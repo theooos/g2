@@ -1,9 +1,10 @@
-package client.networking;
+package networking;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import static client.Client.out;
+import static networking.Connection.out;
+
 
 /**
  * Created by theooos on 21/01/2017.

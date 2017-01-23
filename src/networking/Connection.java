@@ -1,8 +1,5 @@
-package server.networking;
+package networking;
 
-import client.Client;
-import client.networking.ClientListener;
-import client.networking.ClientSender;
 import objects.Sendable;
 
 import java.io.IOException;
@@ -15,15 +12,34 @@ import static server.Server.out;
 /**
  * Created by theooos on 18/01/2017.
  */
-public class ConnectionToClient {
+public class Connection {
+
+    private static String HOSTNAME = "localhost";
+    private static int PORT = 3000;
 
     private Socket socket;
     private ClientSender toClient;
     private ClientListener fromClient;
 
-    public ConnectionToClient(Socket socket) {
+    /**
+     * To initialise the server.
+     */
+    public Connection(){
+        try {
+            socket = new Socket(HOSTNAME,PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        establishConnection();
+    }
+
+    /**
+     * To initialise client connection.
+     * @param socket
+     */
+    public Connection(Socket socket) {
         this.socket = socket;
-        out("ConnectionToClient made to client.");
+        out("Connection made to client.");
         establishConnection();
     }
 
@@ -54,5 +70,9 @@ public class ConnectionToClient {
     public void resetConnection(){
         closeConnection();
         establishConnection();
+    }
+
+    public static void out(Object o){
+        System.out.println("[NETWORK] "+o);
     }
 }
