@@ -3,7 +3,7 @@ package client;
 import networking.Connection;
 
 /**
- * Created by theooos on 18/01/2017.
+ * The class to be run to start the Client.
  */
 public class Client {
 

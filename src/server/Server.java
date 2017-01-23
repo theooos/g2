@@ -7,23 +7,18 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 /**
- * Created by theooos on 18/01/2017.
+ * The class to be run to start the server.
  */
 public class Server extends Thread {
 
-    private static int PORT = 3000;
-
-    private ServerSocket serverSocket;
+    private ServerSocket serverSocket = Connection.getServerSocket();
+    private NewConnectionListener newConnectionListener = new NewConnectionListener(serverSocket);
 
     private LobbyManager lobbyManager = new LobbyManager();
-    private NewConnectionListener newConnectionListener;
 
-    public Server(){
-        connect();
-        newConnectionListener = new NewConnectionListener(serverSocket);
-        this.start();
-    }
-
+    /**
+     * Always checking if the listener has any new clients. If so, sends them to the lobby manager.
+     */
     public void run(){
         while(true){
             // Keep checking if listener has any new clients, send them to lobby manager if so.
@@ -34,20 +29,9 @@ public class Server extends Thread {
         }
     }
 
-    private void connect() {
-        try {
-            serverSocket = new ServerSocket(PORT);
-        } catch (IOException e) {
-            out("Failed to connect through server socket.");
-        }
-    }
-
-    public static void kill(){
-        System.exit(0);
-    }
-
     public static void main(String[] args){
         Server server = new Server();
+        server.start();
     }
 
     public static void out(Object o){

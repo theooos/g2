@@ -5,12 +5,11 @@ import objects.Sendable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
-import static server.Server.out;
-
 /**
- * Created by theooos on 18/01/2017.
+ * This holds the connection between Server and Client, and can be used by either.
  */
 public class Connection {
 
@@ -18,11 +17,11 @@ public class Connection {
     private static int PORT = 3000;
 
     private Socket socket;
-    private ClientSender toClient;
-    private ClientListener fromClient;
+    private NetworkSender toConnection;
+    private NetworkListener fromConnection;
 
     /**
-     * To initialise the server.
+     * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
      */
     public Connection(){
         try {
@@ -34,8 +33,8 @@ public class Connection {
     }
 
     /**
-     * To initialise client connection.
-     * @param socket
+     * FOR USE ONLY BY SERVER. Initialises the connection to a client.
+     * @param socket The server socket.
      */
     public Connection(Socket socket) {
         this.socket = socket;
@@ -43,36 +42,66 @@ public class Connection {
         establishConnection();
     }
 
+    /**
+     * Creates the input and output streams.
+     */
     private void establishConnection(){
         try {
-            toClient = new ClientSender(new ObjectOutputStream(socket.getOutputStream()));
-            fromClient = new ClientListener(new ObjectInputStream(socket.getInputStream()));
+            toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
+            fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()));
         } catch (IOException e) {
             out("Failed to establish connection.");
         }
         out("Connection made to server.");
     }
 
+    /**
+     * Closes all streams.
+     */
     private void closeConnection(){
         try {
-            toClient.close();
-            fromClient.close();
+            toConnection.close();
+            fromConnection.close();
             socket.close();
         } catch (IOException e) {
             out("Could not close connection gracefully.");
         }
     }
 
-    public void send(Sendable obj){
-        toClient.send(obj);
+    /**
+     * Creates a ServerSocket for use by the server.
+     * @return The socket.
+     */
+    public static ServerSocket getServerSocket(){
+        try {
+            return new ServerSocket(PORT);
+        } catch (IOException e) {
+            out("Failed to connect through server socket.");
+        }
+        return null;
     }
 
+    /**
+     * Sends a Sendable object the partner.
+     * @param obj Sendable item.
+     */
+    public void send(Sendable obj){
+        toConnection.send(obj);
+    }
+
+    /**
+     * This re-initialises the connection in case of an error.
+     */
     public void resetConnection(){
         closeConnection();
         establishConnection();
     }
 
-    public static void out(Object o){
+    /**
+     * For debugging use only. Remove all references for production.
+     * @param o Object to print.
+     */
+    static void out(Object o){
         System.out.println("[NETWORK] "+o);
     }
 }

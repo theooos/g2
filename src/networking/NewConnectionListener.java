@@ -8,23 +8,27 @@ import java.util.ArrayList;
 import static networking.Connection.out;
 
 /**
- * Created by theooos on 21/01/2017.
+ * Creates the listening thread for the Server which accepts new clients.
  */
 public class NewConnectionListener extends Thread {
 
     boolean alive = true;
-
     private ServerSocket serverSocket;
-
     private ArrayList<Connection> waitingClients = new ArrayList<>();
 
+    /**
+     * Constructor.
+     * @param serverSocket The socket that the thread should listen on.
+     */
     public NewConnectionListener(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
         this.start();
     }
 
+    /**
+     * Waiting for a new connection is blocking, hence threaded.
+     */
     public void run(){
-        //Keep getting clients and adding them to waitingClients
         try {
             while(alive) {
                 // Hangs here until connection appears.
@@ -38,10 +42,18 @@ public class NewConnectionListener extends Thread {
         }
     }
 
+    /**
+     * Adds a connection to an ArrayList in a synchronised way, ready for another class to pop.
+     * @param conn The connection to add.
+     */
     private synchronized void addWaitingClient(Connection conn) {
         waitingClients.add(conn);
     }
 
+    /**
+     * This pops the next connection from the ArrayList.
+     * @return The new connection.
+     */
     public synchronized Connection getClient(){
         if(waitingClients.size() != 0){
             Connection nextClient = waitingClients.get(0);
@@ -51,6 +63,9 @@ public class NewConnectionListener extends Thread {
         else return null;
     }
 
+    /**
+     * Kills the thread.
+     */
     public void kill(){
         alive = false;
     }
