@@ -2,17 +2,46 @@ package server;
 
 import objects.String;
 import networking.Connection;
+import java.util.ArrayList;
+import java.util.Random;
 
-/**
- * Created by theooos on 21/01/2017.
- */
 public class LobbyManager {
 
-    public void addConnection(Connection newClient) {
-        newClient.send(new String("You have being cared for by the lobby manager."));
+    ArrayList<Lobby> lobbies;
+
+    public LobbyManager() {
+        lobbies = new ArrayList<>();
+        lobbies.add(createLobby());
     }
 
-    private static void out(Object o) {
+    public void addConnection(Connection c) {
+        c.send(new String("You are being cared for by the lobby manager."));
+
+        boolean added = false;
+
+        for (Lobby l: lobbies) {
+            if (!l.isFull()) {
+               l.addConnection(c);
+               added = true;
+               break;
+            }
+        }
+
+        if (!added) {
+            Lobby l = createLobby();
+            l.addConnection(c);
+            lobbies.add(l);
+        }
+    }
+
+    private Lobby createLobby() {
+        Random r = new Random();
+        int size = r.nextInt(4)+1;
+        size = size*4;
+        return new Lobby(4);
+    }
+
+    private void out(Object o) {
         System.out.println(o);
     }
 }
