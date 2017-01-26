@@ -1,5 +1,6 @@
 package server;
 
+<<<<<<< ecbde1cc809c485f6c64a10f6ecd93558402dd6e
 import networking.Connection;
 import server.game.Game;
 
@@ -7,10 +8,13 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+=======
+>>>>>>> written lobby code which generates lobbies as required and places connections into them.  Also has a countdown timer which starts a placeholder method for the game.  Woo!  The lobbies cannot handle disconnects yet as requires that in networking code (thanks theo ¬¬)
 /**
  * Created by peran on 25/01/17.
  */
 public class Lobby {
+<<<<<<< ecbde1cc809c485f6c64a10f6ecd93558402dd6e
     private int maxSize;
     private int minSize;
     private ArrayList<Connection> players;
@@ -107,4 +111,6 @@ public class Lobby {
         game = new Game(players, maxSize, map);
     }
 
+=======
+>>>>>>> written lobby code which generates lobbies as required and places connections into them.  Also has a countdown timer which starts a placeholder method for the game.  Woo!  The lobbies cannot handle disconnects yet as requires that in networking code (thanks theo ¬¬)
 }
