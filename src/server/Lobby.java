@@ -1,6 +1,8 @@
 package server;
 
 import networking.Connection;
+import server.game.Game;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,6 +16,8 @@ public class Lobby {
     private ArrayList<Connection> players;
     private boolean countdownRunning;
     private int countdown;
+    private Timer t;
+    private Game game;
 
 
 
@@ -22,6 +26,7 @@ public class Lobby {
         players = new ArrayList<>();
         this.maxSize = maxSize;
         minSize = maxSize/2;
+        t = new Timer();
     }
 
     /**
@@ -53,25 +58,33 @@ public class Lobby {
     private void startCountdown() {
         if (!countdownRunning) {
             countdown = 60;
-
+            t = new Timer();
             countdownRunning = true;
             sendToAllConnected("Minimum number of players is reached, countdown starting");
-            Timer t = new Timer();
 
             t.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
                     sendToAllConnected("Game starting in "+countdown+"s");
                     countdown--;
+
                     //stops the countdown when the timer has run out
                     if (countdown < 0) {
-                        t.cancel();
-                        t.purge();
+                        stopCountdown();
                         startGame();
                     }
                 }
             }, 1000,1000);
         }
+    }
+
+    /**
+     * stops the countdown and resets timer to 60s
+     */
+    public void stopCountdown() {
+        t.cancel();
+        t.purge();
+        countdownRunning = false;
     }
 
     /**
@@ -89,6 +102,7 @@ public class Lobby {
      */
     private void startGame() {
         sendToAllConnected("Game loading....");
+        game = new Game();
     }
 
 }
