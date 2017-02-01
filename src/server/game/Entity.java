@@ -10,6 +10,7 @@ public class Entity {
     protected Vector2 pos;
     protected int health;
     protected int phase;
+    protected boolean visible;
 
     /**
      * A class intended for inheritence, should not be created
@@ -54,5 +55,13 @@ public class Entity {
 
     public void setPhase(int phase) {
         this.phase = phase;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean getVisible() {
+        return visible;
     }
 }
