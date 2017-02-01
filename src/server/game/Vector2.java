@@ -49,7 +49,6 @@ public class Vector2 {
         return (float)Math.sqrt(Math.pow(target.x-this.x, 2)+Math.pow(target.y-this.y, 2));
     }
 
-    
     /**
      * gets the normlisation of the vector
      * @return the value of the normal
@@ -102,9 +101,5 @@ public class Vector2 {
 
     public String toString() {
         return "("+x+", "+y+")";
-    }
-
-    public Vector2(){
-
     }
 }
