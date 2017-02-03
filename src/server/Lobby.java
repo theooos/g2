@@ -18,6 +18,7 @@ public class Lobby {
     private int countdown;
     private Timer t;
     private Game game;
+    private int map;
 
 
 
@@ -27,6 +28,7 @@ public class Lobby {
         this.maxSize = maxSize;
         minSize = maxSize/2;
         t = new Timer();
+        map = maxSize;
     }
 
     /**
@@ -102,7 +104,7 @@ public class Lobby {
      */
     private void startGame() {
         sendToAllConnected("Game loading....");
-        game = new Game();
+        game = new Game(players, maxSize, map);
     }
 
 }
