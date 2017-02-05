@@ -1,5 +1,7 @@
 package networking;
 
+import objects.Sendable;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -11,11 +13,13 @@ import static networking.Connection.out;
  */
 class NetworkListener extends Thread {
 
+    private final NetworkEventHandler handler;
     private ObjectInputStream fromConnection;
     private boolean running = true;
 
-    NetworkListener(ObjectInputStream fromConnection){
+    NetworkListener(ObjectInputStream fromConnection, NetworkEventHandler handler){
         this.fromConnection = fromConnection;
+        this.handler = handler;
         this.start();
     }
 
@@ -25,26 +29,17 @@ class NetworkListener extends Thread {
     public void run(){
         while(running){
             try {
-                Object received = fromConnection.readObject();
-                dealWithCommunication(received);
+                Sendable received = (Sendable) fromConnection.readObject();
+                handler.queueForExecution(received);
             } catch (IOException e) {
-                out("NetworkListener broke attempting to read object.");
+                out("NetworkListener's connection with the server broke.");
                 out(e.getMessage());
                 running = false;
             } catch (ClassNotFoundException e) {
-                out("NetworkListener broke attempting to discover class type.");
+                out("NetworkListener failed to interpret object type.");
                 out(e.getMessage());
-                running = false;
             }
         }
-    }
-
-    /**
-     * TODO This dictates what should happen when a particular type is received.
-     * @param received The received object.
-     */
-    private void dealWithCommunication(Object received){
-        if (received instanceof objects.String) out(received);
     }
 
     /**

@@ -7,6 +7,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * This holds the connection between Server and Client, and can be used by either.
@@ -19,6 +21,7 @@ public class Connection {
     private Socket socket;
     private NetworkSender toConnection;
     private NetworkListener fromConnection;
+    private NetworkEventHandler handler = new NetworkEventHandler();
 
     /**
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
@@ -48,7 +51,7 @@ public class Connection {
     private void establishConnection(){
         try {
             toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
-            fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()));
+            fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler);
         } catch (IOException e) {
             out("Failed to establish connection.");
         }
@@ -95,6 +98,10 @@ public class Connection {
     public void resetConnection(){
         closeConnection();
         establishConnection();
+    }
+
+    public void addFunctionEvent(String className, Consumer<Sendable> consumer){
+        handler.addFunction(className, consumer);
     }
 
     /**

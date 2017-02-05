@@ -9,6 +9,10 @@ public class Client {
 
     Connection connection = new Connection();
 
+    public Client(){
+        connection.addFunctionEvent("String", Client::out);
+    }
+
     public static void main(String[] args){
         Client client = new Client();
     }
