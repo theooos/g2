@@ -30,8 +30,7 @@ public class Server extends Thread {
     }
 
     public static void main(String[] args){
-        Server server = new Server();
-        server.start();
+        new Server().start();
     }
 
     public static void out(Object o){

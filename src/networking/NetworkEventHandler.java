@@ -17,7 +17,6 @@ public class NetworkEventHandler extends Thread{
     private ArrayList<Sendable> toExecute = new ArrayList<>();
 
     public void run(){
-        out("NetworkEventHandler ran.");
         while(!toExecute.isEmpty()){
             Sendable sendable = popSendable();
             String className = sendable.getClass().toString().substring(14);
