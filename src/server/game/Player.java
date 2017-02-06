@@ -27,6 +27,7 @@ public class Player extends MovableEntity {
         this.health = 100;
         this.w1 = w1;
         this.w2 = w2;
+        radius = 20;
         w1Out = true;
     }
 

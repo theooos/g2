@@ -7,8 +7,6 @@ public class Projectile extends MovableEntity {
 
     protected int damage;
     protected int lifespan;
-    protected int radius;
-
 
     /**
      * A boring default projectile
@@ -53,9 +51,5 @@ public class Projectile extends MovableEntity {
      */
     public void kill() {
         lifespan = 0;
-    }
-
-    public int getRadius() {
-        return radius;
     }
 }

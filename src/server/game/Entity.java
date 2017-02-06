@@ -64,4 +64,8 @@ public class Entity {
     public boolean getVisible() {
         return visible;
     }
+
+    public Vector2 getPos() {
+        return pos;
+    }
 }

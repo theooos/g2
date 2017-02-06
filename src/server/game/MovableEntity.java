@@ -6,6 +6,7 @@ package server.game;
 public class MovableEntity extends Entity {
     protected float speed;
     protected Vector2 dir;
+    protected int radius;
 
     /**
      * A class intended for inheritence, should not be created
@@ -34,5 +35,9 @@ public class MovableEntity extends Entity {
 
     public void setDir(Vector2 dir) {
         this.dir = dir;
+    }
+
+    public int getRadius() {
+        return radius;
     }
 }
