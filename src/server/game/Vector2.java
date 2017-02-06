@@ -99,6 +99,11 @@ public class Vector2 {
         this.y = y;
     }
 
+    public Vector2(int x, int y) {
+        this.x = (float) x;
+        this.y = (float) y;
+    }
+
     public String toString() {
         return "("+x+", "+y+")";
     }

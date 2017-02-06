@@ -22,6 +22,7 @@ public class Zombie extends MovableEntity {
         this.damagable = true;
         this.visible = true;
         this.health = 50;
+        radius = 10;
     }
 
     public void live() {
