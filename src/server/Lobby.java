@@ -1,28 +1,19 @@
 package server;
 
-<<<<<<< ecbde1cc809c485f6c64a10f6ecd93558402dd6e
 import networking.Connection;
-import server.game.Game;
-
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-=======
->>>>>>> written lobby code which generates lobbies as required and places connections into them.  Also has a countdown timer which starts a placeholder method for the game.  Woo!  The lobbies cannot handle disconnects yet as requires that in networking code (thanks theo ¬¬)
 /**
  * Created by peran on 25/01/17.
  */
 public class Lobby {
-<<<<<<< ecbde1cc809c485f6c64a10f6ecd93558402dd6e
     private int maxSize;
     private int minSize;
     private ArrayList<Connection> players;
     private boolean countdownRunning;
     private int countdown;
-    private Timer t;
-    private Game game;
-    private int map;
 
 
 
@@ -31,8 +22,6 @@ public class Lobby {
         players = new ArrayList<>();
         this.maxSize = maxSize;
         minSize = maxSize/2;
-        t = new Timer();
-        map = maxSize;
     }
 
     /**
@@ -64,33 +53,25 @@ public class Lobby {
     private void startCountdown() {
         if (!countdownRunning) {
             countdown = 60;
-            t = new Timer();
+
             countdownRunning = true;
             sendToAllConnected("Minimum number of players is reached, countdown starting");
+            Timer t = new Timer();
 
             t.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
                     sendToAllConnected("Game starting in "+countdown+"s");
                     countdown--;
-
                     //stops the countdown when the timer has run out
                     if (countdown < 0) {
-                        stopCountdown();
+                        t.cancel();
+                        t.purge();
                         startGame();
                     }
                 }
             }, 1000,1000);
         }
-    }
-
-    /**
-     * stops the countdown and resets timer to 60s
-     */
-    public void stopCountdown() {
-        t.cancel();
-        t.purge();
-        countdownRunning = false;
     }
 
     /**
@@ -108,9 +89,6 @@ public class Lobby {
      */
     private void startGame() {
         sendToAllConnected("Game loading....");
-        game = new Game(players, maxSize, map);
     }
 
-=======
->>>>>>> written lobby code which generates lobbies as required and places connections into them.  Also has a countdown timer which starts a placeholder method for the game.  Woo!  The lobbies cannot handle disconnects yet as requires that in networking code (thanks theo ¬¬)
 }
