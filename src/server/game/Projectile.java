@@ -22,7 +22,7 @@ public class Projectile extends MovableEntity {
     public Projectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, Player player) {
         this.damage = damage;
         this.lifespan = lifespan;
-        this.damagable = false;
+        this.damageable = false;
         this.visible = true;
         this.radius = radius;
         this.pos = pos;

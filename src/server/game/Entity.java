@@ -1,12 +1,10 @@
 package server.game;
 
-import java.awt.*;
-
 /**
  * Created by peran on 27/01/17.
  */
 public class Entity implements objects.Sendable {
-    protected boolean damagable;
+    protected boolean damageable;
     protected Vector2 pos;
     protected int maxHealth;
     protected int health;
@@ -14,7 +12,7 @@ public class Entity implements objects.Sendable {
     protected boolean visible;
 
     /**
-     * A class intended for inheritence, should not be created
+     * A class intended for inheritance, should not be created
      */
     public Entity() {}
 
@@ -26,12 +24,12 @@ public class Entity implements objects.Sendable {
         this.pos = pos;
     }
 
-    public void setDamagable(boolean d) {
-        damagable = d;
+    public void setDamageable(boolean d) {
+        damageable = d;
     }
 
-    public boolean getDamagable() {
-        return damagable;
+    public boolean getDamageable() {
+        return damageable;
     }
 
     public int getHealth() {
