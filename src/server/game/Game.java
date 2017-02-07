@@ -50,7 +50,6 @@ public class Game {
             zombies.add(z);
         }
 
-
         loadMap(map);
 
         t = new Timer();
@@ -61,14 +60,21 @@ public class Game {
         t.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                countdown--;
-
-                //stops the countdown when the timer has run out
-                if (countdown < 0) {
-                    endGame();
-                }
+            gameTick();
             }
         }, rate, rate);
+    }
+
+    /**
+     * The game tick runs.  This is the master function for a runnign game
+     */
+    public void gameTick() {
+        countdown--;
+
+        //stops the countdown when the timer has run out
+        if (countdown < 0) {
+            endGame();
+        }
     }
 
     public void endGame() {
