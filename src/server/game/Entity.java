@@ -68,4 +68,8 @@ public class Entity {
     public Vector2 getPos() {
         return pos;
     }
+
+    public void setPos(Vector2 pos) {
+        this.pos = pos;
+    }
 }
