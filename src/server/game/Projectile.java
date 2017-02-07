@@ -53,6 +53,7 @@ public class Projectile extends MovableEntity {
      */
     public void kill() {
         lifespan = 0;
+        health = 0;
     }
 
     public Player getPlayer() {
