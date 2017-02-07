@@ -19,7 +19,7 @@ public class Zombie extends MovableEntity {
         this.dir = dir;
         this.team = team;
         this.phase = phase;
-        this.damagable = true;
+        this.damageable = true;
         this.visible = true;
         maxHealth = 50;
         this.health = maxHealth;
