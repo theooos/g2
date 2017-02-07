@@ -24,7 +24,8 @@ public class Player extends MovableEntity {
         this.phase = phase;
         this.damagable = true;
         this.visible = true;
-        this.health = 100;
+        maxHealth = 100;
+        this.health = maxHealth;
         this.w1 = w1;
         this.w2 = w2;
         radius = 20;
