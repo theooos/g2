@@ -20,19 +20,22 @@ public class Game {
     private ArrayList<Connection> playerConnections;
     private ArrayList<Player> players;
     private ArrayList<Zombie> zombies;
+    private ArrayList<Projectile> projectiles;
 
-    private int maxPlayers;
     private Random rand;
+
+    private Scoreboard sb;
 
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int map) {
         this.map = map;
         this.playerConnections = playerConnections;
-        this.maxPlayers = maxPlayers;
         rand = new Random();
+        sb = new Scoreboard(100);
 
         players = new ArrayList<>();
         zombies = new ArrayList<>();
+        projectiles = new ArrayList<>();
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
@@ -77,10 +80,24 @@ public class Game {
             z.move();
         }
 
+        for (Projectile p: projectiles) {
+            MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos());
+            if (e != null) {
+                e.damage(p.getDamage());
+                p.kill();
+            }
+            //collides with walls
+            p.live();
+        }
+
+        //deletes the projectile from the list if it's dead
+        projectiles.removeIf(p -> !p.isAlive());
+
+
         countdown--;
 
         //stops the countdown when the timer has run out
-        if (countdown < 0) {
+        if (countdown <= 0 || sb.scoreReached()) {
             endGame();
         }
     }
