@@ -8,6 +8,7 @@ import java.awt.*;
 public class Entity {
     protected boolean damagable;
     protected Vector2 pos;
+    protected int maxHealth;
     protected int health;
     protected int phase;
     protected boolean visible;
@@ -71,5 +72,13 @@ public class Entity {
 
     public void setPos(Vector2 pos) {
         this.pos = pos;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void damage(int d) {
+        health -= d;
     }
 }

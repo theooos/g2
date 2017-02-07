@@ -36,17 +36,17 @@ public class Game {
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
-            Player p = new Player(respawnCoords(), new Vector2(0, 1), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
+            Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
             players.add(p);
         }
         //create AI players
         for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
-            Player p = new AIPlayer(respawnCoords(), new Vector2(0, 1), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
+            Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
             players.add(p);
         }
         //create team zombies
         for (int i = 0; i < maxPlayers*2; i++) {
-            Zombie z = new Zombie(respawnCoords(), new Vector2(0, 1),i % 2, rand.nextInt(2));
+            Zombie z = new Zombie(respawnCoords(), randomDir(),i % 2, rand.nextInt(2));
             zombies.add(z);
         }
 
@@ -80,16 +80,10 @@ public class Game {
 
     }
 
-    /**
-     * creates the player and places it on one of the inital spawn points on the loaded map
-     * @param p the player
-     */
-    public void initalPlayerSpawn(Player p) {
-
-    }
-
     public void respawn(MovableEntity e) {
-        e.set
+        e.setPos(respawnCoords());
+        e.setDir(randomDir());
+        e.setHealth(e.getMaxHealth());
     }
 
     /**
@@ -115,6 +109,15 @@ public class Game {
             }
         }
         return v;
+    }
+
+
+    /**
+     * Will get a random vector of length 1 from 0,0
+     * @return
+     */
+    public Vector2 randomDir() {
+        return new Vector2(0,1);
     }
 
     /**
