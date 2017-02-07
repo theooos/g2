@@ -36,17 +36,17 @@ public class Game {
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
-            Player p = new Player(respawn(), new Vector2(0, 1), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
+            Player p = new Player(respawnCoords(), new Vector2(0, 1), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
             players.add(p);
         }
         //create AI players
         for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
-            Player p = new AIPlayer(respawn(), new Vector2(0, 1), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
+            Player p = new AIPlayer(respawnCoords(), new Vector2(0, 1), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
             players.add(p);
         }
         //create team zombies
         for (int i = 0; i < maxPlayers*2; i++) {
-            Zombie z = new Zombie(respawn(), new Vector2(0, 1),i % 2, rand.nextInt(2));
+            Zombie z = new Zombie(respawnCoords(), new Vector2(0, 1),i % 2, rand.nextInt(2));
             zombies.add(z);
         }
 
@@ -88,10 +88,14 @@ public class Game {
 
     }
 
+    public void respawn(MovableEntity e) {
+        e.set
+    }
+
     /**
      * returns a valid respawn coord
      */
-    public Vector2 respawn() {
+    public Vector2 respawnCoords() {
         //get map bounds
         int boundX = 1000;
         int boundY = 1000;
