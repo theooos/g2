@@ -113,6 +113,13 @@ public class Game {
         return v;
     }
 
+    /**
+     * Given a radius and a position, it checks to see if it collided with a player or bot
+     * that is still alive
+     * @param r the radius of the object
+     * @param pos the centre of the object
+     * @return the player or bot it is collided with.  Null if no collision
+     */
     public MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos) {
         for (Player p: players) {
             if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
