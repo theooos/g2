@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * Created by peran on 27/01/17.
  */
-public class Entity {
+public class Entity implements objects.Sendable {
     protected boolean damagable;
     protected Vector2 pos;
     protected int maxHealth;
