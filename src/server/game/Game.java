@@ -66,9 +66,17 @@ public class Game {
     }
 
     /**
-     * The game tick runs.  This is the master function for a runnign game
+     * The game tick runs.  This is the master function for a running game
      */
     public void gameTick() {
+        for (Player p: players) {
+            if (!p.isAlive()) respawn(p);
+        }
+        for (Zombie z: zombies) {
+            if(!z.isAlive()) respawn(z);
+            z.move();
+        }
+
         countdown--;
 
         //stops the countdown when the timer has run out
