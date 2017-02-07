@@ -46,7 +46,7 @@ public class Lobby {
      */
     public void addConnection(Connection c) {
         players.add(c);
-        sendToAllConnected("Player connected");
+        msgToAllConnected("Player connected");
         c.send(new objects.String("You are in a "+maxSize+" player lobby with "+players.size()+" players in it"));
         if (players.size() >= minSize) {
             startCountdown();
@@ -62,12 +62,12 @@ public class Lobby {
             countdown = 60;
             t = new Timer();
             countdownRunning = true;
-            sendToAllConnected("Minimum number of players is reached, countdown starting");
+            msgToAllConnected("Minimum number of players is reached, countdown starting");
 
             t.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    sendToAllConnected("Game starting in "+countdown+"s");
+                    msgToAllConnected("Game starting in "+countdown+"s");
                     countdown--;
 
                     //stops the countdown when the timer has run out
@@ -93,7 +93,7 @@ public class Lobby {
      * sends the string to all players in the lobby
      * @param s the string to be sent
      */
-    private void sendToAllConnected(String s) {
+    private void msgToAllConnected(String s) {
         for (Connection c: players) {
             c.send(new objects.String(s));
         }
@@ -103,7 +103,7 @@ public class Lobby {
      * starts a game, is called when countdown runs out.
      */
     private void startGame() {
-        sendToAllConnected("Game loading....");
+        msgToAllConnected("Game loading....");
         game = new Game(players, maxSize, map);
     }
 

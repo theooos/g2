@@ -2,6 +2,7 @@ package server.game;
 
 import networking.Connection;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
@@ -15,7 +16,7 @@ public class Game {
     private Timer t;
     private int countdown;
     private int tick = 60;
-    private int map;
+    private Map map;
 
     private ArrayList<Connection> playerConnections;
     private ArrayList<Player> players;
@@ -27,8 +28,13 @@ public class Game {
     private Scoreboard sb;
 
 
-    public Game(ArrayList<Connection> playerConnections, int maxPlayers, int map) {
-        this.map = map;
+    public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
+        try {
+            this.map = new Map(mapID);
+        }
+        catch(IOException e) {
+
+        }
         this.playerConnections = playerConnections;
         rand = new Random();
         sb = new Scoreboard(100);
@@ -53,7 +59,6 @@ public class Game {
             zombies.add(z);
         }
 
-        loadMap(map);
 
         t = new Timer();
         countdown = 10*60*tick; //ten minutes
@@ -107,9 +112,6 @@ public class Game {
         t.purge();
     }
 
-    public void loadMap(int map) {
-
-    }
 
     public void respawn(MovableEntity e) {
         e.setPos(respawnCoords());
@@ -183,6 +185,22 @@ public class Game {
             return true;
         }
         return false;
+    }
+
+    /**
+     * sends the string to all players in the lobby
+     * @param s the string to be sent
+     */
+    private void msgToAllConnected(String s) {
+        for (Connection c: playerConnections) {
+            c.send(new objects.String(s));
+        }
+    }
+
+    private void sendToAllConnected(Entity e) {
+        for (Connection c: playerConnections) {
+            c.send(e);
+        }
     }
 
     //public Wall collidesWithWalls(int r, Vector2 p1) {}
