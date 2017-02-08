@@ -1,5 +1,6 @@
 package client.testgui;
 
+import networking.Connection;
 import server.game.*;
 
 import java.io.IOException;
@@ -16,11 +17,16 @@ public class TestEnvironment extends Observable {
     private Player player;
     private Zombie zombie;
     private Map map;
+    Connection connection = new Connection();
+
 
 
     public TestEnvironment(){
 
         super();
+
+        connection.addFunctionEvent("String", TestEnvironment::out);
+
 
         // Create Map.
         map = null;
@@ -76,15 +82,20 @@ public class TestEnvironment extends Observable {
         return zombie;
     }
 
+    public ArrayList<Wall> getWalls(){
+        return map.wallsInPhase(1, true);
+    }
+
+    public int getMapHeight() {
+        return map.getMapHeight();
+    }
+
     public int getMapWidth() {
         return map.getMapWidth();
     }
 
-    public int getMapLength() {
-        return map.getMapHeight();
+    public static void out(Object o){
+        System.out.println("[CLIENT] "+o);
     }
 
-    public ArrayList<Wall> getWalls(){
-        return map.wallsInPhase(1, true);
-    }
 }

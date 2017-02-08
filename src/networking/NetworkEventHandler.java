@@ -11,12 +11,16 @@ import static networking.Connection.out;
 /**
  * This enables other classes to provide functionality for when a specific command is received.
  */
-public class NetworkEventHandler extends Thread{
+public class NetworkEventHandler implements Runnable {
 
     private HashMap<String,ArrayList<Consumer<Sendable>>> allConsumers = new HashMap<>();
     private ArrayList<Sendable> toExecute = new ArrayList<>();
 
+    private boolean running = false;
+
     public void run(){
+        running = true;
+
         while(!toExecute.isEmpty()){
             Sendable sendable = popSendable();
             String className = sendable.getClass().toString().substring(14);
@@ -26,16 +30,18 @@ public class NetworkEventHandler extends Thread{
                 consumer.accept(sendable);
             }
         }
+        running = false;
     }
 
     /**
      * This adds a command to a list of tasks, then tells the handler to run if it isn't already.
      * @param command Command to execute.
      */
-    void queueForExecution(Sendable command){
+    synchronized void queueForExecution(Sendable command){
         addSendable(command);
-        if(!this.isAlive()){
-            this.start();
+
+        if (!running) {
+            new Thread(this).start();
         }
     }
 

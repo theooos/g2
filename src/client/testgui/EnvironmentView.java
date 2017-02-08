@@ -32,7 +32,7 @@ public class EnvironmentView extends JPanel implements Observer {
         Graphics2D g2 = (Graphics2D)g;
 
         int width = env.getMapWidth();
-        int height = env.getMapLength();
+        int height = env.getMapHeight();
         g2.clearRect(0,0, width, height);
         
         g2.setColor(Color.GREEN);

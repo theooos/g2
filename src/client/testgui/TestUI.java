@@ -5,7 +5,7 @@ import javax.swing.*;
  * Runs a GUI for testing and developing the game's client to server communication
  * Created by peran on 8/02/17, heavily based off of rhys code
  */
-public class AITestUI {
+public class TestUI {
 
     public static final int FRAME_WIDTH = 1000;
     public static final int FRAME_HEIGHT= 800;
