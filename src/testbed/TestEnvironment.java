@@ -55,12 +55,14 @@ public class TestEnvironment extends Observable {
 
         // Face the player in the appropriate direction.
         player.setDir(direction);
-        System.out.println("Player now facing direction: " + player.getDir().toString());
+        System.out.println("TE: Player now facing direction: " + player.getDir().toString());
 
         // Check the movement isn't obstructed before making it.
         Vector2 hypoLoc = player.hypoMove();
         if (hypoLoc.getX() >= 0 && hypoLoc.getX() < map.getMapWidth()){
+            System.out.println("Valid movement for X-Direction.");
             if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapLength()){
+                System.out.println("Valid movement for Y-Direction.");
                 player.live();      // Execute the movement??
                 setChanged();
                 notifyObservers();
