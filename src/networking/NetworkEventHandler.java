@@ -23,14 +23,25 @@ public class NetworkEventHandler implements Runnable {
 
         while(!toExecute.isEmpty()){
             Sendable sendable = popSendable();
-            String className = sendable.getClass().toString().substring(14);
+            String className = getClassName(sendable);
 
             ArrayList<Consumer<Sendable>> consumers = this.allConsumers.get(className);
-            for (Consumer<Sendable> consumer : consumers) {
-                consumer.accept(sendable);
+            if(consumers == null){
+                out("Network doesn't know hoe to handle the class: "+className);
+            }
+            else {
+                for (Consumer<Sendable> consumer : consumers) {
+                    consumer.accept(sendable);
+                }
             }
         }
         running = false;
+    }
+
+    private String getClassName(Sendable sendable) {
+        String full = sendable.getClass().toString();
+        String[] split = full.split("\\.");
+        return split[split.length-1];
     }
 
     /**
