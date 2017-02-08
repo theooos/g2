@@ -16,9 +16,9 @@ public class NetworkEventHandler implements Runnable {
     private HashMap<String,ArrayList<Consumer<Sendable>>> allConsumers = new HashMap<>();
     private ArrayList<Sendable> toExecute = new ArrayList<>();
 
-    private boolean running = false;
+    private volatile boolean running = false;
 
-    public void run(){
+    public synchronized void run(){
         running = true;
 
         while(!toExecute.isEmpty()){
