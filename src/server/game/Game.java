@@ -3,7 +3,6 @@ package server.game;
 import networking.Connection;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
@@ -11,11 +10,11 @@ import java.util.TimerTask;
 
 /**
  * Created by peran on 27/01/17.
+ * Controls the main game logic
  */
 public class Game {
     private Timer t;
     private int countdown;
-    private int tick = 60;
     private Map map;
 
     private ArrayList<Connection> playerConnections;
@@ -29,12 +28,16 @@ public class Game {
 
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
+        int tick = 60;
+
+        //try to load the map
         try {
             this.map = new Map(mapID);
         }
         catch(IOException e) {
-
+            msgToAllConnected("Failed to load map");
         }
+
         this.playerConnections = playerConnections;
         rand = new Random();
         sb = new Scoreboard(100);
@@ -76,17 +79,17 @@ public class Game {
     /**
      * The game tick runs.  This is the master function for a running game
      */
-    public void gameTick() {
+    private void gameTick() {
         for (Player p: players) {
             if (!p.isAlive()) respawn(p);
         }
         for (Zombie z: zombies) {
             if(!z.isAlive()) respawn(z);
-            z.move();
+            z.live();
         }
 
         for (Projectile p: projectiles) {
-            MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos());
+            MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase());
             if (e != null) {
                 e.damage(p.getDamage());
                 p.kill();
@@ -105,28 +108,44 @@ public class Game {
         if (countdown <= 0 || sb.scoreReached()) {
             endGame();
         }
+        else {
+            sendAllObjects();
+        }
     }
 
-    public void endGame() {
+    private void endGame() {
         t.cancel();
         t.purge();
+        msgToAllConnected("Game Ended");
     }
 
+    private void sendAllObjects() {
+        for (Player p: players) {
+            sendToAllConnected(p);
+        }
+        for (Zombie z: zombies) {
+            sendToAllConnected(z);
+        }
+        for (Projectile p: projectiles) {
+            sendToAllConnected(p);
+        }
+    }
 
-    public void respawn(MovableEntity e) {
+    private void respawn(MovableEntity e) {
         e.setPos(respawnCoords());
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
+        msgToAllConnected("respawn in progress");
     }
 
     /**
      * returns a valid respawn coord
      */
-    public Vector2 respawnCoords() {
+    private Vector2 respawnCoords() {
         //get map bounds
-        int boundX = 1000;
-        int boundY = 1000;
-        int minDist = 50;
+        int boundX = map.getMapHeight();
+        int boundY = map.getMapWidth();
+        int minDist = 20;
 
         boolean valid = false;
         Vector2 v = new Vector2(0,0);
@@ -147,9 +166,8 @@ public class Game {
 
     /**
      * Will get a random vector of length 1 from 0,0
-     * @return
      */
-    public Vector2 randomDir() {
+    private Vector2 randomDir() {
         return new Vector2(0,1);
     }
 
@@ -160,7 +178,7 @@ public class Game {
      * @param pos the centre of the object
      * @return the player or bot it is collided with.  Null if no collision
      */
-    public MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos) {
+    private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos) {
         for (Player p: players) {
             if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
         }
@@ -173,18 +191,33 @@ public class Game {
     }
 
     /**
+     * Given a radius and a position, it checks to see if it collided with a player or bot
+     * that is still alive
+     * @param r the radius of the object
+     * @param pos the centre of the object
+     * @return the player or bot it is collided with.  Null if no collision
+     */
+    private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase) {
+        for (Player p: players) {
+            if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos()) && phase == p.phase) return p;
+        }
+
+        for (Zombie z: zombies) {
+            if (z.isAlive() && collided(r, pos, z.getRadius(), z.getPos()) && phase == z.phase) return z;
+        }
+
+        return null;
+    }
+
+    /**
      * returns true if the two entity have collided
      * @param r1 the radius of the first entity
      * @param p1 the position of the first entity
      * @param r2 the radius of the second entity
      * @param p2 the position of the second entity
-     * @return
      */
-    public boolean collided(int r1, Vector2 p1, int r2, Vector2 p2) {
-        if (p1.getDistanceTo(p2) < r1+r2) {
-            return true;
-        }
-        return false;
+    private boolean collided(int r1, Vector2 p1, int r2, Vector2 p2) {
+        return p1.getDistanceTo(p2) < r1 + r2;
     }
 
     /**
@@ -195,6 +228,7 @@ public class Game {
         for (Connection c: playerConnections) {
             c.send(new objects.String(s));
         }
+        System.out.println(s);
     }
 
     private void sendToAllConnected(Entity e) {

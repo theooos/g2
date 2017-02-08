@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class LobbyManager {
 
-    ArrayList<Lobby> lobbies;
+    private ArrayList<Lobby> lobbies;
 
     public LobbyManager() {
         lobbies = new ArrayList<>();
@@ -39,9 +39,5 @@ public class LobbyManager {
         int size = r.nextInt(4)+1;
         size = size*4;
         return new Lobby(4);
-    }
-
-    private void out(Object o) {
-        System.out.println(o);
     }
 }

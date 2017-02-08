@@ -22,7 +22,7 @@ public class Map {
 
     /**
      * Generates the requested map from the appropriate text file.
-     * @param mapID
+     * @param mapID which map will be generated
      */
     public Map(int mapID) throws IOException {
 
@@ -99,7 +99,7 @@ public class Map {
     /**
      * @return the length of the map in position units.
      */
-    public int getMapLength() {
+    public int getMapHeight() {
         return length;
     }
 }

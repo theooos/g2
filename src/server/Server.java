@@ -3,7 +3,6 @@ package server;
 import networking.Connection;
 import networking.NewConnectionListener;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 
 /**

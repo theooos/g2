@@ -33,6 +33,7 @@ public class Zombie extends MovableEntity {
 
     protected void move() {
         //ai basic movement for the zombie
+        pos.add(dir).mult(speed);
     }
 
     public int getTeam() {
