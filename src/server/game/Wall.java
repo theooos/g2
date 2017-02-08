@@ -1,5 +1,7 @@
 package server.game;
 
+import java.util.HashSet;
+
 /**
  * Represents one wall of a game map.
  * Created by rhys on 2/1/17.
@@ -81,6 +83,10 @@ public class Wall extends Entity {
      */
     public boolean inPhase(int phase){
         return (this.phase == phase);
+    }
+
+    public HashSet<Vector2> getWholeWall(){
+        return null;
     }
 
 }

@@ -34,13 +34,11 @@ public class Player extends MovableEntity {
     }
 
     public void live() {
-        System.out.println("P: Calling move().");
         move();
         //any other methods the player may do once a tick
     }
 
     protected void move() {
-        System.out.println("P: Calling super.move().");
         super.move();
     }
 

@@ -16,9 +16,6 @@ public class MovableEntity extends Entity {
     protected void move() {
 
         this.pos = pos.add(dir.mult(speed));
-        System.out.println("ME: Move made. New pos - " + this.pos.toString() + ".");
-        System.out.println("ME: Movement made at speed " + String.valueOf(this.speed));
-
 
     }
 
