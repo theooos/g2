@@ -28,7 +28,7 @@ public class Lobby {
         this.maxSize = maxSize;
         minSize = maxSize/2;
         t = new Timer();
-        map = maxSize;
+        map = 0;
     }
 
     /**
@@ -59,7 +59,7 @@ public class Lobby {
      */
     private void startCountdown() {
         if (!countdownRunning) {
-            countdown = 60;
+            countdown = 5;
             t = new Timer();
             countdownRunning = true;
             msgToAllConnected("Minimum number of players is reached, countdown starting");

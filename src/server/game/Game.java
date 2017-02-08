@@ -30,6 +30,8 @@ public class Game {
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
         int tick = 60;
 
+        this.playerConnections = playerConnections;
+
         //try to load the map
         try {
             this.map = new Map(mapID);
@@ -38,7 +40,8 @@ public class Game {
             msgToAllConnected("Failed to load map");
         }
 
-        this.playerConnections = playerConnections;
+        System.out.println(playerConnections.size());
+
         rand = new Random();
         sb = new Scoreboard(100);
 
