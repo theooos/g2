@@ -23,6 +23,7 @@ public class Zombie extends MovableEntity {
         this.visible = true;
         maxHealth = 50;
         this.health = maxHealth;
+        this.speed = 2;
         radius = 10;
     }
 
