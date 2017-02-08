@@ -3,9 +3,7 @@ package server.game;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents a game map.
@@ -14,6 +12,8 @@ import java.util.List;
 public class Map {
 
     private ArrayList<Wall> walls;
+    private ArrayList<Vector2> validSpace;
+
     private int width;
     private int length;
     private final String LOCAL_PATH = "/home/rhys/Dropbox/University/Year2-Semester2/TeamProject/";
@@ -102,4 +102,49 @@ public class Map {
     public int getMapHeight() {
         return length;
     }
+
+    /**
+     * Calculates and returns an ArrayList of spaces that movable entities can move and exist within.
+     * Assumes boundary walls are included in the map specification file.
+     * @return an ArrayList of valid spaces within the map.
+     */
+    private ArrayList<Vector2> allValidSpace(){
+
+        HashSet<Vector2> validSpaceSet = new HashSet<>();
+
+        // Add all possible map positions.
+        for (int x = 0; x < width; x++){
+            for (int y = 0; y < length; y++){
+                validSpaceSet.add(new Vector2(x, y));
+            }
+        }
+
+        // Check all (intact) walls and remove each position obstructed by a wall.
+        for (Wall w : walls) {
+            if (w.isAlive()){
+                HashSet<Vector2> wallSpace = w.getWholeWall();
+                for (Vector2 space : wallSpace){
+                    validSpaceSet.remove(space);
+                }
+            }
+        }
+
+        // Convert the set into an ArrayList and return it.
+        ArrayList<Vector2> validSpace = new ArrayList<>();
+        for (Vector2 space : validSpaceSet){
+            validSpace.add(space);
+        }
+        return validSpace;
+    }
+
+
+    /**
+     *
+     * @return true if the map is valid.
+     */
+    private void constructMapFromSource(){
+
+     }
+
+
 }

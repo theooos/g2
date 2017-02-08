@@ -28,6 +28,7 @@ public class Player extends MovableEntity {
         this.health = maxHealth;
         this.w1 = w1;
         this.w2 = w2;
+        this.speed = 2;
         radius = 20;
         w1Out = true;
     }
@@ -38,7 +39,7 @@ public class Player extends MovableEntity {
     }
 
     protected void move() {
-        //movement based on player input
+        super.move();
     }
 
     public int getTeam() {

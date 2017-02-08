@@ -16,6 +16,7 @@ public class MovableEntity extends Entity {
     protected void move() {
 
         this.pos = pos.add(dir.mult(speed));
+
     }
 
     public Vector2 hypoMove() {

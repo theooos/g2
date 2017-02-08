@@ -55,7 +55,6 @@ public class TestEnvironment extends Observable {
 
         // Face the player in the appropriate direction.
         player.setDir(direction);
-        System.out.println("Player now facing direction: " + player.getDir().toString());
 
         // Check the movement isn't obstructed before making it.
         Vector2 hypoLoc = player.hypoMove();
