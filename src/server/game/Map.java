@@ -1,6 +1,7 @@
 package server.game;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -16,15 +17,18 @@ public class Map {
 
     private int width;
     private int length;
-    private final String LOCAL_PATH = "/home/rhys/Dropbox/University/Year2-Semester2/TeamProject/";
-    private final String PROJ_PATH = "g2/src/server/game/maps/";
-    private final String FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 
     /**
      * Generates the requested map from the appropriate text file.
      * @param mapID which map will be generated
      */
     public Map(int mapID) throws IOException {
+
+        String LOCAL_PATH = new File("").getAbsolutePath();
+        System.out.println(LOCAL_PATH);
+        String PROJ_PATH = "/src/server/game/maps/";
+        String FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
+
 
         walls = new ArrayList<>();
         ArrayList<String> wallStrings = new ArrayList<>();
