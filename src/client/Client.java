@@ -11,6 +11,7 @@ public class Client {
 
     public Client(){
         connection.addFunctionEvent("String", Client::out);
+        connection.addFunctionEvent("Player", Client::out);
     }
 
     public static void main(String[] args){

@@ -1,10 +1,12 @@
 package server.game;
 
+import objects.Sendable;
+
 /**
  * Created by peran on 27/01/17.
  */
 
-public class Vector2 {
+public class Vector2 implements Sendable{
     private float x;
     private float y;
 

@@ -1,9 +1,11 @@
 package server.game;
 
+import objects.Sendable;
+
 /**
  * Created by peran on 01/02/17.
  */
-public class Weapon {
+public class Weapon implements Sendable{
     protected float accuracy;
     protected float recoil;
     protected float recoilRecovery;
