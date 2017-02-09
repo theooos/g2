@@ -15,6 +15,8 @@ public class Client {
         connection.addFunctionEvent("AIPlayer", Client::out);
         connection.addFunctionEvent("Zombie", Client::out);
         connection.addFunctionEvent("Projectile", Client::out);
+
+        //testing branch
     }
 
     public static void main(String[] args){
