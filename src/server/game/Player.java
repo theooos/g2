@@ -48,7 +48,12 @@ public class Player extends MovableEntity {
         else return w2;
     }
 
-    void changeActiveWeapon() {
+    void toggleWeapon() {
         w1Out = !w1Out;
+    }
+
+    void togglePhase() {
+        if (phase == 1) phase = 0;
+        else phase = 1;
     }
 }

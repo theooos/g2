@@ -1,6 +1,7 @@
 package server.game;
 
 import networking.Connection;
+import objects.Sendable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class Game {
         System.out.println(playerConnections.size());
 
         rand = new Random();
-        sb = new Scoreboard(100);
+        sb = new Scoreboard(100, maxPlayers);
 
         players = new ArrayList<>();
         zombies = new ArrayList<>();
@@ -53,15 +54,17 @@ public class Game {
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
-          //  Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
-          //  players.add(p);
-            //IDCounter++;
+            Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+            playerConnections.get(i).send(new objects.String("ID"+IDCounter));
+            playerConnections.get(i).addFunctionEvent("String", this::decodeString);
+            players.add(p);
+            IDCounter++;
         }
         //create AI players
         for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
-          //  Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
-          //  players.add(p);
-            //IDCounter++;
+            Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+            players.add(p);
+            IDCounter++;
         }
         //create team zombies
         for (int i = 0; i < 1; i++) {
@@ -79,10 +82,11 @@ public class Game {
         t.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-            gameTick();
+                gameTick();
             }
         }, rate, rate);
     }
+
 
     /**
      * The game tick runs.  This is the master function for a running game
@@ -241,12 +245,63 @@ public class Game {
         System.out.println(s);
     }
 
+    /**
+     * sends an entity to all connected players
+     * @param e the entity to send
+     */
     private void sendToAllConnected(Entity e) {
         for (Connection c: playerConnections) {
             c.send(e);
         }
     }
 
+    /**
+     * decodes a string from a sendable string
+     * @param s0 to sendable string to decode
+     */
+    private void decodeString(Sendable s0) {
+        String s = s0.toString();
+        try{
+            String s1 = s.substring(1);
+            switch (s.charAt(0)) {
+                case 'f':
+                    fire(getPlayerFromID(Integer.parseInt(s1)));
+                    break;
+                case 'p':
+                    togglePhase(getPlayerFromID(Integer.parseInt(s1)));
+                    break;
+                case 'w':
+                    toggleWeapon(getPlayerFromID(Integer.parseInt(s1)));
+                    break;
+                case 'm':
+                    System.out.println(s.substring(1));
+                    break;
+                default:
+                    System.out.println(s);
+            }
+        }
+        catch (Exception e) {
+            System.out.println(s);
+        }
+    }
+
+    /**
+     * gets a player from an id
+     * @param id the player id
+     * @return returns the player of null if no player exist
+     */
+    private Player getPlayerFromID(int id) {
+        for (Player p: players) {
+            if (p.getID() == id) return p;
+        }
+        System.out.println("No player with that ID");
+        return null;
+    }
+
+    /**
+     * fires the active gun of the given player
+     * @param player the gun to fire
+     */
     private void fire(Player player) {
         Weapon w = player.getActiveWeapon();
         if (w.canFire()) {
@@ -259,6 +314,22 @@ public class Game {
             p.setPlayerID(player.getID());
             projectiles.add(p);
         }
+    }
+
+    /**
+     * switches the weapon of the given player
+     * @param player the player to switch weapon
+     */
+    private void toggleWeapon(Player player) {
+        player.toggleWeapon();
+    }
+
+    /**
+     * Switches the phase of the given player
+     * @param player the player to switch phase
+     */
+    private void togglePhase(Player player) {
+        player.togglePhase();
     }
 
 }

@@ -27,16 +27,6 @@ public class TestUI {
 
         frame.setVisible(true);
 
-        Timer t = new java.util.Timer();
-
-        int rate = 1000/60;
-
-        t.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                comp.repaint();
-            }
-        }, rate, rate);
 
     }
 
