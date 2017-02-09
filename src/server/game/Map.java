@@ -11,14 +11,21 @@ import java.util.*;
  */
 public class Map {
 
-    private ArrayList<Wall> walls;
-    private ArrayList<Vector2> validSpace;
-
-    private int width;
-    private int length;
+    // Map Source File information:
     private final String LOCAL_PATH = "/home/rhys/Dropbox/University/Year2-Semester2/TeamProject/";
     private final String PROJ_PATH = "g2/src/server/game/maps/";
     private final String FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
+
+    // Game Object Information:
+    private int mapID;
+    private String mapName;
+    private int mapSize;                        // Denotes this map's max number of players.
+    private ArrayList<Wall> walls;
+    private int width;
+    private int length;
+
+    // Short-term members:
+    private ArrayList<Vector2> validSpace;
 
     /**
      * Generates the requested map from the appropriate text file.
@@ -26,21 +33,10 @@ public class Map {
      */
     public Map(int mapID) throws IOException {
 
-        walls = new ArrayList<>();
-        ArrayList<String> wallStrings = new ArrayList<>();
+        this.mapID = mapID;
 
-        // Read the map's text file.
-        try {
-            FileReader file = new FileReader(FULL_PATH + String.valueOf(mapID) + ".txt");
-            BufferedReader input = new BufferedReader(file);
-            String nextWallString;
-            while ((nextWallString = input.readLine()) != null) {
-                wallStrings.add(nextWallString);
-            }
-            input.close();
-        } catch (IOException e) {
-            throw new IOException();
-        }
+        ArrayList<String> mapStrings = readMapFromSource();
+
 
         // Parse the overall dimensions of the map.
         List<String> dimensions = Arrays.asList(wallStrings.get(0).split("\\s*,\\s*"));
@@ -139,10 +135,38 @@ public class Map {
 
 
     /**
-     *
-     * @return true if the map is valid.
+     * Reads this map's specified source file and returns it as an ArrayList of strings.
+     * @return an ArrayList of strings representing the source file.
+     */
+    private ArrayList<String> readMapFromSource(){
+
+        ArrayList<String> mapStrings = new ArrayList<>();
+
+        try {
+            FileReader file = new FileReader(FULL_PATH + String.valueOf(mapID) + ".txt");
+            BufferedReader input = new BufferedReader(file);
+            String nextString;
+            while ((nextString = input.readLine()) != null) {
+                mapStrings.add(nextString);
+            }
+            input.close();
+        } catch (IOException e) {
+            System.err.print("ERROR: Invalid Map Source location/file.");
+            System.exit(0);
+        }
+
+        return mapStrings;
+    }
+
+    /**
+     * Parses the strings of the source file, constructing the map and checking for
+     * invalid walls and spawn zones.
      */
     private void constructMapFromSource(){
+
+        // Parse metadata.
+
+        //
 
      }
 
