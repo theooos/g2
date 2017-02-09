@@ -247,5 +247,18 @@ public class Game {
         }
     }
 
-    //public Wall collidesWithWalls(int r, Vector2 p1) {}
+    private void fire(Player player) {
+        Weapon w = player.getActiveWeapon();
+        if (w.canFire()) {
+            Projectile p = w.getShotType();
+            p.setDir(player.getDir());
+            p.setPos(player.getPos());
+            p.setID(IDCounter);
+            IDCounter++;
+            p.setPhase(player.phase);
+            p.setPlayerID(player.getID());
+            projectiles.add(p);
+        }
+    }
+
 }

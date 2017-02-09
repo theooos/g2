@@ -21,8 +21,8 @@ public class ClusterProjectile extends Projectile {
      * @param speed the speed of the prj
      * @param phase the phase the prj is in
      */
-    public ClusterProjectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, Player player) {
-        super(damage, lifespan, radius, pos, dir, speed, phase, player);
+    public ClusterProjectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, int player, int id) {
+        super(damage, lifespan, radius, pos, dir, speed, phase, player, id);
         clustered = false;
         children = new ArrayList<Projectile>();
     }
@@ -32,7 +32,7 @@ public class ClusterProjectile extends Projectile {
         if (!clustered) {
             lifespan--;
             if (lifespan < 1) {
-                cluster();
+              //  cluster();
                 clustered = true;
                 setVisible(false);
             }
@@ -52,16 +52,16 @@ public class ClusterProjectile extends Projectile {
 
     }
 
-    private void cluster() {
+  /*  private void cluster() {
         int newDam = damage/4;
         int newRad = radius/4;
         int newlife = 50;
-        children.add(new Projectile(newDam, newlife, newRad, pos, dir.add(new Vector2(0, 1)), speed, phase, player));
-        children.add(new Projectile(newDam, newlife, newRad, pos, dir.add(new Vector2(1, 0)), speed, phase, player));
-        children.add(new Projectile(newDam, newlife, newRad, pos, dir.add(new Vector2(0, -1)), speed, phase, player));
-        children.add(new Projectile(newDam, newlife, newRad, pos, dir.add(new Vector2(-1, 0)), speed, phase, player));
+    //    children.add(new Projectile(newDam, newlife, newRad, pos, dir.add(new Vector2(0, 1)), speed, phase, player));
+    //    children.add(new Projectile(newDam, newlife, newRad, pos, dir.add(new Vector2(1, 0)), speed, phase, player));
+    //    children.add(new Projectile(newDam, newlife, newRad, pos, dir.add(new Vector2(0, -1)), speed, phase, player));
+    //    children.add(new Projectile(newDam, newlife, newRad, pos, dir.add(new Vector2(-1, 0)), speed, phase, player));
 
-    }
+    } */
 
 
 }

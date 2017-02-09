@@ -22,9 +22,10 @@ public class Weapon implements Sendable{
     public Weapon() {
         magSize = 100;
         currentHeat = 0;
+        shotType = new DistDropOffProjectile(100,100,20,new Vector2(0,0), new Vector2(0,0), 100, 0, 0, 0);
     }
 
-    public void live() {
+    void live() {
         if (currentHeat > coolDownRate) {
             currentHeat -= coolDownRate;
         } else if (currentHeat > 0) {
@@ -32,10 +33,14 @@ public class Weapon implements Sendable{
         }
     }
 
-    public void fire(Vector2 pos, Vector2 dir) {
-        if (magSize-currentHeat < heatPerShot) return;
+    boolean canFire() {
+        if (magSize-currentHeat < heatPerShot) return false;
         currentHeat += heatPerShot;
-        //create projectiles or sommit
+        return true;
+    }
+
+    Projectile getShotType() {
+        return shotType;
     }
 
 

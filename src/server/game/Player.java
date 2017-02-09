@@ -35,11 +35,11 @@ public class Player extends MovableEntity {
     }
 
     public void live() {
-        move();
-        //any other methods the player may do once a tick
+        //any methods the player may do once a tick
+        getActiveWeapon().live();
     }
 
-    protected void move() {
+    public void move() {
         super.move();
     }
 

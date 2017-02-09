@@ -96,4 +96,8 @@ public class Entity implements objects.Sendable {
             return false;
         }
     }
+
+    public void setID(int i) {
+        this.ID = i;
+    }
 }
