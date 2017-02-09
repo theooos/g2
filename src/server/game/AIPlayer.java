@@ -14,7 +14,7 @@ public class AIPlayer extends Player {
         //any other methods the ai may do once a tick
     }
 
-    protected void move() {
+    public void move() {
         //movement based on more advanced ai code
     }
 

@@ -12,7 +12,9 @@ public class MovableEntity extends Entity {
     /**
      * A class intended for inheritence, should not be created
      */
-    public MovableEntity() {}
+    public MovableEntity() {
+        super();
+    }
 
     protected void move() {
 

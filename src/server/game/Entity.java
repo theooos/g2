@@ -16,8 +16,7 @@ public class Entity implements objects.Sendable {
     /**
      * A class intended for inheritance, should not be created
      */
-    public Entity(int id) {
-        ID = id;
+    public Entity() {
     }
 
     public void updatePos(float x, float y) {
