@@ -10,12 +10,10 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * Created by rhys on 19/01/17.
- */
 public class EnvironmentView extends JPanel implements Observer {
 
     private TestEnvironment env;
+    private int size;
 
     public EnvironmentView(TestEnvironment env){
         super();
@@ -34,27 +32,40 @@ public class EnvironmentView extends JPanel implements Observer {
         int width = env.getMapWidth();
         int height = env.getMapHeight();
         g2.clearRect(0,0, width, height);
-        
-        g2.setColor(Color.GREEN);
-        Ellipse2D.Double player = entityToSpot(env.getPlayer());
-        g2.fill(player);
 
-        g2.setColor(Color.RED);
-        Ellipse2D.Double zombie = entityToSpot(env.getZombie());
-        g2.fill(zombie);
-        
-        g2.setColor(Color.BLACK);
         g2.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING, 
+                RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.draw(player);
-        g2.draw(zombie);
+
+        ArrayList<MovableEntity> es = new ArrayList<>(env.getEntities());
+        if (es.size() != size) {
+            System.out.println("Size: " + es.size());
+            size = es.size();
+        }
+        for (MovableEntity e: es) {
+            switch (e.getTeam()) {
+                case 0:
+                    g2.setColor(Color.RED);
+                    break;
+                case 1:
+                    g2.setColor(Color.BLUE);
+                    break;
+                default:
+                    g2.setColor(Color.BLACK);
+                    break;
+            }
+            Ellipse2D.Double p = entityToSpot(e);
+            g2.fill(p);
+            g2.setColor(Color.BLACK);
+            g2.draw(p);
+        }
 
         ArrayList<Line2D.Double> lines = wallsToLines();
         for (Line2D line : lines){
             g2.draw(line);
         }
-        
+
+        repaint();
     }
 
     public void update(Observable obs, Object obj){
@@ -68,6 +79,8 @@ public class EnvironmentView extends JPanel implements Observer {
         double r = entity.getRadius();
         double xCorner = entity.getPos().getX() - r;
         double yCorner = entity.getPos().getY() - r;
+
+        System.out.println("ZOMB: " + xCorner + ", " + yCorner);
 
         return new Ellipse2D.Double(xCorner, yCorner, r*2, r*2);
     }

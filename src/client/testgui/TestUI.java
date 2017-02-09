@@ -1,5 +1,9 @@
 package client.testgui;
+
+
 import javax.swing.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Runs a GUI for testing and developing the game's client to server communication
@@ -8,7 +12,7 @@ import javax.swing.*;
 public class TestUI {
 
     public static final int FRAME_WIDTH = 1000;
-    public static final int FRAME_HEIGHT= 800;
+    public static final int FRAME_HEIGHT= 1000;
 
     public static void main(String[] args){
 
@@ -23,6 +27,18 @@ public class TestUI {
 
         frame.setVisible(true);
 
+        Timer t = new java.util.Timer();
+
+        int rate = 1000/60;
+
+        t.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                comp.repaint();
+            }
+        }, rate, rate);
+
     }
+
     
 }

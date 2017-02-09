@@ -19,7 +19,7 @@ public class Projectile extends MovableEntity {
      * @param speed the speed of the prj
      * @param phase the phase the prj is in
      */
-    public Projectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, Player player) {
+    public Projectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, Player player, int id) {
         this.damage = damage;
         this.lifespan = lifespan;
         this.damageable = false;
@@ -30,6 +30,7 @@ public class Projectile extends MovableEntity {
         this.speed = speed;
         this.phase = phase;
         this.player = player;
+        ID = id;
     }
 
     public void live() {

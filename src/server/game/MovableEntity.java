@@ -7,6 +7,7 @@ public class MovableEntity extends Entity {
     protected float speed;
     protected Vector2 dir;
     protected int radius;
+    protected int team;
 
     /**
      * A class intended for inheritence, should not be created
@@ -45,5 +46,9 @@ public class MovableEntity extends Entity {
 
     public int getRadius() {
         return radius;
+    }
+
+    public int getTeam() {
+        return team;
     }
 }

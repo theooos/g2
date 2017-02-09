@@ -5,7 +5,6 @@ package server.game;
  */
 public class Player extends MovableEntity {
 
-    protected int team;
     protected Weapon w1;
     protected Weapon w2;
     protected boolean w1Out;
@@ -17,7 +16,7 @@ public class Player extends MovableEntity {
      * @param team the team the player is in
      * @param phase starting phase
      */
-    public Player(Vector2 pos, Vector2 dir, int team, int phase, Weapon w1, Weapon w2) {
+    public Player(Vector2 pos, Vector2 dir, int team, int phase, Weapon w1, Weapon w2, int id) {
         this.pos = pos;
         this.dir = dir;
         this.team = team;
@@ -31,6 +30,8 @@ public class Player extends MovableEntity {
         this.speed = 5;
         radius = 20;
         w1Out = true;
+        this.team = team;
+        ID = id;
     }
 
     public void live() {
@@ -42,11 +43,12 @@ public class Player extends MovableEntity {
         super.move();
     }
 
-    public int getTeam() {
-        return team;
+    Weapon getActiveWeapon() {
+        if (w1Out) return w1;
+        else return w2;
     }
 
-    public void setTeam(int team) {
-        this.team = team;
+    void changeActiveWeapon() {
+        w1Out = !w1Out;
     }
 }

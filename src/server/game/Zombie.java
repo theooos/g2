@@ -5,8 +5,6 @@ package server.game;
  */
 public class Zombie extends MovableEntity {
 
-    private int team;
-
     /**
      * The basic AI controlled enemy
      * @param pos starting pos
@@ -14,7 +12,7 @@ public class Zombie extends MovableEntity {
      * @param team the team the is on
      * @param phase starting phase
      */
-    public Zombie(Vector2 pos, Vector2 dir, int team, int phase) {
+    public Zombie(Vector2 pos, Vector2 dir, int team, int phase, int id) {
         this.pos = pos;
         this.dir = dir;
         this.team = team;
@@ -24,7 +22,9 @@ public class Zombie extends MovableEntity {
         maxHealth = 50;
         this.health = maxHealth;
         this.speed = 2;
+        this.team = team;
         radius = 10;
+        ID = id;
     }
 
     public void live() {
@@ -34,14 +34,6 @@ public class Zombie extends MovableEntity {
 
     protected void move() {
         //ai basic movement for the zombie
-        pos.add(dir).mult(speed);
-    }
-
-    public int getTeam() {
-        return team;
-    }
-
-    public void setTeam(int team) {
-        this.team = team;
+        pos = pos.add(dir.mult(speed));
     }
 }

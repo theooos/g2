@@ -17,15 +17,21 @@ public class TestEnvironment extends Observable {
     private Player player;
     private Zombie zombie;
     private Map map;
-    Connection connection = new Connection();
-
+    private ArrayList<MovableEntity> entities;
 
 
     public TestEnvironment(){
 
         super();
+        entities = new ArrayList<>();
 
-        connection.addFunctionEvent("String", TestEnvironment::out);
+        Connection connection = new Connection();
+
+        connection.addFunctionEvent("String", this::out);
+        connection.addFunctionEvent("Player", this::addEntity);
+        connection.addFunctionEvent("AIPlayer", this::addEntity);
+        connection.addFunctionEvent("Zombie", this::addEntity);
+        connection.addFunctionEvent("Projectile", this::addEntity);
 
 
         // Create Map.
@@ -94,8 +100,23 @@ public class TestEnvironment extends Observable {
         return map.getMapWidth();
     }
 
-    public static void out(Object o){
+    private void out(Object o){
         System.out.println("[CLIENT] "+o);
+    }
+
+    synchronized private void addEntity(Object e) {
+        MovableEntity a = (MovableEntity)e;
+        out(a.getPos());
+
+
+        if (entities.size() > 100) {
+            entities.clear();
+        }
+        entities.add((MovableEntity) e);
+    }
+
+    synchronized public ArrayList<MovableEntity> getEntities() {
+        return entities;
     }
 
 }

@@ -25,10 +25,12 @@ public class Game {
     private Random rand;
 
     private Scoreboard sb;
+    private int IDCounter;
 
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
         int tick = 60;
+        IDCounter = 0;
 
         this.playerConnections = playerConnections;
 
@@ -51,18 +53,21 @@ public class Game {
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
-            Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
-            players.add(p);
+          //  Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+          //  players.add(p);
+            //IDCounter++;
         }
         //create AI players
         for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
-            Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon());
-            players.add(p);
+          //  Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+          //  players.add(p);
+            //IDCounter++;
         }
         //create team zombies
-        for (int i = 0; i < maxPlayers*2; i++) {
-            Zombie z = new Zombie(respawnCoords(), randomDir(),i % 2, rand.nextInt(2));
+        for (int i = 0; i < 1; i++) {
+            Zombie z = new Zombie(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
             zombies.add(z);
+            IDCounter++;
         }
 
 
@@ -89,6 +94,7 @@ public class Game {
         for (Zombie z: zombies) {
             if(!z.isAlive()) respawn(z);
             z.live();
+            respawn(z);
         }
 
         for (Projectile p: projectiles) {
@@ -138,7 +144,7 @@ public class Game {
         e.setPos(respawnCoords());
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
-        msgToAllConnected("respawn in progress");
+       // msgToAllConnected("respawn in progress");
     }
 
     /**
@@ -163,6 +169,7 @@ public class Game {
                 valid = false;
             }
         }
+        msgToAllConnected(v.toString());
         return v;
     }
 

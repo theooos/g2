@@ -10,11 +10,15 @@ public class Entity implements objects.Sendable {
     protected int health;
     protected int phase;
     protected boolean visible;
+    protected int ID;
+
 
     /**
      * A class intended for inheritance, should not be created
      */
-    public Entity() {}
+    public Entity(int id) {
+        ID = id;
+    }
 
     public void updatePos(float x, float y) {
         updatePos(new Vector2(x, y));
@@ -78,5 +82,18 @@ public class Entity implements objects.Sendable {
 
     public void damage(int d) {
         health -= d;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public boolean equals(Object o) {
+        try {
+            return ((Entity) o).getID() == ID;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 }
