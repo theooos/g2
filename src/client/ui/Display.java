@@ -1,6 +1,5 @@
 package client.ui;
 
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,28 +9,21 @@ import java.awt.*;
  */
 public class Display {
 
-    private MainMenu menu;
-    private LobbyUI lobby;
-    private JPanel content;
+    private JFrame frame;
 
     public void displayUI() {
 
-        JFrame frame = new JFrame("PhaseShift");
+        frame = new JFrame("PhaseShift");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1000, 600);
 
-        content = new JPanel();
-        content.setLayout(new CardLayout());
+        Container pane = frame.getContentPane();
 
-        menu = new MainMenu(content);
-        lobby = new LobbyUI(content);
+        MainMenu menu = new MainMenu();
+        menu.createMenu(pane, new LobbyUI());
 
-        content.add(menu, "Panel 1");
-        content.add(lobby, "Panel 2");
-
-        frame.setSize(700, 500);
-        frame.setContentPane(content);
-        //frame.pack();
-        //frame.setLocationByPlatform(true);
+        //LobbyUI lobby = new LobbyUI();
+        //lobby.createLobby(pane, new MainMenu(), "");
         frame.setVisible(true);
     }
 }

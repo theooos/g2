@@ -10,70 +10,104 @@ import java.awt.event.ActionListener;
  */
 class LobbyUI extends JPanel {
 
-    private JLabel userLabel;
-    private JTextField userText, clientNames;
-    private JButton loginButton, cancelButton;
-    private JPanel lobby;
+    private static Color mustard = new Color(245, 225, 65);
+    private static Color background = new Color(45,60,75);
 
-    private java.lang.String userName;
+    private JTextArea clientNames;
+    private JButton cancelButton;
+    private JLabel clientText;
+    private JLabel countDownText;
+    private JTextArea countDown;
+    private JButton mapIcon;
 
-    public LobbyUI(JPanel content) {
+    public void createLobby(Container pane, MainMenu menu, String clientUsername){
 
-        this.lobby = content;
-        setOpaque(true);
+        pane.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
 
-        userLabel = new JLabel("User name:");
-        add(userLabel);
+        clientText = new JLabel("Users connected");
 
-        userText = new JTextField(20);
-        add(userText);
-
-        loginButton = new JButton("GO");
-        add(loginButton);
-
-        clientNames = new JTextField(userName);
-        add(clientNames, BorderLayout.CENTER);
+        clientNames = new JTextArea(clientUsername);
+        clientNames.setMinimumSize(new Dimension(200, 300));
+        clientNames.setMinimumSize(new Dimension(200, 300));
+        clientNames.setEnabled(false);
 
         cancelButton = new JButton("Cancel");
-        add(cancelButton, BorderLayout.CENTER);
 
-        setLoginVisible();
+        countDownText = new JLabel("Game will start in");
 
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setLobbyVisible();
-                clientNames.setText(userText.getText());
-            }
-        });
+        countDown = new JTextArea("");
+        countDown.setEnabled(false);
+
+        mapIcon = new JButton();
+        ImageIcon iconLogo = new ImageIcon("Users/Bianca/Documents/map.jpg");
+        mapIcon.setIcon(iconLogo);
 
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CardLayout cardLayout = (CardLayout) lobby.getLayout();
-                cardLayout.next(lobby);
-                setLoginVisible();
+                hideLobby();
+                pane.removeAll();
+                menu.createMenu(pane, new LobbyUI());
             }
         });
 
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        pane.add(clientText, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.ipady = 50;
+        c.ipadx = 50;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        pane.add(clientNames, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;
+        c.gridx = 3;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        pane.add(countDownText, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.ipady= 50;
+        c.ipadx = 50;
+        c.gridx = 3;
+        c.gridy = 2;
+        c.gridwidth = 3;
+        pane.add(mapIcon, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 3;
+        c.gridy = 1;
+        pane.add(countDown, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.gridx = 0;
+        c.gridy = 2;
+        pane.add(cancelButton, c);
     }
 
-    private void setLoginVisible() {
-        userLabel.setVisible(true);
-        userText.setVisible(true);
-        loginButton.setVisible(true);
-        userText.setText("");
-
+    private void hideLobby(){
         clientNames.setVisible(false);
         cancelButton.setVisible(false);
+        clientText.setVisible(false);
+        countDownText.setVisible(false);
+        countDown.setVisible(false);
+        mapIcon.setVisible(false);
     }
 
-    private void setLobbyVisible() {
-        userLabel.setVisible(false);
-        userText.setVisible(false);
-        loginButton.setVisible(false);
-
+    private void showLobby(String clientUsername){
+        clientNames.setText(clientUsername);
         clientNames.setVisible(true);
         cancelButton.setVisible(true);
+        clientText.setVisible(true);
     }
 }
