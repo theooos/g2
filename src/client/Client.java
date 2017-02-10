@@ -18,7 +18,7 @@ public class Client {
         Client client = new Client();
 
         Display d = new Display();
-        d.displayUI();
+        d.displayUI(client.connection);
     }
 
     public static void out(Object o){

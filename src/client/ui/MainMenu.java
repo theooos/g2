@@ -1,5 +1,7 @@
 package client.ui;
 
+import networking.Connection;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,7 +21,7 @@ class MainMenu extends JPanel {
     private JButton loginButton;
     private String clientUsername;
 
-    public void createMenu(Container pane, LobbyUI lobby) {
+    public void createMenu(Connection conn, Container pane, LobbyUI lobby) {
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.setBackground(background);
@@ -31,8 +33,9 @@ class MainMenu extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 hideMenu();
+                conn.send(new objects.String("I want to start a game"));
                 pane.removeAll();
-                createLogin(pane, lobby);
+                createLogin(conn, pane, lobby);
             }
         });
 
@@ -50,7 +53,7 @@ class MainMenu extends JPanel {
         pane.add(about);
     }
 
-    private void createLogin(Container pane, LobbyUI lobby){
+    private void createLogin(Connection conn, Container pane, LobbyUI lobby){
         userLabel = new JLabel("User name:");
         userLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -67,7 +70,7 @@ class MainMenu extends JPanel {
                 clientUsername = userText.getText();
                 hideLogin();
                 pane.removeAll();
-                lobby.createLobby(pane, new MainMenu(), clientUsername);
+                lobby.createLobby(conn, pane, new MainMenu(), clientUsername);
                 //createLobby(pane, clientUsername);
             }
         });

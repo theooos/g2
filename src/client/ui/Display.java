@@ -1,5 +1,6 @@
 package client.ui;
 
+import networking.Connection;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +14,7 @@ public class Display {
 
     private JFrame frame;
 
-    public void displayUI() {
+    public void displayUI(Connection conn) {
 
         frame = new JFrame("PhaseShift");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,7 +23,7 @@ public class Display {
         Container pane = frame.getContentPane();
 
         MainMenu menu = new MainMenu();
-        menu.createMenu(pane, new LobbyUI());
+        menu.createMenu(conn, pane, new LobbyUI());
 
         //LobbyUI lobby = new LobbyUI();
         //lobby.createLobby(pane, new MainMenu(), "");
