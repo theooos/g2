@@ -115,6 +115,7 @@ public class Game {
         //deletes the projectile from the list if it's dead
         projectiles.removeIf(p -> !p.isAlive());
 
+        System.out.println(randomDir());
 
         countdown--;
 
@@ -188,7 +189,7 @@ public class Game {
                 valid = false;
             }
         }
-        msgToAllConnected(v.toString());
+        //msgToAllConnected(v.toString());
         return v;
     }
 
