@@ -2,18 +2,21 @@ package server.game;
 
 import objects.Sendable;
 
+import java.util.ArrayList;
+
 /**
  * Created by peran on 01/02/17.
  */
 public class Weapon implements Sendable{
-    protected float accuracy;
-    protected float recoil;
-    protected float recoilRecovery;
+    protected int accuracy;
+    protected int recoil;
+    protected int recoilRecovery;
     protected int magSize;
     protected int heatPerShot;
     protected int currentHeat;
     protected int coolDownRate;
     protected Projectile shotType;
+    protected int numProjectiles;
 
     /**
      * skeleton class to represent future weapons
@@ -22,7 +25,8 @@ public class Weapon implements Sendable{
     public Weapon() {
         magSize = 100;
         currentHeat = 0;
-        shotType = new DistDropOffProjectile(100,100,20,new Vector2(0,0), new Vector2(0,0), 100, 0, 0, 0);
+        shotType = new Projectile(100,100,20,new Vector2(0,0), new Vector2(0,0), 100, 0, 0, 0);
+        numProjectiles = 1;
     }
 
     void live() {
@@ -39,9 +43,19 @@ public class Weapon implements Sendable{
         return true;
     }
 
-    Projectile getShotType() {
-        return shotType;
+    ArrayList<Projectile> getShots(Player player) {
+        ArrayList<Projectile> ps = new ArrayList<>();
+        for (int i = 0; i < numProjectiles; i++) {
+            ps.add(shotType);
+            ps.get(i).setDir(player.getDir());
+            ps.get(i).setPos(player.getPos());
+            ps.get(i).setPlayerID(player.getID());
+        }
+        return ps;
     }
 
-
+    protected Vector2 getDeviation(Vector2 v) {
+        
+        return v;
+    }
 }
