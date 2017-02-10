@@ -349,14 +349,12 @@ public class Game {
     private void fire(Player player) {
         Weapon w = player.getActiveWeapon();
         if (w.canFire()) {
-            Projectile p = w.getShotType();
-            p.setDir(player.getDir());
-            p.setPos(player.getPos());
-            p.setID(IDCounter);
-            IDCounter++;
-            p.setPhase(player.phase);
-            p.setPlayerID(player.getID());
-            projectiles.add(p);
+            ArrayList<Projectile> ps = w.getShots(player);
+            for (Projectile p: ps) {
+                p.setID(IDCounter);
+                IDCounter++;
+                projectiles.add(p);
+            }
         }
     }
 
