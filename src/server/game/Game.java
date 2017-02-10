@@ -172,7 +172,7 @@ public class Game {
      */
     private Vector2 respawnCoords() {
         //get map bounds
-        int boundX = map.getMapHeight();
+        int boundX = map.getMapLength();
         int boundY = map.getMapWidth();
         int minDist = 20;
 
