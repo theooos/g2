@@ -7,7 +7,7 @@ import networking.Connection;
  */
 public class Client {
 
-    Connection connection = new Connection();
+    static Connection connection = new Connection();
 
     public Client(){
         connection.addFunctionEvent("String", Client::out);
@@ -21,6 +21,12 @@ public class Client {
 
     public static void main(String[] args){
         new Client();
+        SendMove sm = new SendMove(connection);
+
+
+
+
+
     }
 
     public static void out(Object o){

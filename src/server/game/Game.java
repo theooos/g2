@@ -1,6 +1,7 @@
 package server.game;
 
 import networking.Connection;
+import objects.Sendable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class Game {
           //  Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
           //  players.add(p);
             //IDCounter++;
+            playerConnections.get(i).addFunctionEvent("Vector2",this::printVector2);
         }
         //create AI players
         for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
@@ -84,9 +86,16 @@ public class Game {
         }, rate, rate);
     }
 
+
+
     /**
      * The game tick runs.  This is the master function for a running game
      */
+
+    private void printVector2(Sendable s ) {
+
+        System.out.println(s);
+    }
     private void gameTick() {
         for (Player p: players) {
             if (!p.isAlive()) respawn(p);
@@ -169,7 +178,7 @@ public class Game {
                 valid = false;
             }
         }
-        msgToAllConnected(v.toString());
+        //msgToAllConnected(v.toString());
         return v;
     }
 
@@ -238,7 +247,7 @@ public class Game {
         for (Connection c: playerConnections) {
             c.send(new objects.String(s));
         }
-        System.out.println(s);
+        //System.out.println(s);
     }
 
     private void sendToAllConnected(Entity e) {
