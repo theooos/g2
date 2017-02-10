@@ -57,6 +57,7 @@ public class Game {
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
             playerConnections.get(i).send(new objects.String("ID"+IDCounter));
             playerConnections.get(i).addFunctionEvent("String", this::decodeString);
+            playerConnections.get(i).addFunctionEvent("Player", this::updatePlayer);
             players.add(p);
             IDCounter++;
         }
@@ -130,6 +131,9 @@ public class Game {
         t.cancel();
         t.purge();
         msgToAllConnected("Game Ended");
+        for (Connection c: playerConnections) {
+            sendScoreboard(c);
+        }
     }
 
     private void sendAllObjects() {
@@ -256,6 +260,14 @@ public class Game {
     }
 
     /**
+     * sends a scoreboard to a player
+     * @param c the connected player
+     */
+    private void sendScoreboard(Connection c) {
+        c.send(sb);
+    }
+
+    /**
      * decodes a string from a sendable string
      * @param s0 to sendable string to decode
      */
@@ -264,16 +276,20 @@ public class Game {
         try{
             String s1 = s.substring(1);
             switch (s.charAt(0)) {
+                //fire
                 case 'f':
                     fire(getPlayerFromID(Integer.parseInt(s1)));
                     break;
+                //switch phase
                 case 'p':
                     togglePhase(getPlayerFromID(Integer.parseInt(s1)));
                     break;
+                //switch weapon
                 case 'w':
                     toggleWeapon(getPlayerFromID(Integer.parseInt(s1)));
                     break;
-                case 'm':
+                //"say" sends a message
+                case 's':
                     System.out.println(s.substring(1));
                     break;
                 default:
@@ -282,6 +298,17 @@ public class Game {
         }
         catch (Exception e) {
             System.out.println(s);
+        }
+    }
+
+    private void updatePlayer(Sendable s) {
+        try {
+            Player player = (Player) s;
+            players.removeIf(p -> p.equals(player));
+            players.add(player);
+        }
+        catch (Exception e) {
+            System.out.println("Not a player");
         }
     }
 
