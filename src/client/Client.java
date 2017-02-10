@@ -11,7 +11,7 @@ public class Client {
     Connection connection = new Connection();
 
     public static void main(String[] args){
-        Client client = new Client();
+        //Client client = new Client();
 
         Display d = new Display();
         d.displayUI();
