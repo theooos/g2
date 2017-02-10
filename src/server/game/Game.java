@@ -127,6 +127,9 @@ public class Game {
         }
     }
 
+    /**
+     * Ends the game and msgs all clients
+     */
     private void endGame() {
         t.cancel();
         t.purge();
@@ -136,6 +139,9 @@ public class Game {
         }
     }
 
+    /**
+     * Sends all objects to all players
+     */
     private void sendAllObjects() {
         for (Player p: players) {
             sendToAllConnected(p);
@@ -148,10 +154,15 @@ public class Game {
         }
     }
 
+    /**
+     * Respawns an entity with a random position, dir, and phase
+     * @param e the entity to be respawned
+     */
     private void respawn(MovableEntity e) {
         e.setPos(respawnCoords());
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
+        e.setPhase(rand.nextInt(1));
        // msgToAllConnected("respawn in progress");
     }
 
@@ -186,7 +197,8 @@ public class Game {
      * Will get a random vector of length 1 from 0,0
      */
     private Vector2 randomDir() {
-        return new Vector2(0,1);
+        int ang = rand.nextInt(359);
+        return new Vector2((float)(Math.cos(Math.toRadians(ang))),(float)(Math.sin(Math.toRadians(ang))));
     }
 
     /**
@@ -301,6 +313,10 @@ public class Game {
         }
     }
 
+    /**
+     * updates a recieved player to the recieved state
+     * @param s a player object
+     */
     private void updatePlayer(Sendable s) {
         try {
             Player player = (Player) s;
