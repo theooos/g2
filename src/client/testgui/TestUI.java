@@ -27,8 +27,8 @@ public class TestUI {
         frame.add(comp);
 
         //trying to set an id - hardcoded
-        objects.String s = new objects.String("ID:153");
-        testEnv.sendID(s);
+        //objects.String s = new objects.String("ID:153");
+        //testEnv.sendID(s);
 
 
         frame.setVisible(true);

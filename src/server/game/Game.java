@@ -121,9 +121,9 @@ public class Game {
             System.out.println("Back has been pressed");
 
         }
-       if(s.toString().equals("ID:"))
+       if(s.toString().startsWith("ID:"))
        {
-
+           System.out.println("de ce nu am ajuns si aici?");
            String q = s.toString().substring(3);
            int id = this.getClientID(q);
            this.setIDCounter(id);
@@ -146,7 +146,7 @@ public class Game {
     private void createPlayer()
     {
         Player p = new Player(respawnCoords(), randomDir(), 5, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
-        System.out.println("Id Counter" + IDCounter);
+        System.out.println("Id Counter: " + IDCounter);
 
     }
 

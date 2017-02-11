@@ -95,6 +95,13 @@ public class TestEnvironment extends Observable {
         connection.send(v);
     }
 
+    public void getPlayers()
+    {
+
+
+
+    }
+
     public boolean movePlayer(Vector2 direction){
 
         //System.out.println("do we get here?");

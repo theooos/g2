@@ -39,6 +39,13 @@ public class ControlPanel extends KeyAdapter {
         else if (key == KeyEvent.VK_D) {
             x = 1;
         }
+
+        else if(key == KeyEvent.VK_N)
+        {
+            objects.String s = new objects.String("ID:153");
+            env.sendID(s);
+
+        }
         env.movePlayer(new Vector2(x, y));
         env.sendPosition(new Vector2(x,y));
 
