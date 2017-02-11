@@ -4,6 +4,7 @@ import server.game.Vector2;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 
 public class ControlPanel extends KeyAdapter {
 
@@ -56,4 +57,9 @@ public class ControlPanel extends KeyAdapter {
             x = 0;
         }
     }
+
+
+
+
+
 }
