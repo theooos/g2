@@ -63,6 +63,13 @@ public class TestEnvironment extends Observable {
 
     }
 
+    public void getPlayers()
+    {
+
+
+
+    }
+
     public boolean movePlayer(Vector2 direction){
 
         // Face the player in the appropriate direction.
