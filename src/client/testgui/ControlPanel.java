@@ -26,8 +26,7 @@ public class ControlPanel extends KeyAdapter {
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_W) {
            y = -1;
-           String s = new String("back");
-            env.sendString(s);
+
         }
         else if (key == KeyEvent.VK_A) {
             x = -1;

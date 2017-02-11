@@ -29,11 +29,15 @@ public class TestEnvironment extends Observable {
 
          connection = new Connection();
 
+
+
         connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("Player", this::addEntity);
         connection.addFunctionEvent("AIPlayer", this::addEntity);
         connection.addFunctionEvent("Zombie", this::addEntity);
         connection.addFunctionEvent("Projectile", this::addEntity);
+
+
 
 
         // Create Map.
@@ -172,4 +176,10 @@ public class TestEnvironment extends Observable {
     }
 
 
+    public void sendID(String id) {
+
+        System.out.println(id);
+        connection.send(id);
+
+    }
 }

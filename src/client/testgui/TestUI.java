@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 /**
  * Runs a GUI for testing and developing the game's client to server communication
  * Created by peran on 8/02/17, heavily based off of rhys code
@@ -24,6 +25,11 @@ public class TestUI {
         TestEnvironment testEnv = new TestEnvironment();
         EnvironmentComponent comp = new EnvironmentComponent(testEnv);
         frame.add(comp);
+
+        //trying to set an id - hardcoded
+        objects.String s = new objects.String("ID:153");
+        testEnv.sendID(s);
+
 
         frame.setVisible(true);
 

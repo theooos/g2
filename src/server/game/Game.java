@@ -54,16 +54,19 @@ public class Game {
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
-            
-            Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
-            players.add(p);
-            IDCounter++;
+
+
+            //Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+            //players.add(p);
+            //IDCounter++;
             playerConnections.get(i).addFunctionEvent("Vector2",this::printVector2);
             playerConnections.get(i).addFunctionEvent("String",this::parsingStringClient);
 
 
 
         }
+
+
 
 
 
@@ -95,7 +98,10 @@ public class Game {
     }
 
 
-
+    /**
+     * parsing text from the Client
+     * @param s sendable object
+     */
     private void parsingStringClient(Sendable s)
     {
 
@@ -105,7 +111,7 @@ public class Game {
             System.out.println("this is fire");
 
             //working with one player at the moment.
-            this.fire(players.get(0));
+            //this.fire(players.get(0));
 
         }
 
@@ -115,6 +121,45 @@ public class Game {
             System.out.println("Back has been pressed");
 
         }
+       if(s.toString().equals("ID:"))
+       {
+
+           String q = s.toString().substring(3);
+           int id = this.getClientID(q);
+           this.setIDCounter(id);
+           this.createPlayer();
+
+
+       }
+
+
+    }
+    //setting the id
+    private void setIDCounter(int id)
+    {
+
+        this.IDCounter = id;
+    }
+
+    //creating a player
+
+    private void createPlayer()
+    {
+        Player p = new Player(respawnCoords(), randomDir(), 5, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+        System.out.println("Id Counter" + IDCounter);
+
+    }
+
+    /**
+     * changing the string id to int
+     * @param id the id of the Client
+     */
+    private int getClientID(String id)
+    {
+
+        int clientId = Integer.parseInt(id);
+        return clientId;
+
 
     }
 
