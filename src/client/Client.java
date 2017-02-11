@@ -1,5 +1,6 @@
 package client;
 
+import client.ui.Display;
 import networking.Connection;
 
 /**
@@ -18,7 +19,10 @@ public class Client {
     }
 
     public static void main(String[] args){
-        new Client();
+        Client client = new Client();
+
+        Display d = new Display();
+        d.displayUI(client.connection);
     }
 
     public static void out(Object o){
