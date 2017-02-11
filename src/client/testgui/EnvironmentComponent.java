@@ -27,6 +27,8 @@ public class EnvironmentComponent extends JPanel {
             }
         });
 
+
+
         setLayout(new BorderLayout());
         add(view, BorderLayout.CENTER);
     }
