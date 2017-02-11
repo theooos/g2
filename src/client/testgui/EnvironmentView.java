@@ -4,6 +4,7 @@ import server.game.Wall;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
@@ -70,6 +71,8 @@ public class EnvironmentView extends JPanel implements Observer {
 
         repaint();
     }
+
+
 
     public void update(Observable obs, Object obj){
 

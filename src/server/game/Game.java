@@ -54,10 +54,14 @@ public class Game {
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
-          //  Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+            //Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
           //  players.add(p);
             //IDCounter++;
             playerConnections.get(i).addFunctionEvent("Vector2",this::printVector2);
+            playerConnections.get(i).addFunctionEvent("String",this::firetime);
+
+
+
         }
         //create AI players
         for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
@@ -86,16 +90,31 @@ public class Game {
         }, rate, rate);
     }
 
+    private void firefire(Sendable sendable) {
 
+        System.out.println(sendable);
+    }
+
+    private void firetime(Sendable sendable) {
+
+
+        System.out.println(sendable);
+    }
+
+    /**
+     * printing the new position of the player.
+     */
+
+    private void printVector2(Sendable s) {
+
+        System.out.println(s);
+    }
 
     /**
      * The game tick runs.  This is the master function for a running game
      */
 
-    private void printVector2(Sendable s ) {
 
-        System.out.println(s);
-    }
     private void gameTick() {
         for (Player p: players) {
             if (!p.isAlive()) respawn(p);
@@ -257,6 +276,7 @@ public class Game {
     }
 
     private void fire(Player player) {
+        //System.out.println("a tras nebunu de salam");
         Weapon w = player.getActiveWeapon();
         if (w.canFire()) {
             Projectile p = w.getShotType();

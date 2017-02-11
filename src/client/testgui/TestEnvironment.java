@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Random;
+import objects.String;
 
 /**
  * Created by rhys on 19/01/17.
@@ -66,11 +67,27 @@ public class TestEnvironment extends Observable {
         */
     }
 
+    public void sendFiringAlert(String message)
+    {
+
+        connection.send(message);
+
+    }
+
+    public void sendFirefire(String m)
+    {
+
+        connection.send(m);
+
+    }
+
+    /**
+     * send the updated position to the server
+     * @param v the vector of the new position
+     */
     public void sendPosition(Vector2 v)
     {
-        System.out.println("do we get here");
-        System.out.println("vectorul:"+v);
-        System.out.println("conexiunea e"+connection);
+
         connection.send(v);
     }
 
