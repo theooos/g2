@@ -54,15 +54,19 @@ public class Game {
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
-            //Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
-          //  players.add(p);
-            //IDCounter++;
+            
+            Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+            players.add(p);
+            IDCounter++;
             playerConnections.get(i).addFunctionEvent("Vector2",this::printVector2);
-            playerConnections.get(i).addFunctionEvent("String",this::firetime);
+            playerConnections.get(i).addFunctionEvent("String",this::parsingStringClient);
 
 
 
         }
+
+
+
         //create AI players
         for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
           //  Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
@@ -90,16 +94,30 @@ public class Game {
         }, rate, rate);
     }
 
-    private void firefire(Sendable sendable) {
 
-        System.out.println(sendable);
+
+    private void parsingStringClient(Sendable s)
+    {
+
+        if(s.toString().equals("fire"))
+        {
+
+            System.out.println("this is fire");
+
+            //working with one player at the moment.
+            this.fire(players.get(0));
+
+        }
+
+        if(s.toString().equals("back"))
+        {
+
+            System.out.println("Back has been pressed");
+
+        }
+
     }
 
-    private void firetime(Sendable sendable) {
-
-
-        System.out.println(sendable);
-    }
 
     /**
      * printing the new position of the player.
@@ -276,7 +294,9 @@ public class Game {
     }
 
     private void fire(Player player) {
-        //System.out.println("a tras nebunu de salam");
+
+        //testing the player who fired.
+        System.out.println("player is" + player.getID());
         Weapon w = player.getActiveWeapon();
         if (w.canFire()) {
             Projectile p = w.getShotType();

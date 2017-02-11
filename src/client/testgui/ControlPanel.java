@@ -5,6 +5,7 @@ import server.game.Vector2;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
+import objects.String;
 
 public class ControlPanel extends KeyAdapter {
 
@@ -25,6 +26,8 @@ public class ControlPanel extends KeyAdapter {
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_W) {
            y = -1;
+           String s = new String("back");
+            env.sendString(s);
         }
         else if (key == KeyEvent.VK_A) {
             x = -1;
@@ -39,6 +42,7 @@ public class ControlPanel extends KeyAdapter {
         }
         env.movePlayer(new Vector2(x, y));
         env.sendPosition(new Vector2(x,y));
+
     }
 
     public void keyReleased(KeyEvent e) {

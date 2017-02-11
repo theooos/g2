@@ -74,11 +74,11 @@ public class TestEnvironment extends Observable {
 
     }
 
-    public void sendFirefire(String m)
-    {
+
+
+    public void sendString(String m) {
 
         connection.send(m);
-
     }
 
     /**
@@ -170,5 +170,6 @@ public class TestEnvironment extends Observable {
     synchronized public ArrayList<MovableEntity> getEntities() {
         return entities;
     }
+
 
 }
