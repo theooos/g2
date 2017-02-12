@@ -12,12 +12,16 @@ public class LobbyManager {
 
     private ArrayList<Lobby> lobbies;
 
+    private boolean gameOn;
+
     public LobbyManager() {
         lobbies = new ArrayList<>();
         lobbies.add(createLobby());
     }
 
     public void addConnection(Connection c) {
+
+        //c.addFunctionEvent("String", LobbyManager::messageReceived);
         c.send(new String("You are being cared for by the lobby manager."));
 
         boolean added = false;
@@ -35,6 +39,10 @@ public class LobbyManager {
             l.addConnection(c);
             lobbies.add(l);
         }
+    }
+
+    private static void messageReceived(Object o) {
+        System.out.println("[ FROM CLIENT ] " + o);
     }
 
     private Lobby createLobby() {

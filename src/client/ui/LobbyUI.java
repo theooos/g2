@@ -1,6 +1,6 @@
 package client.ui;
 
-import networking.Connection;
+import client.Client;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +22,9 @@ class LobbyUI extends JPanel {
     private JTextArea countDown;
     private JButton mapIcon;
 
-    public void createLobby(Connection conn, Container pane, MainMenu menu, String clientUsername){
+    public void createLobby(Container pane, String clientUsername){
+
+        Client client = new Client();
 
         pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -50,7 +52,7 @@ class LobbyUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 hideLobby();
                 pane.removeAll();
-                menu.createMenu(conn, pane, new LobbyUI());
+                new MainMenu().createMenu(pane);
             }
         });
 

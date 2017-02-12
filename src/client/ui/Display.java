@@ -1,10 +1,7 @@
 package client.ui;
 
-import networking.Connection;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 
 /**
@@ -13,20 +10,36 @@ import java.awt.event.*;
 public class Display {
 
     private JFrame frame;
+    private Container pane;
+    private MainMenu menu;
+    private LobbyUI lobby;
 
-    public void displayUI(Connection conn) {
+    public void displayUI() {
 
         frame = new JFrame("PhaseShift");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 600);
 
-        Container pane = frame.getContentPane();
+        pane = frame.getContentPane();
 
         MainMenu menu = new MainMenu();
-        menu.createMenu(conn, pane, new LobbyUI());
+        this.menu = menu;
+        menu.createMenu(pane);
 
         //LobbyUI lobby = new LobbyUI();
         //lobby.createLobby(pane, new MainMenu(), "");
         frame.setVisible(true);
+    }
+
+    public void paintLobby(){
+        pane.removeAll();
+        this.lobby = new LobbyUI();
+        lobby.createLobby(pane, menu.getClientUsername());
+    }
+
+    public void paintMenu(){
+        pane.removeAll();
+        this.menu = new MainMenu();
+        menu.createMenu(pane);
     }
 }
