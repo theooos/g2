@@ -46,7 +46,7 @@ public class PlayerConnection  {
 
 
     private void out(Object o){
-        System.out.println("[CLIENT] "+o);
+       // System.out.println("[CLIENT] "+o);
     }
 
     synchronized private void addEntity(Object e) {

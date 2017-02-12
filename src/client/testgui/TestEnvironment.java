@@ -153,7 +153,7 @@ public class TestEnvironment extends Observable {
     }
 
     public int getMapHeight() {
-        return map.getMapHeight();
+        return map.getMapLength();
     }
 
     public int getMapWidth() {

@@ -1,5 +1,7 @@
 package client;
 
+import client.ClientLogic.ClientComponent;
+import client.ClientLogic.PlayerConnection;
 import client.ui.Display;
 import networking.Connection;
 
@@ -8,7 +10,7 @@ import networking.Connection;
  */
 public class Client {
 
-    private Connection connection = new Connection();
+    public Connection connection = new Connection();
 
     public Client(){
         connection.addFunctionEvent("String", Client::connectUI);
@@ -16,6 +18,9 @@ public class Client {
         connection.addFunctionEvent("AIPlayer", Client::out);
         connection.addFunctionEvent("Zombie", Client::out);
         connection.addFunctionEvent("Projectile", Client::out);
+
+        PlayerConnection p = new PlayerConnection(connection);
+        ClientComponent com = new ClientComponent(connection,p);
     }
 
     public static void connectUI(Object o) {

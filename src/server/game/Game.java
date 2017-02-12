@@ -46,7 +46,7 @@ public class Game {
         System.out.println(playerConnections.size());
 
         rand = new Random();
-        sb = new Scoreboard(100);
+        sb = new Scoreboard(100,10);
 
         players = new ArrayList<>();
         zombies = new ArrayList<>();
@@ -243,7 +243,7 @@ public class Game {
      */
     private Vector2 respawnCoords() {
         //get map bounds
-        int boundX = map.getMapHeight();
+        int boundX = map.getMapLength();
         int boundY = map.getMapWidth();
         int minDist = 20;
 
