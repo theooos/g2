@@ -1,19 +1,22 @@
-package client.testgui;
+package client.test2gui;
 
+import client.testgui.TestEnvironment;
 import server.game.Vector2;
 
+import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import objects.String;
 
-public class ControlPanel extends KeyAdapter {
+/**
+ * Created by Patrick on 2/10/2017.
+ */
+public class ControlPanel1 extends KeyAdapter {
 
     private TestEnvironment env;
     private int x;
     private int y;
 
-    public ControlPanel(TestEnvironment env) {
+    public ControlPanel1(TestEnvironment env) {
 
         super();
         this.env = env;
@@ -21,12 +24,16 @@ public class ControlPanel extends KeyAdapter {
         y = 0;
     }
 
+
+
+
+
+
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_W) {
-           y = -1;
-
+            y = -1;
         }
         else if (key == KeyEvent.VK_A) {
             x = -1;
@@ -39,16 +46,7 @@ public class ControlPanel extends KeyAdapter {
         else if (key == KeyEvent.VK_D) {
             x = 1;
         }
-
-        else if(key == KeyEvent.VK_N)
-        {
-            objects.String s = new objects.String("ID:153");
-            env.sendID(s);
-
-        }
         env.movePlayer(new Vector2(x, y));
-        env.sendPosition(new Vector2(x,y));
-
     }
 
     public void keyReleased(KeyEvent e) {
@@ -67,9 +65,19 @@ public class ControlPanel extends KeyAdapter {
             x = 0;
         }
     }
+    SwingWorker worker = new SwingWorker<Void, Void>()
+    {
+        @Override
+        public Void doInBackground() throws Exception
+        {
 
+            env.movePlayer(new Vector2(x, y));
+            return null;
+        }
 
-
-
+    };
 
 }
+
+
+

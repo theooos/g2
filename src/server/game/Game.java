@@ -46,7 +46,7 @@ public class Game {
         System.out.println(playerConnections.size());
 
         rand = new Random();
-        sb = new Scoreboard(100, maxPlayers);
+        sb = new Scoreboard(100);
 
         players = new ArrayList<>();
         zombies = new ArrayList<>();
@@ -54,18 +54,27 @@ public class Game {
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
-            Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
-            playerConnections.get(i).send(new objects.String("ID"+IDCounter));
-            playerConnections.get(i).addFunctionEvent("String", this::decodeString);
-            playerConnections.get(i).addFunctionEvent("Player", this::updatePlayer);
-            players.add(p);
-            IDCounter++;
+
+
+            //Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+            //players.add(p);
+            //IDCounter++;
+            playerConnections.get(i).addFunctionEvent("Vector2",this::printVector2);
+            playerConnections.get(i).addFunctionEvent("String",this::parsingStringClient);
+
+
+
         }
+
+
+
+
+
         //create AI players
         for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
-            Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
-            players.add(p);
-            IDCounter++;
+          //  Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+          //  players.add(p);
+            //IDCounter++;
         }
         //create team zombies
         for (int i = 0; i < 1; i++) {
@@ -83,15 +92,92 @@ public class Game {
         t.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                gameTick();
+            gameTick();
             }
         }, rate, rate);
     }
 
 
     /**
+     * parsing text from the Client
+     * @param s sendable object
+     */
+    private void parsingStringClient(Sendable s)
+    {
+
+        if(s.toString().equals("fire"))
+        {
+
+            System.out.println("this is fire");
+
+            //working with one player at the moment.
+            //this.fire(players.get(0));
+
+        }
+
+        if(s.toString().equals("back"))
+        {
+
+            System.out.println("Back has been pressed");
+
+        }
+       if(s.toString().startsWith("ID:"))
+       {
+           System.out.println("de ce nu am ajuns si aici?");
+           String q = s.toString().substring(3);
+           int id = this.getClientID(q);
+           this.setIDCounter(id);
+           this.createPlayer();
+
+
+       }
+
+
+    }
+    //setting the id
+    private void setIDCounter(int id)
+    {
+
+        this.IDCounter = id;
+    }
+
+    //creating a player
+
+    private void createPlayer()
+    {
+        Player p = new Player(respawnCoords(), randomDir(), 5, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+        System.out.println("Id Counter: " + IDCounter);
+
+    }
+
+    /**
+     * changing the string id to int
+     * @param id the id of the Client
+     */
+    private int getClientID(String id)
+    {
+
+        int clientId = Integer.parseInt(id);
+        return clientId;
+
+
+    }
+
+
+    /**
+     * printing the new position of the player.
+     */
+
+    private void printVector2(Sendable s) {
+
+        System.out.println(s);
+    }
+
+    /**
      * The game tick runs.  This is the master function for a running game
      */
+
+
     private void gameTick() {
         for (Player p: players) {
             if (!p.isAlive()) respawn(p);
@@ -115,7 +201,6 @@ public class Game {
         //deletes the projectile from the list if it's dead
         projectiles.removeIf(p -> !p.isAlive());
 
-        System.out.println(randomDir());
 
         countdown--;
 
@@ -128,21 +213,12 @@ public class Game {
         }
     }
 
-    /**
-     * Ends the game and msgs all clients
-     */
     private void endGame() {
         t.cancel();
         t.purge();
         msgToAllConnected("Game Ended");
-        for (Connection c: playerConnections) {
-            sendScoreboard(c);
-        }
     }
 
-    /**
-     * Sends all objects to all players
-     */
     private void sendAllObjects() {
         for (Player p: players) {
             sendToAllConnected(p);
@@ -155,15 +231,10 @@ public class Game {
         }
     }
 
-    /**
-     * Respawns an entity with a random position, dir, and phase
-     * @param e the entity to be respawned
-     */
     private void respawn(MovableEntity e) {
         e.setPos(respawnCoords());
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
-        e.setPhase(rand.nextInt(1));
        // msgToAllConnected("respawn in progress");
     }
 
@@ -172,7 +243,7 @@ public class Game {
      */
     private Vector2 respawnCoords() {
         //get map bounds
-        int boundX = map.getMapLength();
+        int boundX = map.getMapHeight();
         int boundY = map.getMapWidth();
         int minDist = 20;
 
@@ -198,8 +269,7 @@ public class Game {
      * Will get a random vector of length 1 from 0,0
      */
     private Vector2 randomDir() {
-        int ang = rand.nextInt(359);
-        return new Vector2((float)(Math.cos(Math.toRadians(ang))),(float)(Math.sin(Math.toRadians(ang))));
+        return new Vector2(0,1);
     }
 
     /**
@@ -259,94 +329,19 @@ public class Game {
         for (Connection c: playerConnections) {
             c.send(new objects.String(s));
         }
-        System.out.println(s);
+        //System.out.println(s);
     }
 
-    /**
-     * sends an entity to all connected players
-     * @param e the entity to send
-     */
     private void sendToAllConnected(Entity e) {
         for (Connection c: playerConnections) {
             c.send(e);
         }
     }
 
-    /**
-     * sends a scoreboard to a player
-     * @param c the connected player
-     */
-    private void sendScoreboard(Connection c) {
-        c.send(sb);
-    }
-
-    /**
-     * decodes a string from a sendable string
-     * @param s0 to sendable string to decode
-     */
-    private void decodeString(Sendable s0) {
-        String s = s0.toString();
-        try{
-            String s1 = s.substring(1);
-            switch (s.charAt(0)) {
-                //fire
-                case 'f':
-                    fire(getPlayerFromID(Integer.parseInt(s1)));
-                    break;
-                //switch phase
-                case 'p':
-                    togglePhase(getPlayerFromID(Integer.parseInt(s1)));
-                    break;
-                //switch weapon
-                case 'w':
-                    toggleWeapon(getPlayerFromID(Integer.parseInt(s1)));
-                    break;
-                //"say" sends a message
-                case 's':
-                    System.out.println(s.substring(1));
-                    break;
-                default:
-                    System.out.println(s);
-            }
-        }
-        catch (Exception e) {
-            System.out.println(s);
-        }
-    }
-
-    /**
-     * updates a recieved player to the recieved state
-     * @param s a player object
-     */
-    private void updatePlayer(Sendable s) {
-        try {
-            Player player = (Player) s;
-            players.removeIf(p -> p.equals(player));
-            players.add(player);
-        }
-        catch (Exception e) {
-            System.out.println("Not a player");
-        }
-    }
-
-    /**
-     * gets a player from an id
-     * @param id the player id
-     * @return returns the player of null if no player exist
-     */
-    private Player getPlayerFromID(int id) {
-        for (Player p: players) {
-            if (p.getID() == id) return p;
-        }
-        System.out.println("No player with that ID");
-        return null;
-    }
-
-    /**
-     * fires the active gun of the given player
-     * @param player the gun to fire
-     */
     private void fire(Player player) {
+
+        //testing the player who fired.
+        System.out.println("player is" + player.getID());
         Weapon w = player.getActiveWeapon();
         if (w.canFire()) {
             Projectile p = w.getShotType();
@@ -358,22 +353,6 @@ public class Game {
             p.setPlayerID(player.getID());
             projectiles.add(p);
         }
-    }
-
-    /**
-     * switches the weapon of the given player
-     * @param player the player to switch weapon
-     */
-    private void toggleWeapon(Player player) {
-        player.toggleWeapon();
-    }
-
-    /**
-     * Switches the phase of the given player
-     * @param player the player to switch phase
-     */
-    private void togglePhase(Player player) {
-        player.togglePhase();
     }
 
 }

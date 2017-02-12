@@ -1,22 +1,27 @@
-package client.testgui;
+package client.test2gui;
+
+import client.testgui.ControlPanel;
+import client.testgui.TestEnvironment;
 import server.game.MovableEntity;
 import server.game.Wall;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class EnvironmentView extends JPanel implements Observer {
+/**
+ * Created by Patrick on 2/10/2017.
+ */
+public class EnvironmentView1 extends JPanel  {
 
     private TestEnvironment env;
     private int size;
 
-    public EnvironmentView(TestEnvironment env){
+    public EnvironmentView1(TestEnvironment env){
         super();
         this.env = env;
 
@@ -27,7 +32,7 @@ public class EnvironmentView extends JPanel implements Observer {
 
     }
 
-    synchronized public void paintComponent(Graphics g){
+    public void paintComponent(Graphics g){
         Graphics2D g2 = (Graphics2D)g;
 
         int width = env.getMapWidth();
@@ -60,10 +65,7 @@ public class EnvironmentView extends JPanel implements Observer {
             g2.setColor(Color.BLACK);
             g2.draw(p);
         }
-        Ellipse2D.Double player = entityToSpot(env.getPlayer());
-        g2.fill(player);
-        g2.setColor(Color.BLACK);
-        g2.draw(player);
+
         ArrayList<Line2D.Double> lines = wallsToLines();
         for (Line2D line : lines){
             g2.draw(line);
@@ -72,8 +74,7 @@ public class EnvironmentView extends JPanel implements Observer {
         repaint();
     }
 
-
-
+    /*
     public void update(Observable obs, Object obj){
 
         System.out.println("New Position: " + env.getPlayer().getPos().toString());
@@ -81,6 +82,7 @@ public class EnvironmentView extends JPanel implements Observer {
         repaint();
     }
 
+    */
     private Ellipse2D.Double entityToSpot(MovableEntity entity){
         double r = entity.getRadius();
         double xCorner = entity.getPos().getX() - r;
@@ -103,3 +105,4 @@ public class EnvironmentView extends JPanel implements Observer {
         return lines;
     }
 }
+

@@ -1,4 +1,4 @@
-package client.testgui;
+package client.test2gui;
 
 import networking.Connection;
 import server.game.*;
@@ -6,38 +6,30 @@ import server.game.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Random;
-import objects.String;
 
 /**
- * Created by rhys on 19/01/17.
- * Represents the testing environment in which the sprites interact.
+ * Created by Patrick on 2/10/2017.
  */
-public class TestEnvironment extends Observable {
+public class TestEnvironment1  {
 
     private Player player;
     private Zombie zombie;
     private Map map;
     private ArrayList<MovableEntity> entities;
-    private Connection connection;
 
-    public TestEnvironment(){
+
+    public TestEnvironment1(){
 
         super();
-        //this.connection = con;
         entities = new ArrayList<>();
 
-         connection = new Connection();
-
-
+        Connection connection = new Connection();
 
         connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("Player", this::addEntity);
         connection.addFunctionEvent("AIPlayer", this::addEntity);
         connection.addFunctionEvent("Zombie", this::addEntity);
         connection.addFunctionEvent("Projectile", this::addEntity);
-
-
 
 
         // Create Map.
@@ -71,44 +63,12 @@ public class TestEnvironment extends Observable {
         */
     }
 
-    public void sendFiringAlert(String message)
-    {
-
-        connection.send(message);
-
-    }
-
-
-
-    public void sendString(String m) {
-
-        connection.send(m);
-    }
-
-    /**
-     * send the updated position to the server
-     * @param v the vector of the new position
-     */
-    public void sendPosition(Vector2 v)
-    {
-
-        connection.send(v);
-    }
-
-    public void getPlayers()
-    {
-
-
-
-    }
-
     public boolean movePlayer(Vector2 direction){
 
         //System.out.println("do we get here?");
         // Face the player in the appropriate direction.
-      player.setDir(direction);
+        player.setDir(direction);
         System.out.println("in move player");
-       //Vector2 hypoLoc = player.hypoMove();
 
         // Check the movement isn't obstructed before making it.
         /*
@@ -134,8 +94,10 @@ public class TestEnvironment extends Observable {
         player.move();
         // Execute the movement??
         System.out.println("yep");
+        /*
         setChanged();
         notifyObservers();
+        */
         return true;
 
     }
@@ -173,20 +135,10 @@ public class TestEnvironment extends Observable {
             entities.clear();
         }
         entities.add((MovableEntity) e);
-
-        setChanged();
-        notifyObservers();
     }
 
     synchronized public ArrayList<MovableEntity> getEntities() {
         return entities;
     }
 
-
-    public void sendID(String id) {
-
-        System.out.println(id);
-        connection.send(id);
-
-    }
 }

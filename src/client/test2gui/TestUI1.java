@@ -1,16 +1,16 @@
-package client.testgui;
+package client.test2gui;
 
+import client.testgui.EnvironmentComponent;
+import client.testgui.TestEnvironment;
 
 import javax.swing.*;
-import java.util.Timer;
-import java.util.TimerTask;
-
+import java.util.*;
 
 /**
- * Runs a GUI for testing and developing the game's client to server communication
- * Created by peran on 8/02/17, heavily based off of rhys code
+ * Created by Patrick on 2/10/2017.
  */
-public class TestUI {
+
+public class TestUI1 {
 
     public static final int FRAME_WIDTH = 1000;
     public static final int FRAME_HEIGHT= 1000;
@@ -26,15 +26,21 @@ public class TestUI {
         EnvironmentComponent comp = new EnvironmentComponent(testEnv);
         frame.add(comp);
 
-        //trying to set an id - hardcoded
-        //objects.String s = new objects.String("ID:153");
-        //testEnv.sendID(s);
-
-
         frame.setVisible(true);
 
+        java.util.Timer t = new java.util.Timer();
+
+        int rate = 1000/60;
+
+        t.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                comp.repaint();
+            }
+        }, rate, rate);
 
     }
 
-    
+
 }
+
