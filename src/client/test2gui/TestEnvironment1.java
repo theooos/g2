@@ -115,7 +115,7 @@ public class TestEnvironment1  {
     }
 
     public int getMapHeight() {
-        return map.getMapHeight();
+        return map.getMapLength();
     }
 
     public int getMapWidth() {

@@ -1,11 +1,14 @@
 package client.ui;
 
 import client.Client;
+import client.ClientLogic.ClientReceiver;
+import client.ClientLogic.ClientSendable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 
 /**
  * Created by bianca on 06/02/2017.
@@ -25,6 +28,9 @@ class LobbyUI extends JPanel {
     public void createLobby(Container pane, String clientUsername){
 
         Client client = new Client();
+        //client.connection.send();
+        ClientSendable cs = new ClientSendable(client.connection);
+        //ClientReceiver cr = new ClientReceiver(client.connection);
 
         pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -51,6 +57,8 @@ class LobbyUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 hideLobby();
+                objects.String s = new objects.String("fire");
+                cs.sendFiringAlert(s);
                 pane.removeAll();
                 new MainMenu().createMenu(pane);
             }

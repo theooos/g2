@@ -25,7 +25,7 @@ public class ClientComponent extends JPanel {
         this.conn = conn;
 
         ClientSendable cs = new ClientSendable(conn);
-        ClientReceiver cr = new ClientReceiver(conn,pconn);
+        ClientReceiver cr = new ClientReceiver(conn);
 
 
         String s = new String("fire");

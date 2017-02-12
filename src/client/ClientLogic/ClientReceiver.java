@@ -29,10 +29,10 @@ public class ClientReceiver extends Entity {
      * @param conn the connection to the server
      * @param pconn
      */
-    public ClientReceiver(Connection conn,PlayerConnection pconn) {
+    public ClientReceiver(Connection conn) {
 
         this.connection = conn;
-        this.pconn = pconn;
+       // this.pconn = pconn;
 
         connection.addFunctionEvent("String", this::getData);
 
@@ -46,13 +46,13 @@ public class ClientReceiver extends Entity {
 
 
 
-        ArrayList<MovableEntity> es = new ArrayList<>(pconn.getEntities());
+        /*ArrayList<MovableEntity> es = new ArrayList<>(pconn.getEntities());
 
         for (MovableEntity e : es) {
 
 
         }
-
+        */
 
     }
 
