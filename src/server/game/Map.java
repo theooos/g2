@@ -1,6 +1,7 @@
 package server.game;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -11,39 +12,62 @@ import java.util.*;
  */
 public class Map {
 
-    // Map Source File information:
-    static final String LOCAL_PATH = "/home/rhys/Dropbox/University/Year2-Semester2/TeamProject/";
-    static final String PROJ_PATH = "g2/src/server/game/maps/";
-    static final String FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
-
-    // Game Object Information:
-    private int mapID;
-    private String mapName;
-    private int mapCapacity;                        // Denotes this map's max number of players.
-    private int numPhases;
     private ArrayList<Wall> walls;
-    private ArrayList<SpawnPosition> spawnPositions;
+    private ArrayList<Vector2> validSpace;
+
     private int width;
     private int length;
 
-    // Short-term members:
-    private ArrayList<Vector2> validSpace;
-
-
     /**
      * Generates the requested map from the appropriate text file.
-     * @param mapID
+     * @param mapID which map will be generated
      */
     public Map(int mapID) throws IOException {
 
-        this.mapID = mapID;
-        this.walls = new ArrayList<>();
-        this.spawnPositions = new ArrayList<>();
-        this.numPhases = 2;
+        String LOCAL_PATH = new File("").getAbsolutePath();
+        System.out.println(LOCAL_PATH);
+        String PROJ_PATH = "/src/server/game/maps/";
+        String FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 
-        ArrayList<String> mapStrings = readMapFromSource();
 
-        constructMapFromSource(mapStrings);
+        walls = new ArrayList<>();
+        ArrayList<String> wallStrings = new ArrayList<>();
+
+        // Read the map's text file.
+        try {
+            FileReader file = new FileReader(FULL_PATH + String.valueOf(mapID) + ".txt");
+            BufferedReader input = new BufferedReader(file);
+            String nextWallString;
+            while ((nextWallString = input.readLine()) != null) {
+                wallStrings.add(nextWallString);
+            }
+            input.close();
+        } catch (IOException e) {
+            throw new IOException();
+        }
+
+        // Parse the overall dimensions of the map.
+        List<String> dimensions = Arrays.asList(wallStrings.get(0).split("\\s*,\\s*"));
+        width = Integer.parseInt(dimensions.get(0));
+        length = Integer.parseInt(dimensions.get(1));
+        wallStrings.remove(0);
+
+        // Parse each string and build a wall from it.
+        for (String wall : wallStrings) {
+            List<String> items = Arrays.asList(wall.split("\\s*,\\s*"));
+            int x1 = Integer.parseInt(items.get(0));
+            int y1 = Integer.parseInt(items.get(1));
+            Vector2 startPos = new Vector2(x1, y1);
+
+            int x2 = Integer.parseInt(items.get(2));
+            int y2 = Integer.parseInt(items.get(3));
+            Vector2 endPos = new Vector2(x2, y2);
+
+            int phase = Integer.parseInt(items.get(4));
+            boolean damageable = Boolean.parseBoolean(items.get(5));
+
+            walls.add(new Wall(startPos, endPos, phase, damageable));
+        }
     }
 
 
@@ -79,7 +103,7 @@ public class Map {
     /**
      * @return the length of the map in position units.
      */
-    public int getMapLength() {
+    public int getMapHeight() {
         return length;
     }
 
@@ -119,211 +143,12 @@ public class Map {
 
 
     /**
-     * Reads this map's specified source file and returns it as an ArrayList of strings.
-     * @return an ArrayList of strings representing the source file.
+     *
+     * @return true if the map is valid.
      */
-    public static ArrayList<String> readMapFromSource(){
+    private void constructMapFromSource(){
 
-        ArrayList<String> mapStrings = new ArrayList<>();
-
-        try {
-            FileReader file = new FileReader(FULL_PATH + String.valueOf(0) + ".txt");
-            BufferedReader input = new BufferedReader(file);
-            String nextString;
-            while ((nextString = input.readLine()) != null) {
-                mapStrings.add(nextString);
-            }
-            input.close();
-        } catch (IOException e) {
-            System.err.print("ERROR: Invalid Map Source location/file.");
-            System.exit(0);
-        }
-
-        return mapStrings;
     }
 
-    /**
-     * Parses the strings of the source file, constructing the map and checking for
-     * invalid walls and spawn zones.
-     * @param sourceLines - An ArrayList of the lines of map source text.
-     */
-    private void constructMapFromSource(ArrayList<String> sourceLines) {
-
-        boolean parsing = true;
-        int lineNum = 0;
-        String err = "";
-        String line;
-
-        // Parse metadata.
-        while (parsing && !sourceLines.isEmpty()) {
-
-            err = "(Line " + String.valueOf(lineNum + 1) + ") Map Source Parsing Error: ";
-            line = sourceLines.get(0);
-            if (line.startsWith("//") || line.equals("")) {         // If the line is blank or a comment, ignore it.
-                lineNum++;
-                sourceLines.remove(0);
-            } else {                                               // Otherwise, parse it.
-                List<String> items = Arrays.asList(line.split("\\s*,\\s*"));
-
-                // Parse this map's ID.
-                try {
-                    mapID = Integer.parseInt(items.get(0));
-                } catch (NumberFormatException e) {
-                    System.out.println(err + "Map ID not valid. Is it an integer?");
-                    System.exit(0);
-                }
-
-                // Get this map's name.
-                mapName = items.get(1);
-
-                // Parse this map's dimensions.
-                try {
-                    width = Integer.parseInt(items.get(2));
-                    length = Integer.parseInt(items.get(3));
-                } catch (NumberFormatException e) {
-                    System.out.println(err + "Map Dimensions not valid. Are both values integers?");
-                    System.exit(0);
-                }
-
-                // Parse this map's maximum number of players.
-                try {
-                    int tempMapCapacity = Integer.parseInt(items.get(4));
-                    if (tempMapCapacity % 4 != 0) {
-                        System.out.println(err + "Map capacity is not allowed.");
-                        System.exit(0);
-                    } else {
-                        mapCapacity = tempMapCapacity;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println(err + "Map capacity not valid. Is it an integer?");
-                    System.exit(0);
-                }
-                parsing = false;
-                sourceLines.remove(0);
-                lineNum++;
-            }
-        }
-
-        // Check we got the data we needed and haven't run out of lines of map source.
-        if (sourceLines.isEmpty() == true) {
-            if (mapCapacity == 0) {
-                System.out.println(err + "No map metadata provided.");
-            } else {
-                System.out.println(err + "No walls or spawn locations provided.");
-            }
-            System.exit(0);
-        }
-
-        // Parse walls.
-        parsing = true;
-        while (parsing && !sourceLines.isEmpty()) {
-            err = "(Line " + String.valueOf(lineNum + 1) + ") Map Source Parsing Error: ";
-            line = sourceLines.get(0);
-
-            if (line.startsWith("//") || line.equals("")) {          // If the line is blank or a comment, ignore it.
-                lineNum++;
-                sourceLines.remove(0);
-            } else if (line.startsWith("##")) {                     // If the line is a separator, move on.
-                lineNum++;
-                sourceLines.remove(0);
-                parsing = false;
-            } else {                                                // Else, parse it.
-                try {
-                    List<String> items = Arrays.asList(line.split("\\s*,\\s*"));
-                    int x1 = Integer.parseInt(items.get(0));
-                    int y1 = Integer.parseInt(items.get(1));
-                    Vector2 startPos = new Vector2(x1, y1);
-
-                    int x2 = Integer.parseInt(items.get(2));
-                    int y2 = Integer.parseInt(items.get(3));
-                    Vector2 endPos = new Vector2(x2, y2);
-
-                    if (!inMap(startPos) || !inMap(endPos)){        // Check the wall is within the map.
-                        System.out.println(err + "Wall outside of map bounds.");
-                        //System.exit(0);
-                    }
-
-                    int phase = Integer.parseInt(items.get(4));
-                    if (phase > numPhases) {
-                        System.out.println(err + "Wall inside invalid phase.");
-                        //System.exit(0);
-                    }
-
-                    boolean damageable = Boolean.parseBoolean(items.get(5));
-
-                    this.walls.add(new Wall(startPos, endPos, phase, damageable));
-                    lineNum++;
-                    sourceLines.remove(0);
-
-                } catch (NumberFormatException e) {
-                    System.out.println(err + "Invalid wall.");
-                    //System.exit(0);
-                }
-            }
-        }
-
-        // Check there are at least 4 walls and haven't run out of lines of map source.
-        if (sourceLines.isEmpty() == true) {
-            if (walls.size() < 4) {
-                System.out.println(err + "Not enough walls provided.");
-            } else {
-                System.out.println(err + "No spawn locations provided.");
-            }
-            System.exit(0);
-        }
-
-        // Parse spawn points.
-        while (!sourceLines.isEmpty()) {
-            err = "(Line " + String.valueOf(lineNum + 1) + ") Map Source Parsing Error: ";
-            line = sourceLines.get(0);
-
-            if (line.startsWith("//") || line.equals("")) {          // If the line is blank or a comment, ignore it.
-                lineNum++;
-                sourceLines.remove(0);
-            } else {
-                try {
-                    List<String> items = Arrays.asList(line.split("\\s*,\\s*"));
-                    int x = Integer.parseInt(items.get(0));
-                    int y = Integer.parseInt(items.get(1));
-                    Vector2 spawnPos = new Vector2(x, y);
-
-                    if (!inMap(spawnPos)) {      // Check the spawn location is within the map.
-                        System.out.println(err + "Spawn location outside of map bounds.");
-                        //System.exit(0);
-                    }
-
-                    int t = Integer.parseInt(items.get(2));
-                    if (!(t == 1 || t == 2)){
-                        System.out.println(err + "Spawn location belongs to invalid team.");
-                        //System.exit(0);
-                    }
-
-                    spawnPositions.add(new SpawnPosition(spawnPos, t));
-                    lineNum++;
-                    sourceLines.remove(0);
-
-                } catch (NumberFormatException e) {
-                    System.out.println(err + "Invalid spawn point.");
-                    //System.exit(0);
-                }
-            }
-        }
-
-        // Check there are enough spawn points to support the maximum number of players.
-        if (spawnPositions.size() < mapCapacity){
-            System.out.println(err + "Not enough spawn positions to support the specified map capacity.");
-            System.exit(0);
-        }
-    }
-
-    /**
-     * Deduces whether or not a position is within the bounds of this map.
-     * @param pos - The position to be tested.
-     * @return true if the position is within the bounds of this map.
-     */
-    public boolean inMap(Vector2 pos){
-
-        return (pos.getX() >= 0 && pos.getX() <= width && pos.getY() >= 0 && pos.getY() <= length);
-    }
 
 }
