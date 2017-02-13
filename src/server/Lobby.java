@@ -9,20 +9,20 @@ import java.util.TimerTask;
 
 /**
  * Created by peran on 25/01/17.
+ * A lobby class which creates and handles games
  */
-public class Lobby {
+class Lobby {
     private int maxSize;
     private int minSize;
     private ArrayList<Connection> players;
     private boolean countdownRunning;
     private int countdown;
     private Timer t;
-    private Game game;
     private int map;
 
 
 
-    public Lobby(int maxSize) {
+    Lobby(int maxSize) {
         countdownRunning = false;
         players = new ArrayList<>();
         this.maxSize = maxSize;
@@ -35,16 +35,15 @@ public class Lobby {
      * checks to see whether the lobby has reached maximum
      * @return if the lobby is full or not
      */
-    public boolean isFull() {
-        if (players.size() < maxSize) return false;
-        else return true;
+    boolean isFull() {
+        return players.size() >= maxSize;
     }
 
     /**
      * Adds a new player to the lobby
      * @param c the connected player
      */
-    public void addConnection(Connection c) {
+    void addConnection(Connection c) {
         players.add(c);
         msgToAllConnected("Player connected");
         c.send(new objects.String("You are in a "+maxSize+" player lobby with "+players.size()+" players in it"));
@@ -83,7 +82,7 @@ public class Lobby {
     /**
      * stops the countdown and resets timer to 60s
      */
-    public void stopCountdown() {
+    private void stopCountdown() {
         t.cancel();
         t.purge();
         countdownRunning = false;
@@ -104,7 +103,7 @@ public class Lobby {
      */
     private void startGame() {
         msgToAllConnected("Game loading....");
-        game = new Game(players, maxSize, map);
+        Game game = new Game(players, maxSize, map);
     }
 
 }

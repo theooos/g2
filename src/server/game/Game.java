@@ -54,7 +54,30 @@ public class Game {
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
-            Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+            //randomly select weapons for players
+            Weapon w1;
+            Weapon w2;
+            switch (rand.nextInt(3)) {
+                case 0:
+                    w1 = new WeaponShotgun();
+                    w2 = new WeaponSniper();
+                    break;
+                case 1:
+                    w1 = new WeaponSniper();
+                    w2 = new WeaponSMG();
+                    break;
+                case 2:
+                    w1 = new WeaponSMG();
+                    w2 = new WeaponShotgun();
+                    break;
+                default:
+                    w1 = new WeaponSniper();
+                    w2 = new WeaponShotgun();
+                    System.out.println("Error selecting weapon");
+                    break;
+            }
+
+            Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             playerConnections.get(i).send(new objects.String("ID"+IDCounter));
             playerConnections.get(i).addFunctionEvent("String", this::decodeString);
             playerConnections.get(i).addFunctionEvent("Player", this::updatePlayer);
@@ -63,7 +86,29 @@ public class Game {
         }
         //create AI players
         for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
-            Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), new Weapon(), new Weapon(), IDCounter);
+            //randomly select weapons for players
+            Weapon w1;
+            Weapon w2;
+            switch (rand.nextInt(3)) {
+                case 0:
+                    w1 = new WeaponShotgun();
+                    w2 = new WeaponSniper();
+                    break;
+                case 1:
+                    w1 = new WeaponSniper();
+                    w2 = new WeaponSMG();
+                    break;
+                case 2:
+                    w1 = new WeaponSMG();
+                    w2 = new WeaponShotgun();
+                    break;
+                default:
+                    w1 = new WeaponSniper();
+                    w2 = new WeaponShotgun();
+                    System.out.println("Error selecting weapon");
+                    break;
+            }
+            Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             players.add(p);
             IDCounter++;
         }
@@ -172,7 +217,7 @@ public class Game {
      */
     private Vector2 respawnCoords() {
         //get map bounds
-        int boundX = map.getMapLength();
+        int boundX = map.getMapHeight();
         int boundY = map.getMapWidth();
         int minDist = 20;
 
