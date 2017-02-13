@@ -89,7 +89,8 @@ class Weapon implements Sendable{
             ps.get(i).setPos(player.getPos());
             ps.get(i).setPlayerID(player.getID());
         }
-        currentRecoil = maxRecoil;
+        currentRecoil += bloomPerShot;
+        if (currentRecoil > maxRecoil) currentRecoil = maxRecoil;
         currentHeat += heatPerShot;
         refireDelay = refireTime;
         return ps;
@@ -109,5 +110,18 @@ class Weapon implements Sendable{
     boolean isFullyAuto() {
          return fullyAuto;
     }
+
+  /*  public static void main(String[] args) {
+        Vector2 v = new Vector2(1,0);
+        Weapon w = new Weapon();
+        Weapon w1 = new WeaponShotgun();
+        Weapon w2 = new WeaponSniper();
+        Weapon w3 = new WeaponSMG();
+        System.out.println(v);
+        System.out.println(w.getDeviation(v));
+        System.out.println(w1.getDeviation(v));
+        System.out.println(w2.getDeviation(v));
+        System.out.println(w3.getDeviation(v));
+    } */
 
 }
