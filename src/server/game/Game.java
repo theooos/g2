@@ -148,9 +148,17 @@ public class Game {
         }
 
         for (Projectile p: projectiles) {
-            MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase());
+            MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase(), p.getDir(), p.getSpeed());
             if (e != null) {
                 e.damage(p.getDamage());
+                if (!e.isAlive()) {
+                    if (e instanceof Zombie) {
+                        sb.killedZombie(p.getPlayerID());
+                    }
+                    else {
+                        sb.killedPlayer(p.getPlayerID());
+                    }
+                }
                 p.kill();
             }
             //collides with walls
@@ -273,13 +281,15 @@ public class Game {
      * @param pos the centre of the object
      * @return the player or bot it is collided with.  Null if no collision
      */
-    private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase) {
-        for (Player p: players) {
-            if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos()) && phase == p.phase) return p;
-        }
+    private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase, Vector2 dir, float speed) {
+        ArrayList<MovableEntity> entities = new ArrayList<>();
+        entities.addAll(zombies);
+        entities.addAll(players);
+        entities.removeIf(e -> e.getPhase() != phase);
 
-        for (Zombie z: zombies) {
-            if (z.isAlive() && collided(r, pos, z.getRadius(), z.getPos()) && phase == z.phase) return z;
+        for (MovableEntity e: entities) {
+            Vector2 l1 = pos.add(dir.mult(speed));
+            if (collided(r, getClosestPointOnLine(l1, pos, e.getPos()), e.getRadius(), e.getPos())) return e;
         }
 
         return null;
@@ -296,6 +306,23 @@ public class Game {
         return p1.getDistanceTo(p2) < r1 + r2;
     }
 
+
+    //l1 is the start of a line, l2 is the end of a Line, point is the point to get closest point to
+    private Vector2 getClosestPointOnLine(Vector2 l1, Vector2 l2, Vector2 point) {
+        Vector2 a_to_p = new Vector2(point.getX() - l1.getX(), point.getY() - l1.getY());
+        Vector2 a_to_b = new Vector2(l2.getX() - l1.getX(), l2.getY() - l1.getY());
+
+        float atb2 = a_to_b.getX()*a_to_b.getX() + a_to_b.getY()*a_to_b.getY();
+
+        float atp_dot_atb = a_to_p.getX()*a_to_b.getX() + a_to_p.getY()*a_to_b.getY();
+
+        float t = atp_dot_atb / atb2;
+
+        float temp1 = (l1.getX() + a_to_b.getX()*t);
+        float temp2 = (l1.getY() + a_to_b.getY()*t);
+
+        return new Vector2(temp1, temp2);
+    }
     /**
      * sends the string to all players in the lobby
      * @param s the string to be sent
@@ -360,7 +387,7 @@ public class Game {
     }
 
     /**
-     * updates a recieved player to the recieved state
+     * updates a received player to the received state
      * @param s a player object
      */
     private void updatePlayer(Sendable s) {
