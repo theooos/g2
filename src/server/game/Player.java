@@ -2,12 +2,14 @@ package server.game;
 
 /**
  * Created by peran on 01/02/17.
+ * The entity which players control.
+ * AI players are a descendant of these
  */
 public class Player extends MovableEntity {
 
-    protected Weapon w1;
-    protected Weapon w2;
-    protected boolean w1Out;
+    private Weapon w1;
+    private Weapon w2;
+    private boolean w1Out;
 
     /**
      * The basic player class

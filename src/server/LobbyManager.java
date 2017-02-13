@@ -7,17 +7,18 @@ import java.util.Random;
 
 /**
  * Created by theooos on 21/01/2017.
+ * pretty much written by peran
  */
 public class LobbyManager {
 
     private ArrayList<Lobby> lobbies;
 
-    public LobbyManager() {
+    LobbyManager() {
         lobbies = new ArrayList<>();
         lobbies.add(createLobby());
     }
 
-    public void addConnection(Connection c) {
+    void addConnection(Connection c) {
         c.send(new String("You are being cared for by the lobby manager."));
 
         boolean added = false;
@@ -44,7 +45,4 @@ public class LobbyManager {
         return new Lobby(2);
     }
 
-    private void out(Object o) {
-        System.out.println(o);
-    }
 }
