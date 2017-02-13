@@ -3,6 +3,8 @@ package server.game;
 import networking.Connection;
 import objects.Sendable;
 
+import javax.sound.sampled.Line;
+import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -181,6 +183,25 @@ public class Game {
         }
     }
 
+    private boolean pointWallCollision(int r, Vector2 point, int phase) {
+        for (Wall w: map.wallsInPhase(phase, true)) {
+            if (collided(5, getClosestPointOnLine(w.getStartPos(), w.getEndPos(), point), r, point)) return true;
+        }
+
+        return false;
+    }
+
+    private boolean projectileWallCollision(int r, Vector2 p1, Vector2 dir, float speed, int phase) {
+        Vector2 p2 = p1.add(dir.mult(speed));
+        Line2D l1 = new Line2D.Float(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+        for (Wall w: map.wallsInPhase(phase, true)) {
+            Line2D l2 = new Line2D.Float(w.getStartPos().getX(), w.getStartPos().getY(), w.getEndPos().getX(), w.getEndPos().getY());
+            if (l2.intersectsLine(l1)) return true;
+        }
+
+        return false;
+    }
+
     /**
      * Ends the game and msgs all clients
      */
@@ -217,7 +238,6 @@ public class Game {
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
         e.setPhase(rand.nextInt(1));
-       // msgToAllConnected("respawn in progress");
     }
 
     /**
@@ -236,11 +256,9 @@ public class Game {
             valid = true;
             v = new Vector2(rand.nextInt(boundX), rand.nextInt(boundY));
 
-            //check for collisions with walls
-
-            if (collidesWithPlayerOrBot(minDist, v) != null) {
-                valid = false;
-            }
+            if (pointWallCollision(minDist, v, 0)) valid = false;
+            else if (pointWallCollision(minDist, v, 1)) valid = false;
+            else if (collidesWithPlayerOrBot(minDist, v) != null) valid = false;
         }
         //msgToAllConnected(v.toString());
         return v;
