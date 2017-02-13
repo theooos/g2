@@ -71,7 +71,7 @@ public class TestEnvironment extends Observable {
         // Check the movement isn't obstructed before making it.
         Vector2 hypoLoc = player.hypoMove();
         if (hypoLoc.getX() >= 0 && hypoLoc.getX() < map.getMapWidth()){
-            if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapHeight()){
+            if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapLength()){
                 player.live();      // Execute the movement??
                 setChanged();
                 notifyObservers();
@@ -92,13 +92,15 @@ public class TestEnvironment extends Observable {
         return map.wallsInPhase(1, true);
     }
 
-    public int getMapHeight() {
-        return map.getMapHeight();
+    public int getMapLength() {
+        return map.getMapLength();
     }
 
     public int getMapWidth() {
         return map.getMapWidth();
     }
+
+
 
     private void out(Object o){
         System.out.println("[CLIENT] "+o);
