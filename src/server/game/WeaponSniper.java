@@ -4,8 +4,8 @@ package server.game;
  * Created by peran on 2/13/17.
  * A slow firing, high damage weapon type
  */
-class WeaponSniper extends Weapon {
-    WeaponSniper() {
+public class WeaponSniper extends Weapon {
+    public WeaponSniper() {
         super();
         shotType = new Projectile(70,700,20,new Vector2(0,0), new Vector2(0,0), 30, 0, 0, 0);
         numProjectiles = 1;

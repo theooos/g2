@@ -4,8 +4,8 @@ package server.game;
  * Created by peran on 2/13/17.
  * A slow firing, close range weapon with multiple pellets
  */
-class WeaponShotgun extends Weapon {
-    WeaponShotgun() {
+public class WeaponShotgun extends Weapon {
+    public WeaponShotgun() {
         super();
         shotType = new DistDropOffProjectile(40,100,20,new Vector2(0,0), new Vector2(0,0), 20, 0, 0, 0);
         numProjectiles = 7;

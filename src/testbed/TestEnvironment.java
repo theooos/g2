@@ -33,9 +33,9 @@ public class TestEnvironment extends Observable {
         }
 
         // Create player.
-       /* player = new Player(new Vector2(400, 500),
+        player = new Player(new Vector2(400, 500),
                 new Vector2(0, 1), 0, 1,
-                new Weapon(), new Weapon()); */
+                new WeaponShotgun(), new WeaponSniper(), 0);
 
         // Spawn zombie a reasonable distance away from the player.
         Random gen = new Random();
@@ -47,7 +47,7 @@ public class TestEnvironment extends Observable {
             botPos = new Vector2(botX, botY);
             validDistance = player.getPos().getDistanceTo(botPos) >= 50;
         }
-     //   zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1);
+        zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1, 1);
 
     }
 
