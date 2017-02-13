@@ -4,6 +4,7 @@ import networking.Connection;
 import server.game.Game;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,12 +24,15 @@ class Lobby {
 
 
     Lobby(int maxSize) {
+        int mapMax = 1;
         countdownRunning = false;
         players = new ArrayList<>();
         this.maxSize = maxSize;
         minSize = maxSize/2;
         t = new Timer();
-        map = 0;
+        Random rand = new Random();
+        map = rand.nextInt(1);
+        System.out.println(map);
     }
 
     /**
