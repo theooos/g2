@@ -1,11 +1,12 @@
-package testbed;
+package client.testgui;
 
-import java.awt.geom.Ellipse2D;
+import networking.Connection;
+import server.game.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Random;
-import server.game.*;
 
 /**
  * Created by rhys on 19/01/17.
@@ -16,11 +17,22 @@ public class TestEnvironment extends Observable {
     private Player player;
     private Zombie zombie;
     private Map map;
+    private ArrayList<MovableEntity> entities;
 
 
     public TestEnvironment(){
 
         super();
+        entities = new ArrayList<>();
+
+        Connection connection = new Connection();
+
+        connection.addFunctionEvent("String", this::out);
+        connection.addFunctionEvent("Player", this::addEntity);
+        connection.addFunctionEvent("AIPlayer", this::addEntity);
+        connection.addFunctionEvent("Zombie", this::addEntity);
+        connection.addFunctionEvent("Projectile", this::addEntity);
+
 
         // Create Map.
         map = null;
@@ -33,12 +45,12 @@ public class TestEnvironment extends Observable {
         }
 
         // Create player.
-        player = new Player(new Vector2(400, 500),
+      /*  player = new Player(new Vector2(400, 500),
                 new Vector2(0, 1), 0, 1,
-                new WeaponShotgun(), new WeaponSniper(), 0);
+                new Weapon(), new Weapon()); */
 
         // Spawn zombie a reasonable distance away from the player.
-        Random gen = new Random();
+   /*     Random gen = new Random();
         boolean validDistance = false;
         Vector2 botPos = null;
         while (!validDistance){
@@ -47,7 +59,7 @@ public class TestEnvironment extends Observable {
             botPos = new Vector2(botX, botY);
             validDistance = player.getPos().getDistanceTo(botPos) >= 50;
         }
-        zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1, 1);
+       // zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1); */
 
     }
 
@@ -76,15 +88,37 @@ public class TestEnvironment extends Observable {
         return zombie;
     }
 
-    public int getMapWidth() {
-        return map.getMapWidth();
+    public ArrayList<Wall> getWalls(){
+        return map.wallsInPhase(1, true);
     }
 
     public int getMapLength() {
         return map.getMapHeight();
     }
 
-    public ArrayList<Wall> getWalls(){
-        return map.wallsInPhase(1, true);
+    public int getMapWidth() {
+        return map.getMapWidth();
     }
+
+
+
+    private void out(Object o){
+        System.out.println("[CLIENT] "+o);
+    }
+
+    synchronized private void addEntity(Object e) {
+        MovableEntity a = (MovableEntity)e;
+        out(a.getPos());
+
+
+        if (entities.size() > 100) {
+            entities.clear();
+        }
+        entities.add((MovableEntity) e);
+    }
+
+    synchronized public ArrayList<MovableEntity> getEntities() {
+        return entities;
+    }
+
 }
