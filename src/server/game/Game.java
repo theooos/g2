@@ -1,9 +1,9 @@
 package server.game;
 
 import networking.Connection;
+import objects.InitGame;
 import objects.Sendable;
 
-import javax.sound.sampled.Line;
 import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -125,6 +125,9 @@ public class Game {
         t = new Timer();
         countdown = 10*60*tick; //ten minutes
 
+        InitGame g = new InitGame(zombies, players, mapID);
+        sendGameStart(g);
+
         int rate = 1000/60;
 
         t.scheduleAtFixedRate(new TimerTask() {
@@ -163,7 +166,9 @@ public class Game {
                 }
                 p.kill();
             }
-            //collides with walls
+
+            if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
+
             p.live();
         }
 
@@ -359,6 +364,12 @@ public class Game {
     private void sendToAllConnected(Entity e) {
         for (Connection c: playerConnections) {
             c.send(e);
+        }
+    }
+
+    private void sendGameStart(InitGame g) {
+        for (Connection c: playerConnections) {
+            c.send(g);
         }
     }
 
