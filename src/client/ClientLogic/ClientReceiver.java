@@ -54,7 +54,7 @@ public class ClientReceiver extends Entity {
     {
         InitGame i = (InitGame) s;
         HashMap<Integer,Player> players = i.getPlayers();
-        HashMap<Integer,Player> zombies = i.getZombies();
+        HashMap<Integer,Zombie> zombies = i.getZombies();
         int mapID = i.getMapID();
 
         GameData gd = new GameData(players,zombies,mapID);
@@ -68,14 +68,9 @@ public class ClientReceiver extends Entity {
      * @param o method to get some data.
      */
      public void getData(Object o) {
-
-
-
     }
 
     /**
-     *
-     *
      *
      * @return the position at a certain moment.
      */

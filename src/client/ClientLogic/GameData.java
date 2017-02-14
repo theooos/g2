@@ -60,7 +60,7 @@ public class GameData {
     }
 
     /**
-     *
+     * update the hashmap of the players
      *
      */
     public void updatePlayers(int playerId,Player p) {
