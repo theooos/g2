@@ -33,9 +33,9 @@ public class TestEnvironment extends Observable {
         }
 
         // Create player.
-       /* player = new Player(new Vector2(400, 500),
+        player = new Player(new Vector2(400, 500),
                 new Vector2(0, 1), 0, 1,
-                new Weapon(), new Weapon()); */
+                new WeaponShotgun(), new WeaponSniper(), 0);
 
         // Spawn zombie a reasonable distance away from the player.
         Random gen = new Random();
@@ -43,11 +43,12 @@ public class TestEnvironment extends Observable {
         Vector2 botPos = null;
         while (!validDistance){
             int botX = gen.nextInt(map.getMapWidth());
-            int botY = gen.nextInt(map.getMapLength());
+            int botY = gen.nextInt(map.getMapHeight());
             botPos = new Vector2(botX, botY);
             validDistance = player.getPos().getDistanceTo(botPos) >= 50;
         }
-     //   zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1);
+        zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1, 1);
+
 
     }
 
@@ -59,7 +60,7 @@ public class TestEnvironment extends Observable {
         // Check the movement isn't obstructed before making it.
         Vector2 hypoLoc = player.hypoMove();
         if (hypoLoc.getX() >= 0 && hypoLoc.getX() < map.getMapWidth()){
-            if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapLength()){
+            if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapHeight()){
                 player.live();      // Execute the movement??
                 setChanged();
                 notifyObservers();
@@ -81,7 +82,7 @@ public class TestEnvironment extends Observable {
     }
 
     public int getMapLength() {
-        return map.getMapLength();
+        return map.getMapHeight();
     }
 
     public ArrayList<Wall> getWalls(){
