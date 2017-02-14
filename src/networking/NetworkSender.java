@@ -10,8 +10,7 @@ import static networking.Connection.out;
 /**
  * Sends objects to the server. Currently no messaging queue, this might be necessary later.
  */
-class
-NetworkSender {
+class NetworkSender {
 
     private ObjectOutputStream toConnection;
 
