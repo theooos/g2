@@ -167,6 +167,7 @@ public class Map {
 
                 // Parse this map's ID.
                 try {
+                    System.out.println("item: "+ items.get(0));
                     mapID = Integer.parseInt(items.get(0));
                 } catch (NumberFormatException e) {
                     System.out.println(err + "Map ID not valid. Is it an integer?");
