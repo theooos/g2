@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Created by theo on 14/02/2017.
  */
 public class InitGame implements Sendable{
-    private ArrayList<Zombie> zombies
+    private ArrayList<Zombie> zombies;
     private ArrayList<Player> players;
     private int mapID;
 
