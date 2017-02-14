@@ -1,12 +1,16 @@
 package client.ClientLogic;
 
 import networking.Connection;
+import objects.Sendable;
 import server.game.*;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import objects.InitGame;
 
 
 /**
@@ -35,24 +39,37 @@ public class ClientReceiver extends Entity {
        // this.pconn = pconn;
 
         connection.addFunctionEvent("String", this::getData);
+        connection.addFunctionEvent("InitGame",this::setupGame);
+        //
 
 
 
     }
 
+    //InitGame object -
+    //Create other object GameData
 
 
+    public void setupGame(Sendable s)
+    {
+        InitGame i = (InitGame) s;
+        HashMap<Integer,Player> players = i.getPlayers();
+        HashMap<Integer,Player> zombies = i.getZombies();
+        int mapID = i.getMapID();
+
+        GameData gd = new GameData(players,zombies,mapID);
+
+
+    }
+
+    /**
+     *
+     *
+     * @param o method to get some data.
+     */
      public void getData(Object o) {
 
-        //ArrayList<>
 
-        /*ArrayList<MovableEntity> es = new ArrayList<>(pconn.getEntities());
-
-        for (MovableEntity e : es) {
-
-
-        }
-        */
 
     }
 
