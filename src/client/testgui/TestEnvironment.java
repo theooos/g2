@@ -51,10 +51,12 @@ public class TestEnvironment extends Observable {
         }
 
         // Create player.
+        /*
         player = new Player(new Vector2(400, 500),
                 new Vector2(0, 1), 0, 1,
                 new Weapon(), new Weapon(),1);
 
+        */
 
         // Spawn zombie a reasonable distance away from the player.
         /*
