@@ -85,7 +85,11 @@ public class GameRenderer {
         float x = r;//we start at angle = 0
 
         float y = 0;
-        GL11.glBegin(GL_LINE_LOOP);
+       GL11.glBegin(GL_TRIANGLE_FAN);
+      //  GL11.glPolygonMode();
+
+
+        //glPoint(300, 300, 1000);
 
         for(int ii = 0; ii < num_segments; ii++)
         {
@@ -159,7 +163,7 @@ public class GameRenderer {
         // update movement
 
         DrawCircle(300,300,25,100);
-        
+
         glBegin(GL11.GL_QUADS);
 
         glVertex2f(xPos - 50, yPos - 50);
