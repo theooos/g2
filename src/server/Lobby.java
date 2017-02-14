@@ -24,16 +24,17 @@ class Lobby {
 
 
     Lobby(int maxSize) {
-        int mapMax = 1;
+        int mapMax = 2;
         countdownRunning = false;
         players = new ArrayList<>();
         this.maxSize = maxSize;
         minSize = maxSize/2;
         t = new Timer();
         Random rand = new Random();
-        map = rand.nextInt(1);
+        map = rand.nextInt(mapMax);
         System.out.println(map);
     }
+
 
     /**
      * checks to see whether the lobby has reached maximum

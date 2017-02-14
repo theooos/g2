@@ -49,6 +49,7 @@ public class TestEnvironment extends Observable {
         }
         zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1, 1);
 
+
     }
 
     public boolean movePlayer(Vector2 direction){
