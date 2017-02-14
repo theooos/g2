@@ -1,16 +1,14 @@
 package client.ClientLogic;
 
 import networking.Connection;
-import objects.Sendable;
-import server.game.*;
-
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import objects.InitGame;
+import objects.Sendable;
+import server.game.Entity;
+import server.game.Player;
+import server.game.Vector2;
+import server.game.Zombie;
+
+import java.util.HashMap;
 
 
 /**

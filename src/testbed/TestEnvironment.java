@@ -1,11 +1,11 @@
 package testbed;
 
-import java.awt.geom.Ellipse2D;
+import server.game.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Random;
-import server.game.*;
 
 /**
  * Created by rhys on 19/01/17.
