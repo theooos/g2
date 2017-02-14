@@ -1,4 +1,4 @@
-    // Metadata:
+// Metadata:
 0, Test, 800, 600, 4
 
 // Outer Walls:

@@ -64,6 +64,8 @@ class LobbyUI extends JPanel {
             }
         });
 
+
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1.0;
         c.gridx = 0;

@@ -21,9 +21,6 @@ public class ClientReceiver extends Entity {
 
 
     private Connection connection;
-    private PlayerConnection pconn;
-    private ArrayList<Zombie> zombies;
-    private ArrayList<Player> players;
     private int mapID;
 
     /**
@@ -49,7 +46,6 @@ public class ClientReceiver extends Entity {
     //InitGame object -
     //Create other object GameData
 
-
     public void setupGame(Sendable s)
     {
         InitGame i = (InitGame) s;
@@ -58,7 +54,6 @@ public class ClientReceiver extends Entity {
         int mapID = i.getMapID();
 
         GameData gd = new GameData(players,zombies,mapID);
-
 
     }
 
