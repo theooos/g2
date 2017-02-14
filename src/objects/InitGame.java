@@ -4,27 +4,41 @@ import server.game.Player;
 import server.game.Zombie;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by theo on 14/02/2017.
  */
 public class InitGame implements Sendable{
-    private ArrayList<Zombie> zombies;
-    private ArrayList<Player> players;
+    private HashMap<Integer,Zombie> zombies;
+    private HashMap<Integer,Player> players;
     private int mapID;
 
-    public InitGame(ArrayList<Zombie> z, ArrayList<Player> p, int mapID) {
+    public InitGame(HashMap<Integer,Zombie> zombies, HashMap<Integer,Player> players, int mapID){
+        this.zombies = zombies;
+        this.players = players;
         this.mapID = mapID;
-        this.players = p;
-        this.zombies = z;
     }
 
+    public InitGame(ArrayList<Zombie> zombies, ArrayList<Player> players, int mapID) {
+        this.mapID = mapID;
 
-    public ArrayList<Player> getPlayers() {
+        this.zombies = new HashMap<>();
+        for(Zombie zom : zombies){
+            this.zombies.put(zom.getID(), zom);
+        }
+
+        this.players = new HashMap<>();
+        for(Player pla : players){
+            this.players.put(pla.getID(), pla);
+        }
+    }
+
+    public HashMap<Integer,Player> getPlayers() {
         return players;
     }
 
-    public ArrayList<Zombie> getZombies() {
+    public HashMap<Integer,Zombie> getZombies() {
         return zombies;
     }
 
