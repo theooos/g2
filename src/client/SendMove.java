@@ -46,11 +46,11 @@ public class SendMove extends KeyAdapter implements Sendable  {
             System.exit(0);
         }
 
-        // Create player.
+        /* Create player.
         player = new Player(new Vector2(400, 500),
                 new Vector2(0, 1), 0, 1,
                 new Weapon(), new Weapon(),1);
-
+        */
 
 
 
