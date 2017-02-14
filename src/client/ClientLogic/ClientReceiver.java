@@ -1,10 +1,7 @@
 package client.ClientLogic;
 
 import networking.Connection;
-import server.game.Entity;
-import server.game.MovableEntity;
-import server.game.Vector2;
-import server.game.Wall;
+import server.game.*;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -21,13 +18,16 @@ public class ClientReceiver extends Entity {
 
     private Connection connection;
     private PlayerConnection pconn;
+    private ArrayList<Zombie> zombies;
+    private ArrayList<Player> players;
+    private int mapID;
 
     /**
      *
      *
      *
      * @param conn the connection to the server
-     * @param pconn
+     * 
      */
     public ClientReceiver(Connection conn) {
 
@@ -44,7 +44,7 @@ public class ClientReceiver extends Entity {
 
      public void getData(Object o) {
 
-
+        //ArrayList<>
 
         /*ArrayList<MovableEntity> es = new ArrayList<>(pconn.getEntities());
 
