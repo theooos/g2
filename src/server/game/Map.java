@@ -1,23 +1,16 @@
 package server.game;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents a game map.
  * Created by rhys on 2/2/17.
  */
 public class Map {
-
-    // Map Source File information:
-    static final String LOCAL_PATH = "C:/Users/Patrick/Desktop/PhaseShift/";
-    static final String PROJ_PATH = "g2/src/server/game/maps/";
-    static final String FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 
     // Game Object Information:
     private int mapID;
@@ -28,6 +21,7 @@ public class Map {
     private ArrayList<SpawnPosition> spawnPositions;
     private int width;
     private int length;
+    private String FULL_PATH;
 
     // Short-term members:
     private ArrayList<Vector2> validSpace;
@@ -38,6 +32,11 @@ public class Map {
      * @param mapID
      */
     public Map(int mapID) throws IOException {
+
+        String LOCAL_PATH = new File("").getAbsolutePath();
+        System.out.println(LOCAL_PATH);
+        String PROJ_PATH = "/src/server/game/maps/";
+        FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 
         this.mapID = mapID;
         this.walls = new ArrayList<>();
@@ -82,7 +81,7 @@ public class Map {
     /**
      * @return the length of the map in position units.
      */
-    public int getMapLength() {
+    public int getMapHeight() {
         return length;
     }
 
@@ -125,7 +124,7 @@ public class Map {
      * Reads this map's specified source file and returns it as an ArrayList of strings.
      * @return an ArrayList of strings representing the source file.
      */
-    public static ArrayList<String> readMapFromSource(){
+    public ArrayList<String> readMapFromSource(){
 
         ArrayList<String> mapStrings = new ArrayList<>();
 
@@ -170,7 +169,6 @@ public class Map {
 
                 // Parse this map's ID.
                 try {
-                    System.out.println("item: "+ items.get(0));
                     mapID = Integer.parseInt(items.get(0));
                 } catch (NumberFormatException e) {
                     System.out.println(err + "Map ID not valid. Is it an integer?");
