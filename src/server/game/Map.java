@@ -1,7 +1,6 @@
 package server.game;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -12,6 +11,11 @@ import java.util.*;
  */
 public class Map {
 
+    // Map Source File information:
+    static final String LOCAL_PATH = "C:/Users/Patrick/Desktop/PhaseShift/";
+    static final String PROJ_PATH = "g2/src/server/game/maps/";
+    static final String FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
+
     // Game Object Information:
     private int mapID;
     private String mapName;
@@ -21,7 +25,6 @@ public class Map {
     private ArrayList<SpawnPosition> spawnPositions;
     private int width;
     private int length;
-    private String FULL_PATH;
 
     // Short-term members:
     private ArrayList<Vector2> validSpace;
@@ -32,11 +35,6 @@ public class Map {
      * @param mapID
      */
     public Map(int mapID) throws IOException {
-
-        String LOCAL_PATH = new File("").getAbsolutePath();
-        System.out.println(LOCAL_PATH);
-        String PROJ_PATH = "/src/server/game/maps/";
-        FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 
         this.mapID = mapID;
         this.walls = new ArrayList<>();
@@ -81,7 +79,7 @@ public class Map {
     /**
      * @return the length of the map in position units.
      */
-    public int getMapHeight() {
+    public int getMapLength() {
         return length;
     }
 
@@ -124,7 +122,7 @@ public class Map {
      * Reads this map's specified source file and returns it as an ArrayList of strings.
      * @return an ArrayList of strings representing the source file.
      */
-    public ArrayList<String> readMapFromSource(){
+    public static ArrayList<String> readMapFromSource(){
 
         ArrayList<String> mapStrings = new ArrayList<>();
 

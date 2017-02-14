@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Random;
+import objects.String;
 
 /**
  * Created by rhys on 19/01/17.
@@ -18,20 +19,25 @@ public class TestEnvironment extends Observable {
     private Zombie zombie;
     private Map map;
     private ArrayList<MovableEntity> entities;
-
+    private Connection connection;
 
     public TestEnvironment(){
 
         super();
+        //this.connection = con;
         entities = new ArrayList<>();
 
-        Connection connection = new Connection();
+         connection = new Connection();
+
+
 
         connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("Player", this::addEntity);
         connection.addFunctionEvent("AIPlayer", this::addEntity);
         connection.addFunctionEvent("Zombie", this::addEntity);
         connection.addFunctionEvent("Projectile", this::addEntity);
+
+
 
 
         // Create Map.
@@ -45,12 +51,14 @@ public class TestEnvironment extends Observable {
         }
 
         // Create player.
-      /*  player = new Player(new Vector2(400, 500),
+        player = new Player(new Vector2(400, 500),
                 new Vector2(0, 1), 0, 1,
-                new Weapon(), new Weapon()); */
+                new Weapon(), new Weapon(),1);
+
 
         // Spawn zombie a reasonable distance away from the player.
-   /*     Random gen = new Random();
+        /*
+        Random gen = new Random();
         boolean validDistance = false;
         Vector2 botPos = null;
         while (!validDistance){
@@ -59,8 +67,32 @@ public class TestEnvironment extends Observable {
             botPos = new Vector2(botX, botY);
             validDistance = player.getPos().getDistanceTo(botPos) >= 50;
         }
-       // zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1); */
+       // zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1);
+        */
+    }
 
+    public void sendFiringAlert(String message)
+    {
+
+        connection.send(message);
+
+    }
+
+
+
+    public void sendString(String m) {
+
+        connection.send(m);
+    }
+
+    /**
+     * send the updated position to the server
+     * @param v the vector of the new position
+     */
+    public void sendPosition(Vector2 v)
+    {
+
+        connection.send(v);
     }
 
     public void getPlayers()
@@ -72,19 +104,40 @@ public class TestEnvironment extends Observable {
 
     public boolean movePlayer(Vector2 direction){
 
+        //System.out.println("do we get here?");
         // Face the player in the appropriate direction.
-        player.setDir(direction);
+      player.setDir(direction);
+        System.out.println("in move player");
+       //Vector2 hypoLoc = player.hypoMove();
 
         // Check the movement isn't obstructed before making it.
+        /*
         Vector2 hypoLoc = player.hypoMove();
         if (hypoLoc.getX() >= 0 && hypoLoc.getX() < map.getMapWidth()){
+
+            //System.out.println("hypox: " + hypoLoc.getX());
+            //System.out.println("hypoY: " + hypoLoc.getY());
+            //System.out.println(map.getMapWidth()+ "the width value");
             if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapHeight()){
-                player.live();      // Execute the movement??
+                //player.live();
+                player.move();
+                // Execute the movement??
+                System.out.println("yep");
                 setChanged();
                 notifyObservers();
+
                 return true;
             } else return false;
         } else return false;
+
+        */
+        player.move();
+        // Execute the movement??
+        System.out.println("yep");
+        setChanged();
+        notifyObservers();
+        return true;
+
     }
 
     public Player getPlayer(){
@@ -99,15 +152,13 @@ public class TestEnvironment extends Observable {
         return map.wallsInPhase(1, true);
     }
 
-    public int getMapLength() {
-        return map.getMapHeight();
+    public int getMapHeight() {
+        return map.getMapLength();
     }
 
     public int getMapWidth() {
         return map.getMapWidth();
     }
-
-
 
     private void out(Object o){
         System.out.println("[CLIENT] "+o);
@@ -122,10 +173,20 @@ public class TestEnvironment extends Observable {
             entities.clear();
         }
         entities.add((MovableEntity) e);
+
+        setChanged();
+        notifyObservers();
     }
 
     synchronized public ArrayList<MovableEntity> getEntities() {
         return entities;
     }
 
+
+    public void sendID(String id) {
+
+        System.out.println(id);
+        connection.send(id);
+
+    }
 }
