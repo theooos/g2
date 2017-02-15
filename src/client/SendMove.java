@@ -110,7 +110,7 @@ public class SendMove extends KeyAdapter implements Sendable  {
     }
 
     public int getMapHeight() {
-        return map.getMapLength();
+        return map.getMapHeight();
     }
 
     public int getMapWidth() {
