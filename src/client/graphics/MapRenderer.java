@@ -43,8 +43,6 @@ public class MapRenderer {
         walls = map.wallsInPhase(phase, true);
 
         for (Wall w : walls) {
-            System.out.println("In map");
-
             float xStart = w.getStartPos().getX();
             float yStart = w.getStartPos().getY();
             float xEnd = w.getEndPos().getX();
