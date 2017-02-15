@@ -1,5 +1,6 @@
 package client.ClientLogic;
 
+import client.graphics.GameRenderer;
 import networking.Connection;
 import objects.InitGame;
 import objects.Sendable;
@@ -20,6 +21,7 @@ public class ClientReceiver extends Entity {
 
     private Connection connection;
     private int mapID;
+    private GameData gd;
 
     /**
      *
@@ -51,8 +53,15 @@ public class ClientReceiver extends Entity {
         HashMap<Integer,Zombie> zombies = i.getZombies();
         int mapID = i.getMapID();
 
-        GameData gd = new GameData(players,zombies,mapID);
+         gd = new GameData(players,zombies,mapID);
+        new GameRenderer(gd).execute();
 
+    }
+
+    public GameData getGameData()
+    {
+
+        return gd;
     }
 
     /**

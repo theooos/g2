@@ -6,6 +6,11 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import server.game.Player;
+import server.game.Vector2;
+
+
+import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -19,18 +24,29 @@ public class GameRenderer {
     private int width = 800;
     private int height = 600;
 
-    private float xPos = 100;
-    private float yPos = 200;
+    private float xPos;
+    private float yPos;
     //private float rotation = 0;
 
     private long lastFrame;
     private int fps;
     private long lastFPS;
+    private GameData gd;
+    private HashMap<Integer,Player> players;
 
     private MapRenderer map;
 
 
-    public GameRenderer() {
+    public GameRenderer(GameData gd) {
+
+        this.gd = gd;
+        players = gd.getPlayers();
+        Player p = players.get(0);
+        Vector2 position = p.getPos();
+
+        this.setxPos(position.getX());
+        this.setyPos(position.getY());
+
         // initialize the window beforehand
         try {
             Display.setDisplayMode(new DisplayMode(width, height));
@@ -88,6 +104,7 @@ public class GameRenderer {
         GL11.glBegin(GL_TRIANGLE_FAN);
 
 
+        //glPoint(300, 300, 1000);
 
         for(int ii = 0; ii < num_segments; ii++)
         {
@@ -213,6 +230,28 @@ public class GameRenderer {
         lastFrame = time;
 
         return delta;
+    }
+
+    private float getxPos() {
+        return xPos;
+    }
+
+    private float getyPos()
+    {
+        return yPos;
+    }
+
+    private void setxPos(float xposition)
+    {
+
+        this.xPos = xposition;
+
+    }
+
+    private void setyPos(float yposition)
+    {
+
+        this.yPos = yposition;
     }
 
     public static void main(String argv[]) {
