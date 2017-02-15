@@ -2,7 +2,7 @@ package server.game;
 
 import server.ai.Behaviour;
 import server.ai.Intel;
-import server.ai.orb.Repeat;
+import server.ai.Live;
 import server.ai.orb.Wander;
 
 /**
@@ -34,7 +34,7 @@ public class Orb extends MovableEntity {
         radius = 10;
         ID = id;
         this.gameState = gameState;
-        this.behaviour = new Repeat(new Wander(gameState));
+        this.behaviour = new Live(new Wander(gameState));
     }
 
     /**
