@@ -2,7 +2,6 @@ package client.graphics;
 
 import org.lwjgl.opengl.GL11;
 import server.game.Map;
-import server.game.Vector2;
 import server.game.Wall;
 
 import java.io.IOException;
@@ -20,13 +19,15 @@ public class MapRenderer {
     private int height;
     private ArrayList<Wall> walls;
 
+    private final int EXTENT = 10;
+
     public MapRenderer(int mapID, int phase){
         try {
             map = new Map(mapID);
             this.mapID = mapID;
             this.phase = phase;
-            this.height = map.getMapWidth();
-            this.width = map.getMapLength();
+            this.height = map.getMapHeight();
+            this.width = map.getMapWidth();
         } catch (IOException e) {
             System.out.println("Invalid MapID.");
             e.printStackTrace();
@@ -34,43 +35,57 @@ public class MapRenderer {
         }
     }
 
-    public void renderMap(){
+    public void renderMap() {
 
         walls = map.wallsInPhase(phase, true);
 
-        for(Wall w: walls) {
+        for (Wall w : walls) {
             System.out.println("In map");
 
-            float startX = w.getStartPos().getX();
-            float startY = w.getStartPos().getY();
-            float endX = w.getEndPos().getX();
-            float endY = w.getEndPos().getY();
+            float xStart = w.getStartPos().getX();
+            float yStart = w.getStartPos().getY();
+            float xEnd = w.getEndPos().getX();
+            float yEnd = w.getEndPos().getY();
 
-            /*
-            Vector2 startPos = w.getStartPos();
+            if (yStart == yEnd)
+                horizontalDraw(xStart, yStart, xEnd, yEnd);
 
-            Vector2 endPos = w.getEndPos();
-
-            GL11.glColor3f(245.0f, 225.0f, 65.0f);
-            GL11.glBegin(GL11.GL_QUADS);
-            GL11.glVertex2f(startPos.getX(), height - startPos.getY());
-            GL11.glVertex2f(startPos.getX(), height - startPos.getY() + 10);
-            GL11.glVertex2f(endPos.getX(), height - endPos.getY() + 10);
-            GL11.glVertex2f(endPos.getX(), height - endPos.getX());
-            GL11.glEnd();        System.out.print("Map");
-            */
-
-            System.out.println((startX - 10) + " " + startY + " ; " + (endX - 10) + " " + endY);
-            GL11.glColor3f(245.0f, 225.0f, 65.0f);
-            GL11.glBegin(GL11.GL_QUADS);
-            GL11.glVertex2f(startX - 10, height - startY - 10);
-            GL11.glVertex2f(endX + 10, height - endY - 10);
-            GL11.glVertex2f(endX + 10, height - endY + 10);
-            GL11.glVertex2f(startX - 10, height - startY + 10);
-            GL11.glEnd();
+            if (xStart == xEnd)
+                verticalDraw(xStart, yStart, xEnd, yEnd);
         }
+    }
 
-        System.out.println("OUT map");
+    private void verticalDraw(float xStart, float yStart, float xEnd, float yEnd){
+        GL11.glColor3f(245.0f, 225.0f, 65.0f);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart- EXTENT));
+        GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd - EXTENT));
+        GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd + EXTENT));
+        GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart + EXTENT));
+        GL11.glEnd();
+        System.out.print("Vert");
+    }
 
+    private  void horizontalDraw(float xStart, float yStart, float xEnd, float yEnd){
+        GL11.glColor3f(245.0f, 225.0f, 65.0f);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart- EXTENT));
+        GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd - EXTENT));
+        GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd + EXTENT));
+        GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart + EXTENT));
+        GL11.glEnd();
+        System.out.print("Hor");
+    }
+
+    private float checkX(float x){
+        if (x < 0) x = 0;
+        if (x > width) x = width;
+        return x;
+    }
+
+    private float checkY(float y){
+        if (y < 0) y = 0;
+        if (y > height) y = height;
+        return y;
     }
 }

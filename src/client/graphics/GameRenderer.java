@@ -73,7 +73,7 @@ public class GameRenderer {
         Display.destroy();
     }
 
-    void DrawCircle(float cx, float cy, float r, int num_segments)
+    private void DrawCircle(float cx, float cy, float r, int num_segments)
     {
         float theta = (float)(2 * 3.1415926 / (num_segments));
         float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
@@ -113,7 +113,7 @@ public class GameRenderer {
         GL11.glEnd();
     }
 
-    public long getTime() {
+    private long getTime() {
         return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
 
@@ -150,7 +150,7 @@ public class GameRenderer {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         // set the color of the quad (R,G,B,A)
-        //GL11.glColor3f(0.5f,0.5f,1.0f);
+        GL11.glColor3f(0.5f,0.5f,1.0f);
 
         // rotate quad
         //GL11.glPushMatrix();
@@ -158,7 +158,7 @@ public class GameRenderer {
         //GL11.glRotatef(rotation, 0f, 0f, 1f);
         //GL11.glTranslatef(-xPos, -yPos, 0);
 
-        //map.renderMap();
+        map.renderMap();
 
         /*GL11.glColor3f(0.5f,0.5f,1.0f);
         GL11.glColor3f(245.0f, 225.0f, 65.0f);
