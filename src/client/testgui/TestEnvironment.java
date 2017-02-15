@@ -6,7 +6,6 @@ import server.game.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Random;
 
 /**
  * Created by rhys on 19/01/17.
@@ -15,7 +14,7 @@ import java.util.Random;
 public class TestEnvironment extends Observable {
 
     private Player player;
-    private Zombie zombie;
+    private Orb orb;
     private Map map;
     private ArrayList<MovableEntity> entities;
 
@@ -30,7 +29,7 @@ public class TestEnvironment extends Observable {
         connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("Player", this::addEntity);
         connection.addFunctionEvent("AIPlayer", this::addEntity);
-        connection.addFunctionEvent("Zombie", this::addEntity);
+        connection.addFunctionEvent("Orb", this::addEntity);
         connection.addFunctionEvent("Projectile", this::addEntity);
 
 
@@ -49,7 +48,7 @@ public class TestEnvironment extends Observable {
                 new Vector2(0, 1), 0, 1,
                 new Weapon(), new Weapon()); */
 
-        // Spawn zombie a reasonable distance away from the player.
+        // Spawn orb a reasonable distance away from the player.
    /*     Random gen = new Random();
         boolean validDistance = false;
         Vector2 botPos = null;
@@ -59,7 +58,7 @@ public class TestEnvironment extends Observable {
             botPos = new Vector2(botX, botY);
             validDistance = player.getPos().getDistanceTo(botPos) >= 50;
         }
-       // zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1); */
+       // orb = new Orb(botPos, new Vector2(0, 1), 1, 1); */
 
     }
 
@@ -84,8 +83,8 @@ public class TestEnvironment extends Observable {
         return player;
     }
 
-    public Zombie getZombie() {
-        return zombie;
+    public Orb getOrb() {
+        return orb;
     }
 
     public ArrayList<Wall> getWalls(){

@@ -14,7 +14,7 @@ public class Client {
         connection.addFunctionEvent("String", Client::out);
         connection.addFunctionEvent("Player", Client::out);
         connection.addFunctionEvent("AIPlayer", Client::out);
-        connection.addFunctionEvent("Zombie", Client::out);
+        connection.addFunctionEvent("Orb", Client::out);
         connection.addFunctionEvent("Projectile", Client::out);
     }
 

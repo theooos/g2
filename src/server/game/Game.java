@@ -1,10 +1,8 @@
 package server.game;
 
 import networking.Connection;
-import objects.InitGame;
 import objects.Sendable;
 
-import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,7 +20,7 @@ public class Game {
 
     private ArrayList<Connection> playerConnections;
     private ArrayList<Player> players;
-    private ArrayList<Zombie> zombies;
+    private ArrayList<Orb> orbs;
     private ArrayList<Projectile> projectiles;
 
     private Random rand;
@@ -51,7 +49,7 @@ public class Game {
         sb = new Scoreboard(100, maxPlayers);
 
         players = new ArrayList<>();
-        zombies = new ArrayList<>();
+        orbs = new ArrayList<>();
         projectiles = new ArrayList<>();
 
         //create players
@@ -114,10 +112,10 @@ public class Game {
             players.add(p);
             IDCounter++;
         }
-        //create team zombies
+        //create team orbs
         for (int i = 0; i < 1; i++) {
-            Zombie z = new Zombie(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
-            zombies.add(z);
+            Orb z = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
+            orbs.add(z);
             IDCounter++;
         }
 
@@ -125,7 +123,7 @@ public class Game {
         t = new Timer();
         countdown = 10*60*tick; //ten minutes
 
-        InitGame g = new InitGame(zombies, players, mapID);
+        InitGame g = new InitGame(orbs, players, mapID);
         sendGameStart(g);
 
         int rate = 1000/60;
@@ -146,7 +144,7 @@ public class Game {
         for (Player p: players) {
             if (!p.isAlive()) respawn(p);
         }
-        for (Zombie z: zombies) {
+        for (Orb z: orbs) {
             if(!z.isAlive()) respawn(z);
             z.live();
             respawn(z);
@@ -157,7 +155,7 @@ public class Game {
             if (e != null) {
                 e.damage(p.getDamage());
                 if (!e.isAlive()) {
-                    if (e instanceof Zombie) {
+                    if (e instanceof Orb) {
                         sb.killedZombie(p.getPlayerID());
                     }
                     else {
@@ -226,7 +224,7 @@ public class Game {
         for (Player p: players) {
             sendToAllConnected(p);
         }
-        for (Zombie z: zombies) {
+        for (Orb z: orbs) {
             sendToAllConnected(z);
         }
         for (Projectile p: projectiles) {
@@ -243,6 +241,7 @@ public class Game {
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
         e.setPhase(rand.nextInt(1));
+       // msgToAllConnected("respawn in progress");
     }
 
     /**
@@ -290,7 +289,7 @@ public class Game {
             if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
         }
 
-        for (Zombie z: zombies) {
+        for (Orb z: orbs) {
             if (z.isAlive() && collided(r, pos, z.getRadius(), z.getPos())) return z;
         }
 
@@ -306,7 +305,7 @@ public class Game {
      */
     private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase, Vector2 dir, float speed) {
         ArrayList<MovableEntity> entities = new ArrayList<>();
-        entities.addAll(zombies);
+        entities.addAll(orbs);
         entities.addAll(players);
         entities.removeIf(e -> e.getPhase() != phase);
 
@@ -416,7 +415,7 @@ public class Game {
     }
 
     /**
-     * updates a received player to the received state
+     * updates a recieved player to the recieved state
      * @param s a player object
      */
     private void updatePlayer(Sendable s) {
