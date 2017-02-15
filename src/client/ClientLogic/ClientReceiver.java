@@ -55,7 +55,6 @@ public class ClientReceiver extends Entity {
 
          gd = new GameData(players,zombies,mapID);
         new GameRenderer(gd).execute();
-
     }
 
     public GameData getGameData()

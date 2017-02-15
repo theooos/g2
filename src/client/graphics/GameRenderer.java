@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL11;
 import server.game.Player;
 import server.game.Vector2;
 
-
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -25,8 +24,8 @@ public class GameRenderer {
     private int width = 800;
     private int height = 600;
 
-    private float xPos;
-    private float yPos;
+    //private float xPos;
+    //private float yPos;
     //private float rotation = 0;
 
     private long lastFrame;
@@ -42,11 +41,11 @@ public class GameRenderer {
 
         this.gd = gd;
         players = gd.getPlayers();
-        Player p = players.get(0);
-        Vector2 position = p.getPos();
+        //Player p = players.get(0);
+        //Vector2 position = p.getPos();
 
-        this.setxPos(position.getX());
-        this.setyPos(position.getY());
+        //this.setxPos(position.getX());
+        //this.setyPos(position.getY());
 
         // initialize the window beforehand
         try {
@@ -101,8 +100,6 @@ public class GameRenderer {
 
         GL11.glBegin(GL_TRIANGLE_FAN);
 
-        //glPoint(300, 300, 1000);
-
         for(int ii = 0; ii < num_segments; ii++)
         {
             glVertex2f(x + cx, y + cy);//output vertex
@@ -132,6 +129,9 @@ public class GameRenderer {
         // rotate quad
         //rotation += 0.15f * delta;
 
+        float xPos = players.get(0).getPos().getX();
+        float yPos = players.get(0).getPos().getY();
+
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) xPos -= 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) xPos += 0.35f * delta;
 
@@ -143,6 +143,8 @@ public class GameRenderer {
         if (xPos > 800) xPos = 800;
         if (yPos < 0) yPos = 0;
         if (yPos > 600) yPos = 600;
+
+        players.get(0).setPos(new Vector2(xPos, yPos));
 
         updateFPS(); // update FPS Counter
     }
@@ -171,7 +173,8 @@ public class GameRenderer {
 
         map.renderMap();
 
-        DrawCircle(xPos,yPos,25,100);
+        drawPlayers();
+        //DrawCircle(xPos,yPos,25,100);
 
         /* update movement
         glBegin(GL11.GL_QUADS);
@@ -186,36 +189,9 @@ public class GameRenderer {
         */
     }
 
-    public void keyboardInput() {
-
-        while (Keyboard.next()) {
-            if (Keyboard.getEventKeyState()) {
-                if (Keyboard.getEventKey() == Keyboard.KEY_A) {
-                    System.out.println("A Key Pressed");
-                }
-                if (Keyboard.getEventKey() == Keyboard.KEY_S) {
-                    System.out.println("S Key Pressed");
-                }
-                if (Keyboard.getEventKey() == Keyboard.KEY_D) {
-                    System.out.println("D Key Pressed");
-                }
-                if (Keyboard.getEventKey() == Keyboard.KEY_W) {
-                    System.out.println("W Key Pressed");
-                }
-            } else {
-                if (Keyboard.getEventKey() == Keyboard.KEY_A) {
-                    System.out.println("A Key Released");
-                }
-                if (Keyboard.getEventKey() == Keyboard.KEY_S) {
-                    System.out.println("S Key Released");
-                }
-                if (Keyboard.getEventKey() == Keyboard.KEY_D) {
-                    System.out.println("D Key Released");
-                }
-                if (Keyboard.getEventKey() == Keyboard.KEY_W) {
-                    System.out.println("W Key Released");
-                }
-            }
+    private void drawPlayers(){
+        for(Player p: players.values()){
+            DrawCircle(p.getPos().getX(), p.getPos().getY(),25,100);
         }
     }
 
@@ -227,6 +203,7 @@ public class GameRenderer {
         return delta;
     }
 
+    /*
     private float getxPos() {
         return xPos;
     }
@@ -248,6 +225,7 @@ public class GameRenderer {
 
         this.yPos = yposition;
     }
+    */
 
     public static void main(String argv[]) {
 
