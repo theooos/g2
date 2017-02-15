@@ -137,7 +137,7 @@ public class GameRenderer {
 
         players.get(playerID).setPos(new Vector2(xPos, yPos));
         gd.updatePlayers(playerID,players.get(playerID));
-        
+        cs.sendPlayer(players.get(playerID));
 
 
         updateFPS(); // update FPS Counter
