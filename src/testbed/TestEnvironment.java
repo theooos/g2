@@ -43,7 +43,7 @@ public class TestEnvironment extends Observable {
         Vector2 botPos = null;
         while (!validDistance){
             int botX = gen.nextInt(map.getMapWidth());
-            int botY = gen.nextInt(map.getMapHeight());
+            int botY = gen.nextInt(map.getMapLength());
             botPos = new Vector2(botX, botY);
             validDistance = player.getPos().getDistanceTo(botPos) >= 50;
         }
@@ -60,7 +60,7 @@ public class TestEnvironment extends Observable {
         // Check the movement isn't obstructed before making it.
         Vector2 hypoLoc = player.hypoMove();
         if (hypoLoc.getX() >= 0 && hypoLoc.getX() < map.getMapWidth()){
-            if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapHeight()){
+            if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapLength()){
                 player.live();      // Execute the movement??
                 setChanged();
                 notifyObservers();
@@ -82,7 +82,7 @@ public class TestEnvironment extends Observable {
     }
 
     public int getMapLength() {
-        return map.getMapHeight();
+        return map.getMapLength();
     }
 
     public ArrayList<Wall> getWalls(){

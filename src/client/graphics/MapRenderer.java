@@ -26,8 +26,11 @@ public class MapRenderer {
             map = new Map(mapID);
             this.mapID = mapID;
             this.phase = phase;
-            this.height = map.getMapHeight();
+            this.height = map.getMapLength();
             this.width = map.getMapWidth();
+            System.out.println("height is: " + height);
+            System.out.println("width is: " + width);
+
         } catch (IOException e) {
             System.out.println("Invalid MapID.");
             e.printStackTrace();
