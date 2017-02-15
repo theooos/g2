@@ -52,7 +52,7 @@ public class ClientReceiver extends Entity {
         int mapID = i.getMapID();
 
          gd = new GameData(players,zombies,mapID);
-         GameRenderer r = new GameRenderer(gd);
+         GameRenderer r = new GameRenderer(gd,connection);
          r.setID(this.getID());
          r.execute();
 

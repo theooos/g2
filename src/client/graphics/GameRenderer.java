@@ -1,6 +1,8 @@
 package client.graphics;
 
+import client.ClientLogic.ClientSendable;
 import client.ClientLogic.GameData;
+import networking.Connection;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -32,11 +34,15 @@ public class GameRenderer {
     private GameData gd;
     private HashMap<Integer,Player> players;
     private MapRenderer map;
+    private Connection conn;
+    private ClientSendable cs;
 
-    public GameRenderer(GameData gd) {
+    public GameRenderer(GameData gd,Connection conn) {
 
+        this.conn = conn;
         this.gd = gd;
         players = gd.getPlayers();
+         cs = new ClientSendable(conn);
 
         // initialize the window beforehand
         try {
@@ -130,6 +136,9 @@ public class GameRenderer {
         if (yPos > 600) yPos = 600;
 
         players.get(playerID).setPos(new Vector2(xPos, yPos));
+        gd.updatePlayers(playerID,players.get(playerID));
+        
+
 
         updateFPS(); // update FPS Counter
     }
