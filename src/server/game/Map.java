@@ -12,7 +12,7 @@ import java.util.*;
 public class Map {
 
     // Map Source File information:
-    static final String LOCAL_PATH = "C:/Users/Patrick/Desktop/PhaseShift/";
+    static final String LOCAL_PATH = "/Users/bianca/Documents/B/Team Project/";
     static final String PROJ_PATH = "g2/src/server/game/maps/";
     static final String FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 

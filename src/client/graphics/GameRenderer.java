@@ -13,7 +13,6 @@ import org.lwjgl.opengl.GL11;
 public class GameRenderer {
 
     private String WINDOW_TITLE = "PhaseShift";
-    private static boolean isApplication;
     public static boolean gameRunning = true;
     private int width = 800;
     private int height = 600;
@@ -26,12 +25,10 @@ public class GameRenderer {
     private int fps;
     private long lastFPS;
 
+    private MapRenderer map;
+
 
     public GameRenderer() {
-        initialize();
-    }
-
-    public void initialize() {
         // initialize the window beforehand
         try {
             Display.setDisplayMode(new DisplayMode(width, height));
@@ -40,8 +37,10 @@ public class GameRenderer {
 
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
-            GL11.glOrtho(0, 800, 0, 600, 1, -1);
+            GL11.glOrtho(0, width, 0, height, 1, -1);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+            map = new MapRenderer(0, 1);
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
@@ -50,6 +49,7 @@ public class GameRenderer {
             return;
         }
     }
+
 
     public void execute() {
 
@@ -72,11 +72,11 @@ public class GameRenderer {
         Display.destroy();
     }
 
-    public long getTime() {
+    private long getTime() {
         return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
 
-    public void update(int delta) {
+    private void update(int delta) {
         // rotate quad
         //rotation += 0.15f * delta;
 
@@ -95,7 +95,7 @@ public class GameRenderer {
         updateFPS(); // update FPS Counter
     }
 
-    public void updateFPS() {
+    private void updateFPS() {
         if (getTime() - lastFPS > 1000) {
             Display.setTitle("FPS: " + fps);
             fps = 0;
@@ -109,7 +109,7 @@ public class GameRenderer {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         // set the color of the quad (R,G,B,A)
-        GL11.glColor3f(0.5f,0.5f,1.0f);
+        //GL11.glColor3f(0.5f,0.5f,1.0f);
 
         // rotate quad
         //GL11.glPushMatrix();
@@ -117,7 +117,19 @@ public class GameRenderer {
         //GL11.glRotatef(rotation, 0f, 0f, 1f);
         //GL11.glTranslatef(-xPos, -yPos, 0);
 
+        //map.renderMap();
+
+        /*GL11.glColor3f(0.5f,0.5f,1.0f);
+        GL11.glColor3f(245.0f, 225.0f, 65.0f);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2f(0 , 0 );
+        GL11.glVertex2f(0, 0);
+        GL11.glVertex2f(width, 10);
+        GL11.glVertex2f(width, 0);
+        GL11.glEnd();*/
+
         // update movement
+        GL11.glColor3f(0.5f,0.5f,1.0f);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(xPos - 50, yPos - 50);
         GL11.glVertex2f(xPos + 50, yPos - 50);
@@ -160,7 +172,7 @@ public class GameRenderer {
         }
     }
 
-    public int getDelta() {
+    private int getDelta() {
         long time = getTime();
         int delta = (int) (time - lastFrame);
         lastFrame = time;
@@ -169,8 +181,7 @@ public class GameRenderer {
     }
 
     public static void main(String argv[]) {
-        isApplication = true;
-        new GameRenderer().execute();
+        new GameRenderer ().execute();
         System.exit(0);
     }
 }
