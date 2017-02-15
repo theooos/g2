@@ -59,8 +59,6 @@ public class EnvironmentView extends JPanel implements Observer {
 
     public void update(Observable obs, Object obj){
 
-        System.out.println("New Position: " + env.getPlayer().getPos().toString());
-
         repaint();
     }
 

@@ -1,6 +1,9 @@
 package server.game;
 
 import server.ai.Behaviour;
+import server.ai.Intel;
+import server.ai.orb.Repeat;
+import server.ai.orb.Wander;
 
 /**
  * Created by peran on 01/02/17.
@@ -8,7 +11,7 @@ import server.ai.Behaviour;
 public class Orb extends MovableEntity {
 
     private Behaviour behaviour;
-    private Game gameState;
+    private Intel gameState;
 
     /**
      * The basic AI controlled enemy
@@ -17,7 +20,7 @@ public class Orb extends MovableEntity {
      * @param team the team the is on
      * @param phase starting phase
      */
-    public Orb(Vector2 pos, Vector2 dir, int team, int phase, int id, Game gameState) {
+    public Orb(Vector2 pos, Vector2 dir, int team, int phase, int id, Intel gameState) {
         this.pos = pos;
         this.dir = dir;
         this.team = team;
@@ -31,7 +34,7 @@ public class Orb extends MovableEntity {
         radius = 10;
         ID = id;
         this.gameState = gameState;
-        // this.behaviour = new Wander();
+        this.behaviour = new Repeat(new Wander(gameState));
     }
 
     /**
