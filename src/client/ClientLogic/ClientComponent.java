@@ -1,7 +1,6 @@
 package client.ClientLogic;
 
-import client.testgui.EnvironmentView;
-import client.testgui.TestEnvironment;
+
 import objects.String;
 
 import javax.swing.*;

@@ -34,7 +34,7 @@ public class Client {
                 //case "You are in a 2 player lobby with 1 players in it":
                 //case "Minimum number of players is reached, countdown starting":
                 case "Game loading....":
-                    
+
                     new GameRenderer().execute();
                     break;
                 default:
