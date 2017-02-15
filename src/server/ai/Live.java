@@ -1,44 +1,30 @@
-package server.ai.orb;
+package server.ai;
 
 import server.ai.Behaviour;
 import server.ai.Intel;
+import server.game.MovableEntity;
 import server.game.Orb;
 
 /**
  * Created by rhys on 2/15/17.
  */
-public class Repeat extends Behaviour {
+public class Live extends Behaviour {
 
-    private final Behaviour behaviour;
-    private int iterRem;
-    private int iterTotal;
+    private Feel feel;
 
-    public Repeat(Behaviour behaviour) {
+    public Live(Intel env, MovableEntity e) {
         super();
-        this.behaviour = behaviour;
-        this.iterRem = -1;
-        this.iterTotal = iterRem;
-    }
+        feel = new Feel();
 
-    public Repeat(Behaviour behaviour, int iterations) {
-        super();
-        if (iterations < 1) {
-            throw new RuntimeException("Can't repeat negative times.");
-        }
-        this.behaviour = behaviour;
-        this.iterTotal = iterations;
-        this.iterRem = iterations;
     }
 
     public void start() {
         super.start();
-        this.behaviour.start();
     }
 
     @Override
     public void reset() {
-        this.iterRem = iterTotal;
-
+        start();
     }
 
     @Override
