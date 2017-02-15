@@ -40,7 +40,7 @@ public class EnvironmentView extends JPanel implements Observer {
         g2.fill(player);
 
         g2.setColor(Color.RED);
-        Ellipse2D.Double zombie = entityToSpot(env.getZombie());
+        Ellipse2D.Double zombie = entityToSpot(env.getOrb());
         g2.fill(zombie);
         
         g2.setColor(Color.BLACK);

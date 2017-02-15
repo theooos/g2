@@ -52,8 +52,7 @@ public class Vector2 implements Sendable{
     }
 
     /**
-     * gets the normlisation of the vector
-     * @return the value of the normal
+     * @return the unit vector of this vector.
      */
     public Vector2 normalise(){
         float mag = (float)Math.sqrt(x*x + y*y);
@@ -109,4 +108,5 @@ public class Vector2 implements Sendable{
     public String toString() {
         return "("+x+", "+y+")";
     }
+
 }

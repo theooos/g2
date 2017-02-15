@@ -20,7 +20,7 @@ public class Game {
 
     private ArrayList<Connection> playerConnections;
     private ArrayList<Player> players;
-    private ArrayList<Zombie> zombies;
+    private ArrayList<Orb> orbs;
     private ArrayList<Projectile> projectiles;
 
     private Random rand;
@@ -49,7 +49,7 @@ public class Game {
         sb = new Scoreboard(100, maxPlayers);
 
         players = new ArrayList<>();
-        zombies = new ArrayList<>();
+        orbs = new ArrayList<>();
         projectiles = new ArrayList<>();
 
         //create players
@@ -67,10 +67,10 @@ public class Game {
             players.add(p);
             IDCounter++;
         }
-        //create team zombies
+        //create team orbs
         for (int i = 0; i < 1; i++) {
-            Zombie z = new Zombie(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
-            zombies.add(z);
+            Orb z = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
+            orbs.add(z);
             IDCounter++;
         }
 
@@ -96,7 +96,7 @@ public class Game {
         for (Player p: players) {
             if (!p.isAlive()) respawn(p);
         }
-        for (Zombie z: zombies) {
+        for (Orb z: orbs) {
             if(!z.isAlive()) respawn(z);
             z.live();
             respawn(z);
@@ -147,7 +147,7 @@ public class Game {
         for (Player p: players) {
             sendToAllConnected(p);
         }
-        for (Zombie z: zombies) {
+        for (Orb z: orbs) {
             sendToAllConnected(z);
         }
         for (Projectile p: projectiles) {
@@ -214,7 +214,7 @@ public class Game {
             if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
         }
 
-        for (Zombie z: zombies) {
+        for (Orb z: orbs) {
             if (z.isAlive() && collided(r, pos, z.getRadius(), z.getPos())) return z;
         }
 
@@ -233,7 +233,7 @@ public class Game {
             if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos()) && phase == p.phase) return p;
         }
 
-        for (Zombie z: zombies) {
+        for (Orb z: orbs) {
             if (z.isAlive() && collided(r, pos, z.getRadius(), z.getPos()) && phase == z.phase) return z;
         }
 

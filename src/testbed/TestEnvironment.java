@@ -1,6 +1,5 @@
 package testbed;
 
-import java.awt.geom.Ellipse2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -14,7 +13,7 @@ import server.game.*;
 public class TestEnvironment extends Observable {
 
     private Player player;
-    private Zombie zombie;
+    private Orb orb;
     private Map map;
 
 
@@ -37,7 +36,7 @@ public class TestEnvironment extends Observable {
                 new Vector2(0, 1), 0, 1,
                 new Weapon(), new Weapon(), 1);
 
-        // Spawn zombie a reasonable distance away from the player.
+        // Spawn orb a reasonable distance away from the player.
         Random gen = new Random();
         boolean validDistance = false;
         Vector2 botPos = null;
@@ -47,7 +46,9 @@ public class TestEnvironment extends Observable {
             botPos = new Vector2(botX, botY);
             validDistance = player.getPos().getDistanceTo(botPos) >= 50;
         }
-        zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1, 2);
+
+        // Commented out because there is no Game object to pass to the orb.
+        //orb = new Orb(botPos, new Vector2(0, 1), 1, 1, 2);
 
     }
 
@@ -72,8 +73,8 @@ public class TestEnvironment extends Observable {
         return player;
     }
 
-    public Zombie getZombie() {
-        return zombie;
+    public Orb getOrb() {
+        return orb;
     }
 
     public int getMapWidth() {
