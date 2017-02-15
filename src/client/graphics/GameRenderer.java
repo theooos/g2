@@ -1,6 +1,5 @@
 package client.graphics;
 
-import client.ClientLogic.ClientReceiver;
 import client.ClientLogic.GameData;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -10,7 +9,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import server.game.Player;
 import server.game.Vector2;
-
 
 import java.util.HashMap;
 
@@ -26,30 +24,19 @@ public class GameRenderer {
     private int width = 800;
     private int height = 600;
 
-    //private float xPos;
-    //private float yPos;
-    //private float rotation = 0;
-
     private long lastFrame;
     private int fps;
     private long lastFPS;
     private int playerID;
+
     private GameData gd;
     private HashMap<Integer,Player> players;
-
     private MapRenderer map;
-    private PlayerRenderer player;
-
 
     public GameRenderer(GameData gd) {
 
         this.gd = gd;
         players = gd.getPlayers();
-        //Player p = players.get(0);
-        //Vector2 position = p.getPos();
-
-        //this.setxPos(position.getX());
-        //this.setyPos(position.getY());
 
         // initialize the window beforehand
         try {
@@ -63,8 +50,6 @@ public class GameRenderer {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
             map = new MapRenderer(0, 1);
-            player = new PlayerRenderer(gd);
-
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
@@ -83,13 +68,10 @@ public class GameRenderer {
 
             int delta = getDelta();
             update(delta);
-
             render();
-            //keyboardInput();
 
             Display.update();
             Display.sync(60); // cap fps to 60fps
-
         }
         // clean up
         Display.destroy();
@@ -110,8 +92,7 @@ public class GameRenderer {
         {
             glVertex2f(x + cx, y + cy);//output vertex
 
-            //calculate the tangential vector
-            //remember, the radial vector is (x, y)
+            //calculate the tangential vector; remember, the radial vector is (x, y)
             //to get the tangential vector we flip those coordinates and negate one of them
             float tx = -y;
             float ty = x;
@@ -132,11 +113,9 @@ public class GameRenderer {
     }
 
     private void update(int delta) {
-        // rotate quad
-        //rotation += 0.15f * delta;
 
-        float xPos = players.get(0).getPos().getX();
-        float yPos = players.get(0).getPos().getY();
+        float xPos = players.get(playerID).getPos().getX();
+        float yPos = players.get(playerID).getPos().getY();
 
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) xPos -= 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) xPos += 0.35f * delta;
@@ -150,7 +129,7 @@ public class GameRenderer {
         if (yPos < 0) yPos = 0;
         if (yPos > 600) yPos = 600;
 
-        players.get(0).setPos(new Vector2(xPos, yPos));
+        players.get(playerID).setPos(new Vector2(xPos, yPos));
 
         updateFPS(); // update FPS Counter
     }
@@ -171,16 +150,8 @@ public class GameRenderer {
         // set the color of the quad (R,G,B,A)
         GL11.glColor3f(0.5f,0.5f,1.0f);
 
-        // rotate quad
-        //GL11.glPushMatrix();
-        //GL11.glTranslatef(xPos, yPos, 0);
-        //GL11.glRotatef(rotation, 0f, 0f, 1f);
-        //GL11.glTranslatef(-xPos, -yPos, 0);
-
         map.renderMap();
-
         drawPlayers();
-        //DrawCircle(xPos,yPos,25,100);
 
         /* update movement
         glBegin(GL11.GL_QUADS);
@@ -197,7 +168,7 @@ public class GameRenderer {
 
     private void drawPlayers(){
         for(Player p: players.values()){
-            DrawCircle(p.getPos().getX(), p.getPos().getY(),25,100);
+            DrawCircle(p.getPos().getX(), height - p.getPos().getY(),10,100);
         }
     }
 
@@ -208,30 +179,6 @@ public class GameRenderer {
 
         return delta;
     }
-
-    /*
-    private float getxPos() {
-        return xPos;
-    }
-
-    private float getyPos()
-    {
-        return yPos;
-    }
-
-    private void setxPos(float xposition)
-    {
-
-        this.xPos = xposition;
-
-    }
-
-    private void setyPos(float yposition)
-    {
-
-        this.yPos = yposition;
-    }
-    */
 
     public void setID(int id)
     {
