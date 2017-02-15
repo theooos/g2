@@ -1,5 +1,6 @@
 package client.graphics;
 
+import client.ClientLogic.GameData;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -93,17 +94,13 @@ public class GameRenderer {
     {
         float theta = (float)(2 * 3.1415926 / (num_segments));
         float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
-
         float radial_factor = (float)Math.cos(theta);//calculate the radial factor
 
         float x = r;//we start at angle = 0
-
         float y = 0;
 
-        GL11.glColor3f(0,0,1);
         GL11.glBegin(GL_TRIANGLE_FAN);
-
-
+        GL11.glColor3f(0,1,1);
         //glPoint(300, 300, 1000);
 
         for(int ii = 0; ii < num_segments; ii++)
@@ -113,17 +110,14 @@ public class GameRenderer {
             //calculate the tangential vector
             //remember, the radial vector is (x, y)
             //to get the tangential vector we flip those coordinates and negate one of them
-
             float tx = -y;
             float ty = x;
 
             //add the tangential vector
-
             x += tx * tangetial_factor;
             y += ty * tangetial_factor;
 
             //correct using the radial factor
-
             x *= radial_factor;
             y *= radial_factor;
         }
@@ -177,9 +171,9 @@ public class GameRenderer {
 
         map.renderMap();
 
-        DrawCircle(300,300,25,100);
+        DrawCircle(xPos,yPos,25,100);
 
-        // update movement
+        /* update movement
         glBegin(GL11.GL_QUADS);
 
         glVertex2f(xPos - 50, yPos - 50);
@@ -189,6 +183,7 @@ public class GameRenderer {
 
         GL11.glEnd();
         GL11.glPopMatrix();
+        */
     }
 
     public void keyboardInput() {
@@ -255,7 +250,9 @@ public class GameRenderer {
     }
 
     public static void main(String argv[]) {
-        new GameRenderer ().execute();
+
+        //we need to create a GameData
+        //new GameRenderer .execute();
         System.exit(0);
     }
 }
