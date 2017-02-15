@@ -184,9 +184,9 @@ public class GameRenderer {
 
         map.renderMap();
 
-        DrawCircle(300,300,25,100);
+        DrawCircle(xPos,yPos,25,100);
 
-        // update movement
+        /* update movement
         glBegin(GL11.GL_QUADS);
 
         glVertex2f(xPos - 50, yPos - 50);
@@ -196,6 +196,7 @@ public class GameRenderer {
 
         GL11.glEnd();
         GL11.glPopMatrix();
+        */
     }
 
     public void keyboardInput() {
