@@ -318,6 +318,20 @@ public class Game {
         return null;
     }
 
+    private MovableEntity collidesWithPlayerOrBot(Player player) {
+        ArrayList<MovableEntity> entities = new ArrayList<>();
+        entities.addAll(zombies);
+        entities.addAll(players);
+        entities.removeIf(e -> e.getPhase() != player.getPhase());
+        entities.removeIf(e -> e.equals(player));
+        for (MovableEntity e: entities) {
+            Vector2 l1 = player.getPos().add(player.getDir().mult(player.getSpeed()));
+            if (collided(player.getRadius(), getClosestPointOnLine(l1, player.getPos(), e.getPos()), e.getRadius(), e.getPos())) return e;
+        }
+
+        return null;
+    }
+
     /**
      * returns true if the two entity have collided
      * @param r1 the radius of the first entity
@@ -415,15 +429,29 @@ public class Game {
         }
     }
 
+
+    private boolean validPosition(Player player)
+    {
+        if (pointWallCollision(player.getRadius(),player.getPos(),player.getPhase())) return false;
+        if(collidesWithPlayerOrBot(player)!=null) return false;
+        return true;
+    }
+
+
+
+
     /**
      * updates a received player to the received state
      * @param s a player object
      */
+
     private void updatePlayer(Sendable s) {
         try {
             Player player = (Player) s;
-            players.removeIf(p -> p.equals(player));
-            players.add(player);
+            if (validPosition(player)) {
+                players.removeIf(p -> p.equals(player));
+                players.add(player);
+            }
         }
         catch (Exception e) {
             System.out.println("Not a player");
