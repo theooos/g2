@@ -6,6 +6,7 @@ import networking.Connection;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -114,6 +115,29 @@ public class GameRenderer {
         GL11.glEnd();
     }
 
+    float lastX=-1;
+    float lastY=-1;
+
+    private void positionBullet(Vector2 pos)
+    {
+        Vector2 mousePos=new Vector2(Mouse.getX(),Mouse.getY()) ;
+        System.out.println("MousePos"+mousePos);
+
+        Vector2 dir=pos.vectorTowards(mousePos);
+        System.out.println("dir"+dir);
+
+        Vector2 cursor= dir.normalise();
+        System.out.println("cursor"+cursor);
+
+        cursor=pos.add(cursor.mult(21));
+        lastX =cursor.getX();//pos.getX()+(Mouse.getX()-pos.getX())/10;
+        lastY = cursor.getY();//pos.getY()+(Mouse.getY()-pos.getY())/10;
+        //Mouse.setGrabbed(true);
+
+        if (lastX>0&&lastY>0)
+            DrawCircle(lastX,lastY,10,50);
+    }
+
     private long getTime() {
         return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
@@ -180,9 +204,12 @@ public class GameRenderer {
             if (p.getID() % 2 == 0) {
                 GL11.glColor3f(1, 0.33f, 0.26f);
                 DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
+                positionBullet(new Vector2(p.getPos().getX(),height - p.getPos().getY()));
+
             } else {
                 GL11.glColor3f(0.2f, 0.9f, 0.5f);
                 DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
+                positionBullet(new Vector2(p.getPos().getX(),height - p.getPos().getY()));
             }
         }
     }
