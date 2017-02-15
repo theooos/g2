@@ -3,7 +3,6 @@ package client.ClientLogic;
 import server.game.Player;
 import server.game.Zombie;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

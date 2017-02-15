@@ -7,6 +7,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
+import static org.lwjgl.opengl.GL11.*;
+
 /**
  * Created by bianca on 14/02/2017.
  */
@@ -50,7 +52,6 @@ public class GameRenderer {
         }
     }
 
-
     public void execute() {
 
         getDelta();
@@ -72,7 +73,47 @@ public class GameRenderer {
         Display.destroy();
     }
 
-    private long getTime() {
+    void DrawCircle(float cx, float cy, float r, int num_segments)
+    {
+        float theta = (float)(2 * 3.1415926 / (num_segments));
+        float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
+
+        float radial_factor = (float)Math.cos(theta);//calculate the radial factor
+
+        float x = r;//we start at angle = 0
+
+        float y = 0;
+       GL11.glBegin(GL_TRIANGLE_FAN);
+      //  GL11.glPolygonMode();
+
+
+        //glPoint(300, 300, 1000);
+
+        for(int ii = 0; ii < num_segments; ii++)
+        {
+            glVertex2f(x + cx, y + cy);//output vertex
+
+            //calculate the tangential vector
+            //remember, the radial vector is (x, y)
+            //to get the tangential vector we flip those coordinates and negate one of them
+
+            float tx = -y;
+            float ty = x;
+
+            //add the tangential vector
+
+            x += tx * tangetial_factor;
+            y += ty * tangetial_factor;
+
+            //correct using the radial factor
+
+            x *= radial_factor;
+            y *= radial_factor;
+        }
+        GL11.glEnd();
+    }
+
+    public long getTime() {
         return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
 
@@ -129,12 +170,16 @@ public class GameRenderer {
         GL11.glEnd();*/
 
         // update movement
-        GL11.glColor3f(0.5f,0.5f,1.0f);
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2f(xPos - 50, yPos - 50);
-        GL11.glVertex2f(xPos + 50, yPos - 50);
-        GL11.glVertex2f(xPos + 50, yPos + 50);
-        GL11.glVertex2f(xPos - 50, yPos + 50);
+
+        DrawCircle(300,300,25,100);
+
+        glBegin(GL11.GL_QUADS);
+
+        glVertex2f(xPos - 50, yPos - 50);
+        glVertex2f(xPos + 50, yPos - 50);
+        glVertex2f(xPos + 50, yPos + 50);
+        glVertex2f(xPos - 50, yPos + 50);
+
         GL11.glEnd();
         GL11.glPopMatrix();
     }

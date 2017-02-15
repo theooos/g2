@@ -2,6 +2,7 @@ package client;
 
 import client.ClientLogic.ClientComponent;
 import client.ClientLogic.PlayerConnection;
+import client.graphics.GameRenderer;
 import client.ui.Display;
 import networking.Connection;
 
@@ -32,6 +33,10 @@ public class Client {
                 //case "Player connected":
                 //case "You are in a 2 player lobby with 1 players in it":
                 //case "Minimum number of players is reached, countdown starting":
+                case "Game loading....":
+                    
+                    new GameRenderer().execute();
+                    break;
                 default:
                     System.out.println("[CLIENT] LOL" + s);
                     break;

@@ -1,7 +1,6 @@
 package client.ui;
 
 import client.Client;
-import client.ClientLogic.ClientReceiver;
 import client.ClientLogic.ClientSendable;
 
 import javax.swing.*;
@@ -63,6 +62,8 @@ class LobbyUI extends JPanel {
                 new MainMenu().createMenu(pane);
             }
         });
+
+
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1.0;

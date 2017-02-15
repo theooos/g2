@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * This holds the connection between Server and Client, and can be used by either.

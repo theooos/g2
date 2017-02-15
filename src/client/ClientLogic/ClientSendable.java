@@ -1,7 +1,8 @@
 package client.ClientLogic;
+
 import networking.Connection;
 import objects.String;
-import server.game.*;
+import server.game.Vector2;
 
 /**
  * Created by Patrick on 2/11/2017.

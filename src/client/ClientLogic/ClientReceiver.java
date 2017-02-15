@@ -1,16 +1,14 @@
 package client.ClientLogic;
 
 import networking.Connection;
-import objects.Sendable;
-import server.game.*;
-
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import objects.InitGame;
+import objects.Sendable;
+import server.game.Entity;
+import server.game.Player;
+import server.game.Vector2;
+import server.game.Zombie;
+
+import java.util.HashMap;
 
 
 /**
@@ -21,9 +19,6 @@ public class ClientReceiver extends Entity {
 
 
     private Connection connection;
-    private PlayerConnection pconn;
-    private ArrayList<Zombie> zombies;
-    private ArrayList<Player> players;
     private int mapID;
 
     /**
@@ -49,7 +44,6 @@ public class ClientReceiver extends Entity {
     //InitGame object -
     //Create other object GameData
 
-
     public void setupGame(Sendable s)
     {
         InitGame i = (InitGame) s;
@@ -58,7 +52,6 @@ public class ClientReceiver extends Entity {
         int mapID = i.getMapID();
 
         GameData gd = new GameData(players,zombies,mapID);
-
 
     }
 

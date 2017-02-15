@@ -1,12 +1,9 @@
 package client.ClientLogic;
 
 import networking.Connection;
-import objects.String;
-import server.game.*;
+import server.game.MovableEntity;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Observable;
 
 /**
  * Created by Patrick on 2/11/2017.
