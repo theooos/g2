@@ -1,7 +1,8 @@
 package server;
 
-import objects.String;
 import networking.Connection;
+import objects.String;
+
 import java.util.ArrayList;
 import java.util.Random;
 

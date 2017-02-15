@@ -7,13 +7,14 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
+import static org.lwjgl.opengl.GL11.*;
+
 /**
  * Created by bianca on 14/02/2017.
  */
 public class GameRenderer {
 
     private String WINDOW_TITLE = "PhaseShift";
-    private static boolean isApplication;
     public static boolean gameRunning = true;
     private int width = 800;
     private int height = 600;
@@ -26,12 +27,10 @@ public class GameRenderer {
     private int fps;
     private long lastFPS;
 
+    private MapRenderer map;
+
 
     public GameRenderer() {
-        initialize();
-    }
-
-    public void initialize() {
         // initialize the window beforehand
         try {
             Display.setDisplayMode(new DisplayMode(width, height));
@@ -40,8 +39,10 @@ public class GameRenderer {
 
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
-            GL11.glOrtho(0, 800, 0, 600, 1, -1);
+            GL11.glOrtho(0, width, 0, height, 1, -1);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+            map = new MapRenderer(0, 1);
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
@@ -72,11 +73,51 @@ public class GameRenderer {
         Display.destroy();
     }
 
+    void DrawCircle(float cx, float cy, float r, int num_segments)
+    {
+        float theta = (float)(2 * 3.1415926 / (num_segments));
+        float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
+
+        float radial_factor = (float)Math.cos(theta);//calculate the radial factor
+
+        float x = r;//we start at angle = 0
+
+        float y = 0;
+       GL11.glBegin(GL_TRIANGLE_FAN);
+      //  GL11.glPolygonMode();
+
+
+        //glPoint(300, 300, 1000);
+
+        for(int ii = 0; ii < num_segments; ii++)
+        {
+            glVertex2f(x + cx, y + cy);//output vertex
+
+            //calculate the tangential vector
+            //remember, the radial vector is (x, y)
+            //to get the tangential vector we flip those coordinates and negate one of them
+
+            float tx = -y;
+            float ty = x;
+
+            //add the tangential vector
+
+            x += tx * tangetial_factor;
+            y += ty * tangetial_factor;
+
+            //correct using the radial factor
+
+            x *= radial_factor;
+            y *= radial_factor;
+        }
+        GL11.glEnd();
+    }
+
     public long getTime() {
         return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
 
-    public void update(int delta) {
+    private void update(int delta) {
         // rotate quad
         //rotation += 0.15f * delta;
 
@@ -95,7 +136,7 @@ public class GameRenderer {
         updateFPS(); // update FPS Counter
     }
 
-    public void updateFPS() {
+    private void updateFPS() {
         if (getTime() - lastFPS > 1000) {
             Display.setTitle("FPS: " + fps);
             fps = 0;
@@ -109,7 +150,7 @@ public class GameRenderer {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         // set the color of the quad (R,G,B,A)
-        GL11.glColor3f(0.5f,0.5f,1.0f);
+        //GL11.glColor3f(0.5f,0.5f,1.0f);
 
         // rotate quad
         //GL11.glPushMatrix();
@@ -117,12 +158,28 @@ public class GameRenderer {
         //GL11.glRotatef(rotation, 0f, 0f, 1f);
         //GL11.glTranslatef(-xPos, -yPos, 0);
 
-        // update movement
+        //map.renderMap();
+
+        /*GL11.glColor3f(0.5f,0.5f,1.0f);
+        GL11.glColor3f(245.0f, 225.0f, 65.0f);
         GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2f(xPos - 50, yPos - 50);
-        GL11.glVertex2f(xPos + 50, yPos - 50);
-        GL11.glVertex2f(xPos + 50, yPos + 50);
-        GL11.glVertex2f(xPos - 50, yPos + 50);
+        GL11.glVertex2f(0 , 0 );
+        GL11.glVertex2f(0, 0);
+        GL11.glVertex2f(width, 10);
+        GL11.glVertex2f(width, 0);
+        GL11.glEnd();*/
+
+        // update movement
+
+        DrawCircle(300,300,25,100);
+
+        glBegin(GL11.GL_QUADS);
+
+        glVertex2f(xPos - 50, yPos - 50);
+        glVertex2f(xPos + 50, yPos - 50);
+        glVertex2f(xPos + 50, yPos + 50);
+        glVertex2f(xPos - 50, yPos + 50);
+
         GL11.glEnd();
         GL11.glPopMatrix();
     }
@@ -160,7 +217,7 @@ public class GameRenderer {
         }
     }
 
-    public int getDelta() {
+    private int getDelta() {
         long time = getTime();
         int delta = (int) (time - lastFrame);
         lastFrame = time;
@@ -169,8 +226,7 @@ public class GameRenderer {
     }
 
     public static void main(String argv[]) {
-        isApplication = true;
-        new GameRenderer().execute();
+        new GameRenderer ().execute();
         System.exit(0);
     }
 }

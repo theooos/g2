@@ -1,13 +1,11 @@
 package client.ClientLogic;
 
-
+import networking.Connection;
 import objects.String;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import networking.Connection;
 
 /**
  * Created by Patrick on 2/11/2017.
