@@ -28,7 +28,7 @@ class LobbyUI extends JPanel {
 
         Client client = new Client();
         //client.connection.send();
-        ClientSendable cs = new ClientSendable(client.connection);
+        //ClientSendable cs = new ClientSendable(client.connection);
         //ClientReceiver cr = new ClientReceiver(client.connection);
 
         pane.setLayout(new GridBagLayout());
@@ -57,7 +57,7 @@ class LobbyUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 hideLobby();
                 objects.String s = new objects.String("fire");
-                cs.sendFiringAlert(s);
+               // cs.sendFiringAlert(s);
                 pane.removeAll();
                 new MainMenu().createMenu(pane);
             }

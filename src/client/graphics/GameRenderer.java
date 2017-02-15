@@ -135,8 +135,10 @@ public class GameRenderer {
         if (yPos < 0) yPos = 0;
         if (yPos > 600) yPos = 600;
 
+
         players.get(playerID).setPos(new Vector2(xPos, yPos));
-        gd.updatePlayers(playerID,players.get(playerID));
+        gd.updatePlayers(players.get(playerID));
+
         cs.sendPlayer(players.get(playerID));
 
 

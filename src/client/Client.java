@@ -14,16 +14,18 @@ public class Client {
     public Connection connection = new Connection();
 
     public Client(){
-        connection.addFunctionEvent("String", Client::connectUI);
-        connection.addFunctionEvent("Player", Client::out);
-        connection.addFunctionEvent("AIPlayer", Client::out);
-        connection.addFunctionEvent("Zombie", Client::out);
-        connection.addFunctionEvent("Projectile", Client::out);
+
+        //connection.addFunctionEvent("String", Client::connectUI);
+        //connection.addFunctionEvent("Player", Client::out);
+       // connection.addFunctionEvent("AIPlayer", Client::out);
+        //connection.addFunctionEvent("Zombie", Client::out);
+        //connection.addFunctionEvent("Projectile", Client::out);
 
         PlayerConnection p = new PlayerConnection(connection);
         ClientComponent com = new ClientComponent(connection,p);
     }
 
+    /*
     public static void connectUI(Object o) {
             String s = o.toString();
 
@@ -38,12 +40,14 @@ public class Client {
 
 
                     break;
-                 */
+
                 default:
                     System.out.println("[CLIENT] LOL" + s);
                     break;
             }
     }
+
+    */
 
     public static void main(String[] args){
 

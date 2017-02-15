@@ -23,7 +23,7 @@ public class MakeMove {
      */
     public boolean movePlayer(Vector2 direction) {
 
-        cs.sendPosition(direction);
+        //cs.sendPosition(direction);
         return true;
     }
 }

@@ -31,18 +31,30 @@ public class ClientReceiver extends Entity {
      * @param conn the connection to the server
      * 
      */
-    public ClientReceiver(Connection conn) {
+    public ClientReceiver(Connection conn)  {
 
         this.connection = conn;
        // this.pconn = pconn;
 
         connection.addFunctionEvent("String", this::getID);
         connection.addFunctionEvent("InitGame",this::setupGame);
+        connection.addFunctionEvent("Player",this::updatedPlayer);
+
         //
     }
 
     //InitGame object -
     //Create other object GameData
+
+    public void updatedPlayer(Sendable s)
+    {
+
+        System.out.println("do we get here: ");
+        Player p = (Player) s;
+        gd.updatePlayers(p);
+
+
+    }
 
     public void setupGame(Sendable s)
     {
@@ -61,17 +73,18 @@ public class ClientReceiver extends Entity {
     public void getID(Object o)
     {
         String information = o.toString();
-        System.out.println(information);
+        //System.out.println(information);
         String t = information.substring(0,2);
-        System.out.println("t este : " + t);
+        //System.out.println("t este : " + t);
         switch (t) {
             case "ID":
-
                 String idS = information.substring(2);
 
                 int id = Integer.parseInt(idS);
 
                 this.setID(id);
+
+                break;
 
             //case "You are being cared for by the lobby manager.":
             //case "Player connected":
@@ -83,8 +96,9 @@ public class ClientReceiver extends Entity {
 
                     break;
                  */
+
             default:
-                System.out.println("[CLIENT] LOL" + 0);
+                //System.out.println("[CLIENT] LOL" + 0);
                 break;
         }
 

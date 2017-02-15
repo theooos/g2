@@ -143,6 +143,8 @@ public class Game {
      * The game tick runs.  This is the master function for a running game
      */
     private void gameTick() {
+
+
         for (Player p: players) {
             if (!p.isAlive()) respawn(p);
         }
@@ -223,6 +225,8 @@ public class Game {
      * Sends all objects to all players
      */
     private void sendAllObjects() {
+
+
         for (Player p: players) {
             sendToAllConnected(p);
         }
@@ -250,8 +254,8 @@ public class Game {
      */
     private Vector2 respawnCoords() {
         //get map bounds
-        int boundX = map.getMapLength();
-        int boundY = map.getMapWidth();
+        int boundX = map.getMapLength()-100;
+        int boundY = map.getMapWidth()-100;
         int minDist = 20;
 
         boolean valid = false;
@@ -448,13 +452,14 @@ public class Game {
     private void updatePlayer(Sendable s) {
         try {
             Player player = (Player) s;
+            
             if (validPosition(player)) {
                 players.removeIf(p -> p.equals(player));
                 players.add(player);
             }
         }
         catch (Exception e) {
-            System.out.println("Not a player");
+            System.out.println("Not a player" + e);
         }
     }
 

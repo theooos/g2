@@ -62,8 +62,8 @@ public class GameData {
      * update the hashmap of the players
      *
      */
-    public void updatePlayers(int playerId,Player p) {
-        players.put(playerId, p);
+    public void updatePlayers(Player p) {
+        players.put(p.getID(),p);
     }
 
 
