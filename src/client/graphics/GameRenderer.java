@@ -77,15 +77,12 @@ public class GameRenderer {
     {
         float theta = (float)(2 * 3.1415926 / (num_segments));
         float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
-
         float radial_factor = (float)Math.cos(theta);//calculate the radial factor
 
         float x = r;//we start at angle = 0
-
         float y = 0;
-       GL11.glBegin(GL_TRIANGLE_FAN);
-      //  GL11.glPolygonMode();
 
+        GL11.glBegin(GL_TRIANGLE_FAN);
 
         //glPoint(300, 300, 1000);
 
@@ -96,17 +93,14 @@ public class GameRenderer {
             //calculate the tangential vector
             //remember, the radial vector is (x, y)
             //to get the tangential vector we flip those coordinates and negate one of them
-
             float tx = -y;
             float ty = x;
 
             //add the tangential vector
-
             x += tx * tangetial_factor;
             y += ty * tangetial_factor;
 
             //correct using the radial factor
-
             x *= radial_factor;
             y *= radial_factor;
         }
@@ -160,9 +154,9 @@ public class GameRenderer {
 
         map.renderMap();
 
-        DrawCircle(300,300,25,100);
+        DrawCircle(xPos, yPos,20,100);
 
-        // update movement
+        /* update movement
         glBegin(GL11.GL_QUADS);
 
         glVertex2f(xPos - 50, yPos - 50);
@@ -172,6 +166,7 @@ public class GameRenderer {
 
         GL11.glEnd();
         GL11.glPopMatrix();
+        */
     }
 
     public void keyboardInput() {
