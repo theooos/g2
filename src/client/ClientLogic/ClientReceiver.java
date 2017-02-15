@@ -21,6 +21,7 @@ public class ClientReceiver extends Entity {
 
     private Connection connection;
     private int mapID;
+    private int playerID;
     private GameData gd;
 
     /**
@@ -35,12 +36,9 @@ public class ClientReceiver extends Entity {
         this.connection = conn;
        // this.pconn = pconn;
 
-        connection.addFunctionEvent("String", this::getData);
+        connection.addFunctionEvent("String", this::getID);
         connection.addFunctionEvent("InitGame",this::setupGame);
         //
-
-
-
     }
 
     //InitGame object -
@@ -54,13 +52,42 @@ public class ClientReceiver extends Entity {
         int mapID = i.getMapID();
 
          gd = new GameData(players,zombies,mapID);
-        new GameRenderer(gd).execute();
+         GameRenderer r = new GameRenderer(gd);
+         r.setID(this.getID());
+         r.execute();
+
     }
 
-    public GameData getGameData()
+    public void getID(Object o)
     {
+        String information = o.toString();
+        System.out.println(information);
+        String t = information.substring(0,2);
+        System.out.println("t este : " + t);
+        switch (t) {
+            case "ID":
 
-        return gd;
+                String idS = information.substring(2);
+
+                int id = Integer.parseInt(idS);
+
+                this.setID(id);
+
+            //case "You are being cared for by the lobby manager.":
+            //case "Player connected":
+            //case "You are in a 2 player lobby with 1 players in it":
+            //case "Minimum number of players is reached, countdown starting":
+                /*
+                case "Game loading....":
+
+
+                    break;
+                 */
+            default:
+                System.out.println("[CLIENT] LOL" + 0);
+                break;
+        }
+
     }
 
     /**
@@ -82,7 +109,17 @@ public class ClientReceiver extends Entity {
 
     }
 
+    public void setID(int id)
+    {
 
+        this.playerID = id;
+    }
+
+    public int getID()
+    {
+
+        return playerID;
+    }
 
 
 

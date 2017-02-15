@@ -1,5 +1,6 @@
 package client.graphics;
 
+import client.ClientLogic.ClientReceiver;
 import client.ClientLogic.GameData;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -9,6 +10,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import server.game.Player;
 import server.game.Vector2;
+
 
 import java.util.HashMap;
 
@@ -31,10 +33,12 @@ public class GameRenderer {
     private long lastFrame;
     private int fps;
     private long lastFPS;
+    private int playerID;
     private GameData gd;
     private HashMap<Integer,Player> players;
 
     private MapRenderer map;
+    private PlayerRenderer player;
 
 
     public GameRenderer(GameData gd) {
@@ -59,6 +63,8 @@ public class GameRenderer {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
             map = new MapRenderer(0, 1);
+            player = new PlayerRenderer(gd);
+
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
@@ -89,7 +95,7 @@ public class GameRenderer {
         Display.destroy();
     }
 
-    private void DrawCircle(float cx, float cy, float r, int num_segments)
+    public void DrawCircle(float cx, float cy, float r, int num_segments)
     {
         float theta = (float)(2 * 3.1415926 / (num_segments));
         float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
@@ -226,6 +232,11 @@ public class GameRenderer {
         this.yPos = yposition;
     }
     */
+
+    public void setID(int id)
+    {
+        this.playerID = id;
+    }
 
     public static void main(String argv[]) {
 
