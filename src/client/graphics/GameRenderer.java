@@ -1,6 +1,7 @@
 package client.graphics;
 
 import client.ClientLogic.GameData;
+import networking.Connection;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -32,10 +33,12 @@ public class GameRenderer {
     private GameData gd;
     private HashMap<Integer,Player> players;
     private MapRenderer map;
+    private Connection conn;
 
-    public GameRenderer(GameData gd) {
+    public GameRenderer(GameData gd, Connection conn) {
 
         this.gd = gd;
+        this.conn = conn;
         players = gd.getPlayers();
 
         // initialize the window beforehand
@@ -77,7 +80,14 @@ public class GameRenderer {
         Display.destroy();
     }
 
-    public void DrawCircle(float cx, float cy, float r, int num_segments)
+    /**
+     * Draws a circle on the screen
+     * @param cx Center x coordinate
+     * @param cy Center y coordinate
+     * @param r Circle radius
+     * @param num_segments Number of segments
+     */
+    private void DrawCircle(float cx, float cy, float r, int num_segments)
     {
         float theta = (float)(2 * 3.1415926 / (num_segments));
         float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
@@ -120,8 +130,8 @@ public class GameRenderer {
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) xPos -= 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) xPos += 0.35f * delta;
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos += 0.35f * delta;
-        if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos -= 0.35f * delta;
+        if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
+        if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
 
         // keep quad on the screen
         if (xPos < 0) xPos = 0;
