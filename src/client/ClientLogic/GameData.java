@@ -1,6 +1,5 @@
 package client.ClientLogic;
 
-import org.lwjgl.Sys;
 import server.game.Player;
 import server.game.Zombie;
 
@@ -64,8 +63,7 @@ public class GameData {
      *
      */
     public void updatePlayers(Player p) {
-        System.out.println("");
-        players.put(p.getID(), p);
+        players.put(p.getID(),p);
     }
 
 

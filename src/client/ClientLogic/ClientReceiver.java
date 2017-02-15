@@ -4,9 +4,7 @@ import client.graphics.GameRenderer;
 import networking.Connection;
 import objects.InitGame;
 import objects.Sendable;
-import server.game.Entity;
 import server.game.Player;
-import server.game.Vector2;
 import server.game.Zombie;
 
 import java.util.HashMap;
@@ -31,7 +29,7 @@ public class ClientReceiver {
      * @param conn the connection to the server
      * 
      */
-    public ClientReceiver(Connection conn) {
+    public ClientReceiver(Connection conn)  {
 
         this.connection = conn;
 
@@ -49,7 +47,6 @@ public class ClientReceiver {
 
     public void setupGame(Sendable s)
     {
-        System.out.println("Setting up game");
         InitGame i = (InitGame) s;
         HashMap<Integer,Player> players = i.getPlayers();
         HashMap<Integer,Zombie> zombies = i.getZombies();
@@ -69,9 +66,9 @@ public class ClientReceiver {
     {
         String information = o.toString();
         String t = information.substring(0,2);
+
         switch (t) {
             case "ID":
-
                 String idS = information.substring(2);
 
                 int id = Integer.parseInt(idS);

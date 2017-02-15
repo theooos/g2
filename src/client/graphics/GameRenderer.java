@@ -139,6 +139,7 @@ public class GameRenderer {
         gd.updatePlayers(players.get(playerID));
         cs.sendPlayer(players.get(playerID));
 
+
         updateFPS(); // update FPS Counter
     }
 
@@ -159,8 +160,6 @@ public class GameRenderer {
         //GL11.glColor3f(0.5f,0.5f,1.0f);
 
         map.renderMap();
-
-        GL11.glColor3f(0.5f,0.7f,0);
         drawPlayers();
 
         /* update movement

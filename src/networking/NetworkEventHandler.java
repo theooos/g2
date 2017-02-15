@@ -20,8 +20,10 @@ public class NetworkEventHandler implements Runnable {
 
     public synchronized void run(){
         running = true;
+        //out("Created NetworkEventHandler thread");
 
         while(!toExecute.isEmpty()){
+           // out("Recieved message");
             Sendable sendable = popSendable();
             String className = getClassName(sendable);
 
