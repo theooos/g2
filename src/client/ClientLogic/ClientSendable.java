@@ -2,6 +2,7 @@ package client.ClientLogic;
 
 import networking.Connection;
 import objects.String;
+import server.game.Player;
 import server.game.Vector2;
 
 /**
@@ -22,10 +23,7 @@ public class ClientSendable {
      */
     public ClientSendable(Connection conn)
     {
-
         this.conn = conn;
-
-
     }
 
     /**
@@ -35,7 +33,6 @@ public class ClientSendable {
      */
     public void sendFiringAlert(String message)
     {
-
         conn.send(message);
     }
 
@@ -45,24 +42,26 @@ public class ClientSendable {
      * @param m a string to be sent
      */
     public void sendString(String m) {
-
         conn.send(m);
     }
 
     /**
      * send the updated position to the server
-     * @param v the vector of the new position
+     * @param p the vector of the new position
      */
-    public void sendPosition(Vector2 v)
+    public void sendPosition(Player p)
     {
-
-        conn.send(v);
+        conn.send(p);
     }
 
-
-
-
-
+    /**
+     * sedn the player with the updated position and stuff
+     * @param p
+     */
+    public void sendPlayer(Player p)
+    {
+        conn.send(p);
+    }
 
 
 }

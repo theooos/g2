@@ -28,8 +28,8 @@ public class MapRenderer {
             this.phase = phase;
             this.height = map.getMapLength();
             this.width = map.getMapWidth();
-            System.out.println("height is: " + height);
-            System.out.println("width is: " + width);
+            //System.out.println("height is: " + height);
+            //System.out.println("width is: " + width);
 
         } catch (IOException e) {
             System.out.println("Invalid MapID.");
@@ -67,7 +67,7 @@ public class MapRenderer {
      * @param yEnd Y coordinate of the end position
      */
     private void verticalDraw(float xStart, float yStart, float xEnd, float yEnd){
-        GL11.glColor3f(245.0f, 225.0f, 65.0f);
+        GL11.glColor3f(0.84f, 0.86f, 0.88f);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart- EXTENT));
         GL11.glVertex2f(checkX(xStart + EXTENT), checkY(height - yStart - EXTENT));
@@ -84,7 +84,7 @@ public class MapRenderer {
      * @param yEnd Y coordinate of the end position
      */
     private  void horizontalDraw(float xStart, float yStart, float xEnd, float yEnd){
-        GL11.glColor3f(245.0f, 225.0f, 65.0f);
+        GL11.glColor3f(0.84f, 0.86f, 0.88f);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart- EXTENT));
         GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd - EXTENT));

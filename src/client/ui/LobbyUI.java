@@ -17,35 +17,30 @@ class LobbyUI extends JPanel {
     private static Color mustard = new Color(245, 225, 65);
     private static Color background = new Color(45,60,75);
 
-    private JTextArea clientNames;
+    private JLabel clientNames;
     private JButton cancelButton;
     private JLabel clientText;
     private JLabel countDownText;
-    private JTextArea countDown;
+    private JLabel countDown;
     private JButton mapIcon;
 
     public void createLobby(Container pane, String clientUsername){
 
         Client client = new Client();
-        //client.connection.send();
-        ClientSendable cs = new ClientSendable(client.connection);
-        //ClientReceiver cr = new ClientReceiver(client.connection);
 
         pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
         clientText = new JLabel("Users connected");
 
-        clientNames = new JTextArea(clientUsername);
-        clientNames.setMinimumSize(new Dimension(200, 300));
-        clientNames.setMinimumSize(new Dimension(200, 300));
-        clientNames.setEnabled(false);
+        //clientNames = new JTextArea(clientUsername);
+        clientNames = new JLabel(clientUsername);
 
         cancelButton = new JButton("Cancel");
 
         countDownText = new JLabel("Game will start in");
 
-        countDown = new JTextArea("");
+        countDown = new JLabel("");
         countDown.setEnabled(false);
 
         mapIcon = new JButton();
@@ -56,14 +51,10 @@ class LobbyUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 hideLobby();
-                objects.String s = new objects.String("fire");
-                cs.sendFiringAlert(s);
                 pane.removeAll();
                 new MainMenu().createMenu(pane);
             }
         });
-
-
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1.0;

@@ -13,7 +13,7 @@ public class ClientMain {
 
         Connection conn = new Connection();
         PlayerConnection p = new PlayerConnection(conn);
-        ClientComponent com = new ClientComponent(conn,p);
+        ClientComponent com = new ClientComponent(conn);
 
 
     }

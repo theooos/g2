@@ -26,8 +26,6 @@ public class Display {
         this.menu = menu;
         menu.createMenu(pane);
 
-        //LobbyUI lobby = new LobbyUI();
-        //lobby.createLobby(pane, new MainMenu(), "");
         frame.setVisible(true);
     }
 

@@ -1,5 +1,6 @@
 package client.ClientLogic;
 
+import org.lwjgl.Sys;
 import server.game.Player;
 import server.game.Zombie;
 
@@ -62,8 +63,9 @@ public class GameData {
      * update the hashmap of the players
      *
      */
-    public void updatePlayers(int playerId,Player p) {
-        players.put(playerId, p);
+    public void updatePlayers(Player p) {
+        System.out.println("");
+        players.put(p.getID(), p);
     }
 
 

@@ -1,5 +1,6 @@
 package client.ClientLogic;
 
+import client.graphics.GameRenderer;
 import networking.Connection;
 import objects.String;
 
@@ -13,31 +14,19 @@ import java.awt.event.MouseEvent;
  */
 public class ClientComponent extends JPanel {
 
-    PlayerConnection pconn;
+    //PlayerConnection pconn;
     Connection conn ;
-    public ClientComponent(Connection conn,PlayerConnection pconn){
+
+    GameRenderer renderer;
+
+    public ClientComponent(Connection conn){
 
         super();
-        this.pconn= pconn;
+        //this.pconn= pconn;
         this.conn = conn;
 
         ClientSendable cs = new ClientSendable(conn);
         ClientReceiver cr = new ClientReceiver(conn);
-
-
-        String s = new String("fire");
-
-        // listening to firing alert from mouse and sending a message to server
-        addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent me) {
-
-                cs.sendFiringAlert(s);
-
-            }
-        });
-
-
-
 
     }
 }

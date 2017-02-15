@@ -1,5 +1,6 @@
 package client.graphics;
 
+import client.ClientLogic.ClientSendable;
 import client.ClientLogic.GameData;
 import networking.Connection;
 import org.lwjgl.LWJGLException;
@@ -34,12 +35,14 @@ public class GameRenderer {
     private HashMap<Integer,Player> players;
     private MapRenderer map;
     private Connection conn;
+    private ClientSendable cs;
 
     public GameRenderer(GameData gd, Connection conn) {
 
-        this.gd = gd;
         this.conn = conn;
+        this.gd = gd;
         players = gd.getPlayers();
+        cs = new ClientSendable(conn);
 
         // initialize the window beforehand
         try {
@@ -52,7 +55,7 @@ public class GameRenderer {
             GL11.glOrtho(0, width, 0, height, 1, -1);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
-            map = new MapRenderer(0, 1);
+            map = new MapRenderer(gd.getMapID(), 1);
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
@@ -80,14 +83,7 @@ public class GameRenderer {
         Display.destroy();
     }
 
-    /**
-     * Draws a circle on the screen
-     * @param cx Center x coordinate
-     * @param cy Center y coordinate
-     * @param r Circle radius
-     * @param num_segments Number of segments
-     */
-    private void DrawCircle(float cx, float cy, float r, int num_segments)
+    public void DrawCircle(float cx, float cy, float r, int num_segments)
     {
         float theta = (float)(2 * 3.1415926 / (num_segments));
         float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
@@ -140,6 +136,8 @@ public class GameRenderer {
         if (yPos > 600) yPos = 600;
 
         players.get(playerID).setPos(new Vector2(xPos, yPos));
+        gd.updatePlayers(players.get(playerID));
+        cs.sendPlayer(players.get(playerID));
 
         updateFPS(); // update FPS Counter
     }
@@ -158,9 +156,11 @@ public class GameRenderer {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         // set the color of the quad (R,G,B,A)
-        GL11.glColor3f(0.5f,0.5f,1.0f);
+        //GL11.glColor3f(0.5f,0.5f,1.0f);
 
         map.renderMap();
+
+        GL11.glColor3f(0.5f,0.7f,0);
         drawPlayers();
 
         /* update movement
@@ -177,8 +177,14 @@ public class GameRenderer {
     }
 
     private void drawPlayers(){
-        for(Player p: players.values()){
-            DrawCircle(p.getPos().getX(), height - p.getPos().getY(),10,100);
+        for(Player p: players.values()) {
+            if (p.getID() % 2 == 0) {
+                GL11.glColor3f(1, 0.33f, 0.26f);
+                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
+            } else {
+                GL11.glColor3f(0.2f, 0.9f, 0.5f);
+                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
+            }
         }
     }
 
