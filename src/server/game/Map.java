@@ -81,7 +81,7 @@ public class Map {
     /**
      * @return the length of the map in position units.
      */
-    public int getMapHeight() {
+    public int getMapLength() {
         return length;
     }
 

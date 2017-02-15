@@ -1,11 +1,18 @@
 package client.graphics;
 
+import client.ClientLogic.ClientReceiver;
+import client.ClientLogic.GameData;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import server.game.Player;
+import server.game.Vector2;
+
+
+import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -19,18 +26,31 @@ public class GameRenderer {
     private int width = 800;
     private int height = 600;
 
-    private float xPos = 100;
-    private float yPos = 200;
+   // private float xPos = 100;
+    private float xPos;
+   // private float yPos = 200;
+    private float yPos;
     //private float rotation = 0;
 
     private long lastFrame;
     private int fps;
     private long lastFPS;
+    private GameData gd;
+    private HashMap<Integer,Player> players;
 
     private MapRenderer map;
 
 
-    public GameRenderer() {
+    public GameRenderer(GameData gd) {
+
+        this.gd = gd;
+        players = gd.getPlayers();
+        Player p = players.get(0);
+        Vector2 position = p.getPos();
+
+        this.setxPos(position.getX());
+        this.setyPos(position.getY());
+
         // initialize the window beforehand
         try {
             Display.setDisplayMode(new DisplayMode(width, height));
@@ -44,6 +64,9 @@ public class GameRenderer {
 
             map = new MapRenderer(0, 1);
 
+
+
+
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
             le.printStackTrace();
@@ -54,6 +77,7 @@ public class GameRenderer {
 
     public void execute() {
 
+        System.out.println("do we get here???");
         getDelta();
         lastFPS = getTime();
 
@@ -225,8 +249,34 @@ public class GameRenderer {
         return delta;
     }
 
+    private float getxPos() {
+        return xPos;
+    }
+
+    private float getyPos()
+    {
+        return yPos;
+    }
+
+    private void setxPos(float xposition)
+    {
+
+        this.xPos = xposition;
+
+    }
+
+    private void setyPos(float yposition)
+    {
+
+        this.yPos = yposition;
+    }
+
     public static void main(String argv[]) {
-        new GameRenderer ().execute();
+
+        //we need to create a GameData
+
+
+        //new GameRenderer .execute();
         System.exit(0);
     }
 }
