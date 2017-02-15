@@ -35,10 +35,12 @@ public class GameRenderer {
     private long lastFrame;
     private int fps;
     private long lastFPS;
+    private int playerID;
     private GameData gd;
     private HashMap<Integer,Player> players;
 
     private MapRenderer map;
+    private PlayerRenderer player;
 
 
     public GameRenderer(GameData gd) {
@@ -47,12 +49,16 @@ public class GameRenderer {
         players = gd.getPlayers();
         Player p = players.get(0);
         Vector2 position = p.getPos();
-
         this.setxPos(position.getX());
         this.setyPos(position.getY());
 
+
+
         // initialize the window beforehand
+
         try {
+
+
             Display.setDisplayMode(new DisplayMode(width, height));
             Display.setTitle(WINDOW_TITLE);
             Display.create();
@@ -63,6 +69,7 @@ public class GameRenderer {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
             map = new MapRenderer(0, 1);
+            player = new PlayerRenderer(gd);
 
 
 
@@ -77,7 +84,7 @@ public class GameRenderer {
 
     public void execute() {
 
-        System.out.println("do we get here???");
+
         getDelta();
         lastFPS = getTime();
 
@@ -97,7 +104,7 @@ public class GameRenderer {
         Display.destroy();
     }
 
-    private void DrawCircle(float cx, float cy, float r, int num_segments)
+    public void DrawCircle(float cx, float cy, float r, int num_segments)
     {
         float theta = (float)(2 * 3.1415926 / (num_segments));
         float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
@@ -107,8 +114,8 @@ public class GameRenderer {
         float x = r;//we start at angle = 0
 
         float y = 0;
-       GL11.glBegin(GL_TRIANGLE_FAN);
-      //  GL11.glPolygonMode();
+        GL11.glBegin(GL_TRIANGLE_FAN);
+        //  GL11.glPolygonMode();
 
 
         //glPoint(300, 300, 1000);
@@ -151,6 +158,8 @@ public class GameRenderer {
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos += 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos -= 0.35f * delta;
 
+
+
         // keep quad on the screen
         if (xPos < 0) xPos = 0;
         if (xPos > 800) xPos = 800;
@@ -171,6 +180,7 @@ public class GameRenderer {
 
     private void render(){
         // Clear the screen and depth buffer
+
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         // set the color of the quad (R,G,B,A)
@@ -182,10 +192,7 @@ public class GameRenderer {
         //GL11.glRotatef(rotation, 0f, 0f, 1f);
         //GL11.glTranslatef(-xPos, -yPos, 0);
 
-        map.renderMap();
-
-        DrawCircle(xPos,yPos,25,100);
-
+        DrawCircle(xPos,yPos,20,100);
         /* update movement
         glBegin(GL11.GL_QUADS);
 
@@ -260,6 +267,11 @@ public class GameRenderer {
     {
 
         this.yPos = yposition;
+    }
+
+    public void setID(int id)
+    {
+        this.playerID = id;
     }
 
     public static void main(String argv[]) {

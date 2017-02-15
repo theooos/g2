@@ -15,7 +15,6 @@ public class MakeMove {
 
     }
 
-
     /**
      * making a move and sending it to the server
      *

@@ -28,15 +28,11 @@ public class PlayerConnection  {
         this.connection=conn;
 
 
-
         connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("Player", this::addEntity);
         connection.addFunctionEvent("AIPlayer", this::addEntity);
         connection.addFunctionEvent("Zombie", this::addEntity);
         connection.addFunctionEvent("Projectile", this::addEntity);
-
-
-
 
     }
 
