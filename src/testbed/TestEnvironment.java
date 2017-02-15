@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Random;
+
+import server.ai.Intel;
 import server.game.*;
 
 /**
@@ -15,6 +17,7 @@ public class TestEnvironment extends Observable {
     private Player player;
     private Orb orb;
     private Map map;
+    private Intel env;
 
 
     public TestEnvironment(){
@@ -35,20 +38,23 @@ public class TestEnvironment extends Observable {
         player = new Player(new Vector2(400, 500),
                 new Vector2(0, 1), 0, 1,
                 new WeaponShotgun(), new WeaponSniper(), 0);
+        ArrayList<Player> playerList = new ArrayList<>();
+        playerList.add(player);
+
+        env = new Intel(playerList, map);
 
         // Spawn orb a reasonable distance away from the player.
         Random gen = new Random();
         boolean validDistance = false;
-        Vector2 botPos = null;
+        Vector2 orbPos = null;
         while (!validDistance){
             int botX = gen.nextInt(map.getMapWidth());
             int botY = gen.nextInt(map.getMapHeight());
-            botPos = new Vector2(botX, botY);
-            validDistance = player.getPos().getDistanceTo(botPos) >= 50;
+            orbPos = new Vector2(botX, botY);
+            validDistance = player.getPos().getDistanceTo(orbPos) >= 50;
         }
 
-        // Commented out because there is no Game object to pass to the orb.
-        //orb = new Orb(botPos, new Vector2(0, 1), 1, 1, 2);
+        orb = new Orb(orbPos, new Vector2(0, 1), 1, 1, 2, env);
 
     }
 
@@ -62,6 +68,7 @@ public class TestEnvironment extends Observable {
         if (hypoLoc.getX() >= 0 && hypoLoc.getX() < map.getMapWidth()){
             if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapHeight()){
                 player.live();      // Execute the movement??
+                orb.live();
                 setChanged();
                 notifyObservers();
                 return true;

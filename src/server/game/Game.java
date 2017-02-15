@@ -2,6 +2,7 @@ package server.game;
 
 import networking.Connection;
 import objects.Sendable;
+import server.ai.Intel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class Game {
         players = new ArrayList<>();
         orbs = new ArrayList<>();
         projectiles = new ArrayList<>();
+        Intel env = new Intel(players, map);
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
@@ -114,7 +116,7 @@ public class Game {
         }
         //create team orbs
         for (int i = 0; i < 1; i++) {
-            Orb z = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
+            Orb z = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter, env);
             orbs.add(z);
             IDCounter++;
         }
@@ -473,5 +475,4 @@ public class Game {
     private void togglePhase(Player player) {
         player.togglePhase();
     }
-
 }

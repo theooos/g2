@@ -2,6 +2,8 @@ package server.game;
 
 import objects.Sendable;
 
+import java.util.Random;
+
 /**
  * Created by peran on 27/01/17.
  */

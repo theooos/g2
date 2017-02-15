@@ -4,6 +4,8 @@ import server.game.Game;
 import server.game.Orb;
 
 /**
+ * Abstract Behaviour object allowing construction of Behaviour tree.
+ * Based on tutorial at https://goo.gl/0f9F0U .
  * Created by rhys on 2/14/17.
  */
 public abstract class Behaviour {
@@ -20,6 +22,7 @@ public abstract class Behaviour {
      * Sets a flag to signal that this Behaviour is running.
      */
     public void start() {
+        System.out.println(">>> Starting routine: " + this.getClass().getSimpleName());
         this.state = BehaviourState.Running;
     }
 
@@ -30,12 +33,13 @@ public abstract class Behaviour {
      * @param orb - the Orb that this Behaviour will act upon.
      * @param env - the game-state that this Behaviour will use to determine the actions to take.
      */
-    public abstract void act(Orb orb, Game env);
+    public abstract void act(Orb orb, Intel env);
 
     /**
      * Sets a flag to signal that this Behaviour has succeeded.
      */
     protected void succeed(){
+        System.out.println(">>> Routine: " + this.getClass().getSimpleName() + " SUCCEEDED");
         this.state = BehaviourState.Success;
     }
 
@@ -43,6 +47,7 @@ public abstract class Behaviour {
      * Sets a flag to signal that this Behaviour has failed.
      */
     protected void fail() {
+        System.out.println(">>> Routine: " + this.getClass().getSimpleName() + " FAILED");
         this.state = BehaviourState.Failure;
     }
 
