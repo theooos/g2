@@ -83,11 +83,11 @@ public class GameRenderer {
         float x = r;//we start at angle = 0
 
         float y = 0;
-       GL11.glBegin(GL_TRIANGLE_FAN);
-      //  GL11.glPolygonMode();
+
+        GL11.glColor3f(0,0,1);
+        GL11.glBegin(GL_TRIANGLE_FAN);
 
 
-        //glPoint(300, 300, 1000);
 
         for(int ii = 0; ii < num_segments; ii++)
         {
