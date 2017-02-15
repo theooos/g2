@@ -160,19 +160,9 @@ public class GameRenderer {
 
         map.renderMap();
 
-        /*GL11.glColor3f(0.5f,0.5f,1.0f);
-        GL11.glColor3f(245.0f, 225.0f, 65.0f);
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2f(0 , 0 );
-        GL11.glVertex2f(0, 0);
-        GL11.glVertex2f(width, 10);
-        GL11.glVertex2f(width, 0);
-        GL11.glEnd();*/
-
-        // update movement
-
         DrawCircle(300,300,25,100);
 
+        // update movement
         glBegin(GL11.GL_QUADS);
 
         glVertex2f(xPos - 50, yPos - 50);
