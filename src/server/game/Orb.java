@@ -1,6 +1,6 @@
 package server.game;
 
-import server.ai.Behaviour;
+import server.ai.behaviour.Behaviour;
 import server.ai.Intel;
 import server.ai.Live;
 import server.ai.orb.Wander;
@@ -45,5 +45,9 @@ public class Orb extends MovableEntity {
             behaviour.start();
         }
         behaviour.act(this, gameState);
+    }
+
+    private void createBehaviourTree() {
+
     }
 }

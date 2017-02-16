@@ -1,7 +1,6 @@
 package server.ai;
 
-import server.ai.Behaviour;
-import server.ai.Intel;
+import server.ai.behaviour.Behaviour;
 import server.game.MovableEntity;
 import server.game.Orb;
 

@@ -1,6 +1,6 @@
 package server.ai.orb;
 
-import server.ai.Behaviour;
+import server.ai.behaviour.Behaviour;
 import server.ai.Intel;
 import server.game.Orb;
 import server.game.Vector2;

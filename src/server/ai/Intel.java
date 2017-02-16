@@ -2,7 +2,9 @@ package server.ai;
 
 import server.game.Map;
 import server.game.Player;
+import server.game.Vector2;
 
+import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 
 /**
@@ -13,6 +15,12 @@ public class Intel {
 
     private ArrayList<Player> players;
     private Map map;
+    private int healthLastTick;
+    private boolean hurt;
+    private boolean playerNearby;
+    private Vector2 targetLocation;
+    private ArrayList<Vector2> path;
+
 
     /**
      * Constructs an intel object based on the given Players and Map.
@@ -60,5 +68,76 @@ public class Intel {
      */
     public void setMap(Map map) {
         this.map = map;
+    }
+
+    /**
+     * @return true if there is a player in the entity's knowledge region.
+     */
+    public boolean isPlayerNearby() {
+        return playerNearby;
+    }
+
+    /**
+     * Updates the entity's Intel to tell whether or not a player is nearby.
+     * @param playerNearby
+     */
+    public void setPlayerNearby(boolean playerNearby) {
+        this.playerNearby = playerNearby;
+    }
+
+    public int healthLastTick() {
+        return healthLastTick;
+    }
+
+    public void rememberHealth(int health) {
+        this.healthLastTick = health;
+    }
+
+    public boolean isInPain() {
+        return hurt;
+    }
+
+    public void setHurt(boolean hurt) {
+        this.hurt = hurt;
+    }
+
+    public Vector2 getTargetLocation() {
+        return targetLocation;
+    }
+
+    public void setTargetLocation(Vector2 targetLocation) {
+        this.targetLocation = targetLocation;
+    }
+
+    /**
+     * @return the position on the path currently moving towards.
+     */
+    public Vector2 checkpoint(){
+        return path.get(0);
+    }
+
+    /**
+     * Updates the path to acknowledge a checkpoint being reached.
+     * @return the next checkpoint to move towards.
+     */
+    public Vector2 nextCheckpoint(){
+        path.remove(0);
+        return path.get(0);
+    }
+
+    /**
+     * @return true if the current checkpoint is the destination.
+     */
+    public boolean isFinalDestination(){
+        return path.size() == 1;
+    }
+
+    /**
+     * Clears the path and puts a new one in place.
+     * @param newPath - The new list of points for the new path.
+     */
+    public void resetPath(ArrayList<Vector2> newPath){
+        path.clear();
+        path = newPath;
     }
 }
