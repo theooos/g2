@@ -1,17 +1,15 @@
 package server.game;
 
-import server.ai.behaviour.Behaviour;
+import server.ai.behaviour.*;
 import server.ai.Intel;
-import server.ai.Live;
-import server.ai.orb.Wander;
 
 /**
  * Created by peran on 01/02/17.
  */
 public class Orb extends MovableEntity {
 
-    private Behaviour behaviour;
-    private Intel gameState;
+    private Behaviour tree;
+    private Intel intel;
 
     /**
      * The basic AI controlled enemy
@@ -20,7 +18,7 @@ public class Orb extends MovableEntity {
      * @param team the team the is on
      * @param phase starting phase
      */
-    public Orb(Vector2 pos, Vector2 dir, int team, int phase, int id, Intel gameState) {
+    public Orb(Vector2 pos, Vector2 dir, int team, int phase, int id, Intel intel) {
         this.pos = pos;
         this.dir = dir;
         this.team = team;
@@ -33,21 +31,89 @@ public class Orb extends MovableEntity {
         this.team = team;
         radius = 10;
         ID = id;
-        this.gameState = gameState;
-        this.behaviour = new Live(new Wander(gameState));
+        this.intel = intel;
+        createBehaviourTree(intel);
     }
 
     /**
      * Makes this Orb behave in an appropriate manner when triggered by the Game Loop.
      */
     public void live() {
-        if (behaviour.getState() == null) {
-            behaviour.start();
-        }
-        behaviour.act(this, gameState);
+        this.tree.doAction();
     }
 
-    private void createBehaviourTree() {
+    public void start() {
+        this.tree.getControl().safeStart();
+    }
 
+    private void createBehaviourTree(Intel intel) {
+
+        // Feed this Orb into the environment intel object.
+        intel.assignEntity(this);
+
+        Behaviour live = new Sequence(intel);
+        live = new ResetDecorator(intel, live);
+
+        Behaviour feel = new Selector(intel);
+
+        // Create "Scared" branch -----------------------------------------------
+        Behaviour scared = new Selector(intel);
+        scared = new ScaredDecorator(intel, scared);
+
+        // Create "Flee" sequence -------------------------
+        Behaviour flee = new Sequence(intel);
+        //(PlannerController)flee.getControl()).add(new LocateCover(intel, this));
+        ((PlannerController)flee.getControl()).add(new Wander(intel));
+        ((PlannerController)flee.getControl()).add(new FindPath(intel));
+        ((PlannerController)flee.getControl()).add(new Travel(intel));
+
+        ((PlannerController)scared.getControl()).add(new Travel(intel));
+        ((PlannerController)scared.getControl()).add(flee);
+
+
+        // Create "Angry" branch ------------------------------------------------
+        Behaviour angry = new Selector(intel);
+        angry = new AngryDecorator(intel, angry);
+
+        // Create "Attack" sequence -----------------------
+        Behaviour attack = new Sequence(intel);
+        ((PlannerController)attack.getControl()).add(new Travel(intel));
+        ((PlannerController)attack.getControl()).add(new Zap(intel));
+
+        // Create "Hunt" sequence -------------------------
+        Behaviour hunt = new Sequence(intel);
+        ((PlannerController)hunt.getControl()).add(new AcquireTarget(intel));
+        ((PlannerController)hunt.getControl()).add(new FindPath(intel));
+        ((PlannerController)hunt.getControl()).add(new Travel(intel));
+        ((PlannerController)hunt.getControl()).add(new Zap(intel));
+
+        ((PlannerController)angry.getControl()).add(attack);
+        ((PlannerController)angry.getControl()).add(hunt);
+
+
+        // Create "Relaxed" branch ----------------------------------------------
+        Selector relaxed = new Selector(intel);
+
+        // Create "Drift" sequence ------------------------
+        Behaviour drift = new Sequence(intel);
+        ((PlannerController)drift.getControl()).add(new Wander(intel));
+        ((PlannerController)drift.getControl()).add(new FindPath(intel));
+        ((PlannerController)drift.getControl()).add(new Travel(intel));
+
+        ((PlannerController)relaxed.getControl()).add(new Travel(intel));
+        ((PlannerController)relaxed.getControl()).add(drift);
+
+
+        // Final Construction.
+        ((PlannerController)feel.getControl()).add(scared);
+        ((PlannerController)feel.getControl()).add(angry);
+        ((PlannerController)feel.getControl()).add(relaxed);
+
+
+        ((PlannerController)live.getControl()).add(new HealthCheck(intel));
+        ((PlannerController)live.getControl()).add(new LookAround(intel));
+        ((PlannerController)live.getControl()).add(feel);
+
+        this.tree = live;
     }
 }

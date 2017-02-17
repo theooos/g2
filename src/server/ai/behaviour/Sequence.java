@@ -8,10 +8,11 @@ import server.game.MovableEntity;
  */
 public class Sequence extends Planner {
 
-    public Sequence(Intel env, MovableEntity ent)
+    public Sequence(Intel intel)
     {
-        super(env, ent);
+        super(intel);
     }
+
     /**
      * Bails from the sequence when a sub-task fails.
      */
@@ -20,25 +21,23 @@ public class Sequence extends Planner {
     {
         control.fail();
     }
+
+
     /**
      * Moves onto the next sub-task in the sequence when a sub-task succeeds.
      */
     @Override
-    public void subTaskSucceeded()
-    {
+    public void subTaskSucceeded() {
         int curPos =
-                control.subtasks.indexOf(control.curTask);
-        if( curPos ==
-                (control.subTasks.size() - 1))
-        {
+                control.subTasks.indexOf(control.curTask);
+        if (curPos == (control.subTasks.size() - 1)) {
             control.succeed();
         }
-        else
-        {
-            control.curTask = control.subtasks.elementAt(curPos+1);
-            if(!control.curTask.CheckConditions())
-            {
-                control.failure();
+        else {
+            control.curTask = control.subTasks.elementAt(curPos+1);
+            System.out.println("Checking conditions.");
+            if(!control.curTask.checkConditions()) {
+                control.fail();
             }
         }
     }

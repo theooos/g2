@@ -1,9 +1,6 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
-import server.game.Game;
-import server.game.MovableEntity;
-import server.game.Orb;
 
 /**
  * Abstract Behaviour object allowing construction of Behaviour tree.
@@ -12,15 +9,14 @@ import server.game.Orb;
  */
 public abstract class Behaviour {
 
-    protected Intel env;
-    protected MovableEntity ent;
+    protected Intel intel;
 
     /**
      * Constructor for Abstract class.
+     * @param intel
      */
-    protected Behaviour(Intel env, MovableEntity ent){
-        this.env = env;
-        this.ent = ent;
+    protected Behaviour(Intel intel){
+        this.intel = intel;
     }
 
     /**
@@ -46,9 +42,5 @@ public abstract class Behaviour {
 
 
     public abstract TaskController getControl();
-
-
-
-
 
 }

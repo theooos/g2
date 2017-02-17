@@ -12,13 +12,14 @@ import java.util.ArrayList;
  */
 public class FindPath extends Task {
 
-    public FindPath(Intel env, MovableEntity ent) {
-        super(env, ent);
+    public FindPath(Intel intel) {
+        super(intel);
     }
 
     @Override
     public boolean checkConditions() {
-        return (ent.isAlive() && env.getTargetLocation() != null);
+        return (intel.ent().isAlive() &&
+                intel.getTargetLocation() != null);
     }
 
     @Override
@@ -38,8 +39,8 @@ public class FindPath extends Task {
         // SKELETON METHOD.
         // PERQUISITE: Collision Detection, DoorwayDetection.
         ArrayList<Vector2> path = new ArrayList<>();
-        path.add(env.getTargetLocation());
-        env.resetPath(path);
+        path.add(intel.getTargetLocation());
+        intel.resetPath(path);
         getControl().succeed();
     }
 

@@ -9,13 +9,13 @@ import server.game.MovableEntity;
  */
 public class LookAround extends Task {
 
-    public LookAround(Intel env, MovableEntity ent){
-        super(env, ent);
+    public LookAround(Intel intel){
+        super(intel);
     }
 
     @Override
     public boolean checkConditions() {
-        return ent.isAlive();
+        return intel.ent().isAlive();
     }
 
     @Override
@@ -23,7 +23,7 @@ public class LookAround extends Task {
         // Code HERE for checking for nearby players.
         // PERQUISITE: Collision Detection.
 
-        env.setPlayerNearby(true);
+        intel.setPlayerNearby(true);
         getControl().succeed();
     }
 

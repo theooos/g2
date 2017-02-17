@@ -9,13 +9,13 @@ import server.game.MovableEntity;
  */
 public class HealthCheck extends Task {
 
-    public HealthCheck(Intel env, MovableEntity ent){
-        super(env, ent);
+    public HealthCheck(Intel intel){
+        super(intel);
     }
 
     @Override
     public boolean checkConditions() {
-        return ent.isAlive();
+        return intel.ent().isAlive();
     }
 
     @Override
@@ -30,14 +30,14 @@ public class HealthCheck extends Task {
 
     @Override
     public void doAction() {
-        int currentHealth = ent.getHealth();
-        if (currentHealth < env.healthLastTick()){
-            env.setHurt(true);
+        int currentHealth = intel.ent().getHealth();
+        if (currentHealth < intel.healthLastTick()){
+            intel.setHurt(true);
         } else {
-            env.setHurt(false);
+            intel.setHurt(false);
         }
-        env.rememberHealth(currentHealth);
-        getControl().suceed();
+        intel.rememberHealth(currentHealth);
+        getControl().succeed();
     }
 
 }
