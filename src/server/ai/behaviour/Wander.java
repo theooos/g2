@@ -12,13 +12,13 @@ import java.util.Random;
  */
 public class Wander extends Task {
 
-    public Wander(Intel env, MovableEntity ent) {
-        super(env, ent);
+    public Wander(Intel intel) {
+        super(intel);
     }
 
     @Override
     public boolean checkConditions() {
-        return ent.isAlive();
+        return intel.ent().isAlive();
     }
 
     @Override
@@ -35,9 +35,9 @@ public class Wander extends Task {
     @Override
     public void doAction() {
         Random gen = new Random();
-        float ranX = (float) gen.nextInt(env.getMap().getMapWidth());
-        float ranY = (float) gen.nextInt(env.getMap().getMapLength());
-        env.setTargetLocation(new Vector2(ranX, ranY));
+        float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
+        float ranY = (float) gen.nextInt(intel.getMap().getMapLength());
+        intel.setTargetLocation(new Vector2(ranX, ranY));
         getControl().succeed();
     }
 

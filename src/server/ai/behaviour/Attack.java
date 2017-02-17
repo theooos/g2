@@ -8,7 +8,8 @@ import server.game.MovableEntity;
  */
 public abstract class Attack extends Task {
 
-    public Attack(Intel env, MovableEntity ent){
-        super(env,ent);
+    public Attack(Intel intel){
+        super(intel);
     }
+
 }

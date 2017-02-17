@@ -1,6 +1,7 @@
 package server.ai;
 
 import server.game.Map;
+import server.game.MovableEntity;
 import server.game.Player;
 import server.game.Vector2;
 
@@ -13,12 +14,14 @@ import java.util.ArrayList;
  */
 public class Intel {
 
+    private MovableEntity ent;
     private ArrayList<Player> players;
     private Map map;
     private int healthLastTick;
     private boolean hurt;
     private boolean playerNearby;
     private Vector2 targetLocation;
+    private Player targetPlayer;
     private ArrayList<Vector2> path;
 
 
@@ -30,6 +33,16 @@ public class Intel {
     public Intel(ArrayList<Player> players, Map map) {
         this.players = players;
         this.map = map;
+        this.hurt = false;
+        this.playerNearby = false;
+        this.targetLocation = null;
+        this.targetPlayer = null;
+        path = new ArrayList<>();
+    }
+
+    public void assignEntity(MovableEntity ent){
+        this.ent = ent;
+        this.healthLastTick = ent.getHealth();
     }
 
     /**
@@ -139,5 +152,17 @@ public class Intel {
     public void resetPath(ArrayList<Vector2> newPath){
         path.clear();
         path = newPath;
+    }
+
+    public Player getTargetPlayer() {
+        return targetPlayer;
+    }
+
+    public void setTargetPlayer(Player targetPlayer) {
+        this.targetPlayer = targetPlayer;
+    }
+
+    public MovableEntity ent(){
+        return ent;
     }
 }

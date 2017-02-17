@@ -1,7 +1,6 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
-import server.game.MovableEntity;
 
 /**
  * Represents a leaf task of the Behaviour Tree.
@@ -11,8 +10,8 @@ public abstract class Task extends Behaviour {
 
     protected TaskController control;   // Keeps track of Task state.
 
-    public Task(Intel env, MovableEntity ent){
-        super(env, ent );
+    public Task(Intel intel){
+        super(intel);
         createController();
     }
 
