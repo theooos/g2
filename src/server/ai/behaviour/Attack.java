@@ -9,7 +9,7 @@ import server.game.MovableEntity;
 public abstract class Attack extends Task {
 
     public Attack(Intel intel){
-        super(intel);
+        super(intel, "Attack");
     }
 
 }

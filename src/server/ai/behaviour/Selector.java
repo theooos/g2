@@ -2,14 +2,15 @@ package server.ai.behaviour;
 
 import server.ai.Intel;
 import server.game.MovableEntity;
+import testbed.AITestUI;
 
 /**
  * Created by rhys on 2/16/17.
  */
 public class Selector extends Planner {
 
-    public Selector(Intel intel) {
-        super(intel);
+    public Selector(Intel intel, String name) {
+        super(intel, name);
     }
 
     @Override
@@ -25,8 +26,14 @@ public class Selector extends Planner {
         }
     }
 
+    @Override
+    public void start(){
+        if (AITestUI.DEBUG) System.out.println(name + " starting.");
+        chooseNewTask().getControl().safeStart();
+
+    }
+
     public Behaviour chooseNewTask() {
-        System.out.println("Choosing task...");
         Behaviour behaviour = null;
         boolean found = false;
         int curPos = control.subTasks.indexOf(control.curTask);
@@ -41,7 +48,6 @@ public class Selector extends Planner {
             curPos++;
             behaviour = control.subTasks.elementAt((curPos));
 
-            System.out.println("Checking conditions: Selector");
             if (behaviour.checkConditions()) {
                 found = true;
             }

@@ -10,7 +10,7 @@ import server.game.MovableEntity;
 public class HealthCheck extends Task {
 
     public HealthCheck(Intel intel){
-        super(intel);
+        super(intel, "Health Check");
     }
 
     @Override
@@ -18,17 +18,8 @@ public class HealthCheck extends Task {
         return intel.ent().isAlive();
     }
 
-    @Override
-    public void start() {
-        System.out.println("Starting Task: HEALTH CHECK.");
-    }
 
-    @Override
-    public void end() {
-        System.out.println("Ending Task: HEALTH CHECK.");
-    }
-
-    @Override
+   @Override
     public void doAction() {
         int currentHealth = intel.ent().getHealth();
         if (currentHealth < intel.healthLastTick()){

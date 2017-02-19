@@ -2,15 +2,16 @@ package server.ai.behaviour;
 
 import server.ai.Intel;
 import server.game.MovableEntity;
+import testbed.AITestUI;
 
 /**
  * Created by rhys on 2/16/17.
  */
 public class Sequence extends Planner {
 
-    public Sequence(Intel intel)
+    public Sequence(Intel intel, String name)
     {
-        super(intel);
+        super(intel, name);
     }
 
     /**
@@ -35,7 +36,6 @@ public class Sequence extends Planner {
         }
         else {
             control.curTask = control.subTasks.elementAt(curPos+1);
-            System.out.println("Checking conditions.");
             if(!control.curTask.checkConditions()) {
                 control.fail();
             }

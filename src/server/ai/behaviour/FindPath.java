@@ -13,25 +13,13 @@ import java.util.ArrayList;
 public class FindPath extends Task {
 
     public FindPath(Intel intel) {
-        super(intel);
+        super(intel, "Find Path");
     }
 
     @Override
     public boolean checkConditions() {
         return (intel.ent().isAlive() &&
                 intel.getTargetLocation() != null);
-    }
-
-    @Override
-    public void start() {
-        System.out.println("Starting Task: FIND PATH.");
-
-    }
-
-    @Override
-    public void end() {
-        System.out.println("Ending Task: FIND PATH.");
-
     }
 
     @Override

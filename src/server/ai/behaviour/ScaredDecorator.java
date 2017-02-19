@@ -22,9 +22,6 @@ public class ScaredDecorator extends Decorator {
 
     @Override
     public boolean checkConditions() {
-        System.out.println("In pain: " + intel.isInPain());
-        System.out.println("Superconditions: " + super.checkConditions());
-        System.out.println("Health: " + intel.ent().getHealth());
         return super.checkConditions() &&
                 (intel.isInPain() || intel.ent().getHealth() < 50);
     }

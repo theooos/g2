@@ -20,6 +20,7 @@ public class Intel {
     private int healthLastTick;
     private boolean hurt;
     private boolean playerNearby;
+    private boolean targetAcquired;
     private Vector2 targetLocation;
     private Player targetPlayer;
     private ArrayList<Vector2> path;
@@ -164,5 +165,13 @@ public class Intel {
 
     public MovableEntity ent(){
         return ent;
+    }
+
+    public void setTargetAcquired(boolean acquired) {
+        this.targetAcquired = acquired;
+    }
+
+    public boolean isTargetAcquired(){
+        return targetAcquired;
     }
 }

@@ -10,7 +10,7 @@ import server.game.MovableEntity;
 public class Travel extends Task {
 
     public Travel(Intel intel){
-        super(intel);
+        super(intel, "Travel");
     }
 
     @Override
@@ -18,18 +18,6 @@ public class Travel extends Task {
         return (intel.ent().isAlive() &&
                 intel.getTargetLocation() != null &&
                 intel.checkpoint() != null);
-    }
-
-    @Override
-    public void start() {
-        System.out.println("Starting Task: TRAVEL.");
-
-    }
-
-    @Override
-    public void end() {
-        System.out.println("Ending Task: TRAVEL.");
-
     }
 
     @Override

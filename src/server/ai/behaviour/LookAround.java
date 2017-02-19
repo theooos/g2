@@ -10,7 +10,7 @@ import server.game.MovableEntity;
 public class LookAround extends Task {
 
     public LookAround(Intel intel){
-        super(intel);
+        super(intel, "Look Around");
     }
 
     @Override
@@ -26,16 +26,5 @@ public class LookAround extends Task {
         intel.setPlayerNearby(true);
         getControl().succeed();
     }
-
-    @Override
-    public void end() {
-        System.out.println("Ending task: LOOK AROUND.");
-    }
-
-    @Override
-    public void start() {
-        System.out.println("Starting task: LOOK AROUND.");
-    }
-
 
 }

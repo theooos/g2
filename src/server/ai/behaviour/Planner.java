@@ -1,6 +1,7 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
+import testbed.AITestUI;
 
 /**
  * Inner node of behaviour tree, allowing tasks to be assembled like
@@ -10,10 +11,12 @@ import server.ai.Intel;
 public abstract class Planner extends Behaviour {
 
     PlannerController control;
+    String name;
 
-    public Planner(Intel intel){
+    public Planner(Intel intel, String name){
         super(intel);
         createController();
+        this.name = name;
     }
 
     private void createController() {
@@ -41,7 +44,6 @@ public abstract class Planner extends Behaviour {
 
         // If we do have a current task:
         if (!control.curTask.getControl().started()) {
-            System.out.println("Starting un-started process.");
             control.curTask.getControl().safeStart(); // Start it if it isn't already started.
         } else if (control.curTask.getControl().finished()) {
             control.curTask.getControl().safeEnd();
@@ -62,7 +64,7 @@ public abstract class Planner extends Behaviour {
     }
 
     public void start() {
+        if (AITestUI.DEBUG) System.out.println(name + " starting.");
         control.curTask = control.subTasks.firstElement();
-        if (control.curTask == null) {}
     }
 }
