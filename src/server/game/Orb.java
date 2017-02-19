@@ -51,17 +51,17 @@ public class Orb extends MovableEntity {
         // Feed this Orb into the environment intel object.
         intel.assignEntity(this);
 
-        Behaviour live = new Sequence(intel);
+        Behaviour live = new Sequence(intel, "Live");
         live = new ResetDecorator(intel, live);
 
-        Behaviour feel = new Selector(intel);
+        Behaviour feel = new Selector(intel, "Feel");
 
         // Create "Scared" branch -----------------------------------------------
-        Behaviour scared = new Selector(intel);
+        Behaviour scared = new Selector(intel, "Scared");
         scared = new ScaredDecorator(intel, scared);
 
         // Create "Flee" sequence -------------------------
-        Behaviour flee = new Sequence(intel);
+        Behaviour flee = new Sequence(intel, "Flee");
         //(PlannerController)flee.getControl()).add(new LocateCover(intel, this));
         ((PlannerController)flee.getControl()).add(new Wander(intel));
         ((PlannerController)flee.getControl()).add(new FindPath(intel));
@@ -72,16 +72,17 @@ public class Orb extends MovableEntity {
 
 
         // Create "Angry" branch ------------------------------------------------
-        Behaviour angry = new Selector(intel);
+        Behaviour angry = new Selector(intel, "Angry");
         angry = new AngryDecorator(intel, angry);
 
         // Create "Attack" sequence -----------------------
-        Behaviour attack = new Sequence(intel);
+        Behaviour attack = new Sequence(intel, "Attack");
+        attack = new AttackDecorator(intel, attack);
         ((PlannerController)attack.getControl()).add(new Travel(intel));
         ((PlannerController)attack.getControl()).add(new Zap(intel));
 
         // Create "Hunt" sequence -------------------------
-        Behaviour hunt = new Sequence(intel);
+        Behaviour hunt = new Sequence(intel, "Hunt");
         ((PlannerController)hunt.getControl()).add(new AcquireTarget(intel));
         ((PlannerController)hunt.getControl()).add(new FindPath(intel));
         ((PlannerController)hunt.getControl()).add(new Travel(intel));
@@ -92,10 +93,10 @@ public class Orb extends MovableEntity {
 
 
         // Create "Relaxed" branch ----------------------------------------------
-        Selector relaxed = new Selector(intel);
+        Selector relaxed = new Selector(intel, "Relaxed");
 
         // Create "Drift" sequence ------------------------
-        Behaviour drift = new Sequence(intel);
+        Behaviour drift = new Sequence(intel, "Drift");
         ((PlannerController)drift.getControl()).add(new Wander(intel));
         ((PlannerController)drift.getControl()).add(new FindPath(intel));
         ((PlannerController)drift.getControl()).add(new Travel(intel));

@@ -8,7 +8,7 @@ import server.ai.Intel;
 public class AcquireTarget extends Task {
 
     public AcquireTarget(Intel intel) {
-        super(intel);
+        super(intel, "Acquire Target");
     }
 
     @Override
@@ -17,20 +17,13 @@ public class AcquireTarget extends Task {
     }
 
     @Override
-    public void start() {
-        System.out.println("Starting task: ACQUIRE TARGET");
-    }
-
-    @Override
-    public void end() {
-        System.out.println("Ending task: ACQUIRE TARGET");
-    }
-
-    @Override
     public void doAction() {
         // SKELETON FUNCTION.
         // PERQUISITE: CollisionDetection, PlayerSearch.
+        System.out.println("Acquire target starting.");
         intel.setTargetPlayer(intel.getPlayer(0));
+        intel.setTargetAcquired(true);
+        getControl().succeed();
     }
 
 

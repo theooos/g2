@@ -1,6 +1,7 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
+import testbed.AITestUI;
 
 /**
  * Represents a leaf task of the Behaviour Tree.
@@ -8,11 +9,13 @@ import server.ai.Intel;
  */
 public abstract class Task extends Behaviour {
 
-    protected TaskController control;   // Keeps track of Task state.
+    private TaskController control;   // Keeps track of Task state.
+    String name;
 
-    public Task(Intel intel){
+    public Task(Intel intel, String name) {
         super(intel);
-        createController();
+        this.control = new TaskController(this);
+        this.name = name;
     }
 
     /**
@@ -27,6 +30,16 @@ public abstract class Task extends Behaviour {
      */
     public TaskController getControl(){
         return this.control;
+    }
+
+    @Override
+    public void start() {
+        if (AITestUI.DEBUG) System.out.println("Starting Task: " + name + ".");
+    }
+
+    @Override
+    public void end() {
+        if (AITestUI.DEBUG) System.out.println("Ending Task: " + name + ".");
     }
 
 

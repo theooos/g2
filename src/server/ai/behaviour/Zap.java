@@ -23,16 +23,6 @@ public class Zap extends Attack {
     }
 
     @Override
-    public void start() {
-        System.out.println("Starting task: ZAP.");
-    }
-
-    @Override
-    public void end() {
-        System.out.println("Ending task: ZAP.");
-    }
-
-    @Override
     public void doAction() {
         Player target = intel.getTargetPlayer();
         target.damage(45);

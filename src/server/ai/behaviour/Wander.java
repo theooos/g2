@@ -13,7 +13,7 @@ import java.util.Random;
 public class Wander extends Task {
 
     public Wander(Intel intel) {
-        super(intel);
+        super(intel, "Wander");
     }
 
     @Override
@@ -21,16 +21,6 @@ public class Wander extends Task {
         return intel.ent().isAlive();
     }
 
-    @Override
-    public void start() {
-        System.out.println("Starting Task: WANDER.");
-    }
-
-    @Override
-    public void end() {
-        System.out.println("Ending Task: WANDER.");
-
-    }
 
     @Override
     public void doAction() {
@@ -38,6 +28,7 @@ public class Wander extends Task {
         float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
         float ranY = (float) gen.nextInt(intel.getMap().getMapLength());
         intel.setTargetLocation(new Vector2(ranX, ranY));
+        intel.setTargetAcquired(true);
         getControl().succeed();
     }
 
