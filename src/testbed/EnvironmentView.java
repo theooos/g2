@@ -13,9 +13,10 @@ import java.util.Observer;
 /**
  * Created by rhys on 19/01/17.
  */
-public class EnvironmentView extends JPanel implements Observer {
+public class EnvironmentView extends JPanel implements Observer, Runnable {
 
     private TestEnvironment env;
+    private Thread thread;
 
     public EnvironmentView(TestEnvironment env){
         super();
@@ -25,6 +26,9 @@ public class EnvironmentView extends JPanel implements Observer {
         setBackground(Color.white);
         setFocusable(true);
         setDoubleBuffered(true);
+
+        thread = new Thread(this, "Panel");
+        thread.start();
 
     }
 
@@ -80,5 +84,17 @@ public class EnvironmentView extends JPanel implements Observer {
             lines.add(new Line2D.Double(x1, y1, x2, y2));
         }
         return lines;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            repaint();
+            try {
+                thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

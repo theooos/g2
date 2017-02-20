@@ -1,6 +1,7 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
+import server.ai.OrbBrain;
 import server.game.Orb;
 import server.game.Player;
 
@@ -11,15 +12,16 @@ import server.game.Player;
  */
 public class Zap extends Attack {
 
-    public Zap(Intel intel) {
-        super(intel);
+    private final double FREQUENCY = 10;
+    private double ctr;
+
+    public Zap(Intel intel, OrbBrain brain) {
+        super(intel, brain);
+        this.ctr = 0;
     }
 
     @Override
     public boolean checkConditions() {
-        System.out.println("Orb thinks player is at " + intel.getTargetPlayer().getPos());
-        System.out.println("Orb thinks Orb is at " + intel.ent().getPos());
-        System.out.println("Orb thinks distance from player is " + intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos()));
         return (intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos())
                 < intel.ent().getRadius()) &&
                 (intel.ent() instanceof Orb);
@@ -27,9 +29,18 @@ public class Zap extends Attack {
 
     @Override
     public void doAction() {
-        Player target = intel.getTargetPlayer();
-        target.damage(45);
-        getControl().succeed();
+        if (ctr == FREQUENCY) {
+            Player target = intel.getTargetPlayer();
+            target.damage(45);
+            ctr = 0;
+        } else {
+            ctr++;
+        }
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
 
     }
 }

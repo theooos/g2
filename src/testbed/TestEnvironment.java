@@ -68,7 +68,6 @@ public class TestEnvironment extends Observable {
         if (hypoLoc.getX() >= 0 && hypoLoc.getX() < map.getMapWidth()){
             if (hypoLoc.getY() >= 0 && hypoLoc.getY() < map.getMapHeight()){
                 player.live();      // Execute the movement??
-                orb.live();
                 setChanged();
                 notifyObservers();
                 return true;
