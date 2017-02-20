@@ -111,4 +111,7 @@ public class Vector2 implements Sendable{
         return "("+x+", "+y+")";
     }
 
+    public boolean equals(Vector2 other) {
+        return (this.x == other.getX() && this.y == other.getY());
+    }
 }

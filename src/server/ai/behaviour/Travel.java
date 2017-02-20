@@ -10,7 +10,7 @@ import server.game.MovableEntity;
 public class Travel extends Task {
 
     public Travel(Intel intel){
-        super(intel, "Travel");
+        super(intel, "Travel", false);
     }
 
     @Override

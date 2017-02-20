@@ -12,7 +12,7 @@ public class PlannerController extends TaskController {
     public Behaviour curTask;
 
     public PlannerController(Behaviour behaviour) {
-        super(behaviour);
+        super(behaviour, false);
         this.subTasks = new Vector<Behaviour>();
         this.curTask = null;
     }
@@ -25,6 +25,4 @@ public class PlannerController extends TaskController {
         super.reset();
         this.curTask = subTasks.firstElement();
     }
-
-
 }

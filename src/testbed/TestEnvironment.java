@@ -40,6 +40,7 @@ public class TestEnvironment extends Observable {
                 new WeaponShotgun(), new WeaponSniper(), 0);
         ArrayList<Player> playerList = new ArrayList<>();
         playerList.add(player);
+        System.out.println("Player's initial location: " + player.getPos());
 
         env = new Intel(playerList, map);
 
@@ -55,7 +56,6 @@ public class TestEnvironment extends Observable {
         }
 
         orb = new Orb(orbPos, new Vector2(0, 1), 1, 1, 2, env);
-        orb.start();
     }
 
     public boolean movePlayer(Vector2 direction){

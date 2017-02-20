@@ -1,6 +1,8 @@
-package server.ai.behaviour;
+package server.ai.behaviour.decorator;
 
 import server.ai.Intel;
+import server.ai.behaviour.Behaviour;
+import server.ai.behaviour.TaskController;
 
 /**
  * Created by rhys on 2/16/17.

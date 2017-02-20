@@ -1,7 +1,6 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
-import server.game.MovableEntity;
 import server.game.Vector2;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 public class FindPath extends Task {
 
     public FindPath(Intel intel) {
-        super(intel, "Find Path");
+        super(intel);
     }
 
     @Override
@@ -29,7 +28,8 @@ public class FindPath extends Task {
         ArrayList<Vector2> path = new ArrayList<>();
         path.add(intel.getTargetLocation());
         intel.resetPath(path);
-        getControl().succeed();
+        System.out.println("Path found");
+        this.curRunState = runState.FINISHED;
     }
 
 
