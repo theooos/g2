@@ -2,14 +2,20 @@ package server.game;
 
 import server.ai.behaviour.*;
 import server.ai.Intel;
+import server.ai.behaviour.FindPath;
+import server.ai.behaviour.PlannerController;
+import server.ai.behaviour.decorator.*;
+import server.ai.behaviour.Travel;
+import server.ai.behaviour.Wander;
+import server.ai.behaviour.Zap;
 
 /**
  * Created by peran on 01/02/17.
  */
-public class Orb extends MovableEntity {
+public class Orb extends MovableEntity implements Runnable {
 
-    private Behaviour tree;
     private Intel intel;
+    Thread thread;
 
     /**
      * The basic AI controlled enemy
@@ -32,89 +38,133 @@ public class Orb extends MovableEntity {
         radius = 10;
         ID = id;
         this.intel = intel;
-        createBehaviourTree(intel);
+        createBehaviourTrees(intel);
+        thread = new Thread(this, "Orb01");
+        thread.start();
     }
+
 
     /**
      * Makes this Orb behave in an appropriate manner when triggered by the Game Loop.
      */
     public void live() {
-        this.tree.doAction();
+        feel();
+        if (emotion == emotionalState.SCARED){
+            if (!scared.getControl().started()){
+                scared.getControl().safeStart();
+            } else {
+                scared.doAction();
+            }
+        } else if (emotion == emotionalState.ANGRY){
+            if (!angry.getControl().started()){
+                angry.getControl().safeStart();
+            } else {
+                angry.doAction();
+            }
+        } else {
+            if (!relaxed.getControl().started()) {
+                relaxed.getControl().safeStart();
+            } else {
+                relaxed.doAction();
+            }
+        }
     }
 
-    public void start() {
-        this.tree.getControl().safeStart();
+
+    /**
+     * Determines how this Orb is feeling.
+     */
+    private void feel(){
+        int currentHealth = intel.ent().getHealth();
+
+        // If the entity has lost health since the last tick, be scared.
+        if (currentHealth < intel.healthLastTick()){
+            intel.emotionalStateChanged(emotion != emotionalState.SCARED);
+            this.emotion = emotionalState.SCARED;
+        }
+        // If there is an enemy nearby, be angry.
+        else if (playerNearby()) {
+            intel.emotionalStateChanged(emotion != emotionalState.ANGRY);
+            this.emotion = emotionalState.ANGRY;
+            locateTarget();
+        }
+        // Otherwise, just chill.
+        else {
+            intel.emotionalStateChanged(emotion != emotionalState.RELAXED);
+            this.emotion = emotionalState.RELAXED;
+        }
+        intel.rememberHealth(currentHealth);
     }
 
-    private void createBehaviourTree(Intel intel) {
+    /**
+     * Construct behaviour trees for each of this Orb's three possible emotional states.
+     * @param intel - The object containing information the orb needs to take into account when acting.
+     */
+    private void createBehaviourTrees(Intel intel) {
 
         // Feed this Orb into the environment intel object.
         intel.assignEntity(this);
 
-        Behaviour live = new Sequence(intel, "Live");
-        live = new ResetDecorator(intel, live);
-
-        Behaviour feel = new Selector(intel, "Feel");
-
-        // Create "Scared" branch -----------------------------------------------
-        Behaviour scared = new Selector(intel, "Scared");
-        scared = new ScaredDecorator(intel, scared);
-
-        // Create "Flee" sequence -------------------------
-        Behaviour flee = new Sequence(intel, "Flee");
+        // Create "Scared" tree -----------------------------------------------
+        this.scared = new Sequence(intel, "Flee");
+        scared = new ResetDecorator(intel, scared);
         //(PlannerController)flee.getControl()).add(new LocateCover(intel, this));
-        ((PlannerController)flee.getControl()).add(new Wander(intel));
-        ((PlannerController)flee.getControl()).add(new FindPath(intel));
-        ((PlannerController)flee.getControl()).add(new Travel(intel));
-
+        ((PlannerController)scared.getControl()).add(new Wander(intel));
+        ((PlannerController)scared.getControl()).add(new FindPath(intel));
         ((PlannerController)scared.getControl()).add(new Travel(intel));
-        ((PlannerController)scared.getControl()).add(flee);
 
+        // Create "Angry" tree ------------------------------------------------
+        this.angry = new Selector(intel, "Range Check");
+        angry = new ResetDecorator(intel, angry);
 
-        // Create "Angry" branch ------------------------------------------------
-        Behaviour angry = new Selector(intel, "Angry");
-        angry = new AngryDecorator(intel, angry);
+        Behaviour movementCheck = new Selector(intel, "Movement Check");
+        Behaviour hunt = new Travel(intel);
+        hunt = new HuntDecorator(intel, hunt);
 
-        // Create "Attack" sequence -----------------------
-        Behaviour attack = new Sequence(intel, "Attack");
-        attack = new AttackDecorator(intel, attack);
-        ((PlannerController)attack.getControl()).add(new Travel(intel));
-        ((PlannerController)attack.getControl()).add(new Zap(intel));
+        Behaviour track = new Sequence(intel, "Track");
+        ((PlannerController)track.getControl()).add(new FindPath(intel));
+        ((PlannerController)track.getControl()).add(new Travel(intel));
 
-        // Create "Hunt" sequence -------------------------
-        Behaviour hunt = new Sequence(intel, "Hunt");
-        ((PlannerController)hunt.getControl()).add(new AcquireTarget(intel));
-        ((PlannerController)hunt.getControl()).add(new FindPath(intel));
-        ((PlannerController)hunt.getControl()).add(new Travel(intel));
-        ((PlannerController)hunt.getControl()).add(new Zap(intel));
+        ((PlannerController)movementCheck.getControl()).add(hunt);
+        ((PlannerController)movementCheck.getControl()).add(track);
+        ((PlannerController)angry.getControl()).add(new Zap(intel));
+        ((PlannerController)angry.getControl()).add(movementCheck);
 
-        ((PlannerController)angry.getControl()).add(attack);
-        ((PlannerController)angry.getControl()).add(hunt);
-
-
-        // Create "Relaxed" branch ----------------------------------------------
-        Selector relaxed = new Selector(intel, "Relaxed");
-
-        // Create "Drift" sequence ------------------------
-        Behaviour drift = new Sequence(intel, "Drift");
-        ((PlannerController)drift.getControl()).add(new Wander(intel));
-        ((PlannerController)drift.getControl()).add(new FindPath(intel));
-        ((PlannerController)drift.getControl()).add(new Travel(intel));
-
+        // Create "Relaxed" tree ----------------------------------------------
+        this.relaxed = new Sequence(intel, "Drift");
+        relaxed = new ResetDecorator(intel, relaxed);
+        ((PlannerController)relaxed.getControl()).add(new Wander(intel));
+        ((PlannerController)relaxed.getControl()).add(new FindPath(intel));
         ((PlannerController)relaxed.getControl()).add(new Travel(intel));
-        ((PlannerController)relaxed.getControl()).add(drift);
+    }
 
+    /**
+     * @return true if there is a player in the entity's field of vision.
+     */
+    private boolean playerNearby(){
+        // Code HERE for checking for nearby players.
+        // PERQUISITE: Collision Detection.
+        return true;
+    }
 
-        // Final Construction.
-        ((PlannerController)feel.getControl()).add(scared);
-        ((PlannerController)feel.getControl()).add(angry);
-        ((PlannerController)feel.getControl()).add(relaxed);
+    /**
+     * Finds the current location of the target and stores it in this Orb's Intel.
+     */
+    private void locateTarget(){
+        Player target = intel.getPlayer(0);
+        intel.setTargetPlayer(target);
+        intel.setTargetLocation(target.getPos());
+    }
 
-
-        ((PlannerController)live.getControl()).add(new HealthCheck(intel));
-        ((PlannerController)live.getControl()).add(new LookAround(intel));
-        ((PlannerController)live.getControl()).add(feel);
-
-        this.tree = live;
+    @Override
+    public void run() {
+        while(true) {
+            live();
+            try {
+                thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

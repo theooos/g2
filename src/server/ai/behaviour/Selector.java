@@ -28,14 +28,15 @@ public class Selector extends Planner {
 
     @Override
     public void start(){
-        if (AITestUI.DEBUG) System.out.println(name + " starting.");
-        chooseNewTask().getControl().safeStart();
+        control.curTask = chooseNewTask();
+        control.curTask.getControl().safeStart();
 
     }
 
     public Behaviour chooseNewTask() {
         Behaviour behaviour = null;
         boolean found = false;
+
         int curPos = control.subTasks.indexOf(control.curTask);
 
         while (!found){

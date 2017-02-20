@@ -1,46 +1,73 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
-import testbed.AITestUI;
 
 /**
  * Represents a leaf task of the Behaviour Tree.
  * Created by rhys on 2/16/17.
  */
-public abstract class Task extends Behaviour {
+public abstract class Task {
 
-    private TaskController control;   // Keeps track of Task state.
-    String name;
+    public enum runState{DORMANT, RUNNING, FINISHED}
+    protected runState curRunState;
+    protected Intel intel;
 
-    public Task(Intel intel, String name) {
-        super(intel);
-        this.control = new TaskController(this);
-        this.name = name;
+    public Task(Intel intel) {
+        this.intel = intel;
+        this.curRunState = runState.DORMANT;
     }
 
     /**
-     * Creates the controller for this task.
+     * Check whether or not the behaviour's initial conditions are met.
+     * @return true if the behaviour is permissible.
      */
-    private void createController() {
-        this.control = new TaskController(this);
-    }
+    public abstract boolean checkConditions();
 
     /**
-     * @return this task's controller.
+     * Performs the startup logic of the behaviour.
      */
-    public TaskController getControl(){
-        return this.control;
-    }
-
-    @Override
     public void start() {
-        if (AITestUI.DEBUG) System.out.println("Starting Task: " + name + ".");
+        this.curRunState = runState.RUNNING;
     }
 
-    @Override
-    public void end() {
-        if (AITestUI.DEBUG) System.out.println("Ending Task: " + name + ".");
+    /**
+     * Performs the updating logic the behaviour must perform each cycle.
+     */
+    public abstract void doAction();
+
+    /**
+     * Performs the ending logic of the behaviour.
+     */
+    public void end(){
+        this.curRunState = runState.FINISHED;
     }
 
+    /**
+     * Resets the state of this task.
+     */
+    public void reset() {
+        this.curRunState = runState.DORMANT;
+    }
+
+    /**
+     * @return true if this task has not yet started.
+     */
+    public boolean isDormant(){
+        return (curRunState == runState.DORMANT);
+    }
+
+    /**
+     * @return true if this task is currently running.
+     */
+    public boolean isRunning(){
+        return (curRunState == runState.RUNNING);
+    }
+
+    /**
+     * @return true if this task has finished.
+     */
+    public boolean hasFinished(){
+        return (curRunState == runState.FINISHED);
+    }
 
 }

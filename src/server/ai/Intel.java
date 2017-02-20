@@ -18,9 +18,6 @@ public class Intel {
     private ArrayList<Player> players;
     private Map map;
     private int healthLastTick;
-    private boolean hurt;
-    private boolean playerNearby;
-    private boolean targetAcquired;
     private Vector2 targetLocation;
     private Player targetPlayer;
     private ArrayList<Vector2> path;
@@ -34,8 +31,6 @@ public class Intel {
     public Intel(ArrayList<Player> players, Map map) {
         this.players = players;
         this.map = map;
-        this.hurt = false;
-        this.playerNearby = false;
         this.targetLocation = null;
         this.targetPlayer = null;
         path = new ArrayList<>();
@@ -84,35 +79,12 @@ public class Intel {
         this.map = map;
     }
 
-    /**
-     * @return true if there is a player in the entity's knowledge region.
-     */
-    public boolean isPlayerNearby() {
-        return playerNearby;
-    }
-
-    /**
-     * Updates the entity's Intel to tell whether or not a player is nearby.
-     * @param playerNearby
-     */
-    public void setPlayerNearby(boolean playerNearby) {
-        this.playerNearby = playerNearby;
-    }
-
     public int healthLastTick() {
         return healthLastTick;
     }
 
     public void rememberHealth(int health) {
         this.healthLastTick = health;
-    }
-
-    public boolean isInPain() {
-        return hurt;
-    }
-
-    public void setHurt(boolean hurt) {
-        this.hurt = hurt;
     }
 
     public Vector2 getTargetLocation() {
@@ -127,7 +99,11 @@ public class Intel {
      * @return the position on the path currently moving towards.
      */
     public Vector2 checkpoint(){
-        return path.get(0);
+        if (path == null) {
+            return null;
+        } else {
+            return path.get(0);
+        }
     }
 
     /**
@@ -151,7 +127,9 @@ public class Intel {
      * @param newPath - The new list of points for the new path.
      */
     public void resetPath(ArrayList<Vector2> newPath){
-        path.clear();
+        if (path != null){
+            path.clear();
+        }
         path = newPath;
     }
 
@@ -167,11 +145,11 @@ public class Intel {
         return ent;
     }
 
-    public void setTargetAcquired(boolean acquired) {
-        this.targetAcquired = acquired;
-    }
-
-    public boolean isTargetAcquired(){
-        return targetAcquired;
+    public void emotionalStateChanged(boolean changed) {
+        if (changed) {
+            targetLocation = null;
+            targetPlayer = null;
+            path = null;
+        }
     }
 }

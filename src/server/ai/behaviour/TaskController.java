@@ -1,23 +1,24 @@
 package server.ai.behaviour;
 
+import server.ai.behaviour.Behaviour;
+
 /**
+ * Stores information about the state of the task under this controller's control.
  * Created by rhys on 2/16/17.
  */
 public class TaskController {
 
-    private boolean finished;
-    private boolean success;
-    private boolean started;
-    private Behaviour behaviour;
+    protected boolean finished;
+    protected boolean success;
+    protected boolean started;
+    protected boolean requiresRepeat;
+    protected Behaviour behaviour;
 
-    public TaskController(Behaviour behaviour){
-        setBehaviour(behaviour);
+    public TaskController(Behaviour behaviour, boolean requiresRepeat){
         this.finished = false;
         this.success = true;
         this.started = false;
-    }
-
-    public void setBehaviour(Behaviour behaviour){
+        this.requiresRepeat = requiresRepeat;
         this.behaviour = behaviour;
     }
 
@@ -34,12 +35,12 @@ public class TaskController {
 
     protected void succeed() {
         this.success = true;
-        this.finished = true;
+        this.finished = !requiresRepeat;
     }
 
     protected void fail() {
         this.success = false;
-        this.finished = true;
+        this.finished = !requiresRepeat;
     }
 
     public boolean succeeded() {
@@ -60,5 +61,9 @@ public class TaskController {
 
     public void reset() {
         this.finished = false;
+    }
+
+    public void setBehaviour(Behaviour behaviour){
+        this.behaviour = behaviour;
     }
 }

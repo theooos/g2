@@ -1,7 +1,6 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
-import server.game.MovableEntity;
 import server.game.Vector2;
 
 import java.util.Random;
@@ -13,7 +12,7 @@ import java.util.Random;
 public class Wander extends Task {
 
     public Wander(Intel intel) {
-        super(intel, "Wander");
+        super(intel, "Wander", false);
     }
 
     @Override
@@ -28,7 +27,6 @@ public class Wander extends Task {
         float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
         float ranY = (float) gen.nextInt(intel.getMap().getMapLength());
         intel.setTargetLocation(new Vector2(ranX, ranY));
-        intel.setTargetAcquired(true);
         getControl().succeed();
     }
 

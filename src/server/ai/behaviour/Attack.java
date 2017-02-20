@@ -1,7 +1,6 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
-import server.game.MovableEntity;
 
 /**
  * Created by rhys on 2/16/17.
@@ -9,7 +8,12 @@ import server.game.MovableEntity;
 public abstract class Attack extends Task {
 
     public Attack(Intel intel){
-        super(intel, "Attack");
+        super(intel);
+    }
+
+    @Override
+    public void start(){
+        this.curRunState = runState.RUNNING;
     }
 
 }

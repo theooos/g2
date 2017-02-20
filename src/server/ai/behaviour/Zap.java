@@ -17,6 +17,9 @@ public class Zap extends Attack {
 
     @Override
     public boolean checkConditions() {
+        System.out.println("Orb thinks player is at " + intel.getTargetPlayer().getPos());
+        System.out.println("Orb thinks Orb is at " + intel.ent().getPos());
+        System.out.println("Orb thinks distance from player is " + intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos()));
         return (intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos())
                 < intel.ent().getRadius()) &&
                 (intel.ent() instanceof Orb);

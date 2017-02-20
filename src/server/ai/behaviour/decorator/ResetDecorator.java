@@ -1,7 +1,8 @@
-package server.ai.behaviour;
+package server.ai.behaviour.decorator;
 
 import server.ai.Intel;
-import server.game.MovableEntity;
+import server.ai.behaviour.Behaviour;
+import server.ai.behaviour.decorator.Decorator;
 
 /**
  * Makes the entity repeat the given behaviour.

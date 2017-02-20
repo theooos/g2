@@ -7,8 +7,8 @@ import javax.swing.*;
  */
 public class AITestUI {
 
-    public static final int FRAME_WIDTH = 1000;
-    public static final int FRAME_HEIGHT= 800;
+    public static final int FRAME_WIDTH = 800;
+    public static final int FRAME_HEIGHT= 600;
     public static final boolean DEBUG = true;
 
     public static void main(String[] args){
