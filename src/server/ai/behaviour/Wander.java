@@ -26,7 +26,7 @@ public class Wander extends Task {
     public void doAction() {
         Random gen = new Random();
         float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
-        float ranY = (float) gen.nextInt(intel.getMap().getMapLength());
+        float ranY = (float) gen.nextInt(intel.getMap().getMapHeight());
         intel.setTargetLocation(new Vector2(ranX, ranY));
     }
 
