@@ -1,6 +1,7 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
+import server.ai.OrbBrain;
 import server.game.MovableEntity;
 
 /**
@@ -9,8 +10,8 @@ import server.game.MovableEntity;
  */
 public class Travel extends Task {
 
-    public Travel(Intel intel){
-        super(intel, "Travel", false);
+    public Travel(Intel intel, OrbBrain brain){
+        super(intel, brain);
     }
 
     @Override
@@ -36,12 +37,16 @@ public class Travel extends Task {
 
         // Update the entity's state for the next tick.
         if (reached && intel.isFinalDestination()){
-            getControl().succeed();
+            end();
         } else if (reached) {
             intel.nextCheckpoint();
         }
+    }
 
-
+    @Override
+    public void run(){
+        System.err.println("Travel is not a single-tick task.");
+        System.exit(1);
     }
 
 

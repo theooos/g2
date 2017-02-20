@@ -127,10 +127,10 @@ public class Intel {
      * @param newPath - The new list of points for the new path.
      */
     public void resetPath(ArrayList<Vector2> newPath){
-        if (path != null){
-            path.clear();
+        if (this.path != null){
+            this.path.clear();
         }
-        path = newPath;
+        this.path = newPath;
     }
 
     public Player getTargetPlayer() {
@@ -145,11 +145,4 @@ public class Intel {
         return ent;
     }
 
-    public void emotionalStateChanged(boolean changed) {
-        if (changed) {
-            targetLocation = null;
-            targetPlayer = null;
-            path = null;
-        }
-    }
 }

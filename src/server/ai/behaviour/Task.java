@@ -1,6 +1,7 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
+import server.ai.OrbBrain;
 
 /**
  * Represents a leaf task of the Behaviour Tree.
@@ -11,9 +12,11 @@ public abstract class Task {
     public enum runState{DORMANT, RUNNING, FINISHED}
     protected runState curRunState;
     protected Intel intel;
+    protected OrbBrain brain;
 
-    public Task(Intel intel) {
+    public Task(Intel intel, OrbBrain brain) {
         this.intel = intel;
+        this.brain = brain;
         this.curRunState = runState.DORMANT;
     }
 
@@ -68,6 +71,15 @@ public abstract class Task {
      */
     public boolean hasFinished(){
         return (curRunState == runState.FINISHED);
+    }
+
+    /**
+     * Allows the task to be run from start to finish in a single tick.
+     */
+    public void run() {
+        start();
+        doAction();
+        end();
     }
 
 }

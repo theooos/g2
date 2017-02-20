@@ -1,6 +1,7 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
+import server.ai.OrbBrain;
 import server.game.Vector2;
 
 import java.util.ArrayList;
@@ -11,8 +12,8 @@ import java.util.ArrayList;
  */
 public class FindPath extends Task {
 
-    public FindPath(Intel intel) {
-        super(intel);
+    public FindPath(Intel intel, OrbBrain brain) {
+        super(intel, brain);
     }
 
     @Override
@@ -28,8 +29,6 @@ public class FindPath extends Task {
         ArrayList<Vector2> path = new ArrayList<>();
         path.add(intel.getTargetLocation());
         intel.resetPath(path);
-        System.out.println("Path found");
-        this.curRunState = runState.FINISHED;
     }
 
 
