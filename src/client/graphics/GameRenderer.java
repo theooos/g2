@@ -51,6 +51,8 @@ public class GameRenderer {
             Display.setTitle(WINDOW_TITLE);
             Display.create();
 
+            System.err.print("Creating the display!");
+
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
             GL11.glOrtho(0, width, 0, height, 1, -1);

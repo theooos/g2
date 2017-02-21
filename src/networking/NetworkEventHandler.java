@@ -18,7 +18,7 @@ public class NetworkEventHandler implements Runnable {
 
     private volatile boolean running = false;
 
-    public synchronized void run(){
+    public void run(){
         running = true;
         //out("Created NetworkEventHandler thread");
 

@@ -11,7 +11,7 @@ import static networking.Connection.out;
 /**
  * Listens for communications on the network. Then deals with them appropriately?
  */
-class NetworkListener extends Thread {
+class NetworkListener implements Runnable {
 
     private final NetworkEventHandler handler;
     private ObjectInputStream fromConnection;
@@ -20,7 +20,7 @@ class NetworkListener extends Thread {
     NetworkListener(ObjectInputStream fromConnection, NetworkEventHandler handler){
         this.fromConnection = fromConnection;
         this.handler = handler;
-        this.start();
+        new Thread(this).start();
     }
 
     /**
@@ -30,6 +30,7 @@ class NetworkListener extends Thread {
         while(running){
             try {
                 Sendable received = (Sendable) fromConnection.readObject();
+                System.err.print("Received "+received);
                 handler.queueForExecution(received);
             } catch (IOException e) {
                 out("NetworkListener's connection with the server broke.");

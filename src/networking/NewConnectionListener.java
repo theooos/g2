@@ -10,7 +10,7 @@ import static networking.Connection.out;
 /**
  * Creates the listening thread for the Server which accepts new clients.
  */
-public class NewConnectionListener extends Thread {
+public class NewConnectionListener implements Runnable{
 
     boolean alive = true;
     private ServerSocket serverSocket;
@@ -22,7 +22,7 @@ public class NewConnectionListener extends Thread {
      */
     public NewConnectionListener(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
-        this.start();
+        new Thread(this).start();
     }
 
     /**
