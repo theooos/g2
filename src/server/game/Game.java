@@ -6,10 +6,7 @@ import objects.Sendable;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Created by peran on 27/01/17.
@@ -21,7 +18,7 @@ public class Game {
     private Map map;
 
     private ArrayList<Connection> playerConnections;
-    private ArrayList<Player> players;
+    private List<Player> players;
     private ArrayList<Zombie> zombies;
     private ArrayList<Projectile> projectiles;
 
@@ -50,7 +47,7 @@ public class Game {
         rand = new Random();
         sb = new Scoreboard(100, maxPlayers);
 
-        players = new ArrayList<>();
+        players = Collections.synchronizedList(new ArrayList<>());
         zombies = new ArrayList<>();
         projectiles = new ArrayList<>();
 
@@ -82,7 +79,7 @@ public class Game {
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             playerConnections.get(i).send(new objects.String("ID"+IDCounter));
             playerConnections.get(i).addFunctionEvent("String", this::decodeString);
-            playerConnections.get(i).addFunctionEvent("Player", this::updatePlayer);
+            playerConnections.get(i).addFunctionEvent("Player", this::receivedPlayer);
             players.add(p);
             IDCounter++;
         }
@@ -225,7 +222,6 @@ public class Game {
      * Sends all objects to all players
      */
     private void sendAllObjects() {
-
 
         for (Player p: players) {
             sendToAllConnected(p);
@@ -410,15 +406,15 @@ public class Game {
             switch (s.charAt(0)) {
                 //fire
                 case 'f':
-                    fire(getPlayerFromID(Integer.parseInt(s1)));
+                    fire(getPlayer(Integer.parseInt(s1)));
                     break;
                 //switch phase
                 case 'p':
-                    togglePhase(getPlayerFromID(Integer.parseInt(s1)));
+                    togglePhase(getPlayer(Integer.parseInt(s1)));
                     break;
                 //switch weapon
                 case 'w':
-                    toggleWeapon(getPlayerFromID(Integer.parseInt(s1)));
+                    toggleWeapon(getPlayer(Integer.parseInt(s1)));
                     break;
                 //"say" sends a message
                 case 's':
@@ -434,28 +430,20 @@ public class Game {
     }
 
 
-    private boolean validPosition(Player player)
-    {
-        if (pointWallCollision(player.getRadius(),player.getPos(),player.getPhase())) return false;
-        if(collidesWithPlayerOrBot(player)!=null) return false;
-        return true;
+    private boolean validPosition(Player player) {
+        return !pointWallCollision(player.getRadius(), player.getPos(), player.getPhase()) && collidesWithPlayerOrBot(player) == null;
     }
-
-
-
 
     /**
      * updates a received player to the received state
      * @param s a player object
      */
-
-    private void updatePlayer(Sendable s) {
+    private void receivedPlayer(Sendable s) {
         try {
             Player player = (Player) s;
             
             if (validPosition(player)) {
-                players.removeIf(p -> p.equals(player));
-                players.add(player);
+                updatePlayer(player);
             }
         }
         catch (Exception e) {
@@ -463,17 +451,28 @@ public class Game {
         }
     }
 
+
     /**
      * gets a player from an id
      * @param id the player id
      * @return returns the player of null if no player exist
      */
-    private Player getPlayerFromID(int id) {
+    private synchronized Player getPlayer(int id) {
         for (Player p: players) {
-            if (p.getID() == id) return p;
+            if (p.getID() == id) {
+                return p;
+            }
         }
-        System.out.println("No player with that ID");
         return null;
+    }
+
+    private synchronized void removePlayer(int id) {
+        players.removeIf(p -> p.getID() == id);
+    }
+
+    private synchronized void updatePlayer(Player player) {
+        players.removeIf(p -> p.equals(player));
+        players.add(player);
     }
 
     /**

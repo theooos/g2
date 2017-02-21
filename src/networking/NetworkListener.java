@@ -30,7 +30,7 @@ class NetworkListener implements Runnable {
         while(running){
             try {
                 Sendable received = (Sendable) fromConnection.readObject();
-                System.err.print("Received "+received);
+                System.out.println("I RECEIVED A THING: " + received);
                 handler.queueForExecution(received);
             } catch (IOException e) {
                 out("NetworkListener's connection with the server broke.");

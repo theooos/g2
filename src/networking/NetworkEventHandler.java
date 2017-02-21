@@ -3,7 +3,9 @@ package networking;
 import objects.Sendable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static networking.Connection.out;
@@ -14,7 +16,7 @@ import static networking.Connection.out;
 public class NetworkEventHandler implements Runnable {
 
     private HashMap<String,ArrayList<Consumer<Sendable>>> allConsumers = new HashMap<>();
-    private ArrayList<Sendable> toExecute = new ArrayList<>();
+    private List<Sendable> toExecute = Collections.synchronizedList(new ArrayList<>());
 
     private volatile boolean running = false;
 
@@ -22,9 +24,9 @@ public class NetworkEventHandler implements Runnable {
         running = true;
         //out("Created NetworkEventHandler thread");
 
-        while(!toExecute.isEmpty()){
+        Sendable sendable = null;
+        while((sendable = popSendable()) != null){
            // out("Recieved message");
-            Sendable sendable = popSendable();
             String className = getClassName(sendable);
 
             ArrayList<Consumer<Sendable>> consumers = this.allConsumers.get(className);
@@ -36,44 +38,26 @@ public class NetworkEventHandler implements Runnable {
                     consumer.accept(sendable);
                 }
             }
+            sendable = null;
         }
         running = false;
+    }
+
+    private Sendable popSendable() {
+        if(!toExecute.isEmpty()) {
+            Sendable sendable = toExecute.get(0);
+            toExecute.remove(0);
+            return sendable;
+        }
+        else {
+            return null;
+        }
     }
 
     private String getClassName(Sendable sendable) {
         String full = sendable.getClass().toString();
         String[] split = full.split("\\.");
         return split[split.length-1];
-    }
-
-    /**
-     * This adds a command to a list of tasks, then tells the handler to run if it isn't already.
-     * @param command Command to execute.
-     */
-    synchronized void queueForExecution(Sendable command){
-        addSendable(command);
-
-        if (!running) {
-            new Thread(this).start();
-        }
-    }
-
-    /**
-     * Enables synchronised pushing to the list of commands.
-     * @param command Command to execute.
-     */
-    synchronized private void addSendable(Sendable command){
-        toExecute.add(command);
-    }
-
-    /**
-     * Enables synchronised popping from the list of commands.
-     * @return Command to execute.
-     */
-    synchronized private Sendable popSendable(){
-        Sendable sendable = toExecute.get(0);
-        toExecute.remove(0);
-        return sendable;
     }
 
     /**
