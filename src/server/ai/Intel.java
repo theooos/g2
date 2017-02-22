@@ -10,18 +10,18 @@ import java.util.ArrayList;
 
 /**
  * A packet of the necessary data that AI units need to make decisions.
- * Created by rhys on 2/15/17.
+ * Created by Rhys on 2/15/17.
  */
 public class Intel {
 
-    private MovableEntity ent;
-    private ArrayList<Player> players;
-    private Map map;
-    private int healthLastTick;
-    private Vector2 targetLocation;
-    private Player targetPlayer;
-    private ArrayList<Vector2> path;
-
+    private MovableEntity ent;          // The entity this information is used by.
+    private ArrayList<Player> players;  // A list of all the players in the game.
+    private Map map;                    // The map the current game is being played on.
+    private int healthLastTick;         // The entity's health during the previous tick.
+    private Vector2 targetLocation;     // Where the entity is currently aiming to reach.
+    private Player targetPlayer;        // The player the entity is currently hunting.
+    private ArrayList<Vector2> path;    // A sequence of points through which the entity
+                                        // will travel to reach its target location.
 
     /**
      * Constructs an intel object based on the given Players and Map.
@@ -33,12 +33,23 @@ public class Intel {
         this.map = map;
         this.targetLocation = null;
         this.targetPlayer = null;
-        path = new ArrayList<>();
+        this.path = new ArrayList<>();
     }
 
+    /**
+     * Assigns this Intel's owning entity.
+     * @param ent - The entity this intel object is to belong to.
+     */
     public void assignEntity(MovableEntity ent){
         this.ent = ent;
         this.healthLastTick = ent.getHealth();
+    }
+
+    /**
+     * @return the entity that owns this intel object.
+     */
+    public MovableEntity ent(){
+        return ent;
     }
 
     /**
@@ -49,6 +60,7 @@ public class Intel {
     }
 
     /**
+     * Returns the Player at the specified position in the player list.
      * @param pid - The ID of the desired player.
      * @return the requested Player.
      */
@@ -65,32 +77,46 @@ public class Intel {
     }
 
     /**
-     * @return the map this Intel is using.
+     * @return the map this Intel is currently using.
      */
     public Map getMap() {
         return map;
     }
 
     /**
-     * Re-sets the map that this Intel is to use.
+     * Re-sets the map that this Intel is to use for the next game.
      * @param map - The desired map for refresh.
      */
     public void setMap(Map map) {
         this.map = map;
     }
 
+    /**
+     * @return the health-value of the entity during the last tick.
+     */
     public int healthLastTick() {
         return healthLastTick;
     }
 
+    /**
+     * Stores the entity's current health-value.
+     * @param health - The health-value to be stored.
+     */
     public void rememberHealth(int health) {
         this.healthLastTick = health;
     }
 
+    /**
+     * @return the location the entity is currently aiming to reach.
+     */
     public Vector2 getTargetLocation() {
         return targetLocation;
     }
 
+    /**
+     * Stores the location the entity is currently aiming to reach.
+     * @param targetLocation - The new target location.
+     */
     public void setTargetLocation(Vector2 targetLocation) {
         this.targetLocation = targetLocation;
     }
@@ -133,16 +159,21 @@ public class Intel {
         this.path = newPath;
     }
 
+    /**
+     * @return the player the entity is currently hunting.
+     */
     public Player getTargetPlayer() {
         return targetPlayer;
     }
 
+    /**
+     * Stores the player the entity is intending to hunt next.
+     * @param targetPlayer - the next target player.
+     */
     public void setTargetPlayer(Player targetPlayer) {
         this.targetPlayer = targetPlayer;
     }
 
-    public MovableEntity ent(){
-        return ent;
-    }
+
 
 }

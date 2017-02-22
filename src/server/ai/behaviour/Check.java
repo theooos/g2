@@ -10,12 +10,21 @@ import server.game.Vector2;
 public class Check {
 
     public enum CheckMode { HEALTH, PROXIMITY, RANGE, TARGET_MOVED }
-    private Intel intel;
+    private Intel intel;        // The intelligence this object uses to perform its checks.
 
+    /**
+     * Constructs a check object that utilises a given Intel object.
+     * @param intel - The Intel object this checker will utilise.
+     */
     public Check(Intel intel){
         this.intel = intel;
     }
 
+    /**
+     * Performs the requested check.
+     * @param mode - The check to be carried out.
+     * @return true if the check passes.
+     */
     public boolean doCheck(CheckMode mode) {
 
         // Returns true if the entity has lost health since the last tick.
@@ -53,13 +62,16 @@ public class Check {
             return (distance > accErr);
 
         }
-
         else return false;
     }
 
+    /**
+     * For efficiency purposes, targets the nearest player upon detection and
+     * stores the player in the intel object.
+     */
     private void targetNearestPlayer(){
+        // Skeleton function.
+        // Perquisites: Collision detection.
         intel.setTargetPlayer(intel.getPlayer(0));
     }
-
-
 }
