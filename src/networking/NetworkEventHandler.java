@@ -24,14 +24,14 @@ public class NetworkEventHandler implements Runnable {
         running = true;
         //out("Created NetworkEventHandler thread");
 
-        Sendable sendable = null;
+        Sendable sendable;
         while((sendable = popSendable()) != null){
            // out("Recieved message");
             String className = getClassName(sendable);
 
             ArrayList<Consumer<Sendable>> consumers = this.allConsumers.get(className);
             if(consumers == null){
-                out("Network doesn't know hoe to handle the class: "+className);
+                out("Network doesn't know how to handle the class: "+className);
             }
             else {
                 for (Consumer<Sendable> consumer : consumers) {
@@ -74,5 +74,9 @@ public class NetworkEventHandler implements Runnable {
         }
         consumerList.add(consumer);
         allConsumers.put(objName,consumerList);
+    }
+
+    public void queueForExecution(Sendable received) {
+        toExecute.add(received);
     }
 }
