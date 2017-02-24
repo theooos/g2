@@ -39,9 +39,9 @@ public class ClientReceiver {
         int mapID = i.getMapID();
 
         gd = new GameData(players, zombies, mapID);
-        GameRenderer r = new GameRenderer(gd, connection);
-        r.setID(this.getID());
-        r.execute();
+        GameRenderer gameWindow = new GameRenderer(gd, connection);
+        gameWindow.setID(this.getID());
+        gameWindow.run();
         out("The game is now executing.");
     }
 

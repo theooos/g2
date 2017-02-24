@@ -220,7 +220,6 @@ public class Game {
      * Sends all objects to all players
      */
     private void sendAllObjects() {
-
         for (Player p: players) {
             sendToAllConnected(p);
         }

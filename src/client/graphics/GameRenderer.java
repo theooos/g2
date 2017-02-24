@@ -17,9 +17,9 @@ import java.util.HashMap;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
- * Created by bianca on 14/02/2017.
+ * Provides the visuals for the game itself.
  */
-public class GameRenderer {
+public class GameRenderer implements Runnable {
 
     private String WINDOW_TITLE = "PhaseShift";
     public static boolean gameRunning = true;
@@ -37,7 +37,7 @@ public class GameRenderer {
     private Connection conn;
 
     public GameRenderer(GameData gd, Connection conn) {
-
+        super();
         this.conn = conn;
         this.gd = gd;
         players = gd.getPlayers();
@@ -65,7 +65,7 @@ public class GameRenderer {
         }
     }
 
-    public void execute() {
+    public void run() {
 
         getDelta();
         lastFPS = getTime();
