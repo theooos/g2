@@ -34,7 +34,7 @@ public class Map {
     public Map(int mapID) throws IOException {
 
         String LOCAL_PATH = new File("").getAbsolutePath();
-        System.out.println(LOCAL_PATH);
+//        System.out.println(LOCAL_PATH);
         String PROJ_PATH = "/src/server/game/maps/";
         FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 

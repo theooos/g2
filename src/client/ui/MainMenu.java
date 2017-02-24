@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 class MainMenu extends JPanel {
 
     private static Color mustard = new Color(245, 225, 65);
-    private static Color background = new Color(45,60,75);
+    private static Color background = new Color(45, 60, 75);
 
     private JButton start, help, about;
     private JLabel userLabel;
@@ -50,7 +50,7 @@ class MainMenu extends JPanel {
         pane.add(about);
     }
 
-    private void createLogin(Container pane){
+    private void createLogin(Container pane) {
         userLabel = new JLabel("User name:");
         userLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -91,19 +91,19 @@ class MainMenu extends JPanel {
         about.setVisible(true);
     }
 
-    private void hideLogin(){
+    private void hideLogin() {
         userLabel.setVisible(false);
         userText.setVisible(false);
         loginButton.setVisible(false);
     }
 
-    private void showLogin(){
+    private void showLogin() {
         userLabel.setVisible(true);
         userText.setVisible(true);
         loginButton.setVisible(true);
     }
 
-    public String getClientUsername(){
+    public String getClientUsername() {
         return clientUsername;
     }
 }

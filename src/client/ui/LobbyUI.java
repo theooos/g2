@@ -1,7 +1,6 @@
 package client.ui;
 
 import client.Client;
-import client.ClientLogic.ClientSendable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +14,7 @@ import java.awt.event.ActionListener;
 class LobbyUI extends JPanel {
 
     private static Color mustard = new Color(245, 225, 65);
-    private static Color background = new Color(45,60,75);
+    private static Color background = new Color(45, 60, 75);
 
     private JLabel clientNames;
     private JButton cancelButton;
@@ -24,7 +23,7 @@ class LobbyUI extends JPanel {
     private JLabel countDown;
     private JButton mapIcon;
 
-    public void createLobby(Container pane, String clientUsername){
+    public void createLobby(Container pane, String clientUsername) {
 
         Client client = new Client();
 
@@ -79,7 +78,7 @@ class LobbyUI extends JPanel {
         pane.add(countDownText, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.ipady= 50;
+        c.ipady = 50;
         c.ipadx = 50;
         c.gridx = 3;
         c.gridy = 2;
@@ -99,7 +98,7 @@ class LobbyUI extends JPanel {
         pane.add(cancelButton, c);
     }
 
-    private void hideLobby(){
+    private void hideLobby() {
         clientNames.setVisible(false);
         cancelButton.setVisible(false);
         clientText.setVisible(false);
@@ -108,7 +107,7 @@ class LobbyUI extends JPanel {
         mapIcon.setVisible(false);
     }
 
-    private void showLobby(String clientUsername){
+    private void showLobby(String clientUsername) {
         clientNames.setText(clientUsername);
         clientNames.setVisible(true);
         cancelButton.setVisible(true);

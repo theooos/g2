@@ -30,6 +30,7 @@ class NetworkSender {
         try {
             toConnection.writeObject(obj);
             toConnection.flush();
+            System.err.println("[SENT] "+obj);
         } catch (IOException e) {
             out("Failed to send "+obj);
         }

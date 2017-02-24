@@ -42,7 +42,7 @@ public class Game {
             msgToAllConnected("Failed to load map");
         }
 
-        System.out.println(playerConnections.size());
+//        System.out.println("Total players: "+playerConnections.size());
 
         rand = new Random();
         sb = new Scoreboard(100, maxPlayers);
@@ -72,7 +72,7 @@ public class Game {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-                    System.out.println("Error selecting weapon");
+//                    System.out.println("Error selecting weapon");
                     break;
             }
 
@@ -104,7 +104,7 @@ public class Game {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-                    System.out.println("Error selecting weapon");
+//                    System.out.println("Error selecting weapon");
                     break;
             }
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
@@ -125,7 +125,7 @@ public class Game {
         InitGame g = new InitGame(zombies, players, mapID);
         sendGameStart(g);
 
-        int rate = 1000/60;
+        int rate = 1000;
 
         t.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -173,8 +173,6 @@ public class Game {
 
         //deletes the projectile from the list if it's dead
         projectiles.removeIf(p -> !p.isAlive());
-
-        System.out.println(randomDir());
 
         countdown--;
 
@@ -368,7 +366,7 @@ public class Game {
         for (Connection c: playerConnections) {
             c.send(new objects.String(s));
         }
-        System.out.println(s);
+//        System.out.println("Sending the following to all connected:"+s);
     }
 
     /**
@@ -418,14 +416,14 @@ public class Game {
                     break;
                 //"say" sends a message
                 case 's':
-                    System.out.println(s.substring(1));
+                    System.out.println("SAY: "+s.substring(1));
                     break;
                 default:
-                    System.out.println(s);
+//                    System.out.println(s);
             }
         }
         catch (Exception e) {
-            System.out.println(s);
+//            System.out.println(s);
         }
     }
 

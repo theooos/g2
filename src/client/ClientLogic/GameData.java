@@ -10,15 +10,13 @@ import java.util.HashMap;
  * a gameData object with the status of the game.
  */
 
-
 public class GameData {
 
-    private HashMap<Integer,Player> players;
-    private HashMap<Integer,Zombie> zombies;
+    private HashMap<Integer, Player> players;
+    private HashMap<Integer, Zombie> zombies;
     private int mapID;
 
-    public GameData(HashMap players,HashMap zombies, int id)
-    {
+    public GameData(HashMap players, HashMap zombies, int id) {
         this.players = players;
         this.zombies = zombies;
         this.mapID = id;
@@ -27,43 +25,39 @@ public class GameData {
     /**
      * @return the players of the game
      */
-    public HashMap getPlayers()
-    {
+    public HashMap getPlayers() {
         return players;
     }
 
     /**
      * @return the zombies
      */
-    public HashMap getZombies()
-    {
+    public HashMap getZombies() {
         return zombies;
     }
 
     /**
-     *
      * @return the mapID
      */
-    public int getMapID()
-    {
+    public int getMapID() {
         return mapID;
     }
 
     /**
      * update the hashmap of the zombies
+     *
      * @param zombieId the id
-     * @param z the zombie to be changed.
+     * @param z        the zombie to be changed.
      */
-    public void updateZombies(int zombieId,Zombie z) {
-        zombies.put(zombieId,z);
+    public void updateZombies(int zombieId, Zombie z) {
+        zombies.put(zombieId, z);
     }
 
     /**
      * update the hashmap of the players
-     *
      */
     public void updatePlayers(Player p) {
-        players.put(p.getID(),p);
+        players.put(p.getID(), p);
     }
 
 

@@ -13,13 +13,14 @@ import static networking.Connection.out;
  */
 class NetworkListener implements Runnable {
 
-    private final NetworkEventHandler handler;
+    private NetworkEventHandler handler;
     private ObjectInputStream fromConnection;
     private boolean running = true;
 
     NetworkListener(ObjectInputStream fromConnection, NetworkEventHandler handler){
         this.fromConnection = fromConnection;
         this.handler = handler;
+        this.handler.run();
         new Thread(this).start();
     }
 
@@ -30,7 +31,7 @@ class NetworkListener implements Runnable {
         while(running){
             try {
                 Sendable received = (Sendable) fromConnection.readObject();
-                System.out.println("I RECEIVED A THING: " + received);
+                System.err.println("[RECEIVED] " + received);
                 handler.queueForExecution(received);
             } catch (IOException e) {
                 out("NetworkListener's connection with the server broke.");

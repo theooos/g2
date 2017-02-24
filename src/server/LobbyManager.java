@@ -52,8 +52,4 @@ public class LobbyManager {
         size = size*4;
         return new Lobby(2);
     }
-
-    private void out(Object o) {
-        System.out.println(o);
-    }
 }

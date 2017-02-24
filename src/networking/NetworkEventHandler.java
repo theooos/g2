@@ -1,6 +1,7 @@
 package networking;
 
 import objects.Sendable;
+import org.lwjgl.Sys;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,29 +19,28 @@ public class NetworkEventHandler implements Runnable {
     private HashMap<String,ArrayList<Consumer<Sendable>>> allConsumers = new HashMap<>();
     private List<Sendable> toExecute = Collections.synchronizedList(new ArrayList<>());
 
-    private volatile boolean running = false;
+    private boolean isRunning;
 
     public void run(){
-        running = true;
-        //out("Created NetworkEventHandler thread");
-
         Sendable sendable;
-        while((sendable = popSendable()) != null){
-           // out("Recieved message");
-            String className = getClassName(sendable);
+        isRunning = true;
 
-            ArrayList<Consumer<Sendable>> consumers = this.allConsumers.get(className);
+        while((sendable = popSendable()) != null){
+            String className = getClassName(sendable);
+            ArrayList<Consumer<Sendable>> consumers = allConsumers.get(className);
+//            out(consumers);
             if(consumers == null){
                 out("Network doesn't know how to handle the class: "+className);
             }
             else {
                 for (Consumer<Sendable> consumer : consumers) {
+                    System.out.println("Working on: " + className);
                     consumer.accept(sendable);
                 }
             }
             sendable = null;
         }
-        running = false;
+        isRunning = false;
     }
 
     private Sendable popSendable() {
@@ -77,6 +77,8 @@ public class NetworkEventHandler implements Runnable {
     }
 
     public void queueForExecution(Sendable received) {
+        System.out.println("Queue called!");
         toExecute.add(received);
+        if(!this.isRunning) this.run();
     }
 }

@@ -32,7 +32,7 @@ class Lobby {
         t = new Timer();
         Random rand = new Random();
         map = rand.nextInt(mapMax);
-        System.out.println(map);
+//        System.out.println(map);
     }
 
 

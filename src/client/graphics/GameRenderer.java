@@ -1,6 +1,5 @@
 package client.graphics;
 
-import client.ClientLogic.ClientSendable;
 import client.ClientLogic.GameData;
 import networking.Connection;
 import org.lwjgl.LWJGLException;
@@ -33,17 +32,15 @@ public class GameRenderer {
     private int playerID;
 
     private GameData gd;
-    private HashMap<Integer,Player> players;
+    private HashMap<Integer, Player> players;
     private MapRenderer map;
     private Connection conn;
-    private ClientSendable cs;
 
     public GameRenderer(GameData gd, Connection conn) {
 
         this.conn = conn;
         this.gd = gd;
         players = gd.getPlayers();
-        cs = new ClientSendable(conn);
 
         // initialize the window beforehand
         try {
@@ -61,7 +58,7 @@ public class GameRenderer {
             map = new MapRenderer(gd.getMapID(), 1);
 
         } catch (LWJGLException le) {
-            System.out.println("Game exiting - exception in initialization:");
+//            System.out.println("Game exiting - exception in initialization:");
             le.printStackTrace();
             GameRenderer.gameRunning = false;
             return;
@@ -86,19 +83,17 @@ public class GameRenderer {
         Display.destroy();
     }
 
-    public void DrawCircle(float cx, float cy, float r, int num_segments)
-    {
-        float theta = (float)(2 * 3.1415926 / (num_segments));
-        float tangetial_factor = (float)Math.tan(theta);//calculate the tangential factor
-        float radial_factor = (float)Math.cos(theta);//calculate the radial factor
+    public void DrawCircle(float cx, float cy, float r, int num_segments) {
+        float theta = (float) (2 * 3.1415926 / (num_segments));
+        float tangetial_factor = (float) Math.tan(theta);//calculate the tangential factor
+        float radial_factor = (float) Math.cos(theta);//calculate the radial factor
 
         float x = r;//we start at angle = 0
         float y = 0;
 
         GL11.glBegin(GL_TRIANGLE_FAN);
 
-        for(int ii = 0; ii < num_segments; ii++)
-        {
+        for (int ii = 0; ii < num_segments; ii++) {
             glVertex2f(x + cx, y + cy);//output vertex
 
             //calculate the tangential vector; remember, the radial vector is (x, y)
@@ -117,27 +112,26 @@ public class GameRenderer {
         GL11.glEnd();
     }
 
-    float lastX=-1;
-    float lastY=-1;
+    float lastX = -1;
+    float lastY = -1;
 
-    private void positionBullet(Vector2 pos)
-    {
-        Vector2 mousePos=new Vector2(Mouse.getX(),Mouse.getY()) ;
-        System.out.println("MousePos"+mousePos);
+    private void positionBullet(Vector2 pos) {
+        Vector2 mousePos = new Vector2(Mouse.getX(), Mouse.getY());
+//        System.out.println("MousePos"+mousePos);
 
-        Vector2 dir=pos.vectorTowards(mousePos);
-        System.out.println("dir"+dir);
+        Vector2 dir = pos.vectorTowards(mousePos);
+//        System.out.println("dir"+dir);
 
-        Vector2 cursor= dir.normalise();
-        System.out.println("cursor"+cursor);
+        Vector2 cursor = dir.normalise();
+//        System.out.println("cursor"+cursor);
 
-        cursor=pos.add(cursor.mult(21));
-        lastX =cursor.getX();//pos.getX()+(Mouse.getX()-pos.getX())/10;
+        cursor = pos.add(cursor.mult(21));
+        lastX = cursor.getX();//pos.getX()+(Mouse.getX()-pos.getX())/10;
         lastY = cursor.getY();//pos.getY()+(Mouse.getY()-pos.getY())/10;
         //Mouse.setGrabbed(true);
 
-        if (lastX>0&&lastY>0)
-            DrawCircle(lastX,lastY,10,50);
+        if (lastX > 0 && lastY > 0)
+            DrawCircle(lastX, lastY, 10, 50);
     }
 
     private long getTime() {
@@ -163,7 +157,7 @@ public class GameRenderer {
 
         players.get(playerID).setPos(new Vector2(xPos, yPos));
         gd.updatePlayers(players.get(playerID));
-        cs.sendPlayer(players.get(playerID));
+        conn.send(players.get(playerID));
 
 
         updateFPS(); // update FPS Counter
@@ -178,7 +172,7 @@ public class GameRenderer {
         fps++;
     }
 
-    private void render(){
+    private void render() {
         // Clear the screen and depth buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
@@ -201,17 +195,17 @@ public class GameRenderer {
         */
     }
 
-    private void drawPlayers(){
-        for(Player p: players.values()) {
+    private void drawPlayers() {
+        for (Player p : players.values()) {
             if (p.getID() % 2 == 0) {
                 GL11.glColor3f(1, 0.33f, 0.26f);
                 DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
-                positionBullet(new Vector2(p.getPos().getX(),height - p.getPos().getY()));
+                positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()));
 
             } else {
                 GL11.glColor3f(0.2f, 0.9f, 0.5f);
                 DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
-                positionBullet(new Vector2(p.getPos().getX(),height - p.getPos().getY()));
+                positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()));
             }
         }
     }
@@ -224,8 +218,7 @@ public class GameRenderer {
         return delta;
     }
 
-    public void setID(int id)
-    {
+    public void setID(int id) {
         this.playerID = id;
     }
 

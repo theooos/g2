@@ -22,6 +22,7 @@ public class Connection {
     private NetworkListener fromConnection;
     private NetworkEventHandler handler = new NetworkEventHandler();
 
+    private static boolean debug = true;
     /**
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
      */
@@ -108,6 +109,6 @@ public class Connection {
      * @param o Object to print.
      */
     static void out(Object o){
-        System.out.println("[NETWORK] "+o);
+        if(debug) System.out.println("[NETWORK] "+o);
     }
 }

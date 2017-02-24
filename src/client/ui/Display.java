@@ -5,7 +5,7 @@ import java.awt.*;
 
 
 /**
- * Created by theooos on 18/01/2017.
+ * The game UI.
  */
 public class Display {
 
@@ -29,13 +29,13 @@ public class Display {
         frame.setVisible(true);
     }
 
-    public void paintLobby(){
+    public void paintLobby() {
         pane.removeAll();
         this.lobby = new LobbyUI();
         lobby.createLobby(pane, menu.getClientUsername());
     }
 
-    public void paintMenu(){
+    public void paintMenu() {
         pane.removeAll();
         this.menu = new MainMenu();
         menu.createMenu(pane);
