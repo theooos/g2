@@ -2,6 +2,7 @@ package server.game;
 
 import objects.Sendable;
 
+import java.awt.*;
 import java.util.Random;
 
 /**
@@ -113,5 +114,9 @@ public class Vector2 implements Sendable{
 
     public boolean equals(Vector2 other) {
         return (this.x == other.getX() && this.y == other.getY());
+    }
+
+    public Point toPoint() {
+        return new Point((int)x, (int)y);
     }
 }

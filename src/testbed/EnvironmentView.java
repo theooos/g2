@@ -1,4 +1,5 @@
 package testbed;
+import server.ai.vision.VisibilityPolygon;
 import server.game.MovableEntity;
 import server.game.Wall;
 
@@ -37,7 +38,28 @@ public class EnvironmentView extends JPanel implements Observer, Runnable {
 
         int width = env.getMapWidth();
         int height = env.getMapLength();
+        VisibilityPolygon vis = env.getOrb().getSight();
+        ArrayList<Line2D.Double> los = env.getOrb().getSight().getTESTlinesofSight();
         g2.clearRect(0,0, width, height);
+
+
+
+        // Show visibility polygon.
+
+        g2.setColor(Color.PINK);
+        for (int x = 0; x < width; x++){
+            for (int y = 0; y < height; y++) {
+                if (vis.contains(x, y)){
+                    Rectangle pixel = new Rectangle(x, y, 1, 1);
+                    g2.fill(pixel);
+                }
+            }
+        }
+
+        g2.setColor(Color.BLUE);
+        for (Line2D.Double line : los) {
+            g2.draw(line);
+        }
         
         g2.setColor(Color.GREEN);
         Ellipse2D.Double player = entityToSpot(env.getPlayer());

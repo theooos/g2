@@ -2,6 +2,7 @@ package server.game;
 
 import server.ai.OrbBrain;
 import server.ai.Intel;
+import server.ai.vision.VisibilityPolygon;
 
 /**
  * Represents an artificially intelligent entity within the game that can see
@@ -28,7 +29,6 @@ public class Orb extends MovableEntity implements Runnable {
 
         // Initialise Orb members.
         this.intel = intel;
-        this.myBrain = new OrbBrain(intel);
 
         // Initialise "Movable Entity" members.
         this.speed = 2;
@@ -46,6 +46,7 @@ public class Orb extends MovableEntity implements Runnable {
         this.ID = id;
 
         this.intel.assignEntity(this);
+        this.myBrain = new OrbBrain(intel);
 
         // Threading for testing purposes.
         // Can be commented out when running the whole system.
@@ -70,5 +71,9 @@ public class Orb extends MovableEntity implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public VisibilityPolygon getSight(){
+        return myBrain.getSight();
     }
 }

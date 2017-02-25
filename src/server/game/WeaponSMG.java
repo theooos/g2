@@ -4,8 +4,8 @@ package server.game;
  * Created by peran on 2/13/17.
  * A fast firing, low damage weapon type
  */
-class WeaponSMG extends Weapon {
-    WeaponSMG() {
+public class WeaponSMG extends Weapon {
+    public WeaponSMG() {
         super();
         shotType = new Projectile(15,300,20,new Vector2(0,0), new Vector2(0,0), 20, 0, 0, 0);
         numProjectiles = 1;

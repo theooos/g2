@@ -1,5 +1,7 @@
 package server.game;
 
+import java.awt.*;
+import java.awt.geom.Line2D;
 import java.util.HashSet;
 
 /**
@@ -87,6 +89,10 @@ public class Wall extends Entity {
 
     public HashSet<Vector2> getWholeWall(){
         return null;
+    }
+
+    public Line2D.Double toLine(){
+        return new Line2D.Double(pos.toPoint(), endPos.toPoint());
     }
 
 }
