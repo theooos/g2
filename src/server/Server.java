@@ -24,7 +24,7 @@ public class Server extends Thread {
             // Keep checking if listener has any new clients, send them to lobby manager if so.
             Connection newClient = newConnectionListener.getClient();
             if(newClient != null){
-                new Thread(new SendingTester(newClient)).start();
+//                new Thread(new SendingTester(newClient)).start();
                 lobbyManager.addConnection(newClient);
             }
         }

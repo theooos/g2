@@ -31,18 +31,16 @@ public class GameRenderer implements Runnable {
     private long lastFPS;
     private int playerID;
 
-    private GameData gd;
-    private HashMap<Integer, Player> players;
+    private GameData gameData;
     private MapRenderer map;
     private Connection conn;
 
-    int count = 100;
+    int count = 10;
 
     public GameRenderer(GameData gd, Connection conn) {
         super();
         this.conn = conn;
-        this.gd = gd;
-        players = gd.getPlayers();
+        this.gameData = gd;
 
         // initialize the window beforehand
         try {
@@ -50,7 +48,7 @@ public class GameRenderer implements Runnable {
             Display.setTitle(WINDOW_TITLE);
             Display.create();
 
-            System.err.print("Creating the display!");
+            //System.err.print("Creating the display!");
 
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
@@ -63,7 +61,6 @@ public class GameRenderer implements Runnable {
             System.out.println("Game exiting - exception in initialization:");
             le.printStackTrace();
             GameRenderer.gameRunning = false;
-            return;
         }
     }
 
@@ -142,8 +139,10 @@ public class GameRenderer implements Runnable {
 
     private void update(int delta) {
 
-        float xPos = players.get(playerID).getPos().getX();
-        float yPos = players.get(playerID).getPos().getY();
+        Player me = gameData.getPlayer(playerID);
+        Vector2 pos = me.getPos();
+        float xPos = pos.getX();
+        float yPos = pos.getY();
 
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) xPos -= 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) xPos += 0.35f * delta;
@@ -157,16 +156,12 @@ public class GameRenderer implements Runnable {
         if (yPos < 0) yPos = 0;
         if (yPos > 600) yPos = 600;
 
-        players.get(playerID).setPos(new Vector2(xPos, yPos));
-        gd.updatePlayers(players.get(playerID));
-
-        if(count == 0) {
-            conn.send(players.get(playerID));
-            count = 100;
-        } else {
-            count--;
+        if(pos.getX() != xPos || pos.getY() != yPos) {
+            me.setPos(new Vector2(xPos, yPos));
+            gameData.updatePlayer(me);
+            System.err.println("Old: "+pos+" New: ("+xPos+", "+yPos+ ") Me: "+me.getPos());
+            conn.send(me);
         }
-
 
         updateFPS(); // update FPS Counter
     }
@@ -204,17 +199,15 @@ public class GameRenderer implements Runnable {
     }
 
     private void drawPlayers() {
+        HashMap<Integer, Player> players = gameData.getPlayers();
         for (Player p : players.values()) {
             if (p.getID() % 2 == 0) {
                 GL11.glColor3f(1, 0.33f, 0.26f);
-                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
-                positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()));
-
             } else {
                 GL11.glColor3f(0.2f, 0.9f, 0.5f);
-                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
-                positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()));
             }
+            DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
+            positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()));
         }
     }
 

@@ -25,14 +25,18 @@ public class GameData {
     /**
      * @return the players of the game
      */
-    public HashMap getPlayers() {
+    public HashMap<Integer, Player> getPlayers() {
         return players;
+    }
+
+    public Player getPlayer(int playerID){
+        return players.get(playerID);
     }
 
     /**
      * @return the zombies
      */
-    public HashMap getZombies() {
+    public HashMap<Integer, Zombie> getZombies() {
         return zombies;
     }
 
@@ -56,7 +60,7 @@ public class GameData {
     /**
      * update the hashmap of the players
      */
-    public void updatePlayers(Player p) {
+    public void updatePlayer(Player p) {
         players.put(p.getID(), p);
     }
 

@@ -1,6 +1,7 @@
 package networking;
 
 import objects.Sendable;
+import server.game.Player;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -30,7 +31,9 @@ class NetworkListener implements Runnable {
         while(isRunning){
             try {
                 Sendable received = (Sendable) fromConnection.readObject();
-                System.err.println("[RECEIVED] " + received);
+//                try{
+//                    System.err.println("[RECEIVED] "+((Player)received).getPos());
+//                } catch (Exception e){}
                 handler.queueForExecution(received);
             } catch (IOException e) {
                 out("NetworkListener's connection with the server broke.");

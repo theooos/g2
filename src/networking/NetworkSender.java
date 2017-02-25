@@ -1,6 +1,7 @@
 package networking;
 
 import objects.Sendable;
+import server.game.Player;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -44,9 +45,12 @@ class NetworkSender implements Runnable {
      */
     private void send(Sendable obj){
         try {
-            toConnection.writeObject(obj);
+            toConnection.writeUnshared(obj);
             toConnection.flush();
-            System.err.println("[SENT] "+obj);
+//            try{
+//                System.out.println("[SENT] "+((Player)obj).getPos());
+//            } catch (Exception e){}
+
         } catch (IOException e) {
             out("Failed to send "+obj);
         }

@@ -14,7 +14,7 @@ public class Client {
 
     public Client() {
         ClientReceiver cr = new ClientReceiver(connection);
-        new Thread(new SendingTester(connection)).start();
+//        new Thread(new SendingTester(connection)).start();
     }
 
     public static void main(String[] args) {
