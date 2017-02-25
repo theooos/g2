@@ -78,6 +78,8 @@ public class ClientReceiver {
 
     public void updatedPlayer(Sendable s) {
         Player p = (Player) s;
-        gd.updatePlayer(p);
+        if (p.getID() != playerID) {
+            gd.updatePlayer(p);
+        }
     }
 }

@@ -159,7 +159,7 @@ public class GameRenderer implements Runnable {
         if(pos.getX() != xPos || pos.getY() != yPos) {
             me.setPos(new Vector2(xPos, yPos));
             gameData.updatePlayer(me);
-            System.err.println("Old: "+pos+" New: ("+xPos+", "+yPos+ ") Me: "+me.getPos());
+            //System.err.println("Old: "+pos+" New: ("+xPos+", "+yPos+ ") Me: "+me.getPos());
             conn.send(me);
         }
 
