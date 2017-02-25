@@ -1,7 +1,5 @@
 package client.ui;
 
-import networking.Connection;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +11,7 @@ import java.awt.event.ActionListener;
 class MainMenu extends JPanel {
 
     private static Color mustard = new Color(245, 225, 65);
-    private static Color background = new Color(45,60,75);
+    private static Color background = new Color(45, 60, 75);
 
     private JButton start, help, about;
     private JLabel userLabel;
@@ -21,7 +19,7 @@ class MainMenu extends JPanel {
     private JButton loginButton;
     private String clientUsername;
 
-    public void createMenu(Connection conn, Container pane, LobbyUI lobby) {
+    public void createMenu(Container pane) {
 
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         pane.setBackground(background);
@@ -33,9 +31,8 @@ class MainMenu extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 hideMenu();
-                conn.send(new objects.String("I want to start a game"));
                 pane.removeAll();
-                createLogin(conn, pane, lobby);
+                createLogin(pane);
             }
         });
 
@@ -53,7 +50,7 @@ class MainMenu extends JPanel {
         pane.add(about);
     }
 
-    private void createLogin(Connection conn, Container pane, LobbyUI lobby){
+    private void createLogin(Container pane) {
         userLabel = new JLabel("User name:");
         userLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -70,8 +67,7 @@ class MainMenu extends JPanel {
                 clientUsername = userText.getText();
                 hideLogin();
                 pane.removeAll();
-                lobby.createLobby(conn, pane, new MainMenu(), clientUsername);
-                //createLobby(pane, clientUsername);
+                new LobbyUI().createLobby(pane, clientUsername);
             }
         });
 
@@ -95,16 +91,20 @@ class MainMenu extends JPanel {
         about.setVisible(true);
     }
 
-    private void hideLogin(){
+    private void hideLogin() {
         userLabel.setVisible(false);
         userText.setVisible(false);
         loginButton.setVisible(false);
     }
 
-    private void showLogin(){
+    private void showLogin() {
         userLabel.setVisible(true);
         userText.setVisible(true);
         loginButton.setVisible(true);
+    }
+
+    public String getClientUsername() {
+        return clientUsername;
     }
 }
 

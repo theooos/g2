@@ -1,31 +1,24 @@
 package client;
 
+import client.ClientLogic.ClientReceiver;
 import client.ui.Display;
 import networking.Connection;
+import networking.SendingTester;
 
 /**
  * The class to be run to start the Client.
  */
 public class Client {
 
-    Connection connection = new Connection();
+    public Connection connection = new Connection();
 
-    public Client(){
-        connection.addFunctionEvent("String", Client::out);
-        connection.addFunctionEvent("Player", Client::out);
-        connection.addFunctionEvent("AIPlayer", Client::out);
-        connection.addFunctionEvent("Zombie", Client::out);
-        connection.addFunctionEvent("Projectile", Client::out);
+    public Client() {
+        ClientReceiver cr = new ClientReceiver(connection);
+//        new Thread(new SendingTester(connection)).start();
     }
 
-    public static void main(String[] args){
-        Client client = new Client();
-
-        Display d = new Display();
-        d.displayUI(client.connection);
-    }
-
-    public static void out(Object o){
-        System.out.println("[CLIENT] "+o);
+    public static void main(String[] args) {
+        Display display = new Display();
+        display.displayUI();
     }
 }

@@ -5,6 +5,7 @@ import server.game.Zombie;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by theo on 14/02/2017.
@@ -20,7 +21,7 @@ public class InitGame implements Sendable{
         this.mapID = mapID;
     }
 
-    public InitGame(ArrayList<Zombie> zombies, ArrayList<Player> players, int mapID) {
+    public InitGame(ArrayList<Zombie> zombies, List<Player> players, int mapID) {
         this.mapID = mapID;
 
         this.zombies = new HashMap<>();

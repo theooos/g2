@@ -6,22 +6,19 @@ import objects.Sendable;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Created by peran on 27/01/17.
  * Controls the main game logic
  */
-public class Game {
+public class Game implements Runnable {
     private Timer t;
     private int countdown;
     private Map map;
 
     private ArrayList<Connection> playerConnections;
-    private ArrayList<Player> players;
+    private List<Player> players;
     private ArrayList<Zombie> zombies;
     private ArrayList<Projectile> projectiles;
 
@@ -29,6 +26,8 @@ public class Game {
 
     private Scoreboard sb;
     private int IDCounter;
+
+    private boolean isRunning;
 
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
@@ -45,12 +44,12 @@ public class Game {
             msgToAllConnected("Failed to load map");
         }
 
-        System.out.println(playerConnections.size());
+//        System.out.println("Total players: "+playerConnections.size());
 
         rand = new Random();
         sb = new Scoreboard(100, maxPlayers);
 
-        players = new ArrayList<>();
+        players = Collections.synchronizedList(new ArrayList<>());
         zombies = new ArrayList<>();
         projectiles = new ArrayList<>();
 
@@ -75,15 +74,16 @@ public class Game {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-                    System.out.println("Error selecting weapon");
+//                    System.out.println("Error selecting weapon");
                     break;
             }
 
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             playerConnections.get(i).send(new objects.String("ID"+IDCounter));
             playerConnections.get(i).addFunctionEvent("String", this::decodeString);
-            playerConnections.get(i).addFunctionEvent("Player", this::updatePlayer);
-            players.add(p);
+            playerConnections.get(i).addFunctionEvent("Player", this::receivedPlayer);
+
+            addPlayer(p);
             IDCounter++;
         }
         //create AI players
@@ -107,11 +107,11 @@ public class Game {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-                    System.out.println("Error selecting weapon");
+//                    System.out.println("Error selecting weapon");
                     break;
             }
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
-            players.add(p);
+            addPlayer(p);
             IDCounter++;
         }
         //create team zombies
@@ -121,70 +121,69 @@ public class Game {
             IDCounter++;
         }
 
-
-        t = new Timer();
         countdown = 10*60*tick; //ten minutes
 
         InitGame g = new InitGame(zombies, players, mapID);
         sendGameStart(g);
+    }
 
-        int rate = 1000/60;
-
-        t.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                gameTick();
-            }
-        }, rate, rate);
+    private void addPlayer(Player p) {
+        List<Player> players = Collections.synchronizedList(this.players);
+        players.add(p);
+        this.players = players;
     }
 
 
     /**
      * The game tick runs.  This is the master function for a running game
      */
-    private void gameTick() {
-        for (Player p: players) {
-            if (!p.isAlive()) respawn(p);
-        }
-        for (Zombie z: zombies) {
-            if(!z.isAlive()) respawn(z);
-            z.live();
-            respawn(z);
-        }
-
-        for (Projectile p: projectiles) {
-            MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase(), p.getDir(), p.getSpeed());
-            if (e != null) {
-                e.damage(p.getDamage());
-                if (!e.isAlive()) {
-                    if (e instanceof Zombie) {
-                        sb.killedZombie(p.getPlayerID());
-                    }
-                    else {
-                        sb.killedPlayer(p.getPlayerID());
-                    }
-                }
-                p.kill();
+    public void run() {
+        isRunning = true;
+        while(isRunning){
+            for (Player p : players) {
+                if (!p.isAlive()) respawn(p);
+            }
+            for (Zombie z : zombies) {
+                if (!z.isAlive()) respawn(z);
+                z.live();
+                respawn(z);
             }
 
-            if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
+            for (Projectile p : projectiles) {
+                MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase(), p.getDir(), p.getSpeed());
+                if (e != null) {
+                    e.damage(p.getDamage());
+                    if (!e.isAlive()) {
+                        if (e instanceof Zombie) {
+                            sb.killedZombie(p.getPlayerID());
+                        } else {
+                            sb.killedPlayer(p.getPlayerID());
+                        }
+                    }
+                    p.kill();
+                }
 
-            p.live();
-        }
+                if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
-        //deletes the projectile from the list if it's dead
-        projectiles.removeIf(p -> !p.isAlive());
+                p.live();
+            }
 
-        System.out.println(randomDir());
+            //deletes the projectile from the list if it's dead
+            projectiles.removeIf(p -> !p.isAlive());
 
-        countdown--;
+            countdown--;
 
-        //stops the countdown when the timer has run out
-        if (countdown <= 0 || sb.scoreReached()) {
-            endGame();
-        }
-        else {
-            sendAllObjects();
+            //stops the countdown when the timer has run out
+            if (countdown <= 0 || sb.scoreReached()) {
+                endGame();
+            } else {
+                sendAllObjects();
+            }
+            try {
+                Thread.sleep(1000/60);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -250,8 +249,8 @@ public class Game {
      */
     private Vector2 respawnCoords() {
         //get map bounds
-        int boundX = map.getMapHeight();
-        int boundY = map.getMapWidth();
+        int boundX = map.getMapLength()-100;
+        int boundY = map.getMapWidth()-100;
         int minDist = 20;
 
         boolean valid = false;
@@ -318,6 +317,20 @@ public class Game {
         return null;
     }
 
+    private MovableEntity collidesWithPlayerOrBot(Player player) {
+        ArrayList<MovableEntity> entities = new ArrayList<>();
+        entities.addAll(zombies);
+        entities.addAll(players);
+        entities.removeIf(e -> e.getPhase() != player.getPhase());
+        entities.removeIf(e -> e.equals(player));
+        for (MovableEntity e: entities) {
+            Vector2 l1 = player.getPos().add(player.getDir().mult(player.getSpeed()));
+            if (collided(player.getRadius(), getClosestPointOnLine(l1, player.getPos(), e.getPos()), e.getRadius(), e.getPos())) return e;
+        }
+
+        return null;
+    }
+
     /**
      * returns true if the two entity have collided
      * @param r1 the radius of the first entity
@@ -354,7 +367,7 @@ public class Game {
         for (Connection c: playerConnections) {
             c.send(new objects.String(s));
         }
-        System.out.println(s);
+//        System.out.println("Sending the following to all connected:"+s);
     }
 
     /**
@@ -392,55 +405,76 @@ public class Game {
             switch (s.charAt(0)) {
                 //fire
                 case 'f':
-                    fire(getPlayerFromID(Integer.parseInt(s1)));
+                    fire(getPlayer(Integer.parseInt(s1)));
                     break;
                 //switch phase
                 case 'p':
-                    togglePhase(getPlayerFromID(Integer.parseInt(s1)));
+                    togglePhase(getPlayer(Integer.parseInt(s1)));
                     break;
                 //switch weapon
                 case 'w':
-                    toggleWeapon(getPlayerFromID(Integer.parseInt(s1)));
+                    toggleWeapon(getPlayer(Integer.parseInt(s1)));
                     break;
                 //"say" sends a message
                 case 's':
-                    System.out.println(s.substring(1));
+                    System.out.println("SAY: "+s.substring(1));
                     break;
                 default:
-                    System.out.println(s);
+//                    System.out.println(s);
             }
         }
         catch (Exception e) {
-            System.out.println(s);
+//            System.out.println(s);
         }
+    }
+
+
+    private boolean validPosition(Player player) {
+        return !pointWallCollision(player.getRadius(), player.getPos(), player.getPhase()) && collidesWithPlayerOrBot(player) == null;
     }
 
     /**
      * updates a received player to the received state
      * @param s a player object
      */
-    private void updatePlayer(Sendable s) {
+    private void receivedPlayer(Sendable s) {
         try {
             Player player = (Player) s;
-            players.removeIf(p -> p.equals(player));
-            players.add(player);
+            System.out.println("Player ID: "+player.getID()+" Position: "+player.getPos());
+            if (validPosition(player)) {
+                updatePlayer(player);
+            }
         }
         catch (Exception e) {
-            System.out.println("Not a player");
+            System.out.println("Not a player" + e);
         }
     }
+
 
     /**
      * gets a player from an id
      * @param id the player id
      * @return returns the player of null if no player exist
      */
-    private Player getPlayerFromID(int id) {
+    private synchronized Player getPlayer(int id) {
         for (Player p: players) {
-            if (p.getID() == id) return p;
+            if (p.getID() == id) {
+                return p;
+            }
         }
-        System.out.println("No player with that ID");
         return null;
+    }
+
+    /*private synchronized void removePlayer(int id) {
+        players.removeIf(p -> p.getID() == id);
+    }*/
+
+    private synchronized void updatePlayer(Player player) {
+        for (int i = 0; i < players.size(); i++){
+            if(players.get(i).getID() == player.getID()){
+                players.set(i, player);
+            }
+        }
     }
 
     /**

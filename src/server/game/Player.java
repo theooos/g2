@@ -45,6 +45,8 @@ public class Player extends MovableEntity {
         super.move();
     }
 
+
+
     Weapon getActiveWeapon() {
         if (w1Out) return w1;
         else return w2;

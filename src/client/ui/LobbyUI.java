@@ -1,11 +1,12 @@
 package client.ui;
 
-import networking.Connection;
+import client.Client;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 
 /**
  * Created by bianca on 06/02/2017.
@@ -13,32 +14,32 @@ import java.awt.event.ActionListener;
 class LobbyUI extends JPanel {
 
     private static Color mustard = new Color(245, 225, 65);
-    private static Color background = new Color(45,60,75);
+    private static Color background = new Color(45, 60, 75);
 
-    private JTextArea clientNames;
+    private JLabel clientNames;
     private JButton cancelButton;
     private JLabel clientText;
     private JLabel countDownText;
-    private JTextArea countDown;
+    private JLabel countDown;
     private JButton mapIcon;
 
-    public void createLobby(Connection conn, Container pane, MainMenu menu, String clientUsername){
+    public void createLobby(Container pane, String clientUsername) {
+
+        Client client = new Client();
 
         pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
         clientText = new JLabel("Users connected");
 
-        clientNames = new JTextArea(clientUsername);
-        clientNames.setMinimumSize(new Dimension(200, 300));
-        clientNames.setMinimumSize(new Dimension(200, 300));
-        clientNames.setEnabled(false);
+        //clientNames = new JTextArea(clientUsername);
+        clientNames = new JLabel(clientUsername);
 
         cancelButton = new JButton("Cancel");
 
         countDownText = new JLabel("Game will start in");
 
-        countDown = new JTextArea("");
+        countDown = new JLabel("");
         countDown.setEnabled(false);
 
         mapIcon = new JButton();
@@ -50,7 +51,7 @@ class LobbyUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 hideLobby();
                 pane.removeAll();
-                menu.createMenu(conn, pane, new LobbyUI());
+                new MainMenu().createMenu(pane);
             }
         });
 
@@ -77,7 +78,7 @@ class LobbyUI extends JPanel {
         pane.add(countDownText, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.ipady= 50;
+        c.ipady = 50;
         c.ipadx = 50;
         c.gridx = 3;
         c.gridy = 2;
@@ -97,7 +98,7 @@ class LobbyUI extends JPanel {
         pane.add(cancelButton, c);
     }
 
-    private void hideLobby(){
+    private void hideLobby() {
         clientNames.setVisible(false);
         cancelButton.setVisible(false);
         clientText.setVisible(false);
@@ -106,7 +107,7 @@ class LobbyUI extends JPanel {
         mapIcon.setVisible(false);
     }
 
-    private void showLobby(String clientUsername){
+    private void showLobby(String clientUsername) {
         clientNames.setText(clientUsername);
         clientNames.setVisible(true);
         cancelButton.setVisible(true);

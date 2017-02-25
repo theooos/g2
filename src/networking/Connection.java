@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * This holds the connection between Server and Client, and can be used by either.
@@ -23,6 +22,7 @@ public class Connection {
     private NetworkListener fromConnection;
     private NetworkEventHandler handler = new NetworkEventHandler();
 
+    private static boolean debug = true;
     /**
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
      */
@@ -56,6 +56,9 @@ public class Connection {
             out("Failed to establish connection.");
         }
         out("Connection made to server.");
+        new Thread(toConnection).start();
+        new Thread(fromConnection).start();
+        new Thread(handler).start();
     }
 
     /**
@@ -89,7 +92,7 @@ public class Connection {
      * @param obj Sendable item.
      */
     public void send(Sendable obj){
-        toConnection.send(obj);
+        toConnection.queueForSending(obj);
     }
 
     /**
@@ -109,6 +112,6 @@ public class Connection {
      * @param o Object to print.
      */
     static void out(Object o){
-        System.out.println("[NETWORK] "+o);
+        if(debug) System.out.println("[NETWORK] "+o);
     }
 }
