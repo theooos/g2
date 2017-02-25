@@ -1,6 +1,6 @@
 package client.ClientLogic;
 
-import client.graphics.GameRenderer;
+import client.graphics.GameRendererCreator;
 import networking.Connection;
 import objects.InitGame;
 import objects.Sendable;
@@ -39,9 +39,8 @@ public class ClientReceiver {
         int mapID = i.getMapID();
 
         gd = new GameData(players, zombies, mapID);
-        GameRenderer gameWindow = new GameRenderer(gd, connection);
-        gameWindow.setID(this.getID());
-        gameWindow.run();
+
+        new Thread(new GameRendererCreator(gd,connection,getID())).start();
 
         out("The game is now executing.");
     }
@@ -59,7 +58,7 @@ public class ClientReceiver {
                 this.setID(id);
 
             default:
-//                System.out.println("[CLIENT] LOL" + 0);
+                System.out.println("[CLIENT] " + information);
                 break;
         }
     }
@@ -79,6 +78,6 @@ public class ClientReceiver {
 
     public void updatedPlayer(Sendable s) {
         Player p = (Player) s;
-        gd.updatePlayers(p);
+        gd.updatePlayer(p);
     }
 }

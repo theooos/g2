@@ -2,6 +2,7 @@ package networking;
 
 import objects.Sendable;
 import org.lwjgl.Sys;
+import server.game.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +25,11 @@ public class NetworkEventHandler implements Runnable {
     public void run() {
         isRunning = true;
 
+//        addFunction("Player", p -> {
+//            Player player = (Player) p;
+//            System.out.println("Player ID: "+player.getID()+" Position: "+player.getPos());
+//        });
+
         while (isRunning) {
             Sendable sendable;
             if ((sendable = popSendable()) != null) {
@@ -32,7 +38,7 @@ public class NetworkEventHandler implements Runnable {
 
                 if (consumers != null) {
                     for (Consumer<Sendable> consumer : consumers) {
-                        System.out.println("Working on: " + className);
+//                        System.out.println("Working on: " + toExecute.size());
                         consumer.accept(sendable);
                     }
                 } else {

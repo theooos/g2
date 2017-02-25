@@ -27,7 +27,7 @@ public class Game implements Runnable {
     private Scoreboard sb;
     private int IDCounter;
 
-    public boolean isRunning;
+    private boolean isRunning;
 
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
@@ -180,7 +180,7 @@ public class Game implements Runnable {
                 sendAllObjects();
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000/60);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -440,7 +440,7 @@ public class Game implements Runnable {
     private void receivedPlayer(Sendable s) {
         try {
             Player player = (Player) s;
-
+            System.out.println("Player ID: "+player.getID()+" Position: "+player.getPos());
             if (validPosition(player)) {
                 updatePlayer(player);
             }
@@ -465,9 +465,9 @@ public class Game implements Runnable {
         return null;
     }
 
-    private synchronized void removePlayer(int id) {
+    /*private synchronized void removePlayer(int id) {
         players.removeIf(p -> p.getID() == id);
-    }
+    }*/
 
     private synchronized void updatePlayer(Player player) {
         for (int i = 0; i < players.size(); i++){
