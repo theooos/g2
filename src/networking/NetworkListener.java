@@ -15,20 +15,19 @@ class NetworkListener implements Runnable {
 
     private NetworkEventHandler handler;
     private ObjectInputStream fromConnection;
-    private boolean running = true;
+    private boolean isRunning;
 
     NetworkListener(ObjectInputStream fromConnection, NetworkEventHandler handler){
         this.fromConnection = fromConnection;
         this.handler = handler;
-        this.handler.run();
-        new Thread(this).start();
     }
 
     /**
      * Blocks connection when waiting for a new object. Hence this is threaded.
      */
     public void run(){
-        while(running){
+        isRunning = true;
+        while(isRunning){
             try {
                 Sendable received = (Sendable) fromConnection.readObject();
                 System.err.println("[RECEIVED] " + received);
@@ -36,7 +35,7 @@ class NetworkListener implements Runnable {
             } catch (IOException e) {
                 out("NetworkListener's connection with the server broke.");
                 out(e.getMessage());
-                running = false;
+                isRunning = false;
             } catch (ClassNotFoundException e) {
                 out("NetworkListener failed to interpret object type.");
                 out(e.getMessage());
@@ -49,7 +48,7 @@ class NetworkListener implements Runnable {
      * @throws IOException
      */
     void close() throws IOException {
-        running = false;
+        isRunning = false;
         fromConnection.close();
     }
 }

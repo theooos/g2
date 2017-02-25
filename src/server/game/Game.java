@@ -12,7 +12,7 @@ import java.util.*;
  * Created by peran on 27/01/17.
  * Controls the main game logic
  */
-public class Game {
+public class Game implements Runnable {
     private Timer t;
     private int countdown;
     private Map map;
@@ -26,6 +26,8 @@ public class Game {
 
     private Scoreboard sb;
     private int IDCounter;
+
+    public boolean isRunning;
 
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
@@ -80,7 +82,8 @@ public class Game {
             playerConnections.get(i).send(new objects.String("ID"+IDCounter));
             playerConnections.get(i).addFunctionEvent("String", this::decodeString);
             playerConnections.get(i).addFunctionEvent("Player", this::receivedPlayer);
-            players.add(p);
+
+            addPlayer(p);
             IDCounter++;
         }
         //create AI players
@@ -108,7 +111,7 @@ public class Game {
                     break;
             }
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
-            players.add(p);
+            addPlayer(p);
             IDCounter++;
         }
         //create team zombies
@@ -118,70 +121,69 @@ public class Game {
             IDCounter++;
         }
 
-
-        t = new Timer();
         countdown = 10*60*tick; //ten minutes
 
         InitGame g = new InitGame(zombies, players, mapID);
         sendGameStart(g);
+    }
 
-        int rate = 1000;
-
-        t.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                gameTick();
-            }
-        }, rate, rate);
+    private void addPlayer(Player p) {
+        List<Player> players = Collections.synchronizedList(this.players);
+        players.add(p);
+        this.players = players;
     }
 
 
     /**
      * The game tick runs.  This is the master function for a running game
      */
-    private void gameTick() {
-
-
-        for (Player p: players) {
-            if (!p.isAlive()) respawn(p);
-        }
-        for (Zombie z: zombies) {
-            if(!z.isAlive()) respawn(z);
-            z.live();
-            respawn(z);
-        }
-
-        for (Projectile p: projectiles) {
-            MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase(), p.getDir(), p.getSpeed());
-            if (e != null) {
-                e.damage(p.getDamage());
-                if (!e.isAlive()) {
-                    if (e instanceof Zombie) {
-                        sb.killedZombie(p.getPlayerID());
-                    }
-                    else {
-                        sb.killedPlayer(p.getPlayerID());
-                    }
-                }
-                p.kill();
+    public void run() {
+        isRunning = true;
+        while(isRunning){
+            for (Player p : players) {
+                if (!p.isAlive()) respawn(p);
+            }
+            for (Zombie z : zombies) {
+                if (!z.isAlive()) respawn(z);
+                z.live();
+                respawn(z);
             }
 
-            if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
+            for (Projectile p : projectiles) {
+                MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase(), p.getDir(), p.getSpeed());
+                if (e != null) {
+                    e.damage(p.getDamage());
+                    if (!e.isAlive()) {
+                        if (e instanceof Zombie) {
+                            sb.killedZombie(p.getPlayerID());
+                        } else {
+                            sb.killedPlayer(p.getPlayerID());
+                        }
+                    }
+                    p.kill();
+                }
 
-            p.live();
-        }
+                if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
-        //deletes the projectile from the list if it's dead
-        projectiles.removeIf(p -> !p.isAlive());
+                p.live();
+            }
 
-        countdown--;
+            //deletes the projectile from the list if it's dead
+            projectiles.removeIf(p -> !p.isAlive());
 
-        //stops the countdown when the timer has run out
-        if (countdown <= 0 || sb.scoreReached()) {
-            endGame();
-        }
-        else {
-            sendAllObjects();
+            countdown--;
+
+            //stops the countdown when the timer has run out
+            if (countdown <= 0 || sb.scoreReached()) {
+                endGame();
+            } else {
+                sendAllObjects();
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -438,7 +440,7 @@ public class Game {
     private void receivedPlayer(Sendable s) {
         try {
             Player player = (Player) s;
-            
+
             if (validPosition(player)) {
                 updatePlayer(player);
             }
@@ -468,8 +470,11 @@ public class Game {
     }
 
     private synchronized void updatePlayer(Player player) {
-        players.removeIf(p -> p.equals(player));
-        players.add(player);
+        for (int i = 0; i < players.size(); i++){
+            if(players.get(i).getID() == player.getID()){
+                players.set(i, player);
+            }
+        }
     }
 
     /**

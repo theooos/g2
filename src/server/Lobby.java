@@ -21,8 +21,6 @@ class Lobby {
     private Timer t;
     private int map;
 
-
-
     Lobby(int maxSize) {
         int mapMax = 2;
         countdownRunning = false;
@@ -34,7 +32,6 @@ class Lobby {
         map = rand.nextInt(mapMax);
 //        System.out.println(map);
     }
-
 
     /**
      * checks to see whether the lobby has reached maximum
@@ -108,7 +105,7 @@ class Lobby {
      */
     private void startGame() {
         msgToAllConnected("Game loading....");
-        Game game = new Game(players, maxSize, map);
+        new Thread(new Game(players, maxSize, map)).start();
     }
 
 }

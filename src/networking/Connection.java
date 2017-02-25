@@ -56,6 +56,9 @@ public class Connection {
             out("Failed to establish connection.");
         }
         out("Connection made to server.");
+        new Thread(toConnection).start();
+        new Thread(fromConnection).start();
+        new Thread(handler).start();
     }
 
     /**
@@ -89,7 +92,7 @@ public class Connection {
      * @param obj Sendable item.
      */
     public void send(Sendable obj){
-        toConnection.send(obj);
+        toConnection.queueForSending(obj);
     }
 
     /**

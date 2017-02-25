@@ -27,9 +27,9 @@ public class ClientReceiver {
         connection.addFunctionEvent("String", this::getID);
         connection.addFunctionEvent("InitGame", this::setupGame);
         connection.addFunctionEvent("Player", this::updatedPlayer);
-//        connection.addFunctionEvent("AIPlayer", this::out);
-//        connection.addFunctionEvent("Zombie", this::out);
-//        connection.addFunctionEvent("Projectile", this::out);
+        connection.addFunctionEvent("AIPlayer", i -> {});
+        connection.addFunctionEvent("Zombie", i -> {});
+        connection.addFunctionEvent("Projectile", i -> {});
     }
 
     public void setupGame(Sendable s) {
@@ -42,6 +42,7 @@ public class ClientReceiver {
         GameRenderer gameWindow = new GameRenderer(gd, connection);
         gameWindow.setID(this.getID());
         gameWindow.run();
+
         out("The game is now executing.");
     }
 

@@ -22,7 +22,7 @@ public class LobbyManager {
 
     public void addConnection(Connection c) {
 
-        //c.addFunctionEvent("String", LobbyManager::messageReceived);
+        c.addFunctionEvent("String", Server::out);
         c.send(new String("You are being cared for by the lobby manager."));
 
         boolean added = false;
@@ -40,10 +40,6 @@ public class LobbyManager {
             l.addConnection(c);
             lobbies.add(l);
         }
-    }
-
-    private static void messageReceived(Object o) {
-        System.out.println("[ FROM CLIENT ] " + o);
     }
 
     private Lobby createLobby() {

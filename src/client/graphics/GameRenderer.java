@@ -36,6 +36,8 @@ public class GameRenderer implements Runnable {
     private MapRenderer map;
     private Connection conn;
 
+    int count = 100;
+
     public GameRenderer(GameData gd, Connection conn) {
         super();
         this.conn = conn;
@@ -58,7 +60,7 @@ public class GameRenderer implements Runnable {
             map = new MapRenderer(gd.getMapID(), 1);
 
         } catch (LWJGLException le) {
-//            System.out.println("Game exiting - exception in initialization:");
+            System.out.println("Game exiting - exception in initialization:");
             le.printStackTrace();
             GameRenderer.gameRunning = false;
             return;
@@ -157,7 +159,13 @@ public class GameRenderer implements Runnable {
 
         players.get(playerID).setPos(new Vector2(xPos, yPos));
         gd.updatePlayers(players.get(playerID));
-        conn.send(players.get(playerID));
+
+        if(count == 0) {
+            conn.send(players.get(playerID));
+            count = 100;
+        } else {
+            count--;
+        }
 
 
         updateFPS(); // update FPS Counter
