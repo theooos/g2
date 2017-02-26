@@ -21,7 +21,7 @@ public class ClusterProjectile extends Projectile {
      * @param speed the speed of the prj
      * @param phase the phase the prj is in
      */
-    public ClusterProjectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, int player, int id) {
+    public ClusterProjectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, Player player, int id) {
         super(damage, lifespan, radius, pos, dir, speed, phase, player, id);
         clustered = false;
         children = new ArrayList<Projectile>();

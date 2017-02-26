@@ -7,7 +7,7 @@ public class Projectile extends MovableEntity {
 
     protected int damage;
     protected int lifespan;
-    protected int playerID;
+    protected Player p;
 
     /**
      * A boring default projectile
@@ -19,7 +19,7 @@ public class Projectile extends MovableEntity {
      * @param speed the speed of the prj
      * @param phase the phase the prj is in
      */
-    public Projectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, int playerID, int id) {
+    public Projectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, Player p, int id) {
         this.damage = damage;
         this.lifespan = lifespan;
         this.damageable = false;
@@ -29,6 +29,9 @@ public class Projectile extends MovableEntity {
         this.dir = dir;
         this.speed = speed;
         this.phase = phase;
+        this.p = p;
+        this.team = p.getTeam();
+
         ID = id;
     }
 
@@ -57,10 +60,10 @@ public class Projectile extends MovableEntity {
     }
 
     int getPlayerID() {
-        return playerID;
+        return p.getID();
     }
 
-    void setPlayerID(int id) {
-        this.playerID = id;
+    void setPlayer(Player p) {
+        this.p = p;
     }
 }

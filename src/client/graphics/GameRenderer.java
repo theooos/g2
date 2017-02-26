@@ -2,6 +2,8 @@ package client.graphics;
 
 import client.ClientLogic.GameData;
 import networking.Connection;
+import objects.FireObject;
+import objects.PhaseObject;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -10,7 +12,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import server.game.Player;
+import server.game.Projectile;
 import server.game.Vector2;
+import server.game.Zombie;
 
 import java.util.HashMap;
 
@@ -34,6 +38,8 @@ public class GameRenderer implements Runnable {
     private GameData gameData;
     private MapRenderer map;
     private Connection conn;
+    private boolean fDown;
+    private boolean clickDown;
 
     int count = 10;
 
@@ -41,6 +47,10 @@ public class GameRenderer implements Runnable {
         super();
         this.conn = conn;
         this.gameData = gd;
+
+        fDown = false;
+        clickDown = false;
+
 
         // initialize the window beforehand
         try {
@@ -116,13 +126,8 @@ public class GameRenderer implements Runnable {
 
     private void positionBullet(Vector2 pos) {
         Vector2 mousePos = new Vector2(Mouse.getX(), Mouse.getY());
-//        System.out.println("MousePos"+mousePos);
-
         Vector2 dir = pos.vectorTowards(mousePos);
-//        System.out.println("dir"+dir);
-
         Vector2 cursor = dir.normalise();
-//        System.out.println("cursor"+cursor);
 
         cursor = pos.add(cursor.mult(21));
         lastX = cursor.getX();//pos.getX()+(Mouse.getX()-pos.getX())/10;
@@ -149,6 +154,26 @@ public class GameRenderer implements Runnable {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+            fDown = true;
+        }
+        else if (fDown){
+            fDown = false;
+            conn.send(new PhaseObject(me.getID()));
+        }
+
+        if (Mouse.isButtonDown(0)) {
+            if (!clickDown) {
+                conn.send(new FireObject(me.getID(), true));
+                clickDown = true;
+            }
+        }
+        else if (clickDown){
+            conn.send(new FireObject(me.getID(), false));
+            clickDown = false;
+        }
+
 
         // keep quad on the screen
         if (xPos < 0) xPos = 0;
@@ -179,35 +204,45 @@ public class GameRenderer implements Runnable {
         // Clear the screen and depth buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        // set the color of the quad (R,G,B,A)
-        //GL11.glColor3f(0.5f,0.5f,1.0f);
-
         map.renderMap();
+        drawProjectiles();
+        drawZombies();
         drawPlayers();
 
-        /* update movement
-        glBegin(GL11.GL_QUADS);
-
-        glVertex2f(xPos - 50, yPos - 50);
-        glVertex2f(xPos + 50, yPos - 50);
-        glVertex2f(xPos + 50, yPos + 50);
-        glVertex2f(xPos - 50, yPos + 50);
-
-        GL11.glEnd();
-        GL11.glPopMatrix();
-        */
     }
 
     private void drawPlayers() {
         HashMap<Integer, Player> players = gameData.getPlayers();
+        int radius = players.get(0).getRadius();
         for (Player p : players.values()) {
-            if (p.getID() % 2 == 0) {
+            if (p.getTeam() == 0) {
                 GL11.glColor3f(1, 0.33f, 0.26f);
             } else {
                 GL11.glColor3f(0.2f, 0.9f, 0.5f);
             }
-            DrawCircle(p.getPos().getX(), height - p.getPos().getY(), 20, 100);
+            DrawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
             positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()));
+        }
+    }
+
+    private void drawZombies() {
+        HashMap<Integer, Zombie> zombies= gameData.getZombies();
+        GL11.glColor3f(0.2f, 0.2f, 1f);
+        for (Zombie z: zombies.values()) {
+            DrawCircle(z.getPos().getX(), height - z.getPos().getY(), z.getRadius(), 100);
+        }
+    }
+
+    private void drawProjectiles() {
+        HashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
+        GL11.glColor3f(0.2f, 0.2f, 1f);
+        for (Projectile p : projectiles.values()) {
+            if (p.getTeam() == 0) {
+                GL11.glColor3f(1, 0.33f, 0.26f);
+            } else {
+                GL11.glColor3f(0.2f, 0.9f, 0.5f);
+            }
+            DrawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
         }
     }
 
@@ -219,14 +254,7 @@ public class GameRenderer implements Runnable {
         return delta;
     }
 
-    public void setID(int id) {
+    void setID(int id) {
         this.playerID = id;
-    }
-
-    public static void main(String argv[]) {
-
-        //we need to create a GameData
-        //new GameRenderer .execute();
-        System.exit(0);
     }
 }

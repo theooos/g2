@@ -31,7 +31,7 @@ class Weapon implements Sendable{
         //with a cooldown rate of 1, it'll take 2s for a full reload
         magSize = 120;
         currentHeat = 0;
-        shotType = new Projectile(100,100,20,new Vector2(0,0), new Vector2(0,0), 100, 0, 0, 0);
+        shotType = new Projectile(100,100,20,new Vector2(0,0), new Vector2(0,0), 100, 0, null, 0);
         numProjectiles = 1;
         //how much current recoil there is
         currentRecoil = 0;
@@ -87,7 +87,7 @@ class Weapon implements Sendable{
             ps.add(shotType);
             ps.get(i).setDir(getDeviation(player.getDir()));
             ps.get(i).setPos(player.getPos());
-            ps.get(i).setPlayerID(player.getID());
+            ps.get(i).setPlayer(player);
         }
         currentRecoil += bloomPerShot;
         if (currentRecoil > maxRecoil) currentRecoil = maxRecoil;

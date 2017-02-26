@@ -19,7 +19,7 @@ public class DistDropOffProjectile extends Projectile {
      * @param phase the phase the prj is in
      */
     public DistDropOffProjectile(int damage, int lifespan, int radius, Vector2 pos,
-                                 Vector2 dir, float speed, int phase, int player, int ID) {
+                                 Vector2 dir, float speed, int phase, Player player, int ID) {
         super(damage, lifespan, radius, pos, dir, speed, phase, player, ID);
         damageDec = damage/lifespan;
         radiusDec = radius/lifespan;

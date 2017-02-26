@@ -1,7 +1,9 @@
 package server.game;
 
 import networking.Connection;
+import objects.FireObject;
 import objects.InitGame;
+import objects.PhaseObject;
 import objects.Sendable;
 
 import java.awt.geom.Line2D;
@@ -82,6 +84,8 @@ public class Game implements Runnable {
             playerConnections.get(i).send(new objects.String("ID"+IDCounter));
             playerConnections.get(i).addFunctionEvent("String", this::decodeString);
             playerConnections.get(i).addFunctionEvent("Player", this::receivedPlayer);
+            playerConnections.get(i).addFunctionEvent("FireObject", this::toggleFire);
+            playerConnections.get(i).addFunctionEvent("PhaseObject", this::switchPhase);
 
             addPlayer(p);
             IDCounter++;
@@ -127,6 +131,16 @@ public class Game implements Runnable {
         sendGameStart(g);
     }
 
+    private void switchPhase(Sendable s) {
+        PhaseObject phase = (PhaseObject) s;
+        for (Player p: players) {
+            if (p.getID() == phase.getID()) {
+                p.togglePhase();
+            }
+            break;
+        }
+    }
+
     private void addPlayer(Player p) {
         List<Player> players = Collections.synchronizedList(this.players);
         players.add(p);
@@ -142,6 +156,7 @@ public class Game implements Runnable {
         while(isRunning){
             for (Player p : players) {
                 if (!p.isAlive()) respawn(p);
+                fire(p);
             }
             for (Zombie z : zombies) {
                 if (!z.isAlive()) respawn(z);
@@ -242,6 +257,9 @@ public class Game implements Runnable {
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
         e.setPhase(rand.nextInt(1));
+        if (e instanceof Player) {
+            ((Player) e).setFiring(false);
+        }
     }
 
     /**
@@ -403,14 +421,6 @@ public class Game implements Runnable {
         try{
             String s1 = s.substring(1);
             switch (s.charAt(0)) {
-                //fire
-                case 'f':
-                    fire(getPlayer(Integer.parseInt(s1)));
-                    break;
-                //switch phase
-                case 'p':
-                    togglePhase(getPlayer(Integer.parseInt(s1)));
-                    break;
                 //switch weapon
                 case 'w':
                     toggleWeapon(getPlayer(Integer.parseInt(s1)));
@@ -440,7 +450,7 @@ public class Game implements Runnable {
     private void receivedPlayer(Sendable s) {
         try {
             Player player = (Player) s;
-            System.out.println("Player ID: "+player.getID()+" Position: "+player.getPos());
+            //System.out.println("Player ID: "+player.getID()+" Position: "+player.getPos());
             if (validPosition(player)) {
                 updatePlayer(player);
             }
@@ -473,6 +483,17 @@ public class Game implements Runnable {
         for (int i = 0; i < players.size(); i++){
             if(players.get(i).getID() == player.getID()){
                 players.set(i, player);
+            }
+        }
+    }
+
+    private void toggleFire(Sendable s) {
+        FireObject f = (FireObject) s;
+        int id = f.getPlayerID();
+        for (Player p : players) {
+            if (p.getID() == id) {
+                p.setFiring(f.isStartFire());
+                break;
             }
         }
     }
