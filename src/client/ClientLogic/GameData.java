@@ -69,4 +69,11 @@ public class GameData {
         players.put(p.getID(), p);
     }
 
+    public void updateMe(Player p) {
+        Player me = players.get(p.getID());
+        me.setPhase(p.getPhase());
+        me.setHealth(p.getHealth());
+        players.put(p.getID(), me);
+    }
+
 }

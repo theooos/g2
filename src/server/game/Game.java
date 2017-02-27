@@ -29,8 +29,6 @@ public class Game implements Runnable {
     private Scoreboard sb;
     private int IDCounter;
 
-    private boolean isRunning;
-
     private final boolean DEBUG = true;
 
 
@@ -48,7 +46,7 @@ public class Game implements Runnable {
             msgToAllConnected("Failed to load map");
         }
 
-//        out("Total players: "+playerConnections.size());
+        out("Total players: "+playerConnections.size());
 
         rand = new Random();
         sb = new Scoreboard(100, maxPlayers);
@@ -78,7 +76,7 @@ public class Game implements Runnable {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-//                    out("Error selecting weapon");
+                    out("Error selecting weapon");
                     break;
             }
 
@@ -93,7 +91,7 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create AI players
-        for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
+        for (int i = playerConnections.size(); i < maxPlayers; i++) {
             //randomly select weapons for players
             Weapon w1;
             Weapon w2;
@@ -122,7 +120,8 @@ public class Game implements Runnable {
         }
         //create team zombies
         for (int i = 0; i < maxPlayers; i++) {
-            Zombie z = new Zombie(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
+            Zombie z = new Zombie(respawnCoords(), randomDir(),rand.nextInt(2), IDCounter);
+            respawn(z);
             zombies.add(z);
             IDCounter++;
         }
@@ -133,15 +132,6 @@ public class Game implements Runnable {
         sendGameStart(g);
     }
 
-    private void switchPhase(Sendable s) {
-        PhaseObject phase = (PhaseObject) s;
-        for (Player p: players) {
-            if (p.getID() == phase.getID()) {
-                p.togglePhase();
-            }
-            break;
-        }
-    }
 
     private void addPlayer(Player p) {
         List<Player> players = Collections.synchronizedList(this.players);
@@ -154,7 +144,7 @@ public class Game implements Runnable {
      * The game tick runs.  This is the master function for a running game
      */
     public void run() {
-        isRunning = true;
+        boolean isRunning = true;
         while(isRunning){
             for (Player p : players) {
                 if (!p.isAlive()) respawn(p);
@@ -163,7 +153,7 @@ public class Game implements Runnable {
             for (Zombie z : zombies) {
                 if (!z.isAlive()) respawn(z);
                 z.live();
-                respawn(z);
+                z.setDir(randomDir());
             }
 
             for (Projectile p : projectiles) {
@@ -278,7 +268,7 @@ public class Game implements Runnable {
 
         while (!valid) {
             valid = true;
-            v = new Vector2(rand.nextInt(boundX), rand.nextInt(boundY));
+            v = new Vector2(rand.nextInt(boundX)+50, rand.nextInt(boundY)+50);
 
             if (pointWallCollision(minDist, v, 0)) valid = false;
             else if (pointWallCollision(minDist, v, 1)) valid = false;
@@ -491,6 +481,7 @@ public class Game implements Runnable {
     }
 
     private void toggleFire(Sendable s) {
+        out("Toggling fire");
         FireObject f = (FireObject) s;
         int id = f.getPlayerID();
         for (Player p : players) {
@@ -499,6 +490,24 @@ public class Game implements Runnable {
                 break;
             }
         }
+    }
+
+    private void switchPhase(Sendable s) {
+        PhaseObject phase = (PhaseObject) s;
+        for (Player p: players) {
+            if (p.getID() == phase.getID()) {
+                p.togglePhase();
+                break;
+            }
+        }
+    }
+
+    /**
+     * Switches the phase of the given player
+     * @param player the player to switch phase
+     */
+    private void togglePhase(Player player) {
+        player.togglePhase();
     }
 
     /**
@@ -523,14 +532,6 @@ public class Game implements Runnable {
      */
     private void toggleWeapon(Player player) {
         player.toggleWeapon();
-    }
-
-    /**
-     * Switches the phase of the given player
-     * @param player the player to switch phase
-     */
-    private void togglePhase(Player player) {
-        player.togglePhase();
     }
 
     private void out(Object o) {

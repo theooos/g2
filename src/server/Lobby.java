@@ -20,6 +20,7 @@ class Lobby {
     private int countdown;
     private Timer t;
     private int map;
+    private boolean gameRunning;
 
     Lobby(int maxSize) {
         int mapMax = 2;
@@ -29,8 +30,9 @@ class Lobby {
         minSize = maxSize/2;
         t = new Timer();
         Random rand = new Random();
-        map = rand.nextInt(mapMax);
-//        System.out.println(map);
+        map = 0;
+        System.out.println(map);
+        gameRunning = false;
     }
 
     /**
@@ -105,7 +107,12 @@ class Lobby {
      */
     private void startGame() {
         msgToAllConnected("Game loading....");
+        gameRunning = true;
         new Thread(new Game(players, maxSize, map)).start();
+    }
+
+    public boolean isGameRunning() {
+        return gameRunning;
     }
 
 }

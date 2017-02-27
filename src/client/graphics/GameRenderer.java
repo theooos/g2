@@ -25,7 +25,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class GameRenderer implements Runnable {
 
-    private String WINDOW_TITLE = "PhaseShift";
+    private final String WINDOW_TITLE = "PhaseShift";
     public static boolean gameRunning = true;
     private int width = 800;
     private int height = 600;
@@ -92,7 +92,7 @@ public class GameRenderer implements Runnable {
         Display.destroy();
     }
 
-    public void DrawCircle(float cx, float cy, float r, int num_segments) {
+    private void DrawCircle(float cx, float cy, float r, int num_segments) {
         float theta = (float) (2 * 3.1415926 / (num_segments));
         float tangetial_factor = (float) Math.tan(theta);//calculate the tangential factor
         float radial_factor = (float) Math.cos(theta);//calculate the radial factor
@@ -121,17 +121,18 @@ public class GameRenderer implements Runnable {
         GL11.glEnd();
     }
 
-    float lastX = -1;
-    float lastY = -1;
-
-    private void positionBullet(Vector2 pos) {
+    private Vector2 getDirFromMouse(Vector2 pos) {
         Vector2 mousePos = new Vector2(Mouse.getX(), Mouse.getY());
         Vector2 dir = pos.vectorTowards(mousePos);
-        Vector2 cursor = dir.normalise();
+        return dir.normalise();
+    }
 
+
+    private void positionBullet(Vector2 pos) {
+        Vector2 cursor = getDirFromMouse(pos);
         cursor = pos.add(cursor.mult(21));
-        lastX = cursor.getX();//pos.getX()+(Mouse.getX()-pos.getX())/10;
-        lastY = cursor.getY();//pos.getY()+(Mouse.getY()-pos.getY())/10;
+        float lastX = cursor.getX();
+        float lastY = cursor.getY();
         //Mouse.setGrabbed(true);
 
         if (lastX > 0 && lastY > 0)
@@ -205,44 +206,51 @@ public class GameRenderer implements Runnable {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         map.renderMap();
-        drawProjectiles();
-        drawZombies();
-        drawPlayers();
+        int phase = gameData.getPlayer(playerID).getPhase();
+        drawProjectiles(phase);
+        drawZombies(phase);
+        drawPlayers(phase);
 
     }
 
-    private void drawPlayers() {
+    private void drawPlayers(int phase) {
         HashMap<Integer, Player> players = gameData.getPlayers();
         int radius = players.get(0).getRadius();
         for (Player p : players.values()) {
-            if (p.getTeam() == 0) {
-                GL11.glColor3f(1, 0.33f, 0.26f);
-            } else {
-                GL11.glColor3f(0.2f, 0.9f, 0.5f);
+            if (p.getPhase() == phase) {
+                if (p.getTeam() == 0) {
+                    GL11.glColor3f(1, 0.33f, 0.26f);
+                } else {
+                    GL11.glColor3f(0.2f, 0.9f, 0.5f);
+                }
+                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
+                positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()));
             }
-            DrawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
-            positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()));
         }
     }
 
-    private void drawZombies() {
+    private void drawZombies(int phase) {
         HashMap<Integer, Zombie> zombies= gameData.getZombies();
         GL11.glColor3f(0.2f, 0.2f, 1f);
         for (Zombie z: zombies.values()) {
-            DrawCircle(z.getPos().getX(), height - z.getPos().getY(), z.getRadius(), 100);
+            if (phase == z.getPhase()) {
+                DrawCircle(z.getPos().getX(), height - z.getPos().getY(), z.getRadius(), 100);
+            }
         }
     }
 
-    private void drawProjectiles() {
+    private void drawProjectiles(int phase) {
         HashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
         GL11.glColor3f(0.2f, 0.2f, 1f);
         for (Projectile p : projectiles.values()) {
-            if (p.getTeam() == 0) {
-                GL11.glColor3f(1, 0.33f, 0.26f);
-            } else {
-                GL11.glColor3f(0.2f, 0.9f, 0.5f);
+            if (phase == p.getPhase()) {
+                if (p.getTeam() == 0) {
+                    GL11.glColor3f(1f, 0f, 0f);
+                } else {
+                    GL11.glColor3f(0f, 1f, 0f);
+                }
+                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
             }
-            DrawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
         }
     }
 

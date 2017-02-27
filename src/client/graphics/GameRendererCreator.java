@@ -3,9 +3,6 @@ package client.graphics;
 import client.ClientLogic.GameData;
 import networking.Connection;
 
-/**
- * Created by theo on 25/02/2017.
- */
 public class GameRendererCreator implements Runnable {
     private GameData gd;
     private Connection connection;

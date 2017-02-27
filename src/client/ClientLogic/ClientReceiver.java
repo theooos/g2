@@ -84,6 +84,9 @@ public class ClientReceiver {
         if (p.getID() != playerID) {
             gd.updatePlayer(p);
         }
+        else {
+            gd.updateMe(p);
+        }
     }
 
     private void updatedZombie(Sendable s) {

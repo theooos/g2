@@ -47,7 +47,7 @@ public class TestEnvironment extends Observable {
             botPos = new Vector2(botX, botY);
             validDistance = player.getPos().getDistanceTo(botPos) >= 50;
         }
-        zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1, 1);
+        zombie = new Zombie(botPos, new Vector2(0, 1), 1, 1);
 
     }
 
