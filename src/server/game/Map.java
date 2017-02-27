@@ -295,7 +295,7 @@ public class Map {
                     }
 
                     int t = Integer.parseInt(items.get(2));
-                    if (!(t == 1 || t == 2)){
+                    if (!(t == 0 || t == 1)){
                         System.out.println(err + "Spawn location belongs to invalid team.");
                         //System.exit(0);
                     }

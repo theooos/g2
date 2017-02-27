@@ -31,6 +31,8 @@ public class Game implements Runnable {
 
     private boolean isRunning;
 
+    private final boolean DEBUG = true;
+
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
         int tick = 60;
@@ -46,7 +48,7 @@ public class Game implements Runnable {
             msgToAllConnected("Failed to load map");
         }
 
-//        System.out.println("Total players: "+playerConnections.size());
+//        out("Total players: "+playerConnections.size());
 
         rand = new Random();
         sb = new Scoreboard(100, maxPlayers);
@@ -76,7 +78,7 @@ public class Game implements Runnable {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-//                    System.out.println("Error selecting weapon");
+//                    out("Error selecting weapon");
                     break;
             }
 
@@ -111,7 +113,7 @@ public class Game implements Runnable {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-//                    System.out.println("Error selecting weapon");
+//                    out("Error selecting weapon");
                     break;
             }
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
@@ -119,7 +121,7 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create team zombies
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < maxPlayers; i++) {
             Zombie z = new Zombie(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
             zombies.add(z);
             IDCounter++;
@@ -385,7 +387,7 @@ public class Game implements Runnable {
         for (Connection c: playerConnections) {
             c.send(new objects.String(s));
         }
-//        System.out.println("Sending the following to all connected:"+s);
+//        out("Sending the following to all connected:"+s);
     }
 
     /**
@@ -399,6 +401,7 @@ public class Game implements Runnable {
     }
 
     private void sendGameStart(InitGame g) {
+        out("Sending init game");
         for (Connection c: playerConnections) {
             c.send(g);
         }
@@ -427,14 +430,14 @@ public class Game implements Runnable {
                     break;
                 //"say" sends a message
                 case 's':
-                    System.out.println("SAY: "+s.substring(1));
+                    out("SAY: "+s.substring(1));
                     break;
                 default:
-//                    System.out.println(s);
+                    out(s);
             }
         }
         catch (Exception e) {
-//            System.out.println(s);
+            out(s);
         }
     }
 
@@ -450,13 +453,13 @@ public class Game implements Runnable {
     private void receivedPlayer(Sendable s) {
         try {
             Player player = (Player) s;
-            //System.out.println("Player ID: "+player.getID()+" Position: "+player.getPos());
+            //out("Player ID: "+player.getID()+" Position: "+player.getPos());
             if (validPosition(player)) {
                 updatePlayer(player);
             }
         }
         catch (Exception e) {
-            System.out.println("Not a player" + e);
+            out("Not a player" + e);
         }
     }
 
@@ -528,6 +531,12 @@ public class Game implements Runnable {
      */
     private void togglePhase(Player player) {
         player.togglePhase();
+    }
+
+    private void out(Object o) {
+        if (DEBUG) {
+            System.out.println(o);
+        }
     }
 
 }

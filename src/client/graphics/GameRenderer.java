@@ -58,7 +58,7 @@ public class GameRenderer implements Runnable {
             Display.setTitle(WINDOW_TITLE);
             Display.create();
 
-            System.err.print("Creating the display!");
+            //System.err.print("Creating the display!");
 
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();

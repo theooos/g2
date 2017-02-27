@@ -30,7 +30,12 @@ public class Projectile extends MovableEntity {
         this.speed = speed;
         this.phase = phase;
         this.p = p;
-        this.team = p.getTeam();
+        try {
+            this.team = p.getTeam();
+        }
+        catch (NullPointerException e) {
+            this.team = 2;
+        }
 
         ID = id;
     }
