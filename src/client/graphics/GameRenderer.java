@@ -232,7 +232,6 @@ public class GameRenderer implements Runnable {
                     Vector2 dir = getDirFromMouse(pos);
                     positionBullet(pos, dir);
                     p.setDir(dir);
-                    //gameData.updatePlayer(p);
                     conn.send(p);
                 }
             }
@@ -252,14 +251,14 @@ public class GameRenderer implements Runnable {
     private void drawProjectiles(int phase) {
         HashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
         for (Projectile p : projectiles.values()) {
-            System.out.println("showing projectile");
+            //System.out.println("showing projectile");
             if (phase == p.getPhase()) {
                 if (p.getTeam() == 0) {
                     GL11.glColor3f(1f, 0.1f, 0.1f);
                 } else {
                     GL11.glColor3f(0.1f, 1f, 0.1f);
                 }
-                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
+                DrawCircle(p.getPos().getX(), p.getPos().getY(), p.getRadius(), 100);
             }
         }
     }

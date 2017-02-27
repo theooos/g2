@@ -15,7 +15,6 @@ import java.util.*;
  * Controls the main game logic
  */
 public class Game implements Runnable {
-    private Timer t;
     private int countdown;
     private Map map;
 
@@ -186,6 +185,7 @@ public class Game implements Runnable {
             //stops the countdown when the timer has run out
             if (countdown <= 0 || sb.scoreReached()) {
                 endGame();
+                isRunning = false;
             } else {
                 sendAllObjects();
             }
@@ -220,8 +220,6 @@ public class Game implements Runnable {
      * Ends the game and msgs all clients
      */
     private void endGame() {
-        t.cancel();
-        t.purge();
         msgToAllConnected("Game Ended");
         for (Connection c: playerConnections) {
             sendScoreboard(c);
@@ -240,7 +238,7 @@ public class Game implements Runnable {
         }
         for (Projectile p: projectiles) {
             sendToAllConnected(p);
-            out("sending projectile");
+            //out("sending projectile");
         }
     }
 

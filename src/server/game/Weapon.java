@@ -85,7 +85,8 @@ class Weapon implements Sendable{
         ArrayList<Projectile> ps = new ArrayList<>();
         for (int i = 0; i < numProjectiles; i++) {
             ps.add(shotType);
-            ps.get(i).setDir(getDeviation(player.getDir()));
+            //ps.get(i).setDir(getDeviation(player.getDir()));
+            ps.get(i).setDir(player.getDir());
             ps.get(i).setPos(player.getPos());
             ps.get(i).setPlayer(player);
         }
@@ -110,18 +111,5 @@ class Weapon implements Sendable{
     boolean isFullyAuto() {
          return fullyAuto;
     }
-
-  /*  public static void main(String[] args) {
-        Vector2 v = new Vector2(1,0);
-        Weapon w = new Weapon();
-        Weapon w1 = new WeaponShotgun();
-        Weapon w2 = new WeaponSniper();
-        Weapon w3 = new WeaponSMG();
-        System.out.println(v);
-        System.out.println(w.getDeviation(v));
-        System.out.println(w1.getDeviation(v));
-        System.out.println(w2.getDeviation(v));
-        System.out.println(w3.getDeviation(v));
-    } */
 
 }

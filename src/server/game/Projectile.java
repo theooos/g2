@@ -1,13 +1,10 @@
 package server.game;
 
-/**
- * Created by peran on 31/01/17.
- */
 public class Projectile extends MovableEntity {
 
-    protected int damage;
-    protected int lifespan;
-    protected Player p;
+    int damage;
+    int lifespan;
+    private Player p;
 
     /**
      * A boring default projectile
@@ -40,12 +37,12 @@ public class Projectile extends MovableEntity {
         ID = id;
     }
 
-    public void live() {
+    void live() {
         move();
         tickLife();
     }
 
-    public int getDamage() {
+    int getDamage() {
         return damage;
     }
 
