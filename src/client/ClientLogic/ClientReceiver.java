@@ -98,5 +98,6 @@ public class ClientReceiver {
     private void updatedProjectile(Sendable s) {
         Projectile p = (Projectile) s;
         gd.updateProjectile(p);
+        System.out.println("got projectile");
     }
 }

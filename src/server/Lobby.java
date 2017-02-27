@@ -111,7 +111,7 @@ class Lobby {
         new Thread(new Game(players, maxSize, map)).start();
     }
 
-    public boolean isGameRunning() {
+    boolean isGameRunning() {
         return gameRunning;
     }
 

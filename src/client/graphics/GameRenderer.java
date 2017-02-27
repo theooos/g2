@@ -128,9 +128,8 @@ public class GameRenderer implements Runnable {
     }
 
 
-    private void positionBullet(Vector2 pos) {
-        Vector2 cursor = getDirFromMouse(pos);
-        cursor = pos.add(cursor.mult(21));
+    private void positionBullet(Vector2 pos, Vector2 dir) {
+        Vector2 cursor = pos.add(dir.mult(21));
         float lastX = cursor.getX();
         float lastY = cursor.getY();
         //Mouse.setGrabbed(true);
@@ -224,7 +223,18 @@ public class GameRenderer implements Runnable {
                     GL11.glColor3f(0.2f, 0.9f, 0.5f);
                 }
                 DrawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
-                positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()));
+
+                if (p.getID() != playerID) {
+                    positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()), p.getDir());
+                }
+                else {
+                    Vector2 pos = new Vector2(p.getPos().getX(), height - p.getPos().getY());
+                    Vector2 dir = getDirFromMouse(pos);
+                    positionBullet(pos, dir);
+                    p.setDir(dir);
+                    //gameData.updatePlayer(p);
+                    conn.send(p);
+                }
             }
         }
     }
@@ -241,13 +251,13 @@ public class GameRenderer implements Runnable {
 
     private void drawProjectiles(int phase) {
         HashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
-        GL11.glColor3f(0.2f, 0.2f, 1f);
         for (Projectile p : projectiles.values()) {
+            System.out.println("showing projectile");
             if (phase == p.getPhase()) {
                 if (p.getTeam() == 0) {
-                    GL11.glColor3f(1f, 0f, 0f);
+                    GL11.glColor3f(1f, 0.1f, 0.1f);
                 } else {
-                    GL11.glColor3f(0f, 1f, 0f);
+                    GL11.glColor3f(0.1f, 1f, 0.1f);
                 }
                 DrawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
             }

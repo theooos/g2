@@ -68,6 +68,10 @@ public class Projectile extends MovableEntity {
         return p.getID();
     }
 
+    Player getPlayer() {
+        return p;
+    }
+
     void setPlayer(Player p) {
         this.p = p;
     }

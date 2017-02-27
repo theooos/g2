@@ -7,7 +7,7 @@ package server.game;
 public class WeaponSniper extends Weapon {
     public WeaponSniper() {
         super();
-        shotType = new Projectile(70,700,20,new Vector2(0,0), new Vector2(0,0), 30, 0, null, 0);
+        shotType = new Projectile(70,700,10,new Vector2(0,0), new Vector2(0,0), 3, 0, null, 0);
         numProjectiles = 1;
         //the max inaccuracy from recoil alone
         maxRecoil = 80;

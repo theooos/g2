@@ -60,7 +60,8 @@ public class Game implements Runnable {
             //randomly select weapons for players
             Weapon w1;
             Weapon w2;
-            switch (rand.nextInt(3)) {
+            int w = rand.nextInt(3);
+            switch (1) {
                 case 0:
                     w1 = new WeaponShotgun();
                     w2 = new WeaponSniper();
@@ -148,7 +149,8 @@ public class Game implements Runnable {
         while(isRunning){
             for (Player p : players) {
                 if (!p.isAlive()) respawn(p);
-                fire(p);
+                if (p.isFiring()) fire(p);
+                p.live();
             }
             for (Zombie z : zombies) {
                 if (!z.isAlive()) respawn(z);
@@ -158,7 +160,8 @@ public class Game implements Runnable {
 
             for (Projectile p : projectiles) {
                 MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase(), p.getDir(), p.getSpeed());
-                if (e != null) {
+                if (e != null && !e.equals(p.getPlayer())) {
+                    out(p.getPlayerID()+" just hit "+e.getID());
                     e.damage(p.getDamage());
                     if (!e.isAlive()) {
                         if (e instanceof Zombie) {
@@ -176,7 +179,7 @@ public class Game implements Runnable {
             }
 
             //deletes the projectile from the list if it's dead
-            projectiles.removeIf(p -> !p.isAlive());
+            //projectiles.removeIf(p -> !p.isAlive());
 
             countdown--;
 
@@ -237,6 +240,7 @@ public class Game implements Runnable {
         }
         for (Projectile p: projectiles) {
             sendToAllConnected(p);
+            out("sending projectile");
         }
     }
 
@@ -503,25 +507,19 @@ public class Game implements Runnable {
     }
 
     /**
-     * Switches the phase of the given player
-     * @param player the player to switch phase
-     */
-    private void togglePhase(Player player) {
-        player.togglePhase();
-    }
-
-    /**
      * fires the active gun of the given player
      * @param player the gun to fire
      */
     private void fire(Player player) {
         Weapon w = player.getActiveWeapon();
         if (w.canFire()) {
+            out("ID"+player.getID()+": Just Fired");
             ArrayList<Projectile> ps = w.getShots(player);
             for (Projectile p: ps) {
                 p.setID(IDCounter);
                 IDCounter++;
                 projectiles.add(p);
+                out("Shot Fired");
             }
         }
     }
