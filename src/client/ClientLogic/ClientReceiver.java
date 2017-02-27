@@ -20,6 +20,7 @@ public class ClientReceiver {
     private Connection connection;
     private int mapID;
     private int playerID;
+    private static boolean DEBUG = true;
     private GameData gd;
 
     public ClientReceiver(Connection conn) {
@@ -41,7 +42,7 @@ public class ClientReceiver {
         HashMap<Integer, Projectile> projectiles = new HashMap<>();
 
         gd = new GameData(players, zombies, projectiles, mapID);
-
+        out("Setting up game");
         new Thread(new GameRendererCreator(gd,connection,getID())).start();
 
         out("The game is now executing.");
@@ -66,7 +67,7 @@ public class ClientReceiver {
     }
 
     public void out(Object o) {
-        System.out.println("[CLIENT] " + o);
+        if (DEBUG) System.out.println("[CLIENT] " + o);
     }
 
 

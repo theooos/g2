@@ -19,6 +19,7 @@ public class GameRendererCreator implements Runnable {
 
     @Override
     public void run() {
+        System.err.println("Starting Game Renderer Creator");
         GameRenderer gameRenderer = new GameRenderer(gd, connection);
         gameRenderer.setID(id);
         gameRenderer.run();

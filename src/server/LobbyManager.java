@@ -46,6 +46,6 @@ public class LobbyManager {
         Random r = new Random();
         int size = r.nextInt(4)+1;
         size = size*4;
-        return new Lobby(4);
+        return new Lobby(2);
     }
 }
