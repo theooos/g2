@@ -321,7 +321,7 @@ public class Game implements Runnable {
      */
     private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase, Vector2 dir, float speed) {
         ArrayList<MovableEntity> entities = new ArrayList<>();
-        entities.addAll(zombies);
+        //entities.addAll(zombies);
         entities.addAll(players);
         entities.removeIf(e -> e.getPhase() != phase);
 
@@ -355,7 +355,8 @@ public class Game implements Runnable {
      * @param p2 the position of the second entity
      */
     private boolean collided(int r1, Vector2 p1, int r2, Vector2 p2) {
-        return p1.getDistanceTo(p2) < r1 + r2;
+        out("Distance to object: "+p1.getDistanceTo(p2) + " : " + (p1.getDistanceTo(p2) < (r1 + r2)));
+        return p1.getDistanceTo(p2) < (r1 + r2);
     }
 
 
