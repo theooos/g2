@@ -9,10 +9,9 @@ public class Zombie extends MovableEntity {
      * The basic AI controlled enemy
      * @param pos starting pos
      * @param dir starting dir
-     * @param team the team the is on
      * @param phase starting phase
      */
-    public Zombie(Vector2 pos, Vector2 dir, int team, int phase, int id) {
+    public Zombie(Vector2 pos, Vector2 dir, int phase, int id) {
         this.pos = pos;
         this.dir = dir;
         this.team = team;
@@ -22,7 +21,6 @@ public class Zombie extends MovableEntity {
         maxHealth = 50;
         this.health = maxHealth;
         this.speed = 2;
-        this.team = team;
         radius = 10;
         ID = id;
     }

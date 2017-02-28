@@ -1,19 +1,20 @@
 package server.game;
 
 import networking.Connection;
-import objects.InitGame;
-import objects.Sendable;
+import objects.*;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
+import java.lang.String;
 import java.util.*;
+
+import static sun.audio.AudioPlayer.player;
 
 /**
  * Created by peran on 27/01/17.
  * Controls the main game logic
  */
 public class Game implements Runnable {
-    private Timer t;
     private int countdown;
     private Map map;
 
@@ -27,7 +28,7 @@ public class Game implements Runnable {
     private Scoreboard sb;
     private int IDCounter;
 
-    private boolean isRunning;
+    private final boolean DEBUG = true;
 
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
@@ -44,7 +45,7 @@ public class Game implements Runnable {
             msgToAllConnected("Failed to load map");
         }
 
-//        System.out.println("Total players: "+playerConnections.size());
+        out("Total players: "+playerConnections.size());
 
         rand = new Random();
         sb = new Scoreboard(100, maxPlayers);
@@ -58,7 +59,8 @@ public class Game implements Runnable {
             //randomly select weapons for players
             Weapon w1;
             Weapon w2;
-            switch (rand.nextInt(3)) {
+            int w = rand.nextInt(3);
+            switch (1) {
                 case 0:
                     w1 = new WeaponShotgun();
                     w2 = new WeaponSniper();
@@ -74,20 +76,22 @@ public class Game implements Runnable {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-//                    System.out.println("Error selecting weapon");
+                    out("Error selecting weapon");
                     break;
             }
 
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             playerConnections.get(i).send(new objects.String("ID"+IDCounter));
             playerConnections.get(i).addFunctionEvent("String", this::decodeString);
-            playerConnections.get(i).addFunctionEvent("Player", this::receivedPlayer);
+            playerConnections.get(i).addFunctionEvent("MoveObject", this::receivedMove);
+            playerConnections.get(i).addFunctionEvent("FireObject", this::toggleFire);
+            playerConnections.get(i).addFunctionEvent("PhaseObject", this::switchPhase);
 
             addPlayer(p);
             IDCounter++;
         }
         //create AI players
-        for (int i = 0; i < maxPlayers-playerConnections.size(); i++) {
+        for (int i = playerConnections.size(); i < maxPlayers; i++) {
             //randomly select weapons for players
             Weapon w1;
             Weapon w2;
@@ -107,7 +111,7 @@ public class Game implements Runnable {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-//                    System.out.println("Error selecting weapon");
+                    out("Error selecting weapon");
                     break;
             }
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
@@ -115,8 +119,9 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create team zombies
-        for (int i = 0; i < 1; i++) {
-            Zombie z = new Zombie(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
+        for (int i = 0; i < maxPlayers; i++) {
+            Zombie z = new Zombie(respawnCoords(), randomDir(),rand.nextInt(2), IDCounter);
+            respawn(z);
             zombies.add(z);
             IDCounter++;
         }
@@ -126,6 +131,7 @@ public class Game implements Runnable {
         InitGame g = new InitGame(zombies, players, mapID);
         sendGameStart(g);
     }
+
 
     private void addPlayer(Player p) {
         List<Player> players = Collections.synchronizedList(this.players);
@@ -138,20 +144,28 @@ public class Game implements Runnable {
      * The game tick runs.  This is the master function for a running game
      */
     public void run() {
-        isRunning = true;
+        boolean isRunning = true;
         while(isRunning){
             for (Player p : players) {
-                if (!p.isAlive()) respawn(p);
+                if (!p.isAlive()) {
+                    respawn(p);
+                    if (!(p instanceof AIPlayer)) {
+                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID()));
+                    }
+                }
+                if (p.isFiring()) fire(p);
+                p.live();
             }
             for (Zombie z : zombies) {
                 if (!z.isAlive()) respawn(z);
                 z.live();
-                respawn(z);
+                z.setDir(randomDir());
             }
 
             for (Projectile p : projectiles) {
                 MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase(), p.getDir(), p.getSpeed());
-                if (e != null) {
+                if (e != null && !e.equals(p.getPlayer())) {
+                    out(p.getPlayerID()+" just hit "+e.getID());
                     e.damage(p.getDamage());
                     if (!e.isAlive()) {
                         if (e instanceof Zombie) {
@@ -176,6 +190,7 @@ public class Game implements Runnable {
             //stops the countdown when the timer has run out
             if (countdown <= 0 || sb.scoreReached()) {
                 endGame();
+                isRunning = false;
             } else {
                 sendAllObjects();
             }
@@ -210,8 +225,6 @@ public class Game implements Runnable {
      * Ends the game and msgs all clients
      */
     private void endGame() {
-        t.cancel();
-        t.purge();
         msgToAllConnected("Game Ended");
         for (Connection c: playerConnections) {
             sendScoreboard(c);
@@ -242,6 +255,9 @@ public class Game implements Runnable {
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
         e.setPhase(rand.nextInt(1));
+        if (e instanceof Player) {
+            ((Player) e).setFiring(false);
+        }
     }
 
     /**
@@ -258,7 +274,7 @@ public class Game implements Runnable {
 
         while (!valid) {
             valid = true;
-            v = new Vector2(rand.nextInt(boundX), rand.nextInt(boundY));
+            v = new Vector2(rand.nextInt(boundX)+50, rand.nextInt(boundY)+50);
 
             if (pointWallCollision(minDist, v, 0)) valid = false;
             else if (pointWallCollision(minDist, v, 1)) valid = false;
@@ -367,7 +383,6 @@ public class Game implements Runnable {
         for (Connection c: playerConnections) {
             c.send(new objects.String(s));
         }
-//        System.out.println("Sending the following to all connected:"+s);
     }
 
     /**
@@ -381,6 +396,7 @@ public class Game implements Runnable {
     }
 
     private void sendGameStart(InitGame g) {
+        out("Sending init game");
         for (Connection c: playerConnections) {
             c.send(g);
         }
@@ -403,28 +419,20 @@ public class Game implements Runnable {
         try{
             String s1 = s.substring(1);
             switch (s.charAt(0)) {
-                //fire
-                case 'f':
-                    fire(getPlayer(Integer.parseInt(s1)));
-                    break;
-                //switch phase
-                case 'p':
-                    togglePhase(getPlayer(Integer.parseInt(s1)));
-                    break;
                 //switch weapon
                 case 'w':
                     toggleWeapon(getPlayer(Integer.parseInt(s1)));
                     break;
                 //"say" sends a message
                 case 's':
-                    System.out.println("SAY: "+s.substring(1));
+                    out("SAY: "+s.substring(1));
                     break;
                 default:
-//                    System.out.println(s);
+                    out(s);
             }
         }
         catch (Exception e) {
-//            System.out.println(s);
+            out(s);
         }
     }
 
@@ -437,16 +445,14 @@ public class Game implements Runnable {
      * updates a received player to the received state
      * @param s a player object
      */
-    private void receivedPlayer(Sendable s) {
+    private void receivedMove(Sendable s) {
         try {
-            Player player = (Player) s;
-            System.out.println("Player ID: "+player.getID()+" Position: "+player.getPos());
-            if (validPosition(player)) {
-                updatePlayer(player);
-            }
+            MoveObject m = (MoveObject) s;
+            updatePlayerMove(m);
+
         }
         catch (Exception e) {
-            System.out.println("Not a player" + e);
+            out("Not a move" + e);
         }
     }
 
@@ -469,10 +475,36 @@ public class Game implements Runnable {
         players.removeIf(p -> p.getID() == id);
     }*/
 
-    private synchronized void updatePlayer(Player player) {
+    private synchronized void updatePlayerMove(MoveObject m) {
         for (int i = 0; i < players.size(); i++){
-            if(players.get(i).getID() == player.getID()){
-                players.set(i, player);
+            if(players.get(i).getID() == m.getID()){
+                Player p = players.get(i);
+                p.setDir(m.getDir());
+                p.setPos(m.getPos());
+                players.set(i, p);
+            }
+        }
+    }
+
+    private void toggleFire(Sendable s) {
+        out("Toggling fire");
+        FireObject f = (FireObject) s;
+        int id = f.getPlayerID();
+        for (Player p : players) {
+            if (p.getID() == id) {
+                p.setFiring(f.isStartFire());
+                break;
+            }
+        }
+    }
+
+    private void switchPhase(Sendable s) {
+        PhaseObject phase = (PhaseObject) s;
+        for (Player p: players) {
+            if (p.getID() == phase.getID()) {
+                p.togglePhase();
+                out("ID"+p.getID()+": Switching phase");
+                break;
             }
         }
     }
@@ -484,11 +516,13 @@ public class Game implements Runnable {
     private void fire(Player player) {
         Weapon w = player.getActiveWeapon();
         if (w.canFire()) {
+            out("ID"+player.getID()+": Just Fired");
             ArrayList<Projectile> ps = w.getShots(player);
             for (Projectile p: ps) {
                 p.setID(IDCounter);
                 IDCounter++;
                 projectiles.add(p);
+                out("Shot Fired");
             }
         }
     }
@@ -501,12 +535,10 @@ public class Game implements Runnable {
         player.toggleWeapon();
     }
 
-    /**
-     * Switches the phase of the given player
-     * @param player the player to switch phase
-     */
-    private void togglePhase(Player player) {
-        player.togglePhase();
+    private void out(Object o) {
+        if (DEBUG) {
+            System.out.println(o);
+        }
     }
 
 }

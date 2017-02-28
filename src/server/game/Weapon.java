@@ -31,7 +31,7 @@ class Weapon implements Sendable{
         //with a cooldown rate of 1, it'll take 2s for a full reload
         magSize = 120;
         currentHeat = 0;
-        shotType = new Projectile(100,100,20,new Vector2(0,0), new Vector2(0,0), 100, 0, 0, 0);
+        shotType = new Projectile(100,100,20,new Vector2(0,0), new Vector2(0,0), 100, 0, null, 0);
         numProjectiles = 1;
         //how much current recoil there is
         currentRecoil = 0;
@@ -84,10 +84,12 @@ class Weapon implements Sendable{
     ArrayList<Projectile> getShots(Player player) {
         ArrayList<Projectile> ps = new ArrayList<>();
         for (int i = 0; i < numProjectiles; i++) {
-            ps.add(shotType);
-            ps.get(i).setDir(getDeviation(player.getDir()));
-            ps.get(i).setPos(player.getPos());
-            ps.get(i).setPlayerID(player.getID());
+            Projectile p = new Projectile(shotType);
+            p.setDir(player.getDir());
+            p.setPos(player.getPos());
+            p.setPhase(player.getPhase());
+            p.setPlayer(player);
+            ps.add(p);
         }
         currentRecoil += bloomPerShot;
         if (currentRecoil > maxRecoil) currentRecoil = maxRecoil;
@@ -110,18 +112,5 @@ class Weapon implements Sendable{
     boolean isFullyAuto() {
          return fullyAuto;
     }
-
-  /*  public static void main(String[] args) {
-        Vector2 v = new Vector2(1,0);
-        Weapon w = new Weapon();
-        Weapon w1 = new WeaponShotgun();
-        Weapon w2 = new WeaponSniper();
-        Weapon w3 = new WeaponSMG();
-        System.out.println(v);
-        System.out.println(w.getDeviation(v));
-        System.out.println(w1.getDeviation(v));
-        System.out.println(w2.getDeviation(v));
-        System.out.println(w3.getDeviation(v));
-    } */
 
 }

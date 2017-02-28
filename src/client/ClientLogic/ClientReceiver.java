@@ -3,8 +3,10 @@ package client.ClientLogic;
 import client.graphics.GameRendererCreator;
 import networking.Connection;
 import objects.InitGame;
+import objects.MoveObject;
 import objects.Sendable;
 import server.game.Player;
+import server.game.Projectile;
 import server.game.Zombie;
 
 import java.util.HashMap;
@@ -19,6 +21,7 @@ public class ClientReceiver {
     private Connection connection;
     private int mapID;
     private int playerID;
+    private static boolean DEBUG = false;
     private GameData gd;
 
     public ClientReceiver(Connection conn) {
@@ -27,25 +30,27 @@ public class ClientReceiver {
         connection.addFunctionEvent("String", this::getID);
         connection.addFunctionEvent("InitGame", this::setupGame);
         connection.addFunctionEvent("Player", this::updatedPlayer);
-        connection.addFunctionEvent("AIPlayer", i -> {});
-        connection.addFunctionEvent("Zombie", i -> {});
-        connection.addFunctionEvent("Projectile", i -> {});
+        connection.addFunctionEvent("AIPlayer", this::updatedPlayer);
+        connection.addFunctionEvent("Zombie", this::updatedZombie);
+        connection.addFunctionEvent("Projectile", this::updatedProjectile);
+        connection.addFunctionEvent("MoveObject", this::movePlayer);
     }
 
-    public void setupGame(Sendable s) {
+    private void setupGame(Sendable s) {
         InitGame i = (InitGame) s;
         HashMap<Integer, Player> players = i.getPlayers();
         HashMap<Integer, Zombie> zombies = i.getZombies();
         int mapID = i.getMapID();
+        HashMap<Integer, Projectile> projectiles = new HashMap<>();
 
-        gd = new GameData(players, zombies, mapID);
-
+        gd = new GameData(players, zombies, projectiles, mapID);
+        out("Setting up game");
         new Thread(new GameRendererCreator(gd,connection,getID())).start();
 
         out("The game is now executing.");
     }
 
-    public void getID(Object o) {
+    private void getID(Object o) {
         String information = o.toString();
         String t = information.substring(0, 2);
 
@@ -64,22 +69,43 @@ public class ClientReceiver {
     }
 
     public void out(Object o) {
-        System.out.println("[CLIENT] " + o);
+        if (DEBUG) System.out.println("[CLIENT] " + o);
     }
 
 
-    public void setID(int id) {
+    private void setID(int id) {
         this.playerID = id;
     }
 
-    public int getID() {
+    private int getID() {
         return playerID;
     }
 
-    public void updatedPlayer(Sendable s) {
+    private void updatedPlayer(Sendable s) {
         Player p = (Player) s;
         if (p.getID() != playerID) {
             gd.updatePlayer(p);
         }
+        else {
+            gd.updateMe(p);
+        }
+    }
+
+    private void updatedZombie(Sendable s) {
+        Zombie z = (Zombie) s;
+        gd.updateZombie(z);
+
+    }
+
+    private void updatedProjectile(Sendable s) {
+        Projectile p = (Projectile) s;
+        gd.updateProjectile(p);
+    }
+
+    private void movePlayer(Sendable s) {
+        MoveObject m = (MoveObject) s;
+        Player p = gd.getPlayer(m.getID());
+        p.setPos(m.getPos());
+        gd.updatePlayer(p);
     }
 }

@@ -7,7 +7,7 @@ package server.game;
 public class WeaponShotgun extends Weapon {
     public WeaponShotgun() {
         super();
-        shotType = new DistDropOffProjectile(40,100,20,new Vector2(0,0), new Vector2(0,0), 20, 0, 0, 0);
+        shotType = new DistDropOffProjectile(40,100,20,new Vector2(0,0), new Vector2(0,0), 20, 0, null, 0);
         numProjectiles = 7;
         //the max inaccuracy from recoil alone
         maxRecoil = 5;

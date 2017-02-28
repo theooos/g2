@@ -6,21 +6,19 @@ import objects.String;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * Created by theooos on 21/01/2017.
- */
-public class LobbyManager {
+
+class LobbyManager {
 
     private ArrayList<Lobby> lobbies;
 
     private boolean gameOn;
 
-    public LobbyManager() {
+    LobbyManager() {
         lobbies = new ArrayList<>();
         lobbies.add(createLobby());
     }
 
-    public void addConnection(Connection c) {
+    void addConnection(Connection c) {
 
         c.addFunctionEvent("String", Server::out);
         c.send(new String("You are being cared for by the lobby manager."));
@@ -28,7 +26,7 @@ public class LobbyManager {
         boolean added = false;
 
         for (Lobby l: lobbies) {
-            if (!l.isFull()) {
+            if (!l.isFull() && !l.isGameRunning()) {
                l.addConnection(c);
                added = true;
                break;
