@@ -106,7 +106,7 @@ class Weapon implements Sendable{
         float newX = (float)(v.getX()*Math.cos(ang) - v.getY()*Math.sin(ang));
         float newY = (float)(v.getY()*Math.cos(ang) - v.getX()*Math.sin(ang));
 
-        return new Vector2(newX, newY);
+        return (new Vector2(newX, newY)).normalise();
     }
 
     boolean isFullyAuto() {

@@ -59,7 +59,7 @@ public class Game implements Runnable {
             Weapon w1;
             Weapon w2;
             int w = rand.nextInt(3);
-            switch (1) {
+            switch (w) {
                 case 0:
                     w1 = new WeaponShotgun();
                     w2 = new WeaponSniper();
