@@ -259,7 +259,7 @@ public class GameRenderer implements Runnable {
                 } else {
                     GL11.glColor3f(0.1f, 1f, 0.1f);
                 }
-                DrawCircle(p.getPos().getX(), p.getPos().getY(), p.getRadius(), 100);
+                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
             }
         }
     }

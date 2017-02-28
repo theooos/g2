@@ -3,6 +3,7 @@ package client.ClientLogic;
 import client.graphics.GameRendererCreator;
 import networking.Connection;
 import objects.InitGame;
+import objects.MoveObject;
 import objects.Sendable;
 import server.game.Player;
 import server.game.Projectile;
@@ -32,6 +33,7 @@ public class ClientReceiver {
         connection.addFunctionEvent("AIPlayer", this::updatedPlayer);
         connection.addFunctionEvent("Zombie", this::updatedZombie);
         connection.addFunctionEvent("Projectile", this::updatedProjectile);
+        connection.addFunctionEvent("MoveObject", this::movePlayer);
     }
 
     private void setupGame(Sendable s) {
@@ -98,6 +100,12 @@ public class ClientReceiver {
     private void updatedProjectile(Sendable s) {
         Projectile p = (Projectile) s;
         gd.updateProjectile(p);
-        //System.out.println("got projectile");
+    }
+
+    private void movePlayer(Sendable s) {
+        MoveObject m = (MoveObject) s;
+        Player p = gd.getPlayer(m.getID());
+        p.setPos(m.getPos());
+        gd.updatePlayer(p);
     }
 }

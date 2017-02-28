@@ -111,7 +111,7 @@ public class Game implements Runnable {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-//                    out("Error selecting weapon");
+                    out("Error selecting weapon");
                     break;
             }
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
@@ -147,7 +147,12 @@ public class Game implements Runnable {
         boolean isRunning = true;
         while(isRunning){
             for (Player p : players) {
-                if (!p.isAlive()) respawn(p);
+                if (!p.isAlive()) {
+                    respawn(p);
+                    if (!(p instanceof AIPlayer)) {
+                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID()));
+                    }
+                }
                 if (p.isFiring()) fire(p);
                 p.live();
             }
@@ -178,7 +183,7 @@ public class Game implements Runnable {
             }
 
             //deletes the projectile from the list if it's dead
-            //projectiles.removeIf(p -> !p.isAlive());
+            projectiles.removeIf(p -> !p.isAlive());
 
             countdown--;
 
@@ -238,7 +243,6 @@ public class Game implements Runnable {
         }
         for (Projectile p: projectiles) {
             sendToAllConnected(p);
-            //out("sending projectile");
         }
     }
 
@@ -379,7 +383,6 @@ public class Game implements Runnable {
         for (Connection c: playerConnections) {
             c.send(new objects.String(s));
         }
-//        out("Sending the following to all connected:"+s);
     }
 
     /**
@@ -445,10 +448,7 @@ public class Game implements Runnable {
     private void receivedMove(Sendable s) {
         try {
             MoveObject m = (MoveObject) s;
-            //out("Player ID: "+player.getID()+" Position: "+player.getPos());
-            //if (validPosition(player)) {
             updatePlayerMove(m);
-            //}
 
         }
         catch (Exception e) {

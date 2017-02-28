@@ -84,11 +84,12 @@ class Weapon implements Sendable{
     ArrayList<Projectile> getShots(Player player) {
         ArrayList<Projectile> ps = new ArrayList<>();
         for (int i = 0; i < numProjectiles; i++) {
-            ps.add(shotType);
-            //ps.get(i).setDir(getDeviation(player.getDir()));
-            ps.get(i).setDir(player.getDir());
-            ps.get(i).setPos(player.getPos());
-            ps.get(i).setPlayer(player);
+            Projectile p = new Projectile(shotType);
+            p.setDir(player.getDir());
+            p.setPos(player.getPos());
+            p.setPhase(player.getPhase());
+            p.setPlayer(player);
+            ps.add(p);
         }
         currentRecoil += bloomPerShot;
         if (currentRecoil > maxRecoil) currentRecoil = maxRecoil;

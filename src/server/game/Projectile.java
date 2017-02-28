@@ -17,6 +17,7 @@ public class Projectile extends MovableEntity {
      * @param phase the phase the prj is in
      */
     public Projectile(int damage, int lifespan, int radius, Vector2 pos, Vector2 dir, float speed, int phase, Player p, int id) {
+        this.health = 10;
         this.damage = damage;
         this.lifespan = lifespan;
         this.damageable = false;
@@ -37,6 +38,32 @@ public class Projectile extends MovableEntity {
         ID = id;
     }
 
+    /**
+     * A constructor to copy an exsisting projectile
+     * @param p the projectile to copy
+     */
+    public Projectile(Projectile p) {
+        this.health = 10;
+        this.damage = p.damage;
+        this.lifespan = p.lifespan;
+        this.damageable = false;
+        this.visible = true;
+        this.radius = p.radius;
+        this.pos = p.pos;
+        this.dir = p.dir;
+        this.speed = p.speed;
+        this.phase = p.phase;
+        this.p = p.getPlayer();
+        try {
+            this.team = p.getTeam();
+        }
+        catch (NullPointerException e) {
+            this.team = 2;
+        }
+
+        ID = p.ID;
+    }
+
     void live() {
         move();
         tickLife();
@@ -50,6 +77,7 @@ public class Projectile extends MovableEntity {
         lifespan--;
         if (lifespan < 1) {
             setHealth(0);
+            System.out.println("killed due to lifespan");
         }
     }
 
@@ -58,7 +86,7 @@ public class Projectile extends MovableEntity {
      */
     void kill() {
         lifespan = 0;
-        health = 0;
+        setHealth(0);
     }
 
     int getPlayerID() {
