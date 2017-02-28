@@ -1,14 +1,14 @@
 package server.game;
 
 import networking.Connection;
-import objects.FireObject;
-import objects.InitGame;
-import objects.PhaseObject;
-import objects.Sendable;
+import objects.*;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
+import java.lang.String;
 import java.util.*;
+
+import static sun.audio.AudioPlayer.player;
 
 /**
  * Created by peran on 27/01/17.
@@ -83,7 +83,7 @@ public class Game implements Runnable {
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             playerConnections.get(i).send(new objects.String("ID"+IDCounter));
             playerConnections.get(i).addFunctionEvent("String", this::decodeString);
-            playerConnections.get(i).addFunctionEvent("Player", this::receivedPlayer);
+            playerConnections.get(i).addFunctionEvent("MoveObject", this::receivedMove);
             playerConnections.get(i).addFunctionEvent("FireObject", this::toggleFire);
             playerConnections.get(i).addFunctionEvent("PhaseObject", this::switchPhase);
 
@@ -442,16 +442,17 @@ public class Game implements Runnable {
      * updates a received player to the received state
      * @param s a player object
      */
-    private void receivedPlayer(Sendable s) {
+    private void receivedMove(Sendable s) {
         try {
-            Player player = (Player) s;
+            MoveObject m = (MoveObject) s;
             //out("Player ID: "+player.getID()+" Position: "+player.getPos());
-            if (validPosition(player)) {
-                updatePlayer(player);
-            }
+            //if (validPosition(player)) {
+            updatePlayerMove(m);
+            //}
+
         }
         catch (Exception e) {
-            out("Not a player" + e);
+            out("Not a move" + e);
         }
     }
 
@@ -474,10 +475,13 @@ public class Game implements Runnable {
         players.removeIf(p -> p.getID() == id);
     }*/
 
-    private synchronized void updatePlayer(Player player) {
+    private synchronized void updatePlayerMove(MoveObject m) {
         for (int i = 0; i < players.size(); i++){
-            if(players.get(i).getID() == player.getID()){
-                players.set(i, player);
+            if(players.get(i).getID() == m.getID()){
+                Player p = players.get(i);
+                p.setDir(m.getDir());
+                p.setPos(m.getPos());
+                players.set(i, p);
             }
         }
     }
@@ -499,6 +503,7 @@ public class Game implements Runnable {
         for (Player p: players) {
             if (p.getID() == phase.getID()) {
                 p.togglePhase();
+                out("ID"+p.getID()+": Switching phase");
                 break;
             }
         }

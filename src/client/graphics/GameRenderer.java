@@ -3,6 +3,7 @@ package client.graphics;
 import client.ClientLogic.GameData;
 import networking.Connection;
 import objects.FireObject;
+import objects.MoveObject;
 import objects.PhaseObject;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -185,7 +186,7 @@ public class GameRenderer implements Runnable {
             me.setPos(new Vector2(xPos, yPos));
             gameData.updatePlayer(me);
             //System.err.println("Old: "+pos+" New: ("+xPos+", "+yPos+ ") Me: "+me.getPos());
-            conn.send(me);
+            conn.send(new MoveObject(me.getPos(), me.getDir(), playerID));
         }
 
         updateFPS(); // update FPS Counter
@@ -232,7 +233,7 @@ public class GameRenderer implements Runnable {
                     Vector2 dir = getDirFromMouse(pos);
                     positionBullet(pos, dir);
                     p.setDir(dir);
-                    conn.send(p);
+                    conn.send(new MoveObject(p.getPos(), p.getDir(), playerID));
                 }
             }
         }
