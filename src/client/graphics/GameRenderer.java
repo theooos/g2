@@ -234,7 +234,7 @@ public class GameRenderer implements Runnable {
                     Vector2 dir = getDirFromMouse(pos);
                     positionBullet(pos, dir);
                     p.setDir(dir);
-                    conn.send(new MoveObject(p.getPos(), new Vector2(p.getDir().getX(), height-p.getDir().getY()), playerID));
+                    conn.send(new MoveObject(p.getPos(), new Vector2(p.getDir().getX(), 0-p.getDir().getY()), playerID));
                 }
             }
         }
