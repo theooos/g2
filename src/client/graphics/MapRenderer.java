@@ -14,18 +14,16 @@ public class MapRenderer {
 
     private Map map;
     private int mapID;
-    private int phase;
     private int width;
     private int height;
     private ArrayList<Wall> walls;
 
     private final int EXTENT = 10;
 
-    public MapRenderer(int mapID, int phase) {
+    public MapRenderer(int mapID) {
         try {
             map = new Map(mapID);
             this.mapID = mapID;
-            this.phase = phase;
             this.height = map.getMapLength();
             this.width = map.getMapWidth();
             //System.out.println("height is: " + height);
@@ -41,7 +39,7 @@ public class MapRenderer {
     /**
      * Create all components of the map
      */
-    public void renderMap() {
+    public void renderMap(int phase) {
 
         walls = map.wallsInPhase(phase, true);
 
