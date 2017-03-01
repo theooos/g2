@@ -29,16 +29,8 @@ public class MovableEntity extends Entity {
         return speed;
     }
 
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
-
     public Vector2 getDir() {
         return  dir;
-    }
-
-    public void setDir(float x, float y) {
-        setDir(new Vector2(x, y));
     }
 
     public void setDir(Vector2 dir) {

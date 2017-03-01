@@ -10,6 +10,7 @@ public class Player extends MovableEntity {
     private Weapon w1;
     private Weapon w2;
     private boolean w1Out;
+    private boolean firing;
 
     /**
      * The basic player class
@@ -34,6 +35,7 @@ public class Player extends MovableEntity {
         w1Out = true;
         this.team = team;
         ID = id;
+        firing = false;
     }
 
     public void live() {
@@ -45,6 +47,8 @@ public class Player extends MovableEntity {
     public void move() {
         super.move();
     }
+
+
 
     Weapon getActiveWeapon() {
         if (w1Out) return w1;
@@ -58,5 +62,13 @@ public class Player extends MovableEntity {
     void togglePhase() {
         if (phase == 1) phase = 0;
         else phase = 1;
+    }
+
+    public boolean isFiring() {
+        return firing;
+    }
+
+    public void setFiring(boolean firing) {
+        this.firing = firing;
     }
 }

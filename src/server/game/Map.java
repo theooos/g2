@@ -35,7 +35,7 @@ public class Map {
     public Map(int mapID) throws IOException {
 
         String LOCAL_PATH = new File("").getAbsolutePath();
-        System.out.println(LOCAL_PATH);
+//        System.out.println(LOCAL_PATH);
         String PROJ_PATH = "/src/server/game/maps/";
         FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 
@@ -85,7 +85,7 @@ public class Map {
     /**
      * @return the length of the map in position units.
      */
-    public int getMapHeight() {
+    public int getMapLength() {
         return length;
     }
 
@@ -307,7 +307,7 @@ public class Map {
                     }
 
                     int t = Integer.parseInt(items.get(2));
-                    if (!(t == 1 || t == 2)){
+                    if (!(t == 0 || t == 1)){
                         System.out.println(err + "Spawn location belongs to invalid team.");
                         //System.exit(0);
                     }

@@ -1,9 +1,13 @@
 package networking;
 
 import objects.Sendable;
+import org.lwjgl.Sys;
+import server.game.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static networking.Connection.out;
@@ -13,80 +17,72 @@ import static networking.Connection.out;
  */
 public class NetworkEventHandler implements Runnable {
 
-    private HashMap<String,ArrayList<Consumer<Sendable>>> allConsumers = new HashMap<>();
-    private ArrayList<Sendable> toExecute = new ArrayList<>();
+    private HashMap<String, ArrayList<Consumer<Sendable>>> allConsumers = new HashMap<>();
+    private List<Sendable> toExecute = Collections.synchronizedList(new ArrayList<>());
 
-    private volatile boolean running = false;
+    private boolean isRunning;
 
-    public synchronized void run(){
-        running = true;
+    public void run() {
+        isRunning = true;
 
-        while(!toExecute.isEmpty()){
-            Sendable sendable = popSendable();
-            String className = getClassName(sendable);
+//        addFunction("Player", p -> {
+//            Player player = (Player) p;
+//            System.out.println("Player ID: "+player.getID()+" Position: "+player.getPos());
+//        });
 
-            ArrayList<Consumer<Sendable>> consumers = this.allConsumers.get(className);
-            if(consumers == null){
-                out("Network doesn't know hoe to handle the class: "+className);
-            }
-            else {
-                for (Consumer<Sendable> consumer : consumers) {
-                    consumer.accept(sendable);
+        while (isRunning) {
+            Sendable sendable;
+            if ((sendable = popSendable()) != null) {
+                String className = getClassName(sendable);
+                ArrayList<Consumer<Sendable>> consumers = allConsumers.get(className);
+
+                if (consumers != null) {
+                    for (Consumer<Sendable> consumer : consumers) {
+//                        System.out.println("Working on: " + toExecute.size());
+                        consumer.accept(sendable);
+                    }
+                } else {
+                    out("Network doesn't know how to handle the class: " + className);
                 }
             }
         }
-        running = false;
+    }
+
+    private Sendable popSendable() {
+        if (!toExecute.isEmpty()) {
+            Sendable sendable = toExecute.get(0);
+            toExecute.remove(0);
+            return sendable;
+        } else {
+            return null;
+        }
     }
 
     private String getClassName(Sendable sendable) {
         String full = sendable.getClass().toString();
         String[] split = full.split("\\.");
-        return split[split.length-1];
-    }
-
-    /**
-     * This adds a command to a list of tasks, then tells the handler to run if it isn't already.
-     * @param command Command to execute.
-     */
-    synchronized void queueForExecution(Sendable command){
-        addSendable(command);
-
-        if (!running) {
-            new Thread(this).start();
-        }
-    }
-
-    /**
-     * Enables synchronised pushing to the list of commands.
-     * @param command Command to execute.
-     */
-    synchronized private void addSendable(Sendable command){
-        toExecute.add(command);
-    }
-
-    /**
-     * Enables synchronised popping from the list of commands.
-     * @return Command to execute.
-     */
-    synchronized private Sendable popSendable(){
-        Sendable sendable = toExecute.get(0);
-        toExecute.remove(0);
-        return sendable;
+        return split[split.length - 1];
     }
 
     /**
      * Adds a function to be executed whenever an object of the specified type is received.
-     * @param objName Class name.
+     *
+     * @param objName  Class name.
      * @param consumer Consumer which will exe.
      */
-    public void addFunction(String objName, Consumer<Sendable> consumer){
+    public void addFunction(String objName, Consumer<Sendable> consumer) {
         ArrayList<Consumer<Sendable>> consumerList;
-        if(allConsumers.containsKey(objName)){
+        if (allConsumers.containsKey(objName)) {
             consumerList = this.allConsumers.get(objName);
         } else {
             consumerList = new ArrayList<>();
         }
         consumerList.add(consumer);
-        allConsumers.put(objName,consumerList);
+        allConsumers.put(objName, consumerList);
+    }
+
+    public void queueForExecution(Sendable received) {
+        toExecute.add(received);
+        if (!this.isRunning) new Thread(this).start();
     }
 }
