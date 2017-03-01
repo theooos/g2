@@ -12,11 +12,10 @@ import server.ai.vision.VisibilityPolygon;
  * electrical attack when enemy players find themselves within touching range.
  * Created by Peran and Rhys on 01/02/17.
  */
-public class Orb extends MovableEntity implements Runnable {
+public class Orb extends MovableEntity {
 
     private Intel intel;
     private OrbBrain myBrain;
-    Thread thread;
 
     /**
      * Creates an Orb.
@@ -47,11 +46,6 @@ public class Orb extends MovableEntity implements Runnable {
 
         this.intel.assignEntity(this);
         this.myBrain = new OrbBrain(intel);
-
-        // Threading for testing purposes.
-        // Can be commented out when running the whole system.
-        thread = new Thread(this, "Orb01");
-        thread.start();
     }
 
     /**
@@ -61,19 +55,8 @@ public class Orb extends MovableEntity implements Runnable {
         myBrain.doSomething();
     }
 
-    @Override
-    public void run() {
-        while(true) {
-            live();
-            try {
-                thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public VisibilityPolygon getSight(){
-        return myBrain.getSight();
+        return intel.getSight();
     }
 }

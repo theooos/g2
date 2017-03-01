@@ -22,8 +22,6 @@ public class OrbBrain {
     private Travel traveller;   // Allows the Orb to travel along a predetermined path.
     private Zap zapper;         // Allows the Orb to damage an enemy player when in touching range.
 
-    private VisibilityPolygon sight;
-
     /**
      * Constructs an Orb's Brain - the decision maker of an Orb.
      * @param intel - The Intel object the brain utilises to make decisions.
@@ -31,7 +29,6 @@ public class OrbBrain {
     public OrbBrain(Intel intel) {
         this.intel = intel;
         this.curEmotion = EmotionalState.RELAXED;
-        this.sight = new VisibilityPolygon(intel.ent().getPhase(), intel.getMap());
         constructBehaviours();
     }
 
@@ -122,13 +119,5 @@ public class OrbBrain {
 
             curEmotion = newEmotion;
         }
-    }
-
-    public VisibilityPolygon getSight() {
-        look();
-        return this.sight;
-    }
-    private void look(){
-        sight.visibilityFrom(intel.ent().getPos().toPoint());
     }
 }

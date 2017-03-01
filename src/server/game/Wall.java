@@ -11,6 +11,7 @@ import java.util.HashSet;
 public class Wall extends Entity {
 
     private Vector2 endPos;
+    private boolean boundary;
 
     /**
      * Builds a wall based on the given parameters.
@@ -19,7 +20,7 @@ public class Wall extends Entity {
      * @param phase the phase the wall belongs to.
      * @param damageable
      */
-    public Wall(Vector2 startPos, Vector2 endPos, int phase, boolean damageable){
+    public Wall(Vector2 startPos, Vector2 endPos, int phase, boolean damageable, boolean boundary){
 
         this.pos = startPos;
         this.endPos = endPos;
@@ -27,6 +28,7 @@ public class Wall extends Entity {
         this.damageable = damageable;
         this.health = 100;
         this.visible = true;
+        this.boundary = boundary;
     }
 
 
@@ -93,6 +95,10 @@ public class Wall extends Entity {
 
     public Line2D.Double toLine(){
         return new Line2D.Double(pos.toPoint(), endPos.toPoint());
+    }
+
+    public boolean isBoundary(){
+        return boundary;
     }
 
 }

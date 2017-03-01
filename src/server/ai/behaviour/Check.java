@@ -1,6 +1,8 @@
 package server.ai.behaviour;
 
 import server.ai.Intel;
+import server.ai.vision.VisibilityPolygon;
+import server.game.Player;
 import server.game.Vector2;
 
 /**
@@ -37,8 +39,13 @@ public class Check {
 
         // SKELETON: Returns true if there is a player within the entity's field of vision.
         else if (mode == CheckMode.PROXIMITY) {
-            targetNearestPlayer();
-            return true;
+            if (playerInSight()){
+                targetNearestPlayer();
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         // Returns true if the Orb is in attacking range of the targeted player.
@@ -73,5 +80,15 @@ public class Check {
         // Skeleton function.
         // Perquisites: Collision detection.
         intel.setTargetPlayer(intel.getPlayer(0));
+    }
+
+    private boolean playerInSight(){
+        VisibilityPolygon sight = intel.updateSight();
+        for (Player p : intel.getPlayers()){
+            if (sight.contains(p.getPos().toPoint())){
+                return true;
+            }
+        }
+        return false;
     }
 }

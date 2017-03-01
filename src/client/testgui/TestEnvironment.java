@@ -88,7 +88,7 @@ public class TestEnvironment extends Observable {
     }
 
     public ArrayList<Wall> getWalls(){
-        return map.wallsInPhase(1, true);
+        return map.wallsInPhase(1, true, false);
     }
 
     public int getMapLength() {

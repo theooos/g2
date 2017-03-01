@@ -3,6 +3,7 @@ package server.game;
 import objects.Sendable;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.util.Random;
 
 /**
@@ -118,5 +119,19 @@ public class Vector2 implements Sendable{
 
     public Point toPoint() {
         return new Point((int)x, (int)y);
+    }
+
+    public static Vector2 getDirectionVector(Line2D line){
+        Vector2 start = new Vector2((float)line.getX1(), (float)line.getY1());
+        Vector2 end = new Vector2((float)line.getX2(), (float)line.getY2());
+        return start.vectorTowards(end);
+    }
+
+    public static Vector2 getPositionVector(Line2D line){
+        return new Vector2((float)line.getX1(), (float)line.getY1());
+    }
+
+    public Vector2 clampedTo(int size) {
+        return (normalise()).mult(size);
     }
 }

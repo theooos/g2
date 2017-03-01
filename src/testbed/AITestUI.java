@@ -7,8 +7,8 @@ import javax.swing.*;
  */
 public class AITestUI {
 
-    public static final int FRAME_WIDTH = 800;
-    public static final int FRAME_HEIGHT= 600;
+    public static final int FRAME_WIDTH = 900;
+    public static final int FRAME_HEIGHT= 700;
     public static final boolean DEBUG = true;
 
     public static void main(String[] args){
@@ -19,11 +19,10 @@ public class AITestUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         TestEnvironment testEnv = new TestEnvironment();
+
         EnvironmentComponent comp = new EnvironmentComponent(testEnv);
         frame.add(comp);
 
         frame.setVisible(true);
-
     }
-    
 }

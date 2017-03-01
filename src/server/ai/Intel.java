@@ -1,5 +1,6 @@
 package server.ai;
 
+import server.ai.vision.VisibilityPolygon;
 import server.game.Map;
 import server.game.MovableEntity;
 import server.game.Player;
@@ -20,6 +21,7 @@ public class Intel {
     private int healthLastTick;         // The entity's health during the previous tick.
     private Vector2 targetLocation;     // Where the entity is currently aiming to reach.
     private Player targetPlayer;        // The player the entity is currently hunting.
+    private VisibilityPolygon sight;    // The entity's field of vision.
     private ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
 
@@ -43,6 +45,7 @@ public class Intel {
     public void assignEntity(MovableEntity ent){
         this.ent = ent;
         this.healthLastTick = ent.getHealth();
+        this.sight = new VisibilityPolygon(this.ent.getPhase(), this.map);
     }
 
     /**
@@ -174,6 +177,13 @@ public class Intel {
         this.targetPlayer = targetPlayer;
     }
 
+    public VisibilityPolygon updateSight(){
+        sight.visibilityFrom(ent.getPos());
+        return sight;
+    }
 
+    public VisibilityPolygon getSight() {
+        return sight;
+    }
 
 }

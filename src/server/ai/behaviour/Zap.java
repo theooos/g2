@@ -22,10 +22,9 @@ public class Zap extends Attack {
 
     @Override
     public boolean checkConditions() {
+        assert (intel.ent() instanceof Orb);
         return (intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos())
-                < intel.ent().getRadius()) &&
-                (intel.ent() instanceof Orb);
-    }
+                < intel.ent().getRadius());}
 
     @Override
     public void doAction() {

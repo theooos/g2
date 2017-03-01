@@ -191,7 +191,7 @@ public class Game {
     }
 
     private boolean pointWallCollision(int r, Vector2 point, int phase) {
-        for (Wall w: map.wallsInPhase(phase, true)) {
+        for (Wall w: map.wallsInPhase(phase, true, false)) {
             if (collided(5, getClosestPointOnLine(w.getStartPos(), w.getEndPos(), point), r, point)) return true;
         }
 
@@ -201,7 +201,7 @@ public class Game {
     private boolean projectileWallCollision(int r, Vector2 p1, Vector2 dir, float speed, int phase) {
         Vector2 p2 = p1.add(dir.mult(speed));
         Line2D l1 = new Line2D.Float(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-        for (Wall w: map.wallsInPhase(phase, true)) {
+        for (Wall w: map.wallsInPhase(phase, true, false)) {
             Line2D l2 = new Line2D.Float(w.getStartPos().getX(), w.getStartPos().getY(), w.getEndPos().getX(), w.getEndPos().getY());
             if (l2.intersectsLine(l1)) return true;
         }

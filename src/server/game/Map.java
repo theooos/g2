@@ -1,5 +1,6 @@
 package server.game;
 
+import java.awt.geom.Line2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -55,7 +56,7 @@ public class Map {
      * @param intactOnly - if true, restricts the resulting ArrayList to only walls that are intact.
      * @return an ArrayList of walls that exist in the given phase.
      */
-    public ArrayList<Wall> wallsInPhase(int phase, boolean intactOnly){
+    public ArrayList<Wall> wallsInPhase(int phase, boolean intactOnly, boolean innerOnly){
 
         ArrayList<Wall> relWalls = new ArrayList<>();
 
@@ -63,7 +64,10 @@ public class Map {
         for (Wall thisWall : walls) {
             if (thisWall.inPhase(phase)){
                 if (!(intactOnly && !thisWall.intact())) {
-                    relWalls.add(thisWall);
+                    if (!(innerOnly && thisWall.isBoundary())){
+                        relWalls.add(thisWall);
+                    }
+
                 }
             }
         }
@@ -207,7 +211,7 @@ public class Map {
         }
 
         // Check we got the data we needed and haven't run out of lines of map source.
-        if (sourceLines.isEmpty() == true) {
+        if (sourceLines.isEmpty()) {
             if (mapCapacity == 0) {
                 System.out.println(err + "No map metadata provided.");
             } else {
@@ -240,20 +244,28 @@ public class Map {
                     int y2 = Integer.parseInt(items.get(3));
                     Vector2 endPos = new Vector2(x2, y2);
 
-                    if (!inMap(startPos) || !inMap(endPos)){        // Check the wall is within the map.
-                        System.out.println(err + "Wall outside of map bounds.");
-                        //System.exit(0);
+                    if (isBoundary(startPos, endPos)) {
+                        for (int phase = 0; phase < 2; phase++){
+                            this.walls.add(new Wall(startPos, endPos, phase, false, true));
+                        }
+                    }
+                    else {
+                        if (!inMap(startPos) || !inMap(endPos)) {        // Check the wall is within the map.
+                            System.out.println(err + "Wall outside of map bounds.");
+                            //System.exit(0);
+                        }
+
+                        int phase = Integer.parseInt(items.get(4));
+                        if (phase > numPhases) {
+                            System.out.println(err + "Wall inside invalid phase.");
+                            //System.exit(0);
+                        }
+
+                        boolean damageable = Boolean.parseBoolean(items.get(5));
+
+                        this.walls.add(new Wall(startPos, endPos, phase, damageable, false));
                     }
 
-                    int phase = Integer.parseInt(items.get(4));
-                    if (phase > numPhases) {
-                        System.out.println(err + "Wall inside invalid phase.");
-                        //System.exit(0);
-                    }
-
-                    boolean damageable = Boolean.parseBoolean(items.get(5));
-
-                    this.walls.add(new Wall(startPos, endPos, phase, damageable));
                     lineNum++;
                     sourceLines.remove(0);
 
@@ -265,7 +277,7 @@ public class Map {
         }
 
         // Check there are at least 4 walls and haven't run out of lines of map source.
-        if (sourceLines.isEmpty() == true) {
+        if (sourceLines.isEmpty()) {
             if (walls.size() < 4) {
                 System.out.println(err + "Not enough walls provided.");
             } else {
@@ -323,9 +335,20 @@ public class Map {
      * @param pos - The position to be tested.
      * @return true if the position is within the bounds of this map.
      */
-    public boolean inMap(Vector2 pos){
+    public boolean inMap(Vector2 pos) {
 
         return (pos.getX() >= 0 && pos.getX() <= width && pos.getY() >= 0 && pos.getY() <= length);
     }
 
+    private boolean isBoundary(Vector2 startPos, Vector2 endPos){
+        float x1 = startPos.getX();
+        float y1 = startPos.getY();
+        float x2 = endPos.getX();
+        float y2 = endPos.getY();
+
+        return (x1 == 0 || x1 == width) &&
+                (y1 == 0 || y1 == length) &&
+                (x2 == 0 || x2 == width) &&
+                (y2 == 0 || y2 == length);
+    }
 }

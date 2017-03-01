@@ -14,10 +14,9 @@ import java.util.Observer;
 /**
  * Created by rhys on 19/01/17.
  */
-public class EnvironmentView extends JPanel implements Observer, Runnable {
+public class EnvironmentView extends JPanel implements Observer {
 
     private TestEnvironment env;
-    private Thread thread;
 
     public EnvironmentView(TestEnvironment env){
         super();
@@ -28,9 +27,6 @@ public class EnvironmentView extends JPanel implements Observer, Runnable {
         setFocusable(true);
         setDoubleBuffered(true);
 
-        thread = new Thread(this, "Panel");
-        thread.start();
-
     }
 
     public void paintComponent(Graphics g){
@@ -39,7 +35,7 @@ public class EnvironmentView extends JPanel implements Observer, Runnable {
         int width = env.getMapWidth();
         int height = env.getMapLength();
         VisibilityPolygon vis = env.getOrb().getSight();
-        ArrayList<Line2D.Double> los = env.getOrb().getSight().getTESTlinesofSight();
+        ArrayList<Line2D.Double> los = env.getOrb().getSight().getTEST_Lines_Of_Sight();
         g2.clearRect(0,0, width, height);
 
 
@@ -106,17 +102,5 @@ public class EnvironmentView extends JPanel implements Observer, Runnable {
             lines.add(new Line2D.Double(x1, y1, x2, y2));
         }
         return lines;
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            repaint();
-            try {
-                thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
