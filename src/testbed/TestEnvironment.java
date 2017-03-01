@@ -52,11 +52,10 @@ public class TestEnvironment extends Observable {
         Vector2 orbPos = null;
         while (!validDistance){
             int botX = gen.nextInt(map.getMapWidth());
-            int botY = gen.nextInt(map.getMapHeight());
+            int botY = gen.nextInt(map.getMapLength());
             orbPos = new Vector2(botX, botY);
             validDistance = player.getPos().getDistanceTo(orbPos) >= 50;
         }
-        orb = new Orb(botPos, new Vector2(0, 1), 1, 1);
 
         orb = new Orb(orbPos, new Vector2(0, 1), 1, 1, 2, env);
     }

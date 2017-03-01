@@ -43,7 +43,7 @@ public class MapRenderer {
      */
     public void renderMap() {
 
-        walls = map.wallsInPhase(phase, true);
+        walls = map.wallsInPhase(phase, true, false);
 
         for (Wall w : walls) {
             float xStart = w.getStartPos().getX();

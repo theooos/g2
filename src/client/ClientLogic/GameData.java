@@ -1,8 +1,8 @@
 package client.ClientLogic;
 
+import server.game.Orb;
 import server.game.Player;
 import server.game.Projectile;
-import server.game.Zombie;
 
 import java.util.HashMap;
 
@@ -14,13 +14,13 @@ import java.util.HashMap;
 public class GameData {
 
     private HashMap<Integer, Player> players;
-    private HashMap<Integer, Zombie> zombies;
+    private HashMap<Integer, Orb> orbs;
     private HashMap<Integer, Projectile> projectiles;
     private int mapID;
 
-    public GameData(HashMap players, HashMap zombies, HashMap projectiles, int id) {
+    public GameData(HashMap players, HashMap orbs, HashMap projectiles, int id) {
         this.players = players;
-        this.zombies = zombies;
+        this.orbs = orbs;
         this.projectiles = projectiles;
         this.mapID = id;
     }
@@ -41,10 +41,10 @@ public class GameData {
     public void updateProjectile(Projectile p) {projectiles.put(p.getID(), p);}
 
     /**
-     * @return the zombies
+     * @return the orbs
      */
-    public HashMap<Integer, Zombie> getZombies() {
-        return zombies;
+    public HashMap<Integer, Orb> getOrbs() {
+        return orbs;
     }
 
     /**
@@ -55,11 +55,11 @@ public class GameData {
     }
 
     /**
-     * update the hashmap of the zombies
-     * @param z the zombie to be changed.
+     * update the hashmap of the orbs.
+     * @param o the orb to be changed.
      */
-    public void updateZombie(Zombie z) {
-        zombies.put(z.getID(), z);
+    public void updateOrb(Orb o) {
+        orbs.put(o.getID(), o);
     }
 
     /**

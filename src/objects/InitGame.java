@@ -1,7 +1,7 @@
 package objects;
 
 import server.game.Player;
-import server.game.Zombie;
+import server.game.Orb;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,22 +11,22 @@ import java.util.List;
  * Created by theo on 14/02/2017.
  */
 public class InitGame implements Sendable{
-    private HashMap<Integer,Zombie> zombies;
+    private HashMap<Integer,Orb> orbs;
     private HashMap<Integer,Player> players;
     private int mapID;
 
-    public InitGame(HashMap<Integer,Zombie> zombies, HashMap<Integer,Player> players, int mapID){
-        this.zombies = zombies;
+    public InitGame(HashMap<Integer,Orb> orbs, HashMap<Integer,Player> players, int mapID){
+        this.orbs = orbs;
         this.players = players;
         this.mapID = mapID;
     }
 
-    public InitGame(ArrayList<Zombie> zombies, List<Player> players, int mapID) {
+    public InitGame(ArrayList<Orb> orbs, List<Player> players, int mapID) {
         this.mapID = mapID;
 
-        this.zombies = new HashMap<>();
-        for(Zombie zom : zombies){
-            this.zombies.put(zom.getID(), zom);
+        this.orbs = new HashMap<>();
+        for(Orb orb : orbs){
+            this.orbs.put(orb.getID(), orb);
         }
 
         this.players = new HashMap<>();
@@ -39,8 +39,8 @@ public class InitGame implements Sendable{
         return players;
     }
 
-    public HashMap<Integer,Zombie> getZombies() {
-        return zombies;
+    public HashMap<Integer,Orb> getOrb() {
+        return orbs;
     }
 
     public int getMapID() {

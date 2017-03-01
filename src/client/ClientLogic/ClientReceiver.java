@@ -5,9 +5,9 @@ import networking.Connection;
 import objects.InitGame;
 import objects.MoveObject;
 import objects.Sendable;
+import server.game.Orb;
 import server.game.Player;
 import server.game.Projectile;
-import server.game.Zombie;
 
 import java.util.HashMap;
 
@@ -31,7 +31,7 @@ public class ClientReceiver {
         connection.addFunctionEvent("InitGame", this::setupGame);
         connection.addFunctionEvent("Player", this::updatedPlayer);
         connection.addFunctionEvent("AIPlayer", this::updatedPlayer);
-        connection.addFunctionEvent("Zombie", this::updatedZombie);
+        connection.addFunctionEvent("Zombie", this::updatedOrb);
         connection.addFunctionEvent("Projectile", this::updatedProjectile);
         connection.addFunctionEvent("MoveObject", this::movePlayer);
     }
@@ -39,11 +39,11 @@ public class ClientReceiver {
     private void setupGame(Sendable s) {
         InitGame i = (InitGame) s;
         HashMap<Integer, Player> players = i.getPlayers();
-        HashMap<Integer, Zombie> zombies = i.getZombies();
+        HashMap<Integer, Orb> orbs = i.getOrb();
         int mapID = i.getMapID();
         HashMap<Integer, Projectile> projectiles = new HashMap<>();
 
-        gd = new GameData(players, zombies, projectiles, mapID);
+        gd = new GameData(players, orbs, projectiles, mapID);
         out("Setting up game");
         new Thread(new GameRendererCreator(gd,connection,getID())).start();
 
@@ -91,9 +91,9 @@ public class ClientReceiver {
         }
     }
 
-    private void updatedZombie(Sendable s) {
-        Zombie z = (Zombie) s;
-        gd.updateZombie(z);
+    private void updatedOrb(Sendable s) {
+        Orb o = (Orb) s;
+        gd.updateOrb(o);
 
     }
 

@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL11;
 import server.game.Player;
 import server.game.Projectile;
 import server.game.Vector2;
-import server.game.Zombie;
+import server.game.Orb;
 
 import java.util.HashMap;
 
@@ -208,7 +208,7 @@ public class GameRenderer implements Runnable {
         map.renderMap();
         int phase = gameData.getPlayer(playerID).getPhase();
         drawProjectiles(phase);
-        drawZombies(phase);
+        drawOrbs(phase);
         drawPlayers(phase);
 
     }
@@ -239,12 +239,12 @@ public class GameRenderer implements Runnable {
         }
     }
 
-    private void drawZombies(int phase) {
-        HashMap<Integer, Zombie> zombies= gameData.getZombies();
+    private void drawOrbs(int phase) {
+        HashMap<Integer, Orb> orbs = gameData.getOrbs();
         GL11.glColor3f(0.2f, 0.2f, 1f);
-        for (Zombie z: zombies.values()) {
-            if (phase == z.getPhase()) {
-                DrawCircle(z.getPos().getX(), height - z.getPos().getY(), z.getRadius(), 100);
+        for (Orb o: orbs.values()) {
+            if (phase == o.getPhase()) {
+                DrawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
             }
         }
     }

@@ -26,7 +26,7 @@ public class LocateCover extends Task {
         // PERQUISITE: Collisions, Room detection.
         Random gen = new Random();
         float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
-        float ranY = (float) gen.nextInt(intel.getMap().getMapHeight());
+        float ranY = (float) gen.nextInt(intel.getMap().getMapLength());
         intel.setTargetLocation(new Vector2(ranX, ranY));
     }
 }

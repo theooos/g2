@@ -2,13 +2,12 @@ package server.game;
 
 import networking.Connection;
 import objects.*;
+import server.ai.Intel;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.lang.String;
 import java.util.*;
-
-import static sun.audio.AudioPlayer.player;
 
 /**
  * Created by peran on 27/01/17.
@@ -20,7 +19,7 @@ public class Game implements Runnable {
 
     private ArrayList<Connection> playerConnections;
     private List<Player> players;
-    private ArrayList<Zombie> zombies;
+    private ArrayList<Orb> orbs;
     private ArrayList<Projectile> projectiles;
 
     private Random rand;
@@ -51,7 +50,7 @@ public class Game implements Runnable {
         sb = new Scoreboard(100, maxPlayers);
 
         players = Collections.synchronizedList(new ArrayList<>());
-        zombies = new ArrayList<>();
+        orbs = new ArrayList<>();
         projectiles = new ArrayList<>();
 
         //create players
@@ -118,17 +117,18 @@ public class Game implements Runnable {
             addPlayer(p);
             IDCounter++;
         }
-        //create team zombies
+        //create team orbs
+        Intel intel = new Intel(players, map);
         for (int i = 0; i < maxPlayers; i++) {
-            Zombie z = new Zombie(respawnCoords(), randomDir(),rand.nextInt(2), IDCounter);
-            respawn(z);
-            zombies.add(z);
+            Orb o = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter, intel);
+            respawn(o);
+            orbs.add(o);
             IDCounter++;
         }
 
         countdown = 10*60*tick; //ten minutes
 
-        InitGame g = new InitGame(zombies, players, mapID);
+        InitGame g = new InitGame(orbs, players, mapID);
         sendGameStart(g);
     }
 
@@ -156,10 +156,10 @@ public class Game implements Runnable {
                 if (p.isFiring()) fire(p);
                 p.live();
             }
-            for (Zombie z : zombies) {
-                if (!z.isAlive()) respawn(z);
-                z.live();
-                z.setDir(randomDir());
+            for (Orb o : orbs) {
+                if (!o.isAlive()) respawn(o);
+                o.live();
+                o.setDir(randomDir());
             }
 
             for (Projectile p : projectiles) {
@@ -168,7 +168,7 @@ public class Game implements Runnable {
                     out(p.getPlayerID()+" just hit "+e.getID());
                     e.damage(p.getDamage());
                     if (!e.isAlive()) {
-                        if (e instanceof Zombie) {
+                        if (e instanceof Orb) {
                             sb.killedZombie(p.getPlayerID());
                         } else {
                             sb.killedPlayer(p.getPlayerID());
@@ -203,7 +203,7 @@ public class Game implements Runnable {
     }
 
     private boolean pointWallCollision(int r, Vector2 point, int phase) {
-        for (Wall w: map.wallsInPhase(phase, true)) {
+        for (Wall w: map.wallsInPhase(phase, true, false)) {
             if (collided(5, getClosestPointOnLine(w.getStartPos(), w.getEndPos(), point), r, point)) return true;
         }
 
@@ -213,7 +213,7 @@ public class Game implements Runnable {
     private boolean projectileWallCollision(int r, Vector2 p1, Vector2 dir, float speed, int phase) {
         Vector2 p2 = p1.add(dir.mult(speed));
         Line2D l1 = new Line2D.Float(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-        for (Wall w: map.wallsInPhase(phase, true)) {
+        for (Wall w: map.wallsInPhase(phase, true, false)) {
             Line2D l2 = new Line2D.Float(w.getStartPos().getX(), w.getStartPos().getY(), w.getEndPos().getX(), w.getEndPos().getY());
             if (l2.intersectsLine(l1)) return true;
         }
@@ -238,8 +238,8 @@ public class Game implements Runnable {
         for (Player p: players) {
             sendToAllConnected(p);
         }
-        for (Zombie z: zombies) {
-            sendToAllConnected(z);
+        for (Orb o: orbs) {
+            sendToAllConnected(o);
         }
         for (Projectile p: projectiles) {
             sendToAllConnected(p);
@@ -305,8 +305,8 @@ public class Game implements Runnable {
             if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
         }
 
-        for (Zombie z: zombies) {
-            if (z.isAlive() && collided(r, pos, z.getRadius(), z.getPos())) return z;
+        for (Orb o: orbs) {
+            if (o.isAlive() && collided(r, pos, o.getRadius(), o.getPos())) return o;
         }
 
         return null;
@@ -321,7 +321,7 @@ public class Game implements Runnable {
      */
     private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase, Vector2 dir, float speed) {
         ArrayList<MovableEntity> entities = new ArrayList<>();
-        entities.addAll(zombies);
+        entities.addAll(orbs);
         entities.addAll(players);
         entities.removeIf(e -> e.getPhase() != phase);
 
@@ -335,7 +335,7 @@ public class Game implements Runnable {
 
     private MovableEntity collidesWithPlayerOrBot(Player player) {
         ArrayList<MovableEntity> entities = new ArrayList<>();
-        entities.addAll(zombies);
+        entities.addAll(orbs);
         entities.addAll(players);
         entities.removeIf(e -> e.getPhase() != player.getPhase());
         entities.removeIf(e -> e.equals(player));
