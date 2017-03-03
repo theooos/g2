@@ -70,17 +70,15 @@ public class OrbBrain {
 
         // Decide what to do.
         if (curEmotion == EmotionalState.SCARED){
-            System.out.println("Orb " + intel.ent().getID() + " is Scared.");
+            intel.ent().setSpeed(2);
             flee.start();
         }
         else if (curEmotion == EmotionalState.RELAXED) {
-            System.out.println("Orb " + intel.ent().getID() + " is Relaxed.");
+            intel.ent().setSpeed(0.5F);
             drift.start();
         }
         else if (curEmotion == EmotionalState.ANGRY) {
-
-            System.out.println("Orb " + intel.ent().getID() + " is Angry.");
-
+            intel.ent().setSpeed(1);
             // Compute/re-compute travel path if the target has moved since the last tick.
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
                 intel.setTargetLocation(intel.getTargetPlayer().getPos());
@@ -114,6 +112,7 @@ public class OrbBrain {
      */
     public void emotionTransition(EmotionalState newEmotion){
         if (newEmotion != curEmotion) {
+            System.out.println("Changing emotion to " + newEmotion);
             flee.reset();
             drift.reset();
             pathfinder.reset();

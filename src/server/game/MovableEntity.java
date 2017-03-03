@@ -29,6 +29,14 @@ public class MovableEntity extends Entity {
         return speed;
     }
 
+    /**
+     * Allows the Orb to change its speed depending on how it's feeling.
+     * @param newSpeed - the Orb's new speed.
+     */
+    public void setSpeed(float newSpeed){
+        this.speed = newSpeed;
+    }
+
     public Vector2 getDir() {
         return  dir;
     }

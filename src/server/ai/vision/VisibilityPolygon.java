@@ -14,7 +14,7 @@ public class VisibilityPolygon extends Polygon{
 
     private ArrayList<Wall> walls;
     private HashSet<Vector2> testVertices;
-    private HashSet<Vector2> cornerVerticies;
+    private HashSet<Vector2> cornerVertices;
     private final int SIGHT_RANGE = 200;
     private ArrayList<Line2D.Double> TEST_Lines_Of_Sight;
 
@@ -26,13 +26,13 @@ public class VisibilityPolygon extends Polygon{
 
         this.walls = map.wallsInPhase(phase, false, false);
         this.testVertices = new HashSet<>();
-        this.cornerVerticies = new HashSet<>();
+        this.cornerVertices = new HashSet<>();
         this.TEST_Lines_Of_Sight = new ArrayList<>();
 
         for (Wall wall : walls){
             if (wall.isBoundary()) {
-                cornerVerticies.add(wall.getStartPos());
-                cornerVerticies.add(wall.getEndPos());
+                cornerVertices.add(wall.getStartPos());
+                cornerVertices.add(wall.getEndPos());
             } else {
                 testVertices.add(wall.getStartPos());
                 testVertices.add(wall.getEndPos());
@@ -120,7 +120,7 @@ public class VisibilityPolygon extends Polygon{
 
         // Sort and clamp all the vertices.
         Set<Vector2> union = new HashSet<>(testVertices);
-        union.addAll(cornerVerticies);
+        union.addAll(cornerVertices);
         for (Vector2 v : union) {
             //Vector2 rangedVertex = pov.add(pov.vectorTowards(v).clampedTo(SIGHT_RANGE));
             sortedVertices.put(angleFromNormal(/*rangedVertex*/v, pov), /*rangedVertex*/v);

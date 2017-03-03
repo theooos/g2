@@ -44,12 +44,10 @@ public class Check {
         else if (mode == CheckMode.PROXIMITY) {
             ArrayList<Integer> playersInSight = getPlayersInSight();
             if (playersInSight.size() > 0){
-                System.out.println("I see you, bitch!");
                 targetNearestPlayer(playersInSight);
                 return true;
             }
             else {
-                System.out.println("Shit, I lost him...");
                 return false;
             }
         }
@@ -78,9 +76,11 @@ public class Check {
         else return false;
     }
 
+
     /**
      * For efficiency purposes, targets the nearest player upon detection and
      * stores the player in the intel object.
+     * @param playersInSight - the list of IDs of players within visible range.
      */
     private void targetNearestPlayer(ArrayList<Integer> playersInSight){
         float closestDistance = -1;
@@ -97,7 +97,7 @@ public class Check {
 
     /**
      * Returns the IDs of players that the Orb can currently see.
-     * @return
+     * @return a list of Integers corresponding to the IDs of players within the player list.
      */
     private ArrayList<Integer> getPlayersInSight(){
         VisibilityPolygon sight = intel.updateSight();

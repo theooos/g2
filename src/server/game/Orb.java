@@ -27,7 +27,7 @@ public class Orb extends MovableEntity {
     public Orb(Vector2 pos, Vector2 dir, int team, int phase, int id) {
 
         // Initialise "Movable Entity" members.
-        this.speed = 2;
+        this.speed = 1;
         this.dir = dir;
         this.radius = 10;
         this.team = team;
