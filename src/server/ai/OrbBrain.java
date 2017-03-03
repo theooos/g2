@@ -1,7 +1,6 @@
 package server.ai;
 
 import server.ai.behaviour.*;
-import server.ai.vision.VisibilityPolygon;
 
 /**
  * Represents the brain of an Orb, making decisions on the Orb's behalf while taking

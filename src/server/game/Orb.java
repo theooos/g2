@@ -46,7 +46,6 @@ public class Orb extends MovableEntity {
      * Calls upon this Orb's brain to make this Orb perform an appropriate action.
      */
     public void live() {
-        System.out.println("Orb living!");
         myBrain.doSomething();
     }
 

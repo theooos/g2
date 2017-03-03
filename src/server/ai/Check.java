@@ -1,9 +1,12 @@
-package server.ai.behaviour;
+package server.ai;
 
 import server.ai.Intel;
 import server.ai.vision.VisibilityPolygon;
 import server.game.Player;
 import server.game.Vector2;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * Can perform a variety of checks on the entity or its environment.
@@ -37,13 +40,16 @@ public class Check {
             return healthDown;
         }
 
-        // SKELETON: Returns true if there is a player within the entity's field of vision.
+        // Returns true if there is a player within the entity's field of vision.
         else if (mode == CheckMode.PROXIMITY) {
-            if (playerInSight()){
-                targetNearestPlayer();
+            ArrayList<Integer> playersInSight = getPlayersInSight();
+            if (playersInSight.size() > 0){
+                System.out.println("I see you, bitch!");
+                targetNearestPlayer(playersInSight);
                 return true;
             }
             else {
+                System.out.println("Shit, I lost him...");
                 return false;
             }
         }
@@ -76,19 +82,32 @@ public class Check {
      * For efficiency purposes, targets the nearest player upon detection and
      * stores the player in the intel object.
      */
-    private void targetNearestPlayer(){
-        // Skeleton function.
-        // Perquisites: Collision detection.
-        intel.setTargetPlayer(intel.getPlayer(0));
-    }
-
-    private boolean playerInSight(){
-        VisibilityPolygon sight = intel.updateSight();
-        for (Player p : intel.getPlayers()){
-            if (sight.contains(p.getPos().toPoint())){
-                return true;
+    private void targetNearestPlayer(ArrayList<Integer> playersInSight){
+        float closestDistance = -1;
+        int closestPiD = -1;
+        for (int i : playersInSight){
+            float thisDistance = intel.ent().getPos().getDistanceTo(intel.getPlayer(i).getPos());
+            if (closestDistance < 0 || thisDistance < closestDistance){
+                closestDistance = thisDistance;
+                closestPiD = i;
             }
         }
-        return false;
+        intel.setTargetPlayer(intel.getPlayer(closestPiD));
+    }
+
+    /**
+     * Returns the IDs of players that the Orb can currently see.
+     * @return
+     */
+    private ArrayList<Integer> getPlayersInSight(){
+        VisibilityPolygon sight = intel.updateSight();
+        ArrayList<Integer> playersInSight = new ArrayList<>();
+
+        for (Player p : intel.getPlayers()){
+            if (sight.contains(p.getPos().toPoint())){
+                playersInSight.add(intel.getPlayers().indexOf(p));
+            }
+        }
+        return playersInSight;
     }
 }
