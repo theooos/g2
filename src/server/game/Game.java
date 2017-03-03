@@ -118,9 +118,8 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create team orbs
-        Intel intel = new Intel(players, map);
         for (int i = 0; i < maxPlayers; i++) {
-            Orb o = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter, intel);
+            Orb o = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
             respawn(o);
             orbs.add(o);
             IDCounter++;
@@ -144,6 +143,13 @@ public class Game implements Runnable {
      * The game tick runs.  This is the master function for a running game
      */
     public void run() {
+
+        // Inform the Orbs.
+        for (Orb o : orbs) {
+                Intel intel = new Intel(players, map);
+                o.prepareOrbForGame(intel);
+        }
+
         boolean isRunning = true;
         while(isRunning){
             for (Player p : players) {

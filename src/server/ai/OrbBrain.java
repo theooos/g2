@@ -71,12 +71,16 @@ public class OrbBrain {
 
         // Decide what to do.
         if (curEmotion == EmotionalState.SCARED){
+            System.out.println("Orb " + intel.ent().getID() + " is Scared.");
             flee.start();
         }
         else if (curEmotion == EmotionalState.RELAXED) {
+            System.out.println("Orb " + intel.ent().getID() + " is Relaxed.");
             drift.start();
         }
         else if (curEmotion == EmotionalState.ANGRY) {
+
+            System.out.println("Orb " + intel.ent().getID() + " is Angry.");
 
             // Compute/re-compute travel path if the target has moved since the last tick.
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {

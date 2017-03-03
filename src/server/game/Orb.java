@@ -14,8 +14,8 @@ import server.ai.vision.VisibilityPolygon;
  */
 public class Orb extends MovableEntity {
 
-    private Intel intel;
-    private OrbBrain myBrain;
+    transient private Intel intel;
+    transient private OrbBrain myBrain;
 
     /**
      * Creates an Orb.
@@ -24,10 +24,7 @@ public class Orb extends MovableEntity {
      * @param team - The team the Orb is a part of.
      * @param phase - The phase the Orb exists within.
      */
-    public Orb(Vector2 pos, Vector2 dir, int team, int phase, int id, Intel intel) {
-
-        // Initialise Orb members.
-        this.intel = intel;
+    public Orb(Vector2 pos, Vector2 dir, int team, int phase, int id) {
 
         // Initialise "Movable Entity" members.
         this.speed = 2;
@@ -43,20 +40,29 @@ public class Orb extends MovableEntity {
         this.phase = phase;
         this.visible = true;
         this.ID = id;
-
-        this.intel.assignEntity(this);
-        this.myBrain = new OrbBrain(intel);
     }
 
     /**
-     * Calls upon the Orb's brain to make the Orb perform an appropriate action.
+     * Calls upon this Orb's brain to make this Orb perform an appropriate action.
      */
     public void live() {
+        System.out.println("Orb living!");
         myBrain.doSomething();
     }
 
 
     public VisibilityPolygon getSight(){
         return intel.getSight();
+    }
+
+    /**
+     * Re-initialises this Orb's Intel and Brain. To be called at the beginning of each new game
+     * with an appropriate (new) Intel object.
+     * @param intel - the Intel containing details about the next game.
+     */
+    public void prepareOrbForGame(Intel intel){
+        this.intel = intel;
+        this.intel.assignEntity(this);
+        this.myBrain = new OrbBrain(intel);
     }
 }

@@ -31,7 +31,7 @@ public class ClientReceiver {
         connection.addFunctionEvent("InitGame", this::setupGame);
         connection.addFunctionEvent("Player", this::updatedPlayer);
         connection.addFunctionEvent("AIPlayer", this::updatedPlayer);
-        connection.addFunctionEvent("Zombie", this::updatedOrb);
+        connection.addFunctionEvent("Orb", this::updatedOrb);
         connection.addFunctionEvent("Projectile", this::updatedProjectile);
         connection.addFunctionEvent("MoveObject", this::movePlayer);
     }
