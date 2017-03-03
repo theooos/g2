@@ -85,7 +85,7 @@ class Weapon implements Sendable{
         ArrayList<Projectile> ps = new ArrayList<>();
         for (int i = 0; i < numProjectiles; i++) {
             Projectile p = new Projectile(shotType);
-            p.setDir(player.getDir());
+            p.setDir(getDeviation(player.getDir()));
             p.setPos(player.getPos());
             p.setPhase(player.getPhase());
             p.setPlayer(player);
@@ -101,10 +101,15 @@ class Weapon implements Sendable{
     private Vector2 getDeviation(Vector2 v) {
         //x' = xcosf - ysinf
         //y' = ycosf - xsinf
-        double ang = Math.toDegrees(Math.cos((double) v.getX()));
-        ang += rand.nextInt(2*(int)(accuracy+currentRecoil))-accuracy+currentRecoil;
-        float newX = (float)(v.getX()*Math.cos(ang) - v.getY()*Math.sin(ang));
-        float newY = (float)(v.getY()*Math.cos(ang) - v.getX()*Math.sin(ang));
+        double ang = Math.atan(v.getX()/v.getY());
+        if (Double.isInfinite(ang)) {
+            ang = 0;
+        } else if (v.getY() < 0) {
+            ang += Math.PI;
+        }
+        ang += Math.toRadians(rand.nextInt(2*(int)(accuracy+currentRecoil))-accuracy+currentRecoil);
+        float newX = (float)(Math.sin(ang));
+        float newY = (float)(Math.cos(ang));
 
         return (new Vector2(newX, newY)).normalise();
     }

@@ -125,12 +125,13 @@ public class GameRenderer implements Runnable {
     private Vector2 getDirFromMouse(Vector2 pos) {
         Vector2 mousePos = new Vector2(Mouse.getX(), Mouse.getY());
         Vector2 dir = pos.vectorTowards(mousePos);
-        return dir.normalise();
+        dir = dir.normalise();
+        return new Vector2(dir.getX(), 0-dir.getY());
     }
 
 
     private void positionBullet(Vector2 pos, Vector2 dir) {
-        Vector2 cursor = pos.add(dir.mult(21));
+        Vector2 cursor = pos.add((new Vector2(dir.getX(), 0-dir.getY())).mult(21));
         float lastX = cursor.getX();
         float lastY = cursor.getY();
         //Mouse.setGrabbed(true);
@@ -234,7 +235,7 @@ public class GameRenderer implements Runnable {
                     Vector2 dir = getDirFromMouse(pos);
                     positionBullet(pos, dir);
                     p.setDir(dir);
-                    conn.send(new MoveObject(p.getPos(), new Vector2(p.getDir().getX(), 0-p.getDir().getY()), playerID));
+                    conn.send(new MoveObject(p.getPos(), p.getDir(), playerID));
                 }
             }
         }

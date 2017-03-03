@@ -96,6 +96,15 @@ public class Vector2 implements Sendable{
         return new Vector2(this.x - subVector.getX(), this.y - subVector.getY());
     }
 
+    /**
+     * The dot product of two vectors
+     * @param v the second vector
+     * @return a float value of the scalar product
+     */
+    public float dot(Vector2 v) {
+        return (x*v.y)+(y*v.y);
+    }
+
     public Vector2(float x, float y){
         this.x = x;
         this.y = y;

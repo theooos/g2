@@ -163,8 +163,8 @@ public class Game implements Runnable {
             }
 
             for (Projectile p : projectiles) {
-                MovableEntity e = collidesWithPlayerOrBot(p.getRadius(), p.getPos(), p.getPhase(), p.getDir(), p.getSpeed());
-                if (e != null && !e.equals(p.getPlayer())) {
+                MovableEntity e = collidesWithPlayerOrBot(p);
+                if (e != null) {
                     out(p.getPlayerID()+" just hit "+e.getID());
                     e.damage(p.getDamage());
                     if (!e.isAlive()) {
@@ -204,7 +204,7 @@ public class Game implements Runnable {
 
     private boolean pointWallCollision(int r, Vector2 point, int phase) {
         for (Wall w: map.wallsInPhase(phase, true)) {
-            if (collided(5, getClosestPointOnLine(w.getStartPos(), w.getEndPos(), point), r, point)) return true;
+            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+5)) return true;
         }
 
         return false;
@@ -313,37 +313,29 @@ public class Game implements Runnable {
     }
 
     /**
-     * Given a radius and a position, it checks to see if it collided with a player or bot
-     * that is still alive
-     * @param r the radius of the object
-     * @param pos the centre of the object
-     * @return the player or bot it is collided with.  Null if no collision
+     * Checks to see if the entity collides with an entity that isn't itself.
+     * @param e the movable entity to check collisions with
+     * @return the entity if there is a collision, null if there isn't
      */
-    private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase, Vector2 dir, float speed) {
+    private MovableEntity collidesWithPlayerOrBot(MovableEntity e) {
         ArrayList<MovableEntity> entities = new ArrayList<>();
-        //entities.addAll(zombies);
         entities.addAll(players);
-        entities.removeIf(e -> e.getPhase() != phase);
-
-        for (MovableEntity e: entities) {
-            Vector2 l1 = pos.add(dir.mult(speed));
-            if (collided(r, getClosestPointOnLine(l1, pos, e.getPos()), e.getRadius(), e.getPos())) return e;
-        }
-
-        return null;
-    }
-
-    private MovableEntity collidesWithPlayerOrBot(Player player) {
-        ArrayList<MovableEntity> entities = new ArrayList<>();
         entities.addAll(zombies);
-        entities.addAll(players);
-        entities.removeIf(e -> e.getPhase() != player.getPhase());
-        entities.removeIf(e -> e.equals(player));
-        for (MovableEntity e: entities) {
-            Vector2 l1 = player.getPos().add(player.getDir().mult(player.getSpeed()));
-            if (collided(player.getRadius(), getClosestPointOnLine(l1, player.getPos(), e.getPos()), e.getRadius(), e.getPos())) return e;
+        entities.removeIf(et -> et.equals(e));
+        entities.removeIf(et -> et.getPhase() != e.getPhase());
+        if (e instanceof Projectile) {
+            entities.removeIf(et -> et.equals(((Projectile) e).getPlayer()));
         }
 
+        Vector2 nextPos = e.getPos().add(e.getDir().mult(e.getSpeed()));
+
+        for (MovableEntity et: entities) {
+            float minDist = linePointDistance(e.getPos(), nextPos, et.getPos());
+            if (minDist < (e.getRadius() + et.getRadius())) {
+                out("Collided with: ID"+et.getID());
+                return et;
+            }
+        }
         return null;
     }
 
@@ -355,27 +347,26 @@ public class Game implements Runnable {
      * @param p2 the position of the second entity
      */
     private boolean collided(int r1, Vector2 p1, int r2, Vector2 p2) {
-        out("Distance to object: "+p1.getDistanceTo(p2) + " : " + (p1.getDistanceTo(p2) < (r1 + r2)));
         return p1.getDistanceTo(p2) < (r1 + r2);
     }
 
 
-    //l1 is the start of a line, l2 is the end of a Line, point is the point to get closest point to
-    private Vector2 getClosestPointOnLine(Vector2 l1, Vector2 l2, Vector2 point) {
-        Vector2 a_to_p = new Vector2(point.getX() - l1.getX(), point.getY() - l1.getY());
-        Vector2 a_to_b = new Vector2(l2.getX() - l1.getX(), l2.getY() - l1.getY());
 
-        float atb2 = a_to_b.getX()*a_to_b.getX() + a_to_b.getY()*a_to_b.getY();
-
-        float atp_dot_atb = a_to_p.getX()*a_to_b.getX() + a_to_p.getY()*a_to_b.getY();
-
-        float t = atp_dot_atb / atb2;
-
-        float temp1 = (l1.getX() + a_to_b.getX()*t);
-        float temp2 = (l1.getY() + a_to_b.getY()*t);
-
-        return new Vector2(temp1, temp2);
+    private float linePointDistance(Vector2 v, Vector2 w, Vector2 p) {
+        // Return minimum distance between line segment vw and point p
+        float l2 = Math.abs(v.getDistanceTo(w));
+        l2 = l2*l2; // i.e. |w-v|^2 -  avoid a sqrt
+        if (l2 == 0.0) return p.getDistanceTo(v);   // v == w case
+        // Consider the line extending the segment, parameterized as v + t (w - v).
+        // We find projection of point p onto the line.
+        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
+        // We clamp t from [0,1] to handle points outside the segment vw.
+        float dot = ((p.sub(v)).dot(w.sub(v)) / l2);
+        float t = Math.max(0, Math.min(1, dot));
+        Vector2 projection = v.add(w.sub(v).mult(t));  // Projection falls on the segment
+        return p.getDistanceTo(projection);
     }
+
     /**
      * sends the string to all players in the lobby
      * @param s the string to be sent

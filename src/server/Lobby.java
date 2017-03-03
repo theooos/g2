@@ -30,7 +30,8 @@ class Lobby {
         minSize = maxSize/2;
         t = new Timer();
         Random rand = new Random();
-        map = 0;
+        map = rand.nextInt(3);
+        map = 2;
         System.out.println(map);
         gameRunning = false;
     }
