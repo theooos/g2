@@ -5,6 +5,7 @@ import server.game.Player;
 import server.game.Projectile;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Patrick on 2/14/2017.
@@ -15,10 +16,10 @@ public class GameData {
 
     private HashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
-    private HashMap<Integer, Projectile> projectiles;
+    private ConcurrentHashMap<Integer, Projectile> projectiles;
     private int mapID;
 
-    public GameData(HashMap players, HashMap orbs, HashMap projectiles, int id) {
+    public GameData(HashMap players, HashMap orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id) {
         this.players = players;
         this.orbs = orbs;
         this.projectiles = projectiles;
@@ -36,7 +37,7 @@ public class GameData {
         return players.get(playerID);
     }
 
-    public HashMap<Integer, Projectile> getProjectiles() {return  projectiles;}
+    public ConcurrentHashMap<Integer, Projectile> getProjectiles() {return  projectiles;}
 
     public void updateProjectile(Projectile p) {
         if (p.isAlive()) {

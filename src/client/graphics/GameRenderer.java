@@ -19,6 +19,7 @@ import server.game.Vector2;
 import server.game.Orb;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 import static server.Server.out;
@@ -291,7 +292,7 @@ public class GameRenderer implements Runnable {
     }
 
     private void drawProjectiles(int phase) {
-        HashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
+        ConcurrentHashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
         for (Projectile p : projectiles.values()) {
             //System.out.println("showing projectile");
             if (phase == p.getPhase()) {

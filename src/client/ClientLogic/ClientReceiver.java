@@ -10,6 +10,7 @@ import server.game.Player;
 import server.game.Projectile;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -41,7 +42,7 @@ public class ClientReceiver {
         HashMap<Integer, Player> players = i.getPlayers();
         HashMap<Integer, Orb> orbs = i.getOrb();
         int mapID = i.getMapID();
-        HashMap<Integer, Projectile> projectiles = new HashMap<>();
+        ConcurrentHashMap<Integer, Projectile> projectiles = new ConcurrentHashMap<>();
 
         gd = new GameData(players, orbs, projectiles, mapID);
         out("Setting up game");
