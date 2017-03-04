@@ -38,7 +38,14 @@ public class GameData {
 
     public HashMap<Integer, Projectile> getProjectiles() {return  projectiles;}
 
-    public void updateProjectile(Projectile p) {projectiles.put(p.getID(), p);}
+    public void updateProjectile(Projectile p) {
+        if (p.isAlive()) {
+            projectiles.put(p.getID(), p);
+        }
+        else {
+            projectiles.remove(p.getID());
+        }
+    }
 
     /**
      * @return the orbs

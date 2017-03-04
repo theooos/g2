@@ -118,7 +118,7 @@ class Weapon implements Sendable{
         return (new Vector2(newX, newY)).normalise();
     }
 
-    boolean isFullyAuto() {
+    private boolean isFullyAuto() {
          return fullyAuto;
     }
 

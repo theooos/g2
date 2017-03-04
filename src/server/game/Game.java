@@ -190,9 +190,6 @@ public class Game implements Runnable {
                 p.live();
             }
 
-            //deletes the projectile from the list if it's dead
-            projectiles.removeIf(p -> !p.isAlive());
-
             countdown--;
 
             //stops the countdown when the timer has run out
@@ -207,6 +204,9 @@ public class Game implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            //deletes the projectile from the list if it's dead
+            projectiles.removeIf(p -> !p.isAlive());
         }
     }
 
