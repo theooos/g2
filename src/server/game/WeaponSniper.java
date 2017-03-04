@@ -8,7 +8,7 @@ public class WeaponSniper extends Weapon {
     public WeaponSniper() {
         super();
         name = "Sniper";
-        shotType = new Projectile(70,700,10,new Vector2(0,0), new Vector2(0,0), 40, 0, null, 0);
+        shotType = new Projectile(70,300,10,new Vector2(0,0), new Vector2(0,0), 40, 0, null, 0);
         numProjectiles = 1;
         //the max inaccuracy from recoil alone
         maxRecoil = 80;

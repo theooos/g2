@@ -127,6 +127,10 @@ public class Game implements Runnable {
             respawn(o);
             orbs.add(o);
             IDCounter++;
+
+            // Inform the Orbs.
+            Intel intel = new Intel(players, map);
+            o.prepareOrbForGame(intel);
         }
 
         countdown = 10*60*tick; //ten minutes
@@ -147,12 +151,6 @@ public class Game implements Runnable {
      * The game tick runs.  This is the master function for a running game
      */
     public void run() {
-
-        // Inform the Orbs.
-        for (Orb o : orbs) {
-                Intel intel = new Intel(players, map);
-                o.prepareOrbForGame(intel);
-        }
 
         boolean isRunning = true;
         while(isRunning){

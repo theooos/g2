@@ -22,7 +22,8 @@ public class VisibilityPolygon extends Polygon{
 
         super();
 
-        System.out.println("Polygon created.");
+        //System.out.println("Polygon created.");
+
 
         this.walls = map.wallsInPhase(phase, false, false);
         this.testVertices = new HashSet<>();

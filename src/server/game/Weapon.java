@@ -96,6 +96,9 @@ class Weapon implements Sendable{
         if (currentRecoil > maxRecoil) currentRecoil = maxRecoil;
         currentHeat += heatPerShot;
         refireDelay = refireTime;
+        if (!isFullyAuto()) {
+            player.setFiring(false);
+        }
         return ps;
     }
 
@@ -108,7 +111,7 @@ class Weapon implements Sendable{
         } else if (v.getY() < 0) {
             ang += Math.PI;
         }
-        ang += Math.toRadians(rand.nextInt(2*(int)(accuracy+currentRecoil))-accuracy+currentRecoil);
+        ang += Math.toRadians(rand.nextInt(2*(int)(accuracy+currentRecoil))-(accuracy+currentRecoil));
         float newX = (float)(Math.sin(ang));
         float newY = (float)(Math.cos(ang));
 

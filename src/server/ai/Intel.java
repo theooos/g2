@@ -39,6 +39,7 @@ public class Intel {
         this.path = new ArrayList<>();
     }
 
+
     /**
      * Assigns this Intel's owning entity.
      * @param ent - The entity this intel object is to belong to.
