@@ -23,15 +23,15 @@ class Lobby {
     private boolean gameRunning;
 
     Lobby(int maxSize) {
-        int mapMax = 2;
+        int mapMax = 3;
         countdownRunning = false;
         players = new ArrayList<>();
         this.maxSize = maxSize;
         minSize = maxSize/2;
         t = new Timer();
         Random rand = new Random();
-        map = rand.nextInt(3);
-        map = 2;
+        map = rand.nextInt(mapMax);
+        //map = 2;
         System.out.println(map);
         gameRunning = false;
     }
