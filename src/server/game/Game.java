@@ -81,11 +81,13 @@ public class Game implements Runnable {
             }
 
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
-            playerConnections.get(i).send(new objects.String("ID"+IDCounter));
-            playerConnections.get(i).addFunctionEvent("String", this::decodeString);
-            playerConnections.get(i).addFunctionEvent("MoveObject", this::receivedMove);
-            playerConnections.get(i).addFunctionEvent("FireObject", this::toggleFire);
-            playerConnections.get(i).addFunctionEvent("PhaseObject", this::switchPhase);
+            Connection con = playerConnections.get(i);
+            con.send(new objects.String("ID"+IDCounter));
+            con.addFunctionEvent("String", this::decodeString);
+            con.addFunctionEvent("MoveObject", this::receivedMove);
+            con.addFunctionEvent("FireObject", this::toggleFire);
+            con.addFunctionEvent("PhaseObject", this::switchPhase);
+            con.addFunctionEvent("SwitchObject", this::switchWeapon);
 
             addPlayer(p);
             IDCounter++;
@@ -408,24 +410,7 @@ public class Game implements Runnable {
      */
     private void decodeString(Sendable s0) {
         String s = s0.toString();
-        try{
-            String s1 = s.substring(1);
-            switch (s.charAt(0)) {
-                //switch weapon
-                case 'w':
-                    toggleWeapon(getPlayer(Integer.parseInt(s1)));
-                    break;
-                //"say" sends a message
-                case 's':
-                    out("SAY: "+s.substring(1));
-                    break;
-                default:
-                    out(s);
-            }
-        }
-        catch (Exception e) {
-            out(s);
-        }
+        out(s);
     }
 
 
@@ -501,6 +486,17 @@ public class Game implements Runnable {
         }
     }
 
+    private void switchWeapon(Sendable s) {
+        SwitchObject sw = (SwitchObject) s;
+        for (Player p: players) {
+            if (p.getID() == sw.getID()) {
+                p.setWeaponOut(sw.takeWeaponOneOut());
+                out("ID"+p.getID()+": Switching weapon");
+                break;
+            }
+        }
+    }
+
     /**
      * fires the active gun of the given player
      * @param player the gun to fire
@@ -517,14 +513,6 @@ public class Game implements Runnable {
                 out("Shot Fired");
             }
         }
-    }
-
-    /**
-     * switches the weapon of the given player
-     * @param player the player to switch weapon
-     */
-    private void toggleWeapon(Player player) {
-        player.toggleWeapon();
     }
 
     private void out(Object o) {

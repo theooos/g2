@@ -25,9 +25,10 @@ class Weapon implements Sendable{
     int refireTime;
     private int refireDelay;
     boolean fullyAuto;
-
+    String name;
 
      Weapon() {
+        name = "Default";
         //with a cooldown rate of 1, it'll take 2s for a full reload
         magSize = 120;
         currentHeat = 0;
@@ -116,6 +117,10 @@ class Weapon implements Sendable{
 
     boolean isFullyAuto() {
          return fullyAuto;
+    }
+
+    public String toString() {
+         return name;
     }
 
 }
