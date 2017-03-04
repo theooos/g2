@@ -167,7 +167,6 @@ public class Game implements Runnable {
             for (Orb o : orbs) {
                 if (!o.isAlive()) respawn(o);
                 o.live();
-                o.setDir(randomDir());
             }
 
             for (Projectile p : projectiles) {
@@ -262,9 +261,10 @@ public class Game implements Runnable {
         e.setPos(respawnCoords());
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
-        e.setPhase(rand.nextInt(1));
+        e.setPhase(rand.nextInt(2));
         if (e instanceof Player) {
             ((Player) e).setFiring(false);
+            out("ID"+e.getID()+" Respawning at "+e.getPos()+" and phase "+e.getPhase());
         }
     }
 
@@ -288,7 +288,6 @@ public class Game implements Runnable {
             else if (pointWallCollision(minDist, v, 1)) valid = false;
             else if (collidesWithPlayerOrBot(minDist, v) != null) valid = false;
         }
-        //msgToAllConnected(v.toString());
         return v;
     }
 

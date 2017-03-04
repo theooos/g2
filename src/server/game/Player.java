@@ -40,7 +40,6 @@ public class Player extends MovableEntity {
 
     public void live() {
         //any methods the player may do once a tick
-        move();
         getActiveWeapon().live();
     }
 
