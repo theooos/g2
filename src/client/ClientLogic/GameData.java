@@ -14,12 +14,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GameData {
 
-    private HashMap<Integer, Player> players;
+    private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
     private ConcurrentHashMap<Integer, Projectile> projectiles;
     private int mapID;
 
-    public GameData(HashMap players, HashMap orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id) {
+    public GameData(ConcurrentHashMap players, HashMap orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id) {
         this.players = players;
         this.orbs = orbs;
         this.projectiles = projectiles;
@@ -29,7 +29,7 @@ public class GameData {
     /**
      * @return the players of the game
      */
-    public HashMap<Integer, Player> getPlayers() {
+    public ConcurrentHashMap<Integer, Player> getPlayers() {
         return players;
     }
 

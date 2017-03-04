@@ -256,7 +256,7 @@ public class GameRenderer implements Runnable {
     }
 
     private void drawPlayers(int phase) {
-        HashMap<Integer, Player> players = gameData.getPlayers();
+        ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
         int radius = players.get(0).getRadius();
         for (Player p : players.values()) {
             if (p.getPhase() == phase) {
@@ -294,7 +294,6 @@ public class GameRenderer implements Runnable {
     private void drawProjectiles(int phase) {
         ConcurrentHashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
         for (Projectile p : projectiles.values()) {
-            //System.out.println("showing projectile");
             if (phase == p.getPhase()) {
                 if (p.getTeam() == 0) {
                     GL11.glColor3f(1f, 0.1f, 0.1f);

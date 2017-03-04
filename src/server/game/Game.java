@@ -8,8 +8,7 @@ import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.lang.String;
 import java.util.*;
-
-import static sun.audio.AudioPlayer.player;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by peran on 27/01/17.
@@ -20,9 +19,9 @@ public class Game implements Runnable {
     private Map map;
 
     private ArrayList<Connection> playerConnections;
-    private List<Player> players;
-    private ArrayList<Orb> orbs;
-    private ArrayList<Projectile> projectiles;
+    private ConcurrentHashMap<Integer, Player> players;
+    private HashMap<Integer, Orb> orbs;
+    private HashMap<Integer, Projectile> projectiles;
 
     private Random rand;
 
@@ -51,9 +50,9 @@ public class Game implements Runnable {
         rand = new Random();
         sb = new Scoreboard(100, maxPlayers);
 
-        players = Collections.synchronizedList(new ArrayList<>());
-        orbs = new ArrayList<>();
-        projectiles = new ArrayList<>();
+        players = new ConcurrentHashMap<>();
+        orbs = new HashMap<>();
+        projectiles = new HashMap<>();
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
@@ -90,7 +89,7 @@ public class Game implements Runnable {
             con.addFunctionEvent("PhaseObject", this::switchPhase);
             con.addFunctionEvent("SwitchObject", this::switchWeapon);
 
-            addPlayer(p);
+            players.put(IDCounter, p);
             IDCounter++;
         }
         //create AI players
@@ -118,14 +117,14 @@ public class Game implements Runnable {
                     break;
             }
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
-            addPlayer(p);
+            players.put(IDCounter, p);
             IDCounter++;
         }
         //create team orbs
         for (int i = 0; i < maxPlayers; i++) {
             Orb o = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
             respawn(o);
-            orbs.add(o);
+            orbs.put(IDCounter, o);
             IDCounter++;
 
             // Inform the Orbs.
@@ -140,13 +139,6 @@ public class Game implements Runnable {
     }
 
 
-    private void addPlayer(Player p) {
-        List<Player> players = Collections.synchronizedList(this.players);
-        players.add(p);
-        this.players = players;
-    }
-
-
     /**
      * The game tick runs.  This is the master function for a running game
      */
@@ -154,7 +146,7 @@ public class Game implements Runnable {
 
         boolean isRunning = true;
         while(isRunning){
-            for (Player p : players) {
+            for (Player p : players.values()) {
                 if (!p.isAlive()) {
                     respawn(p);
                     if (!(p instanceof AIPlayer)) {
@@ -164,12 +156,14 @@ public class Game implements Runnable {
                 if (p.isFiring()) fire(p);
                 p.live();
             }
-            for (Orb o : orbs) {
+            for (Orb o : orbs.values()) {
                 if (!o.isAlive()) respawn(o);
                 o.live();
             }
 
-            for (Projectile p : projectiles) {
+            ArrayList<Integer> keys = new ArrayList<>();
+
+            for (Projectile p : projectiles.values()) {
                 MovableEntity e = collidesWithPlayerOrBot(p);
                 if (e != null) {
                     out(p.getPlayerID()+" just hit "+e.getID());
@@ -182,11 +176,16 @@ public class Game implements Runnable {
                         }
                     }
                     p.kill();
+                    keys.add(p.getID());
                 }
 
                 if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
                 p.live();
+            }
+
+            for (Integer i: keys) {
+                projectiles.remove(i);
             }
 
             countdown--;
@@ -203,9 +202,6 @@ public class Game implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            //deletes the projectile from the list if it's dead
-            projectiles.removeIf(p -> !p.isAlive());
         }
     }
 
@@ -242,13 +238,13 @@ public class Game implements Runnable {
      * Sends all objects to all players
      */
     private void sendAllObjects() {
-        for (Player p: players) {
+        for (Player p: players.values()) {
             sendToAllConnected(p);
         }
-        for (Orb o: orbs) {
+        for (Orb o: orbs.values()) {
             sendToAllConnected(o);
         }
-        for (Projectile p: projectiles) {
+        for (Projectile p: projectiles.values()) {
             sendToAllConnected(p);
         }
     }
@@ -308,11 +304,11 @@ public class Game implements Runnable {
      * @return the player or bot it is collided with.  Null if no collision
      */
     private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos) {
-        for (Player p: players) {
+        for (Player p: players.values()) {
             if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
         }
 
-        for (Orb o: orbs) {
+        for (Orb o: orbs.values()) {
             if (o.isAlive() && collided(r, pos, o.getRadius(), o.getPos())) return o;
         }
 
@@ -325,18 +321,28 @@ public class Game implements Runnable {
      * @return the entity if there is a collision, null if there isn't
      */
     private MovableEntity collidesWithPlayerOrBot(MovableEntity e) {
-        ArrayList<MovableEntity> entities = new ArrayList<>();
-        entities.addAll(players);
-        entities.addAll(orbs);
-        entities.removeIf(et -> et.equals(e));
-        entities.removeIf(et -> et.getPhase() != e.getPhase());
-        if (e instanceof Projectile) {
-            entities.removeIf(et -> et.equals(((Projectile) e).getPlayer()));
+        HashMap<Integer, MovableEntity> entities = new HashMap<>();
+
+        for(Player p: players.values()) {
+            if (!(p.equals(e) ||  p.getPhase() != e.getPhase())) {
+                if (!(e instanceof Projectile)) {
+                    entities.put(p.getID(), p);
+                }
+                else if (!((Projectile) e).getPlayer().equals(p)){
+                    entities.put(p.getID(), p);
+                }
+            }
+        }
+
+        for(Orb o: orbs.values()) {
+            if (!(o.equals(e) ||  o.getPhase() != e.getPhase())) {
+                entities.put(o.getID(), o);
+            }
         }
 
         Vector2 nextPos = e.getPos().add(e.getDir().mult(e.getSpeed()));
 
-        for (MovableEntity et: entities) {
+        for (MovableEntity et: entities.values()) {
             float minDist = linePointDistance(e.getPos(), nextPos, et.getPos());
             if (minDist < (e.getRadius() + et.getRadius())) {
                 out("Collided with: ID"+et.getID());
@@ -427,29 +433,8 @@ public class Game implements Runnable {
      * @param s a player object
      */
     private void receivedMove(Sendable s) {
-        try {
-            MoveObject m = (MoveObject) s;
-            updatePlayerMove(m);
-
-        }
-        catch (Exception e) {
-            out("Not a move" + e);
-        }
-    }
-
-
-    /**
-     * gets a player from an id
-     * @param id the player id
-     * @return returns the player of null if no player exist
-     */
-    private synchronized Player getPlayer(int id) {
-        for (Player p: players) {
-            if (p.getID() == id) {
-                return p;
-            }
-        }
-        return null;
+        MoveObject m = (MoveObject) s;
+        updatePlayerMove(m);
     }
 
     /*private synchronized void removePlayer(int id) {
@@ -457,48 +442,32 @@ public class Game implements Runnable {
     }*/
 
     private synchronized void updatePlayerMove(MoveObject m) {
-        for (int i = 0; i < players.size(); i++){
-            if(players.get(i).getID() == m.getID()){
-                Player p = players.get(i);
-                p.setDir(m.getDir());
-                p.setPos(m.getPos());
-                players.set(i, p);
-            }
-        }
+        Player p = players.get(m.getID());
+        //MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID());
+        p.setDir(m.getDir());
+        p.setPos(m.getPos());
+        players.put(m.getID(), p);
     }
 
     private void toggleFire(Sendable s) {
         out("Toggling fire");
         FireObject f = (FireObject) s;
-        int id = f.getPlayerID();
-        for (Player p : players) {
-            if (p.getID() == id) {
-                p.setFiring(f.isStartFire());
-                break;
-            }
-        }
+        Player p = players.get(f.getPlayerID());
+        p.setFiring(f.isStartFire());
     }
 
     private void switchPhase(Sendable s) {
         PhaseObject phase = (PhaseObject) s;
-        for (Player p: players) {
-            if (p.getID() == phase.getID()) {
-                p.togglePhase();
-                out("ID"+p.getID()+": Switching phase");
-                break;
-            }
-        }
+        Player p = players.get(phase.getID());
+        p.togglePhase();
+        out("ID"+p.getID()+": Switching phase");
     }
 
     private void switchWeapon(Sendable s) {
         SwitchObject sw = (SwitchObject) s;
-        for (Player p: players) {
-            if (p.getID() == sw.getID()) {
-                p.setWeaponOut(sw.takeWeaponOneOut());
-                out("ID"+p.getID()+": Switching weapon");
-                break;
-            }
-        }
+        Player p = players.get(sw.getID());
+        p.setWeaponOut(sw.takeWeaponOneOut());
+        out("ID"+p.getID()+": Switching weapon");
     }
 
     /**
@@ -513,7 +482,7 @@ public class Game implements Runnable {
             for (Projectile p: ps) {
                 p.setID(IDCounter);
                 IDCounter++;
-                projectiles.add(p);
+                projectiles.put(p.getID(), p);
                 out("Shot Fired");
             }
         }

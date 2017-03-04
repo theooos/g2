@@ -28,5 +28,9 @@ public class MoveObject implements Sendable {
     public int getID() {
         return ID;
     }
+
+    public java.lang.String toString(){
+        return "Pos: " + pos + " Dir: " + dir + " ID: " + ID;
+    }
 }
 

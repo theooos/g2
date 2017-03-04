@@ -103,9 +103,9 @@ public class Check {
         VisibilityPolygon sight = intel.updateSight();
         ArrayList<Integer> playersInSight = new ArrayList<>();
 
-        for (Player p : intel.getPlayers()){
+        for (Player p : intel.getPlayers().values()){
             if (sight.contains(p.getPos().toPoint())){
-                playersInSight.add(intel.getPlayers().indexOf(p));
+                playersInSight.add(p.getID());
             }
         }
         return playersInSight;

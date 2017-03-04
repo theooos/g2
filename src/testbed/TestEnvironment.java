@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import server.ai.Intel;
 import server.game.*;
@@ -40,8 +41,8 @@ public class TestEnvironment extends Observable {
         player = new Player(new Vector2(400, 500),
                 new Vector2(0, 1), 0, 1,
                 new WeaponShotgun(), new WeaponSniper(), 0);
-        ArrayList<Player> playerList = new ArrayList<>();
-        playerList.add(player);
+        ConcurrentHashMap<Integer, Player> playerList = new ConcurrentHashMap<>();
+        playerList.put(player.getID(), player);
         System.out.println("Player's initial location: " + player.getPos());
 
         intel = new Intel(playerList, map);

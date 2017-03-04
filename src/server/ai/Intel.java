@@ -9,6 +9,7 @@ import server.game.Vector2;
 import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A packet of the necessary data that AI units need to make decisions.
@@ -17,7 +18,7 @@ import java.util.List;
 public class Intel {
 
     private MovableEntity ent;          // The entity this information is used by.
-    private List<Player> players;  // A list of all the players in the game.
+    private ConcurrentHashMap<Integer, Player> players;  // A list of all the players in the game.
     private Map map;                    // The map the current game is being played on.
     private int healthLastTick;         // The entity's health during the previous tick.
     private Vector2 targetLocation;     // Where the entity is currently aiming to reach.
@@ -31,7 +32,7 @@ public class Intel {
      * @param players - The list of players.
      * @param map - The map currently in play.
      */
-    public Intel(List<Player> players, Map map) {
+    public Intel(ConcurrentHashMap<Integer, Player> players, Map map) {
         this.players = players;
         this.map = map;
         this.targetLocation = null;
@@ -60,7 +61,7 @@ public class Intel {
     /**
      * @return the list of players this Intel object is tracking.
      */
-    public List<Player> getPlayers() {
+    public ConcurrentHashMap<Integer, Player> getPlayers() {
         return players;
     }
 
@@ -77,7 +78,7 @@ public class Intel {
      * Refreshes this Intel with a given list of Players.
      * @param players - The list of players to be used to refresh the Intel object.
      */
-    public void resetPlayers(List<Player> players) {
+    public void resetPlayers(ConcurrentHashMap<Integer, Player> players) {
         this.players = players;
     }
 

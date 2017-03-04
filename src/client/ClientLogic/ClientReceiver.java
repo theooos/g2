@@ -39,7 +39,7 @@ public class ClientReceiver {
 
     private void setupGame(Sendable s) {
         InitGame i = (InitGame) s;
-        HashMap<Integer, Player> players = i.getPlayers();
+        ConcurrentHashMap<Integer, Player> players = i.getPlayers();
         HashMap<Integer, Orb> orbs = i.getOrb();
         int mapID = i.getMapID();
         ConcurrentHashMap<Integer, Projectile> projectiles = new ConcurrentHashMap<>();
