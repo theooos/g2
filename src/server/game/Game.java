@@ -273,8 +273,8 @@ public class Game implements Runnable {
      */
     private Vector2 respawnCoords() {
         //get map bounds
-        int boundX = map.getMapLength()-100;
-        int boundY = map.getMapWidth()-100;
+        int boundX = map.getMapWidth()-200;
+        int boundY = map.getMapLength()-200;
         int minDist = 20;
 
         boolean valid = false;
@@ -282,7 +282,7 @@ public class Game implements Runnable {
 
         while (!valid) {
             valid = true;
-            v = new Vector2(rand.nextInt(boundX)+50, rand.nextInt(boundY)+50);
+            v = new Vector2(rand.nextInt(boundX)+100, rand.nextInt(boundY)+100);
 
             if (pointWallCollision(minDist, v, 0)) valid = false;
             else if (pointWallCollision(minDist, v, 1)) valid = false;
