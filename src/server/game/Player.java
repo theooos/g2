@@ -48,15 +48,17 @@ public class Player extends MovableEntity {
         super.move();
     }
 
-
-
-    Weapon getActiveWeapon() {
+    public Weapon getActiveWeapon() {
         if (w1Out) return w1;
         else return w2;
     }
 
-    void toggleWeapon() {
-        w1Out = !w1Out;
+    public boolean isWeaponOneOut() {
+        return w1Out;
+    }
+
+    public void setWeaponOut(boolean w1out) {
+        this.w1Out = w1out;
     }
 
     void togglePhase() {
@@ -64,11 +66,11 @@ public class Player extends MovableEntity {
         else phase = 1;
     }
 
-    public boolean isFiring() {
+    boolean isFiring() {
         return firing;
     }
 
-    public void setFiring(boolean firing) {
+    void setFiring(boolean firing) {
         this.firing = firing;
     }
 }

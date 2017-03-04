@@ -5,6 +5,7 @@ import networking.Connection;
 import objects.FireObject;
 import objects.MoveObject;
 import objects.PhaseObject;
+import objects.SwitchObject;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -20,6 +21,7 @@ import server.game.Orb;
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
+import static server.Server.out;
 
 /**
  * Provides the visuals for the game itself.
@@ -41,6 +43,10 @@ public class GameRenderer implements Runnable {
     private Connection conn;
     private boolean fDown;
     private boolean clickDown;
+    private boolean eDown;
+    private boolean oneDown;
+    private boolean twoDown;
+
 
     int count = 10;
 
@@ -51,6 +57,9 @@ public class GameRenderer implements Runnable {
 
         fDown = false;
         clickDown = false;
+        eDown = false;
+        oneDown = false;
+        twoDown = false;
 
 
         // initialize the window beforehand
@@ -156,13 +165,43 @@ public class GameRenderer implements Runnable {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
-
         if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
             fDown = true;
         }
         else if (fDown){
             fDown = false;
             conn.send(new PhaseObject(me.getID()));
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
+            eDown = true;
+        }
+        else if (eDown){
+            eDown = false;
+            if (me.isWeaponOneOut()) {
+                conn.send(new SwitchObject(me.getID(), false));
+            }
+            else {
+                conn.send(new SwitchObject(me.getID(), true));
+            }
+            out(me.getID()+" just switched from "+me.getActiveWeapon());
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
+            oneDown = true;
+        }
+        else if (oneDown){
+            oneDown = false;
+            conn.send(new SwitchObject(me.getID(), true));
+            out(me.getID()+" just switched from "+me.getActiveWeapon());
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
+            twoDown = true;
+        }
+        else if (twoDown){
+            twoDown = false;
+            conn.send(new SwitchObject(me.getID(), false));
+            out(me.getID()+" just switched from "+me.getActiveWeapon());
         }
 
         if (Mouse.isButtonDown(0)) {
