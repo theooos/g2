@@ -80,6 +80,7 @@ public class GameData {
         Player me = players.get(p.getID());
         me.setPhase(p.getPhase());
         me.setHealth(p.getHealth());
+        me.setWeaponOut(p.isWeaponOneOut());
         players.put(p.getID(), me);
     }
 
