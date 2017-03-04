@@ -5,10 +5,10 @@ package server.game;
  * A fast firing, low damage weapon type
  */
 class WeaponSMG extends Weapon {
-    WeaponSMG() {
+    public WeaponSMG() {
         super();
         name = "SMG";
-        shotType = new Projectile(15,300,10,new Vector2(0,0), new Vector2(0,0), 20, 0, null, 0);
+        shotType = new Projectile(15,100,10,new Vector2(0,0), new Vector2(0,0), 20, 0, null, 0);
         numProjectiles = 1;
         //the max inaccuracy from recoil alone
         maxRecoil = 25;
