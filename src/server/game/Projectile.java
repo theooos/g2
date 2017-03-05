@@ -77,7 +77,7 @@ public class Projectile extends MovableEntity {
         lifespan--;
         if (lifespan < 1) {
             setHealth(0);
-            System.out.println("killed due to lifespan");
+            //System.out.println("killed due to lifespan");
         }
     }
 
