@@ -26,9 +26,11 @@ public class FindPath extends Task {
     public void doAction() {
         // SKELETON METHOD.
         // PERQUISITE: Collision Detection, DoorwayDetection.
+        System.out.println("Finding Path.");
         ArrayList<Vector2> path = new ArrayList<>();
         path.add(intel.getTargetLocation());
         intel.resetPath(path);
+        end();
     }
 
 

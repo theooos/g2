@@ -31,6 +31,7 @@ public class Sequence extends Task {
 
     @Override
     public void start(){
+        System.out.println("Starting Sequence.");
         curTask = subTasks.get(0);
         if (curTask.checkConditions()) {
             curTask.start();
@@ -46,15 +47,20 @@ public class Sequence extends Task {
         }
 
         // If we DO have a current task...
-            //...but it's not running yet:
-        if (!curTask.isRunning()) {
+            //...and it's running.
+        if (curTask.isRunning()) {
+            System.out.println("Continuing with sub-task.");
+            curTask.doAction();
+        }   //...but it's not running yet:
+        else if (curTask.isDormant()) {
+            System.out.println("Starting sub-task.");
             curTask.start();
         }   //...but it's already finished:
         else if (curTask.hasFinished()) {
+            System.out.println("Selecting next sub-task.");
             advanceSequence();
-        } //...and it's running.
-        else {
-            curTask.doAction();
+        } else {
+            System.out.println("No conditions met.");
         }
 
     }
@@ -62,23 +68,27 @@ public class Sequence extends Task {
     /**
      * Moves onto the next sub-task in the sequence when a sub-task succeeds.
      */
-    private void advanceSequence()  {
+    private void advanceSequence() {
         int curPos = subTasks.indexOf(curTask);
 
         // If we've reached the end of the sequence, the sequence is successful.
         if (curPos == (subTasks.size() - 1)) {
-            end();
+            // Reset the sequence, so that it can be repeated as many times as necessary.
+            System.out.println("Repeating sequence.");
+            reset();
         }
         // Otherwise, move on.
         else {
             curTask = subTasks.get(curPos+1);
             if(!curTask.checkConditions()) {
                 end();
+            } else {
             }
         }
     }
 
     public void reset() {
+        System.out.println("Resetting Sequence.");
         super.reset();
         this.curTask = subTasks.get(0);
         for (Task task : subTasks) {

@@ -70,15 +70,12 @@ public class OrbBrain {
 
         // Decide what to do.
         if (curEmotion == EmotionalState.SCARED){
-            intel.ent().setSpeed(2);
-            flee.start();
+            flee.doAction();
         }
         else if (curEmotion == EmotionalState.RELAXED) {
-            intel.ent().setSpeed(0.5F);
-            drift.start();
+            drift.doAction();
         }
         else if (curEmotion == EmotionalState.ANGRY) {
-            intel.ent().setSpeed(1);
             // Compute/re-compute travel path if the target has moved since the last tick.
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
                 intel.setTargetLocation(intel.getTargetPlayer().getPos());
@@ -118,6 +115,17 @@ public class OrbBrain {
             pathfinder.reset();
             zapper.reset();
             traveller.reset();
+            if (newEmotion == EmotionalState.RELAXED){
+                intel.ent().setSpeed(1F);
+                drift.start();
+            }
+            else if (newEmotion == EmotionalState.ANGRY) {
+                intel.ent().setSpeed(1.5F);
+            }
+            else if (newEmotion == EmotionalState.SCARED) {
+                intel.ent().setSpeed(3F);
+                flee.start();
+            }
 
             curEmotion = newEmotion;
         }
