@@ -443,10 +443,15 @@ public class Game implements Runnable {
 
     private synchronized void updatePlayerMove(MoveObject m) {
         Player p = players.get(m.getID());
-        //MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID());
+        MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID());
         p.setDir(m.getDir());
         p.setPos(m.getPos());
-        players.put(m.getID(), p);
+        if (validPosition(p)) {
+            players.put(m.getID(), p);
+        }
+        else {
+            playerConnections.get(p.getID()).send(old);
+        }
     }
 
     private void toggleFire(Sendable s) {
