@@ -305,14 +305,23 @@ public class GameRenderer implements Runnable {
     private void drawPlayers(int phase) {
         ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
         int radius = players.get(0).getRadius();
-
+        float red;
+        float green;
+        float blue;
         for (Player p : players.values()) {
             if (p.getPhase() == phase) {
                 if (p.getTeam() == 0) {
-                    GL11.glColor3f(1, 0.33f, 0.26f);
+                    red = 1;
+                    green = 0.33f;
+                    blue = 0.26f;
                 } else {
-                    GL11.glColor3f(0.2f, 0.9f, 0.5f);
+                    red = 0.2f;
+                    green = 0.9f;
+                    blue = 0.5f;
                 }
+                draw.drawAura(p.getPos(), p.getRadius()+10, 10, red-0.2f, green-0.2f, blue-0.2f);
+                GL11.glColor3f(red, green, blue);
+
                 draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
 
                 if (p.getID() != playerID) {
