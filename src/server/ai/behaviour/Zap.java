@@ -12,7 +12,7 @@ import server.game.Player;
  */
 public class Zap extends Attack {
 
-    private final double FREQUENCY = 10;
+    private final double FREQUENCY = 7;
     private double ctr;
 
     public Zap(Intel intel, OrbBrain brain) {
@@ -30,7 +30,7 @@ public class Zap extends Attack {
     public void doAction() {
         if (ctr == FREQUENCY) {
             Player target = intel.getTargetPlayer();
-            target.damage(45);
+            target.damage(24);
             ctr = 0;
         } else {
             ctr++;

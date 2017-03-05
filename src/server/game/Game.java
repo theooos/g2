@@ -176,12 +176,14 @@ public class Game implements Runnable {
                         }
                     }
                     p.kill();
-                    keys.add(p.getID());
                 }
 
                 if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
                 p.live();
+                if (!p.isAlive()) {
+                    keys.add(p.getID());
+                }
             }
 
             for (Integer i: keys) {
@@ -260,7 +262,6 @@ public class Game implements Runnable {
         e.setPhase(rand.nextInt(2));
         if (e instanceof Player) {
             ((Player) e).setFiring(false);
-            out("ID"+e.getID()+" Respawning at "+e.getPos()+" and phase "+e.getPhase());
         }
     }
 
@@ -345,7 +346,6 @@ public class Game implements Runnable {
         for (MovableEntity et: entities.values()) {
             float minDist = linePointDistance(e.getPos(), nextPos, et.getPos());
             if (minDist < (e.getRadius() + et.getRadius())) {
-                out("Collided with: ID"+et.getID());
                 return et;
             }
         }

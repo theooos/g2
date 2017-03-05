@@ -39,6 +39,11 @@ public class GameRenderer implements Runnable {
     private long lastFPS;
     private int playerID;
 
+    private int oldHealth;
+    private double displayHealth;
+    private double oldHeat;
+    private double displayHeat;
+
     private GameData gameData;
     private MapRenderer map;
     private Connection conn;
@@ -47,9 +52,8 @@ public class GameRenderer implements Runnable {
     private boolean eDown;
     private boolean oneDown;
     private boolean twoDown;
+    private Draw draw;
 
-
-    int count = 10;
 
     GameRenderer(GameData gd, Connection conn) {
         super();
@@ -61,6 +65,11 @@ public class GameRenderer implements Runnable {
         eDown = false;
         oneDown = false;
         twoDown = false;
+        draw = new Draw(width, height);
+        oldHealth = 0;
+        displayHealth = 100;
+        oldHeat = 0;
+        displayHeat = 0;
 
 
         // initialize the window beforehand
@@ -103,35 +112,6 @@ public class GameRenderer implements Runnable {
         Display.destroy();
     }
 
-    private void DrawCircle(float cx, float cy, float r, int num_segments) {
-        float theta = (float) (2 * 3.1415926 / (num_segments));
-        float tangetial_factor = (float) Math.tan(theta);//calculate the tangential factor
-        float radial_factor = (float) Math.cos(theta);//calculate the radial factor
-
-        float x = r;//we start at angle = 0
-        float y = 0;
-
-        GL11.glBegin(GL_TRIANGLE_FAN);
-
-        for (int ii = 0; ii < num_segments; ii++) {
-            glVertex2f(x + cx, y + cy);//output vertex
-
-            //calculate the tangential vector; remember, the radial vector is (x, y)
-            //to get the tangential vector we flip those coordinates and negate one of them
-            float tx = -y;
-            float ty = x;
-
-            //add the tangential vector
-            x += tx * tangetial_factor;
-            y += ty * tangetial_factor;
-
-            //correct using the radial factor
-            x *= radial_factor;
-            y *= radial_factor;
-        }
-        GL11.glEnd();
-    }
-
     private Vector2 getDirFromMouse(Vector2 pos) {
         Vector2 mousePos = new Vector2(Mouse.getX(), Mouse.getY());
         Vector2 dir = pos.vectorTowards(mousePos);
@@ -147,7 +127,7 @@ public class GameRenderer implements Runnable {
         //Mouse.setGrabbed(true);
 
         if (lastX > 0 && lastY > 0)
-            DrawCircle(lastX, lastY, 10, 50);
+            draw.drawCircle(lastX, lastY, 10, 50);
     }
 
     private long getTime() {
@@ -226,7 +206,6 @@ public class GameRenderer implements Runnable {
         if(pos.getX() != xPos || pos.getY() != yPos) {
             me.setPos(new Vector2(xPos, yPos));
             gameData.updatePlayer(me);
-            //System.err.println("Old: "+pos+" New: ("+xPos+", "+yPos+ ") Me: "+me.getPos());
             conn.send(new MoveObject(me.getPos(), me.getDir(), playerID));
         }
 
@@ -246,13 +225,80 @@ public class GameRenderer implements Runnable {
         // Clear the screen and depth buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        int phase = gameData.getPlayer(playerID).getPhase();
+        Player p = gameData.getPlayer(playerID);
+        int phase = p.getPhase();
 
-        map.renderMap(phase);
         drawProjectiles(phase);
+        map.renderMap(phase);
         drawOrbs(phase);
         drawPlayers(phase);
+        drawHealthBar(p.getHealth(), p.getMaxHealth());
+        drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
+    }
 
+    private void drawHeatBar(double heat, double maxHeat) {
+        float heatBarSensitivity = 0.1f;
+        if (heat != oldHeat) {
+            oldHeat = heat;
+        }
+
+        out("Old heat: "+heat);
+        double heatTick = heatBarSensitivity*(oldHeat-displayHeat);
+
+        if (displayHeat > oldHeat && displayHeat+heatTick < oldHeat) {
+            displayHeat = oldHeat;
+        }
+        else if (displayHeat < oldHeat && displayHeat+heatTick > oldHeat) {
+            displayHeat = oldHeat;
+        } else {
+            displayHeat += heatTick;
+        }
+
+        if (displayHeat > maxHeat) displayHeat = maxHeat;
+        else if (displayHeat < 0) displayHeat = 0;
+
+        out("Max heat: "+maxHeat);
+        out("Heat: "+heat);
+        out("Display heat: "+displayHeat);
+        out("Heat tick: "+heatTick);
+
+        int heatWidth = 10;
+        int buffer = 20;
+        float maxHeight = height-buffer*2;
+        float heatRatio = (float) (displayHeat/maxHeat);
+        float green = (204f/255f)*(1-heatRatio);
+        out("Heat ratio: "+heatRatio);
+
+        GL11.glColor3f(heatRatio, green, 0f);
+        draw.verticalDraw(width - (buffer+heatWidth), buffer+(1-heatRatio)*maxHeight, heatWidth, maxHeight*heatRatio);
+    }
+
+    private void drawHealthBar(double health, double maxHealth) {
+        float healthBarSensitivity = 0.1f;
+        if (health != oldHealth) {
+            oldHealth = (int) health;
+        }
+
+        double healthTick = healthBarSensitivity*(oldHealth-displayHealth);
+
+        if (displayHealth > oldHealth && displayHealth+healthTick < oldHealth) {
+            displayHealth = oldHealth;
+        }
+        else if (displayHealth < oldHealth && displayHealth+healthTick > oldHealth) {
+            displayHealth = oldHealth;
+        } else {
+            displayHealth += healthTick;
+        }
+
+        if (displayHealth > maxHealth) displayHealth = maxHealth;
+        else if (displayHealth < 0) displayHealth = 0;
+        int healthWidth = 10;
+        int buffer = 20;
+        float maxHeight = height-buffer*2;
+        float healthRatio = (float) (displayHealth/maxHealth);
+        float green = (204f/255f)*healthRatio;
+        GL11.glColor3f(1-healthRatio, green, 0f);
+        draw.verticalDraw(buffer, buffer+(1-healthRatio)*maxHeight, healthWidth, maxHeight*healthRatio);
     }
 
     private void drawPlayers(int phase) {
@@ -265,7 +311,7 @@ public class GameRenderer implements Runnable {
                 } else {
                     GL11.glColor3f(0.2f, 0.9f, 0.5f);
                 }
-                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
+                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
 
                 if (p.getID() != playerID) {
                     positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()), p.getDir());
@@ -286,7 +332,7 @@ public class GameRenderer implements Runnable {
         GL11.glColor3f(0.2f, 0.2f, 1f);
         for (Orb o: orbs.values()) {
             if (phase == o.getPhase()) {
-                DrawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
+                draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
             }
         }
     }
@@ -300,7 +346,7 @@ public class GameRenderer implements Runnable {
                 } else {
                     GL11.glColor3f(0.1f, 1f, 0.1f);
                 }
-                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
+                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
             }
         }
     }
