@@ -106,6 +106,7 @@ public class Check {
         for (Player p : intel.getPlayers().values()){
             if (sight.contains(p.getPos().toPoint())){
                 playersInSight.add(p.getID());
+                System.out.println("Orb thinks player is at " + p.getPos() + ".");
             }
         }
         return playersInSight;
