@@ -18,12 +18,12 @@ import server.game.Projectile;
 import server.game.Vector2;
 import server.game.Orb;
 
+import java.security.Key;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.glDepthMask;
-import static server.Server.out;
 
 /**
  * Provides the visuals for the game itself.
@@ -31,7 +31,7 @@ import static server.Server.out;
 public class GameRenderer implements Runnable {
 
     private final String WINDOW_TITLE = "PhaseShift";
-    public static boolean gameRunning = true;
+    private static boolean gameRunning = true;
     private int width = 800;
     private int height = 600;
 
@@ -43,11 +43,14 @@ public class GameRenderer implements Runnable {
     private GameData gameData;
     private MapRenderer map;
     private Connection conn;
+
     private boolean fDown;
     private boolean clickDown;
     private boolean eDown;
     private boolean oneDown;
     private boolean twoDown;
+    private boolean tabPressed;
+
     private Draw draw;
     private Pulse pulse;
 
@@ -63,6 +66,7 @@ public class GameRenderer implements Runnable {
         eDown = false;
         oneDown = false;
         twoDown = false;
+        tabPressed = false;
         draw = new Draw(width, height);
 
         // initialize the window beforehand
@@ -179,6 +183,8 @@ public class GameRenderer implements Runnable {
             }
         }
 
+        tabPressed = Keyboard.isKeyDown(Keyboard.KEY_TAB);
+
         if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
             oneDown = true;
         }
@@ -249,6 +255,10 @@ public class GameRenderer implements Runnable {
         }
         draw.drawHealthBar(p.getHealth(), p.getMaxHealth());
         draw.drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
+
+        if (tabPressed) {
+            draw.shadeScreen();
+        }
     }
 
     private void drawStencil() {
@@ -295,6 +305,7 @@ public class GameRenderer implements Runnable {
     private void drawPlayers(int phase) {
         ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
         int radius = players.get(0).getRadius();
+
         for (Player p : players.values()) {
             if (p.getPhase() == phase) {
                 if (p.getTeam() == 0) {

@@ -27,6 +27,10 @@ class Draw {
         displayHeat = 0;
     }
 
+    void shadeScreen() {
+        GL11.glColor4f(1,1,1,0.6f);
+        verticalDraw(0,0,width,height);
+    }
 
     void drawHeatBar(double heat, double maxHeat) {
         float heatBarSensitivity = 0.1f;
