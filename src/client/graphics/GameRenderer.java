@@ -47,12 +47,14 @@ public class GameRenderer implements Runnable {
     private boolean oneDown;
     private boolean twoDown;
     private Draw draw;
+    private Pulse pulse;
 
 
-    GameRenderer(GameData gd, Connection conn) {
+    GameRenderer(GameData gd, Connection conn, int playerID) {
         super();
         this.conn = conn;
         this.gameData = gd;
+        this.playerID = playerID;
 
         fDown = false;
         clickDown = false;
@@ -75,8 +77,18 @@ public class GameRenderer implements Runnable {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glEnable(GL11.GL_STENCIL_TEST);
 
             map = new MapRenderer(gd.getMapID());
+            Player me = gameData.getPlayer(playerID);
+            if (me.getPhase() == 0) {
+                //blue phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20);
+            }
+            else {
+                //red phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20);
+            }
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
@@ -143,6 +155,15 @@ public class GameRenderer implements Runnable {
         else if (fDown){
             fDown = false;
             conn.send(new PhaseObject(me.getID()));
+            if (me.getPhase() == 1) {
+                //switch to blue phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20);
+            }
+            else {
+                //switch to red phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20);
+            }
+
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
             eDown = true;
@@ -155,7 +176,6 @@ public class GameRenderer implements Runnable {
             else {
                 conn.send(new SwitchObject(me.getID(), true));
             }
-            out(me.getID()+" just switched from "+me.getActiveWeapon());
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
@@ -164,7 +184,6 @@ public class GameRenderer implements Runnable {
         else if (oneDown){
             oneDown = false;
             conn.send(new SwitchObject(me.getID(), true));
-            out(me.getID()+" just switched from "+me.getActiveWeapon());
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
@@ -173,7 +192,6 @@ public class GameRenderer implements Runnable {
         else if (twoDown){
             twoDown = false;
             conn.send(new SwitchObject(me.getID(), false));
-            out(me.getID()+" just switched from "+me.getActiveWeapon());
         }
 
         if (Mouse.isButtonDown(0)) {
@@ -223,7 +241,7 @@ public class GameRenderer implements Runnable {
         map.renderMap(phase);
         drawOrbs(phase);
         drawPlayers(phase);
-        draw.drawRing2(p.getPos(),70, 30);
+        if (pulse.isAlive()) pulse.draw();
         draw.drawHealthBar(p.getHealth(), p.getMaxHealth());
         draw.drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
     }
@@ -286,7 +304,4 @@ public class GameRenderer implements Runnable {
         return delta;
     }
 
-    void setID(int id) {
-        this.playerID = id;
-    }
 }

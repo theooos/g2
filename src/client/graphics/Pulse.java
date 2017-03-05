@@ -19,9 +19,10 @@ class Pulse {
     private float height;
     private float width;
     private float speed;
+    private float strokeWidth;
 
 
-    Pulse(Vector2 start, float radius, float red, float green, float blue, float height, float width, float speed) {
+    Pulse(Vector2 start, float radius, float red, float green, float blue, float height, float width, float speed, float strokeWidth) {
         this.start = start;
         this.radius = radius;
         this.red = red;
@@ -30,10 +31,11 @@ class Pulse {
         this.height = height;
         this.width = width;
         this.speed = speed;
+        this.strokeWidth = strokeWidth;
         alive = true;
     }
 
-    void draw(float radius, float strokeWidth) {
+    void draw() {
         GL11.glColor4f(red, green, blue, 0);
         GL11.glBegin(GL_QUAD_STRIP);
         float cx = start.getX();
@@ -44,19 +46,20 @@ class Pulse {
         for (int i = 1; i < 360; i++) {
             //y = hcosTheta
             //x = hsinTheta
-            GL11.glColor4f(1f, 0, 0, 0);
+            GL11.glColor4f(red, green, blue, 0);
             GL11.glVertex2d(cx+((radius-strokeWidth)*Math.sin(Math.toRadians(i))), cy+((radius-strokeWidth)*Math.cos(Math.toRadians(i))));
-            GL11.glColor4f(1f, 0, 0, 1);
+            GL11.glColor4f(red, green, blue, 1);
             GL11.glVertex2d(cx+((radius)*Math.sin(Math.toRadians(i))), cy+((radius)*Math.cos(Math.toRadians(i))));
         }
-        GL11.glColor4f(1f, 0, 0, 0);
+        GL11.glColor4f(red, green, blue, 0);
         GL11.glVertex2f(cx, cy+(radius-strokeWidth));
-        GL11.glColor4f(1f, 0, 0, 1);
+        GL11.glColor4f(red, green, blue, 1);
         GL11.glVertex2f(cx, cy+radius);
         GL11.glEnd();
         radius += speed;
         if (start.getX()+radius > width && start.getX()-radius < 0 && start.getY() + radius > height && start.getY() - radius < 0) {
             alive = false;
+            System.out.println("Pulse died");
         }
     }
 
