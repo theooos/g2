@@ -27,6 +27,7 @@ class Draw {
         displayHeat = 0;
     }
 
+
     void drawHeatBar(double heat, double maxHeat) {
         float heatBarSensitivity = 0.1f;
         if (heat != oldHeat) {

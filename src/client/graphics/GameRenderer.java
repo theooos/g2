@@ -21,6 +21,8 @@ import server.game.Orb;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glDepthMask;
 import static server.Server.out;
 
 /**
@@ -77,17 +79,16 @@ public class GameRenderer implements Runnable {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glEnable(GL11.GL_STENCIL_TEST);
 
             map = new MapRenderer(gd.getMapID());
             Player me = gameData.getPlayer(playerID);
             if (me.getPhase() == 0) {
                 //blue phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20);
+                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20, 0);
             }
             else {
                 //red phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20);
+                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20, 1);
             }
 
         } catch (LWJGLException le) {
@@ -157,11 +158,11 @@ public class GameRenderer implements Runnable {
             conn.send(new PhaseObject(me.getID()));
             if (me.getPhase() == 1) {
                 //switch to blue phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20);
+                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20, 0);
             }
             else {
                 //switch to red phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20);
+                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20, 1);
             }
 
         }
@@ -237,13 +238,58 @@ public class GameRenderer implements Runnable {
         Player p = gameData.getPlayer(playerID);
         int phase = p.getPhase();
 
-        drawProjectiles(phase);
-        map.renderMap(phase);
-        drawOrbs(phase);
-        drawPlayers(phase);
-        if (pulse.isAlive()) pulse.draw();
+        if (pulse.isAlive()) {
+            drawStencil();
+        }
+        else {
+            drawProjectiles(phase);
+            map.renderMap(phase);
+            drawOrbs(phase);
+            drawPlayers(phase);
+        }
         draw.drawHealthBar(p.getHealth(), p.getMaxHealth());
         draw.drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
+    }
+
+    private void drawStencil() {
+        int newPhase = pulse.getNewPhase();
+        int oldPhase = 1;
+        if (newPhase == 1) oldPhase = 0;
+
+        drawProjectiles(oldPhase);
+        map.renderMap(oldPhase);
+        drawOrbs(oldPhase);
+        drawPlayers(oldPhase);
+
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+
+        glColorMask(false,false,false,false);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glStencilMask(0xFF); // Write to stencil buffer
+        glDepthMask(false); // Don't write to depth buffer
+        glClear(GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
+
+        draw.drawCircle(pulse.getStart().getX(), height-pulse.getStart().getY(), pulse.getRadius(), 500);
+
+        glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+        glStencilMask(0x00); // Don't write anything to stencil buffer
+        glDepthMask(true); // Write to depth buffer
+        glColorMask(true,true,true,true);
+
+        //GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+        GL11.glColor3f(0, 0, 0);
+        draw.drawCircle(pulse.getStart().getX(), height-pulse.getStart().getY(), pulse.getRadius(), 500);
+        drawProjectiles(newPhase);
+        map.renderMap(newPhase);
+        drawOrbs(newPhase);
+        drawPlayers(newPhase);
+
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
+
+        pulse.draw();
+
     }
 
     private void drawPlayers(int phase) {

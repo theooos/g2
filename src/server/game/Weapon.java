@@ -129,7 +129,7 @@ public class Weapon implements Sendable{
          return name;
     }
 
-    public double getHeat() {
+    double getHeat() {
          return currentHeat;
     }
 

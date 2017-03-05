@@ -20,9 +20,11 @@ class Pulse {
     private float width;
     private float speed;
     private float strokeWidth;
+    private float buffer;
+    private int newPhase;
 
 
-    Pulse(Vector2 start, float radius, float red, float green, float blue, float height, float width, float speed, float strokeWidth) {
+    Pulse(Vector2 start, float radius, float red, float green, float blue, float height, float width, float speed, float strokeWidth, int newPhase) {
         this.start = start;
         this.radius = radius;
         this.red = red;
@@ -32,6 +34,8 @@ class Pulse {
         this.width = width;
         this.speed = speed;
         this.strokeWidth = strokeWidth;
+        this.newPhase = newPhase;
+        buffer = 100;
         alive = true;
     }
 
@@ -57,7 +61,7 @@ class Pulse {
         GL11.glVertex2f(cx, cy+radius);
         GL11.glEnd();
         radius += speed;
-        if (start.getX()+radius > width && start.getX()-radius < 0 && start.getY() + radius > height && start.getY() - radius < 0) {
+        if (start.getX()+radius-buffer > width && start.getX()-radius+buffer < 0 && start.getY() + radius-buffer > height && start.getY() - radius+buffer < 0) {
             alive = false;
             System.out.println("Pulse died");
         }
@@ -65,5 +69,17 @@ class Pulse {
 
     boolean isAlive() {
         return alive;
+    }
+
+    Vector2 getStart() {
+        return start;
+    }
+
+    float getRadius() {
+        return radius;
+    }
+
+    int getNewPhase() {
+        return newPhase;
     }
 }
