@@ -21,7 +21,6 @@ import server.game.Orb;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.lwjgl.opengl.GL11.*;
 import static server.Server.out;
 
 /**
@@ -38,11 +37,6 @@ public class GameRenderer implements Runnable {
     private int fps;
     private long lastFPS;
     private int playerID;
-
-    private int oldHealth;
-    private double displayHealth;
-    private double oldHeat;
-    private double displayHeat;
 
     private GameData gameData;
     private MapRenderer map;
@@ -66,11 +60,6 @@ public class GameRenderer implements Runnable {
         oneDown = false;
         twoDown = false;
         draw = new Draw(width, height);
-        oldHealth = 0;
-        displayHealth = 100;
-        oldHeat = 0;
-        displayHeat = 0;
-
 
         // initialize the window beforehand
         try {
@@ -84,6 +73,8 @@ public class GameRenderer implements Runnable {
             GL11.glLoadIdentity();
             GL11.glOrtho(0, width, 0, height, 1, -1);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             map = new MapRenderer(gd.getMapID());
 
@@ -232,73 +223,9 @@ public class GameRenderer implements Runnable {
         map.renderMap(phase);
         drawOrbs(phase);
         drawPlayers(phase);
-        drawHealthBar(p.getHealth(), p.getMaxHealth());
-        drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
-    }
-
-    private void drawHeatBar(double heat, double maxHeat) {
-        float heatBarSensitivity = 0.1f;
-        if (heat != oldHeat) {
-            oldHeat = heat;
-        }
-
-        out("Old heat: "+heat);
-        double heatTick = heatBarSensitivity*(oldHeat-displayHeat);
-
-        if (displayHeat > oldHeat && displayHeat+heatTick < oldHeat) {
-            displayHeat = oldHeat;
-        }
-        else if (displayHeat < oldHeat && displayHeat+heatTick > oldHeat) {
-            displayHeat = oldHeat;
-        } else {
-            displayHeat += heatTick;
-        }
-
-        if (displayHeat > maxHeat) displayHeat = maxHeat;
-        else if (displayHeat < 0) displayHeat = 0;
-
-        out("Max heat: "+maxHeat);
-        out("Heat: "+heat);
-        out("Display heat: "+displayHeat);
-        out("Heat tick: "+heatTick);
-
-        int heatWidth = 10;
-        int buffer = 20;
-        float maxHeight = height-buffer*2;
-        float heatRatio = (float) (displayHeat/maxHeat);
-        float green = (204f/255f)*(1-heatRatio);
-        out("Heat ratio: "+heatRatio);
-
-        GL11.glColor3f(heatRatio, green, 0f);
-        draw.verticalDraw(width - (buffer+heatWidth), buffer+(1-heatRatio)*maxHeight, heatWidth, maxHeight*heatRatio);
-    }
-
-    private void drawHealthBar(double health, double maxHealth) {
-        float healthBarSensitivity = 0.1f;
-        if (health != oldHealth) {
-            oldHealth = (int) health;
-        }
-
-        double healthTick = healthBarSensitivity*(oldHealth-displayHealth);
-
-        if (displayHealth > oldHealth && displayHealth+healthTick < oldHealth) {
-            displayHealth = oldHealth;
-        }
-        else if (displayHealth < oldHealth && displayHealth+healthTick > oldHealth) {
-            displayHealth = oldHealth;
-        } else {
-            displayHealth += healthTick;
-        }
-
-        if (displayHealth > maxHealth) displayHealth = maxHealth;
-        else if (displayHealth < 0) displayHealth = 0;
-        int healthWidth = 10;
-        int buffer = 20;
-        float maxHeight = height-buffer*2;
-        float healthRatio = (float) (displayHealth/maxHealth);
-        float green = (204f/255f)*healthRatio;
-        GL11.glColor3f(1-healthRatio, green, 0f);
-        draw.verticalDraw(buffer, buffer+(1-healthRatio)*maxHeight, healthWidth, maxHeight*healthRatio);
+        draw.drawRing2(p.getPos(),70, 30);
+        draw.drawHealthBar(p.getHealth(), p.getMaxHealth());
+        draw.drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
     }
 
     private void drawPlayers(int phase) {
