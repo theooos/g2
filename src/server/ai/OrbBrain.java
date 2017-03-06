@@ -40,6 +40,7 @@ public class OrbBrain {
         this.check = new Check(intel);
 
         this.drift = new Sequence(intel, this);
+        this.drift.add(new Dawdle(intel, this));
         this.drift.add(new Wander(intel, this));
         this.drift.add(new FindPath(intel, this));
         this.drift.add(new Travel(intel, this));

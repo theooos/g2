@@ -31,7 +31,6 @@ public class Sequence extends Task {
 
     @Override
     public void start(){
-        System.out.println("Starting Sequence.");
         curTask = subTasks.get(0);
         if (curTask.checkConditions()) {
             curTask.start();
@@ -49,20 +48,14 @@ public class Sequence extends Task {
         // If we DO have a current task...
             //...and it's running.
         if (curTask.isRunning()) {
-            System.out.println("Continuing with sub-task.");
             curTask.doAction();
         }   //...but it's not running yet:
         else if (curTask.isDormant()) {
-            System.out.println("Starting sub-task.");
             curTask.start();
         }   //...but it's already finished:
         else if (curTask.hasFinished()) {
-            System.out.println("Selecting next sub-task.");
             advanceSequence();
-        } else {
-            System.out.println("No conditions met.");
         }
-
     }
 
     /**
@@ -74,7 +67,6 @@ public class Sequence extends Task {
         // If we've reached the end of the sequence, the sequence is successful.
         if (curPos == (subTasks.size() - 1)) {
             // Reset the sequence, so that it can be repeated as many times as necessary.
-            System.out.println("Repeating sequence.");
             reset();
         }
         // Otherwise, move on.
@@ -82,13 +74,11 @@ public class Sequence extends Task {
             curTask = subTasks.get(curPos+1);
             if(!curTask.checkConditions()) {
                 end();
-            } else {
             }
         }
     }
 
     public void reset() {
-        System.out.println("Resetting Sequence.");
         super.reset();
         this.curTask = subTasks.get(0);
         for (Task task : subTasks) {

@@ -29,7 +29,6 @@ public class Wander extends Task {
         float ranY = (float) gen.nextInt(intel.getMap().getMapLength());
         intel.setTargetLocation(new Vector2(ranX, ranY));
         end();
-        System.out.println("Ending wander");
     }
 
 

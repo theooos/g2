@@ -3,6 +3,9 @@ package server.ai.behaviour;
 import server.ai.Intel;
 import server.ai.OrbBrain;
 import server.game.MovableEntity;
+import server.game.Vector2;
+
+import java.util.Random;
 
 /**
  * Allows the entity to follow a path.
@@ -26,7 +29,8 @@ public class Travel extends Task {
 
         MovableEntity ent = intel.ent();
         // Sets the entity to face in direction of the target location.
-        ent.setDir((ent.getPos().vectorTowards(intel.checkpoint())).normalise());
+        Vector2 target = ent.getPos().vectorTowards(intel.checkpoint())/*.normalise()*/;
+        ent.setDir(deviate(target));
 
         // Moves the entity.
         ent.setPos(ent.getPos().add(ent.getDir().mult(ent.getSpeed())));
@@ -47,6 +51,22 @@ public class Travel extends Task {
     public void run(){
         System.err.println("Travel is not a single-tick task.");
         System.exit(1);
+    }
+
+    private Vector2 deviate(Vector2 targetDirection){
+
+        Random gen = new Random();
+        double ang = Math.atan(targetDirection.getX()/targetDirection.getY());
+        if (Double.isInfinite(ang)) {
+            ang = 0;
+        } else if (targetDirection.getY() < 0) {
+            ang += Math.PI;
+        }
+        ang += Math.toRadians(gen.nextInt(30));
+        float newX = (float)(Math.sin(ang));
+        float newY = (float)(Math.cos(ang));
+
+        return (new Vector2(newX, newY)).normalise();
     }
 
 

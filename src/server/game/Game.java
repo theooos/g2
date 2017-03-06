@@ -316,6 +316,37 @@ public class Game implements Runnable {
     }
 
     /**
+     * Given a radius and a position, it checks to see if it collided with a player that
+     * is still alive
+     * @param r the radius of the object
+     * @param pos the centre of the object
+     * @return the player it is collided with.  Null if no collision
+     */
+    public static MovableEntity collidesWithPlayer(int r, Vector2 pos, ConcurrentHashMap<Integer, Player> players) {
+        for (Player p: players.values()) {
+            if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
+        }
+
+        return null;
+    }
+
+    /**
+     * Given a radius and a position, it checks to see if it collided with a bot
+     * that is still alive
+     * @param r the radius of the object
+     * @param pos the centre of the object
+     * @return the bot it is collided with.  Null if no collision
+     */
+    public static MovableEntity collidesWithBot(int r, Vector2 pos, ConcurrentHashMap<Integer, Orb> orbs) {
+
+        for (Orb o: orbs.values()) {
+            if (o.isAlive() && collided(r, pos, o.getRadius(), o.getPos())) return o;
+        }
+
+        return null;
+    }
+
+    /**
      * Checks to see if the entity collides with an entity that isn't itself.
      * @param e the movable entity to check collisions with
      * @return the entity if there is a collision, null if there isn't
@@ -359,7 +390,7 @@ public class Game implements Runnable {
      * @param r2 the radius of the second entity
      * @param p2 the position of the second entity
      */
-    private boolean collided(int r1, Vector2 p1, int r2, Vector2 p2) {
+    public static boolean collided(int r1, Vector2 p1, int r2, Vector2 p2) {
         return p1.getDistanceTo(p2) < (r1 + r2);
     }
 
