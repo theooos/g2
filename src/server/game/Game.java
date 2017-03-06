@@ -4,7 +4,6 @@ import networking.Connection;
 import objects.*;
 import server.ai.Intel;
 
-import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.lang.String;
 import java.util.*;
@@ -17,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Game implements Runnable {
     private int countdown;
     private Map map;
+    private CollisionManager collisions;
 
     private ArrayList<Connection> playerConnections;
     private ConcurrentHashMap<Integer, Player> players;
@@ -53,6 +53,8 @@ public class Game implements Runnable {
         players = new ConcurrentHashMap<>();
         orbs = new HashMap<>();
         projectiles = new HashMap<>();
+
+        collisions = new CollisionManager(players, orbs, map);
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
@@ -136,6 +138,8 @@ public class Game implements Runnable {
 
         InitGame g = new InitGame(orbs, players, mapID);
         sendGameStart(g);
+
+
     }
 
 
@@ -165,7 +169,7 @@ public class Game implements Runnable {
             ArrayList<Integer> keys = new ArrayList<>();
 
             for (Projectile p : projectiles.values()) {
-                MovableEntity e = collidesWithPlayerOrBot(p);
+                MovableEntity e = collisions.collidesWithPlayerOrBot(p);
                 if (e != null) {
                     out(p.getPlayerID()+" just hit "+e.getID());
                     e.damage(p.getDamage());
@@ -179,7 +183,7 @@ public class Game implements Runnable {
                     p.kill();
                 }
 
-                if (projectileWallCollision(p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
+                if (collisions.projectileWallCollision(p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
                 p.live();
                 if (!p.isAlive()) {
@@ -205,25 +209,6 @@ public class Game implements Runnable {
                 e.printStackTrace();
             }
         }
-    }
-
-    private boolean pointWallCollision(int r, Vector2 point, int phase) {
-        for (Wall w: map.wallsInPhase(phase, true, false)) {
-            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+5)) return true;
-        }
-
-        return false;
-    }
-
-    private boolean projectileWallCollision(Vector2 p1, Vector2 dir, float speed, int phase) {
-        Vector2 p2 = p1.add(dir.mult(speed));
-        Line2D l1 = new Line2D.Float(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-        for (Wall w: map.wallsInPhase(phase, true, false)) {
-            Line2D l2 = new Line2D.Float(w.getStartPos().getX(), w.getStartPos().getY(), w.getEndPos().getX(), w.getEndPos().getY());
-            if (l2.intersectsLine(l1)) return true;
-        }
-
-        return false;
     }
 
     /**
@@ -281,9 +266,9 @@ public class Game implements Runnable {
             valid = true;
             v = new Vector2(rand.nextInt(boundX)+100, rand.nextInt(boundY)+100);
 
-            if (pointWallCollision(minDist, v, 0)) valid = false;
-            else if (pointWallCollision(minDist, v, 1)) valid = false;
-            else if (collidesWithPlayerOrBot(minDist, v) != null) valid = false;
+            if (collisions.pointWallCollision(minDist, v, 0)) valid = false;
+            else if (collisions.pointWallCollision(minDist, v, 1)) valid = false;
+            else if (collisions.collidesWithPlayerOrBot(minDist, v) != null) valid = false;
         }
         return v;
     }
@@ -295,88 +280,6 @@ public class Game implements Runnable {
     private Vector2 randomDir() {
         int ang = rand.nextInt(359);
         return new Vector2((float)(Math.cos(Math.toRadians(ang))),(float)(Math.sin(Math.toRadians(ang))));
-    }
-
-    /**
-     * Given a radius and a position, it checks to see if it collided with a player or bot
-     * that is still alive
-     * @param r the radius of the object
-     * @param pos the centre of the object
-     * @return the player or bot it is collided with.  Null if no collision
-     */
-    private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos) {
-        for (Player p: players.values()) {
-            if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
-        }
-
-        for (Orb o: orbs.values()) {
-            if (o.isAlive() && collided(r, pos, o.getRadius(), o.getPos())) return o;
-        }
-
-        return null;
-    }
-
-    /**
-     * Checks to see if the entity collides with an entity that isn't itself.
-     * @param e the movable entity to check collisions with
-     * @return the entity if there is a collision, null if there isn't
-     */
-    private MovableEntity collidesWithPlayerOrBot(MovableEntity e) {
-        HashMap<Integer, MovableEntity> entities = new HashMap<>();
-
-        for(Player p: players.values()) {
-            if (!(p.equals(e) ||  p.getPhase() != e.getPhase())) {
-                if (!(e instanceof Projectile)) {
-                    entities.put(p.getID(), p);
-                }
-                else if (!((Projectile) e).getPlayer().equals(p)){
-                    entities.put(p.getID(), p);
-                }
-            }
-        }
-
-        for(Orb o: orbs.values()) {
-            if (!(o.equals(e) ||  o.getPhase() != e.getPhase())) {
-                entities.put(o.getID(), o);
-            }
-        }
-
-        Vector2 nextPos = e.getPos().add(e.getDir().mult(e.getSpeed()));
-
-        for (MovableEntity et: entities.values()) {
-            float minDist = linePointDistance(e.getPos(), nextPos, et.getPos());
-            if (minDist < (e.getRadius() + et.getRadius())) {
-                return et;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * returns true if the two entity have collided
-     * @param r1 the radius of the first entity
-     * @param p1 the position of the first entity
-     * @param r2 the radius of the second entity
-     * @param p2 the position of the second entity
-     */
-    private boolean collided(int r1, Vector2 p1, int r2, Vector2 p2) {
-        return p1.getDistanceTo(p2) < (r1 + r2);
-    }
-
-    
-    private float linePointDistance(Vector2 v, Vector2 w, Vector2 p) {
-        // Return minimum distance between line segment vw and point p
-        float l2 = Math.abs(v.getDistanceTo(w));
-        l2 = l2*l2; // i.e. |w-v|^2 -  avoid a sqrt
-        if (l2 == 0.0) return p.getDistanceTo(v);   // v == w case
-        // Consider the line extending the segment, parameterized as v + t (w - v).
-        // We find projection of point p onto the line.
-        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-        // We clamp t from [0,1] to handle points outside the segment vw.
-        float dot = ((p.sub(v)).dot(w.sub(v)) / l2);
-        float t = Math.max(0, Math.min(1, dot));
-        Vector2 projection = v.add(w.sub(v).mult(t));  // Projection falls on the segment
-        return p.getDistanceTo(projection);
     }
 
     /**
@@ -423,11 +326,6 @@ public class Game implements Runnable {
         out(s);
     }
 
-
-    private boolean validPosition(Player player) {
-        return !pointWallCollision(player.getRadius(), player.getPos(), player.getPhase()) && collidesWithPlayerOrBot(player) == null;
-    }
-
     /**
      * updates a received player to the received state
      * @param s a player object
@@ -443,7 +341,7 @@ public class Game implements Runnable {
         if (m.getMoveCounter() == p.getMoveCount()) {
             p.setDir(m.getDir());
             p.setPos(m.getPos());
-            if (validPosition(p)) {
+            if (collisions.validPosition(p)) {
                 players.put(m.getID(), p);
             }
             else {

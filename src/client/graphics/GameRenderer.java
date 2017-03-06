@@ -13,12 +13,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import server.game.Player;
-import server.game.Projectile;
-import server.game.Vector2;
-import server.game.Orb;
+import server.game.*;
 
-import java.security.Key;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,6 +39,7 @@ public class GameRenderer implements Runnable {
     private GameData gameData;
     private MapRenderer map;
     private Connection conn;
+    private CollisionManager collisions;
 
     private boolean fDown;
     private boolean clickDown;
@@ -67,7 +64,9 @@ public class GameRenderer implements Runnable {
         oneDown = false;
         twoDown = false;
         tabPressed = false;
+
         draw = new Draw(width, height);
+        collisions = new CollisionManager(gd);
 
         // initialize the window beforehand
         try {
@@ -154,6 +153,7 @@ public class GameRenderer implements Runnable {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
+
         if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
             fDown = true;
         }
@@ -221,8 +221,13 @@ public class GameRenderer implements Runnable {
 
         if(pos.getX() != xPos || pos.getY() != yPos) {
             me.setPos(new Vector2(xPos, yPos));
-            gameData.updatePlayer(me);
-            conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
+            if (collisions.validPosition(me)) {
+                gameData.updatePlayer(me);
+                conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
+            }
+            else {
+                me.setPos(pos);
+            }
         }
 
         updateFPS(); // update FPS Counter

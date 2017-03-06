@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientReceiver {
 
     private Connection connection;
-    private int mapID;
     private int playerID;
     private static boolean DEBUG = false;
     private GameData gd;
