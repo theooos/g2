@@ -4,6 +4,8 @@ import server.ai.OrbBrain;
 import server.ai.Intel;
 import server.ai.vision.VisibilityPolygon;
 
+import java.util.HashMap;
+
 /**
  * Represents an artificially intelligent entity within the game that can see
  * and attack players in its observable surroundings, irrespective of which
@@ -59,9 +61,10 @@ public class Orb extends MovableEntity {
      * with an appropriate (new) Intel object.
      * @param intel - the Intel containing details about the next game.
      */
-    public void prepareOrbForGame(Intel intel){
+    public void prepareOrbForGame(Intel intel, HashMap<Integer, Orb> orbs){
         this.intel = intel;
         this.intel.assignEntity(this);
+        this.intel.setOrbs(orbs);
         this.myBrain = new OrbBrain(intel);
     }
 }

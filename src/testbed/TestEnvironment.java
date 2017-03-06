@@ -59,7 +59,7 @@ public class TestEnvironment extends Observable {
         }
 
         orb = new Orb(orbPos, new Vector2(0, 1), 1, 1, 2);
-        orb.prepareOrbForGame(intel);
+        //orb.prepareOrbForGame(intel);
     }
 
     public boolean movePlayer(Vector2 direction){

@@ -2,6 +2,8 @@ package server.ai.behaviour;
 
 import server.ai.Intel;
 import server.ai.OrbBrain;
+import server.game.Entity;
+import server.game.Game;
 import server.game.MovableEntity;
 import server.game.Vector2;
 
@@ -32,18 +34,24 @@ public class Travel extends Task {
         Vector2 target = ent.getPos().vectorTowards(intel.checkpoint())/*.normalise()*/;
         ent.setDir(deviate(target));
 
-        // Moves the entity.
-        ent.setPos(ent.getPos().add(ent.getDir().mult(ent.getSpeed())));
-
-        // Check if the checkpoint has been reached.
-        boolean reached = intel.checkpoint().getDistanceTo(ent.getPos())
-                <= ent.getRadius();
-
-        // Update the entity's state for the next tick.
-        if (reached && intel.isFinalDestination()){
+        // Checks for collisions,
+        Vector2 newLoc = ent.getPos().add(ent.getDir().mult(ent.getSpeed()));
+        if (collision(newLoc)) {
             end();
-        } else if (reached) {
-            intel.nextCheckpoint();
+        } else {
+            // Moves the entity.
+            ent.setPos(newLoc);
+
+            // Check if the checkpoint has been reached.
+            boolean reached = intel.checkpoint().getDistanceTo(ent.getPos())
+                    <= ent.getRadius();
+
+            // Update the entity's state for the next tick.
+            if (reached && intel.isFinalDestination()){
+                end();
+            } else if (reached) {
+                intel.nextCheckpoint();
+            }
         }
     }
 
@@ -67,6 +75,20 @@ public class Travel extends Task {
         float newY = (float)(Math.cos(ang));
 
         return (new Vector2(newX, newY)).normalise();
+    }
+
+    private boolean collision(Vector2 newLoc){
+        int r = intel.ent().getRadius();
+
+        Entity obstruction = Game.collidesWithBot(r, newLoc, intel.getOrbs());
+        boolean collidedWithOrb = !(obstruction.equals(null)) && !(obstruction.getID() == intel.ent().getID());
+        if (collidedWithOrb){
+            return true;
+        }
+
+        boolean collidedWithWall = Game.pointWallCollision(r, newLoc, intel.ent().getPhase(), intel.getMap());
+
+        return collidedWithWall;
     }
 
 

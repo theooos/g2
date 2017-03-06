@@ -121,7 +121,7 @@ public class Game implements Runnable {
             IDCounter++;
         }*/
         //create team orbs
-        for (int i = 0; i < /*maxPlayers*/ 1; i++) {
+        for (int i = 0; i < maxPlayers; i++) {
             Orb o = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
             respawn(o);
             orbs.put(IDCounter, o);
@@ -129,7 +129,7 @@ public class Game implements Runnable {
 
             // Inform the Orbs.
             Intel intel = new Intel(players, map);
-            o.prepareOrbForGame(intel);
+            o.prepareOrbForGame(intel, orbs);
         }
 
         countdown = 10*60*tick; //ten minutes
@@ -206,6 +206,14 @@ public class Game implements Runnable {
     }
 
     private boolean pointWallCollision(int r, Vector2 point, int phase) {
+        for (Wall w: map.wallsInPhase(phase, true, false)) {
+            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+5)) return true;
+        }
+
+        return false;
+    }
+
+    public static boolean pointWallCollision(int r, Vector2 point, int phase, Map map) {
         for (Wall w: map.wallsInPhase(phase, true, false)) {
             if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+5)) return true;
         }
@@ -337,7 +345,7 @@ public class Game implements Runnable {
      * @param pos the centre of the object
      * @return the bot it is collided with.  Null if no collision
      */
-    public static MovableEntity collidesWithBot(int r, Vector2 pos, ConcurrentHashMap<Integer, Orb> orbs) {
+    public static MovableEntity collidesWithBot(int r, Vector2 pos, HashMap<Integer, Orb> orbs) {
 
         for (Orb o: orbs.values()) {
             if (o.isAlive() && collided(r, pos, o.getRadius(), o.getPos())) return o;
@@ -395,7 +403,7 @@ public class Game implements Runnable {
     }
 
     
-    private float linePointDistance(Vector2 v, Vector2 w, Vector2 p) {
+    public static float linePointDistance(Vector2 v, Vector2 w, Vector2 p) {
         // Return minimum distance between line segment vw and point p
         float l2 = Math.abs(v.getDistanceTo(w));
         l2 = l2*l2; // i.e. |w-v|^2 -  avoid a sqrt

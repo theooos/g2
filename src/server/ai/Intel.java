@@ -1,13 +1,11 @@
 package server.ai;
 
 import server.ai.vision.VisibilityPolygon;
-import server.game.Map;
-import server.game.MovableEntity;
-import server.game.Player;
-import server.game.Vector2;
+import server.game.*;
 
 import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,6 +17,7 @@ public class Intel {
 
     private MovableEntity ent;          // The entity this information is used by.
     private ConcurrentHashMap<Integer, Player> players;  // A list of all the players in the game.
+    private HashMap<Integer, Orb> allOrbs;
     private Map map;                    // The map the current game is being played on.
     private int healthLastTick;         // The entity's health during the previous tick.
     private Vector2 targetLocation;     // Where the entity is currently aiming to reach.
@@ -80,6 +79,14 @@ public class Intel {
      */
     public void resetPlayers(ConcurrentHashMap<Integer, Player> players) {
         this.players = players;
+    }
+
+    public void setOrbs(HashMap<Integer, Orb> orbs){
+        this.allOrbs = orbs;
+    }
+
+    public HashMap<Integer, Orb> getOrbs(){
+        return allOrbs;
     }
 
     /**
