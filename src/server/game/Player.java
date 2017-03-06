@@ -11,6 +11,7 @@ public class Player extends MovableEntity {
     private Weapon w2;
     private boolean w1Out;
     private boolean firing;
+    private double weaponOutHeat;
 
     /**
      * The basic player class
@@ -36,11 +37,13 @@ public class Player extends MovableEntity {
         this.team = team;
         ID = id;
         firing = false;
+        weaponOutHeat = 0;
     }
 
     public void live() {
         //any methods the player may do once a tick
         getActiveWeapon().live();
+        weaponOutHeat = getActiveWeapon().getHeat();
     }
 
     public void move() {
@@ -71,5 +74,13 @@ public class Player extends MovableEntity {
 
     void setFiring(boolean firing) {
         this.firing = firing;
+    }
+
+    public double getWeaponOutHeat() {
+        return weaponOutHeat;
+    }
+
+    public void setWeaponOutHeat(double weaponOutHeat) {
+        this.weaponOutHeat = weaponOutHeat;
     }
 }

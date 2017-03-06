@@ -82,6 +82,7 @@ public class GameData {
         me.setPhase(p.getPhase());
         me.setHealth(p.getHealth());
         me.setWeaponOut(p.isWeaponOneOut());
+        me.setWeaponOutHeat(p.getWeaponOutHeat());
         players.put(p.getID(), me);
     }
 

@@ -9,28 +9,27 @@ import java.util.Random;
  * Created by peran on 01/02/17.
  * A default weapon class with example stats
  */
-class Weapon implements Sendable{
+public class Weapon implements Sendable{
     int accuracy;
     int maxRecoil;
     double recoilRecovery;
     private double currentRecoil;
-    private int magSize;
+    private int maxHeat;
     int bloomPerShot;
     int heatPerShot;
-    private int currentHeat;
+    private double currentHeat;
     double coolDownRate;
     Projectile shotType;
     int numProjectiles;
     private Random rand;
     int refireTime;
     private int refireDelay;
-    boolean fullyAuto;
-    String name;
+    boolean fullyAuto;String name;
 
-     Weapon() {
+    Weapon() {
         name = "Default";
         //with a cooldown rate of 1, it'll take 2s for a full reload
-        magSize = 120;
+        maxHeat = 120;
         currentHeat = 0;
         shotType = new Projectile(100,100,20,new Vector2(0,0), new Vector2(0,0), 100, 0, null, 0);
         numProjectiles = 1;
@@ -79,7 +78,7 @@ class Weapon implements Sendable{
     }
 
     boolean canFire() {
-        return (magSize - currentHeat >= heatPerShot) && refireDelay <= 0;
+        return (maxHeat - currentHeat >= heatPerShot) && refireDelay <= 0;
     }
 
     ArrayList<Projectile> getShots(Player player) {
@@ -95,6 +94,10 @@ class Weapon implements Sendable{
         currentRecoil += bloomPerShot;
         if (currentRecoil > maxRecoil) currentRecoil = maxRecoil;
         currentHeat += heatPerShot;
+        if (currentHeat > maxHeat) {
+            currentHeat = maxHeat;
+        }
+        System.out.println("Current heat: "+currentHeat);
         refireDelay = refireTime;
         if (!isFullyAuto()) {
             player.setFiring(false);
@@ -124,6 +127,14 @@ class Weapon implements Sendable{
 
     public String toString() {
          return name;
+    }
+
+    double getHeat() {
+         return currentHeat;
+    }
+
+    public int getMaxHeat() {
+         return maxHeat;
     }
 
 }

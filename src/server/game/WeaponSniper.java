@@ -20,7 +20,7 @@ public class WeaponSniper extends Weapon {
         //how many degrees of accuracy is recovered per tick
         recoilRecovery = 1;
         //the speed the weapon cools down
-        coolDownRate = 0.1;
+        coolDownRate = 0.5;
         //the amount of heat each firing of the weapon takes up
         heatPerShot = 30;
         //min time after firing a shot till the gun can fire again

@@ -176,12 +176,14 @@ public class Game implements Runnable {
                         }
                     }
                     p.kill();
-                    keys.add(p.getID());
                 }
 
                 if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
                 p.live();
+                if (!p.isAlive()) {
+                    keys.add(p.getID());
+                }
             }
 
             for (Integer i: keys) {
@@ -268,7 +270,6 @@ public class Game implements Runnable {
         e.setPhase(rand.nextInt(2));
         if (e instanceof Player) {
             ((Player) e).setFiring(false);
-            out("ID"+e.getID()+" Respawning at "+e.getPos()+" and phase "+e.getPhase());
         }
     }
 
@@ -384,7 +385,6 @@ public class Game implements Runnable {
         for (MovableEntity et: entities.values()) {
             float minDist = linePointDistance(e.getPos(), nextPos, et.getPos());
             if (minDist < (e.getRadius() + et.getRadius())) {
-                out("Collided with: ID"+et.getID());
                 return et;
             }
         }
@@ -482,10 +482,15 @@ public class Game implements Runnable {
 
     private synchronized void updatePlayerMove(MoveObject m) {
         Player p = players.get(m.getID());
-        //MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID());
+        MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID());
         p.setDir(m.getDir());
         p.setPos(m.getPos());
-        players.put(m.getID(), p);
+        if (validPosition(p)) {
+            players.put(m.getID(), p);
+        }
+        else {
+            playerConnections.get(p.getID()).send(old);
+        }
     }
 
     private void toggleFire(Sendable s) {

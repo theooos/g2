@@ -110,7 +110,7 @@ public class OrbBrain {
      */
     public void emotionTransition(EmotionalState newEmotion){
         if (newEmotion != curEmotion) {
-            System.out.println("Changing emotion to " + newEmotion);
+            //System.out.println("Changing emotion to " + newEmotion);
             flee.reset();
             drift.reset();
             pathfinder.reset();

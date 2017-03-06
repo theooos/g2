@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glDepthMask;
 import static server.Server.out;
 
 /**
@@ -47,21 +48,22 @@ public class GameRenderer implements Runnable {
     private boolean eDown;
     private boolean oneDown;
     private boolean twoDown;
+    private Draw draw;
+    private Pulse pulse;
 
 
-    int count = 10;
-
-    GameRenderer(GameData gd, Connection conn) {
+    GameRenderer(GameData gd, Connection conn, int playerID) {
         super();
         this.conn = conn;
         this.gameData = gd;
+        this.playerID = playerID;
 
         fDown = false;
         clickDown = false;
         eDown = false;
         oneDown = false;
         twoDown = false;
-
+        draw = new Draw(width, height);
 
         // initialize the window beforehand
         try {
@@ -75,8 +77,19 @@ public class GameRenderer implements Runnable {
             GL11.glLoadIdentity();
             GL11.glOrtho(0, width, 0, height, 1, -1);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             map = new MapRenderer(gd.getMapID());
+            Player me = gameData.getPlayer(playerID);
+            if (me.getPhase() == 0) {
+                //blue phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20, 0);
+            }
+            else {
+                //red phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20, 1);
+            }
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
@@ -103,35 +116,6 @@ public class GameRenderer implements Runnable {
         Display.destroy();
     }
 
-    private void DrawCircle(float cx, float cy, float r, int num_segments) {
-        float theta = (float) (2 * 3.1415926 / (num_segments));
-        float tangetial_factor = (float) Math.tan(theta);//calculate the tangential factor
-        float radial_factor = (float) Math.cos(theta);//calculate the radial factor
-
-        float x = r;//we start at angle = 0
-        float y = 0;
-
-        GL11.glBegin(GL_TRIANGLE_FAN);
-
-        for (int ii = 0; ii < num_segments; ii++) {
-            glVertex2f(x + cx, y + cy);//output vertex
-
-            //calculate the tangential vector; remember, the radial vector is (x, y)
-            //to get the tangential vector we flip those coordinates and negate one of them
-            float tx = -y;
-            float ty = x;
-
-            //add the tangential vector
-            x += tx * tangetial_factor;
-            y += ty * tangetial_factor;
-
-            //correct using the radial factor
-            x *= radial_factor;
-            y *= radial_factor;
-        }
-        GL11.glEnd();
-    }
-
     private Vector2 getDirFromMouse(Vector2 pos) {
         Vector2 mousePos = new Vector2(Mouse.getX(), Mouse.getY());
         Vector2 dir = pos.vectorTowards(mousePos);
@@ -147,7 +131,7 @@ public class GameRenderer implements Runnable {
         //Mouse.setGrabbed(true);
 
         if (lastX > 0 && lastY > 0)
-            DrawCircle(lastX, lastY, 10, 50);
+            draw.drawCircle(lastX, lastY, 10, 50);
     }
 
     private long getTime() {
@@ -172,6 +156,15 @@ public class GameRenderer implements Runnable {
         else if (fDown){
             fDown = false;
             conn.send(new PhaseObject(me.getID()));
+            if (me.getPhase() == 1) {
+                //switch to blue phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20, 0);
+            }
+            else {
+                //switch to red phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20, 1);
+            }
+
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
             eDown = true;
@@ -184,7 +177,6 @@ public class GameRenderer implements Runnable {
             else {
                 conn.send(new SwitchObject(me.getID(), true));
             }
-            out(me.getID()+" just switched from "+me.getActiveWeapon());
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
@@ -193,7 +185,6 @@ public class GameRenderer implements Runnable {
         else if (oneDown){
             oneDown = false;
             conn.send(new SwitchObject(me.getID(), true));
-            out(me.getID()+" just switched from "+me.getActiveWeapon());
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
@@ -202,7 +193,6 @@ public class GameRenderer implements Runnable {
         else if (twoDown){
             twoDown = false;
             conn.send(new SwitchObject(me.getID(), false));
-            out(me.getID()+" just switched from "+me.getActiveWeapon());
         }
 
         if (Mouse.isButtonDown(0)) {
@@ -226,7 +216,6 @@ public class GameRenderer implements Runnable {
         if(pos.getX() != xPos || pos.getY() != yPos) {
             me.setPos(new Vector2(xPos, yPos));
             gameData.updatePlayer(me);
-            //System.err.println("Old: "+pos+" New: ("+xPos+", "+yPos+ ") Me: "+me.getPos());
             conn.send(new MoveObject(me.getPos(), me.getDir(), playerID));
         }
 
@@ -246,12 +235,60 @@ public class GameRenderer implements Runnable {
         // Clear the screen and depth buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        int phase = gameData.getPlayer(playerID).getPhase();
+        Player p = gameData.getPlayer(playerID);
+        int phase = p.getPhase();
 
-        map.renderMap(phase);
-        drawProjectiles(phase);
-        drawOrbs(phase);
-        drawPlayers(phase);
+        if (pulse.isAlive()) {
+            drawStencil();
+        }
+        else {
+            drawProjectiles(phase);
+            map.renderMap(phase);
+            drawOrbs(phase);
+            drawPlayers(phase);
+        }
+        draw.drawHealthBar(p.getHealth(), p.getMaxHealth());
+        draw.drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
+    }
+
+    private void drawStencil() {
+        int newPhase = pulse.getNewPhase();
+        int oldPhase = 1;
+        if (newPhase == 1) oldPhase = 0;
+
+        drawProjectiles(oldPhase);
+        map.renderMap(oldPhase);
+        drawOrbs(oldPhase);
+        drawPlayers(oldPhase);
+
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+
+        glColorMask(false,false,false,false);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glStencilMask(0xFF); // Write to stencil buffer
+        glDepthMask(false); // Don't write to depth buffer
+        glClear(GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
+
+        draw.drawCircle(pulse.getStart().getX(), height-pulse.getStart().getY(), pulse.getRadius(), 500);
+
+        glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+        glStencilMask(0x00); // Don't write anything to stencil buffer
+        glDepthMask(true); // Write to depth buffer
+        glColorMask(true,true,true,true);
+
+        //GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+        GL11.glColor3f(0, 0, 0);
+        draw.drawCircle(pulse.getStart().getX(), height-pulse.getStart().getY(), pulse.getRadius(), 500);
+        drawProjectiles(newPhase);
+        map.renderMap(newPhase);
+        drawOrbs(newPhase);
+        drawPlayers(newPhase);
+
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
+
+        pulse.draw();
 
     }
 
@@ -265,7 +302,7 @@ public class GameRenderer implements Runnable {
                 } else {
                     GL11.glColor3f(0.2f, 0.9f, 0.5f);
                 }
-                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
+                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
 
                 if (p.getID() != playerID) {
                     positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()), p.getDir());
@@ -286,7 +323,7 @@ public class GameRenderer implements Runnable {
         GL11.glColor3f(0.2f, 0.2f, 1f);
         for (Orb o: orbs.values()) {
             if (phase == o.getPhase()) {
-                DrawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
+                draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
             }
         }
     }
@@ -300,7 +337,7 @@ public class GameRenderer implements Runnable {
                 } else {
                     GL11.glColor3f(0.1f, 1f, 0.1f);
                 }
-                DrawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
+                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
             }
         }
     }
@@ -313,7 +350,4 @@ public class GameRenderer implements Runnable {
         return delta;
     }
 
-    void setID(int id) {
-        this.playerID = id;
-    }
 }
