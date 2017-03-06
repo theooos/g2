@@ -107,6 +107,7 @@ public class ClientReceiver {
         MoveObject m = (MoveObject) s;
         Player p = gd.getPlayer(m.getID());
         p.setPos(m.getPos());
+        p.setMoveCount(m.getMoveCounter());
         gd.updatePlayer(p);
     }
 }

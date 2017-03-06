@@ -12,6 +12,7 @@ public class Player extends MovableEntity {
     private boolean w1Out;
     private boolean firing;
     private double weaponOutHeat;
+    private int moveCounter;
 
     /**
      * The basic player class
@@ -38,6 +39,7 @@ public class Player extends MovableEntity {
         ID = id;
         firing = false;
         weaponOutHeat = 0;
+        moveCounter = 0;
     }
 
     public void live() {
@@ -83,4 +85,17 @@ public class Player extends MovableEntity {
     public void setWeaponOutHeat(double weaponOutHeat) {
         this.weaponOutHeat = weaponOutHeat;
     }
+
+    public int getMoveCount() {
+        return moveCounter;
+    }
+
+    void incMove() {
+        moveCounter++;
+    }
+
+    public void setMoveCount(int moveCount) {
+        this.moveCounter = moveCount;
+    }
 }
+

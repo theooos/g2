@@ -222,7 +222,7 @@ public class GameRenderer implements Runnable {
         if(pos.getX() != xPos || pos.getY() != yPos) {
             me.setPos(new Vector2(xPos, yPos));
             gameData.updatePlayer(me);
-            conn.send(new MoveObject(me.getPos(), me.getDir(), playerID));
+            conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
         }
 
         updateFPS(); // update FPS Counter
@@ -332,7 +332,7 @@ public class GameRenderer implements Runnable {
                     Vector2 dir = getDirFromMouse(pos);
                     positionBullet(pos, dir);
                     p.setDir(dir);
-                    conn.send(new MoveObject(p.getPos(), p.getDir(), playerID));
+                    conn.send(new MoveObject(p.getPos(), p.getDir(), playerID, p.getMoveCount()));
                 }
             }
         }

@@ -150,7 +150,8 @@ public class Game implements Runnable {
                 if (!p.isAlive()) {
                     respawn(p);
                     if (!(p instanceof AIPlayer)) {
-                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID()));
+                        p.incMove();
+                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
                     }
                 }
                 if (p.isFiring()) fire(p);
@@ -178,16 +179,12 @@ public class Game implements Runnable {
                     p.kill();
                 }
 
-                if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
+                if (projectileWallCollision(p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
                 p.live();
                 if (!p.isAlive()) {
                     keys.add(p.getID());
                 }
-            }
-
-            for (Integer i: keys) {
-                projectiles.remove(i);
             }
 
             countdown--;
@@ -198,6 +195,9 @@ public class Game implements Runnable {
                 isRunning = false;
             } else {
                 sendAllObjects();
+                for (Integer i: keys) {
+                    projectiles.remove(i);
+                }
             }
             try {
                 Thread.sleep(1000/60);
@@ -215,7 +215,7 @@ public class Game implements Runnable {
         return false;
     }
 
-    private boolean projectileWallCollision(int r, Vector2 p1, Vector2 dir, float speed, int phase) {
+    private boolean projectileWallCollision(Vector2 p1, Vector2 dir, float speed, int phase) {
         Vector2 p2 = p1.add(dir.mult(speed));
         Line2D l1 = new Line2D.Float(p1.getX(), p1.getY(), p2.getX(), p2.getY());
         for (Wall w: map.wallsInPhase(phase, true, false)) {
@@ -437,17 +437,18 @@ public class Game implements Runnable {
         updatePlayerMove(m);
     }
 
-    /*private synchronized void removePlayer(int id) {
-        players.removeIf(p -> p.getID() == id);
-    }*/
-
     private synchronized void updatePlayerMove(MoveObject m) {
         Player p = players.get(m.getID());
-        MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID());
-        p.setDir(m.getDir());
-        p.setPos(m.getPos());
-        if (validPosition(p)) {
-            players.put(m.getID(), p);
+        MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount());
+        if (m.getMoveCounter() == p.getMoveCount()) {
+            p.setDir(m.getDir());
+            p.setPos(m.getPos());
+            if (validPosition(p)) {
+                players.put(m.getID(), p);
+            }
+            else {
+                playerConnections.get(p.getID()).send(old);
+            }
         }
         else {
             playerConnections.get(p.getID()).send(old);
