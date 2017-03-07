@@ -193,6 +193,6 @@ public class Intel {
     }
 
     public boolean validPosition(){
-        return collisionManager.validPosition(ent);
+        return collisionManager.orbValidPosition((Orb)ent);
     }
 }
