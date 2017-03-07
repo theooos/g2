@@ -114,6 +114,7 @@ public class CollisionManager {
                 return et;
             }
         }
+        return null;
     }
 
     /**
