@@ -124,7 +124,7 @@ public class Game implements Runnable {
         }
         //create team orbs
         for (int i = 0; i < maxPlayers; i++) {
-            Orb o = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
+            Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
             respawn(o);
             orbs.put(IDCounter, o);
             IDCounter++;

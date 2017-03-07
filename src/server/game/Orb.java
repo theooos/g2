@@ -21,16 +21,15 @@ public class Orb extends MovableEntity {
      * Creates an Orb.
      * @param pos - The Orb's starting position.
      * @param dir - The Orb's starting direction.
-     * @param team - The team the Orb is a part of.
      * @param phase - The phase the Orb exists within.
      */
-    public Orb(Vector2 pos, Vector2 dir, int team, int phase, int id) {
+    public Orb(Vector2 pos, Vector2 dir, int phase, int id) {
 
         // Initialise "Movable Entity" members.
         this.speed = 1;
         this.dir = dir;
         this.radius = 10;
-        this.team = team;
+        this.team = 10;
 
         // Initialise "Entity" members.
         this.damageable = true;
