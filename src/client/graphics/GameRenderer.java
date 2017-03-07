@@ -51,6 +51,7 @@ public class GameRenderer implements Runnable {
     private Draw draw;
     private Pulse pulse;
 
+    private boolean displayCollisions;
 
     GameRenderer(GameData gd, Connection conn, int playerID) {
         super();
@@ -67,6 +68,7 @@ public class GameRenderer implements Runnable {
 
         draw = new Draw(width, height);
         collisions = new CollisionManager(gd);
+        displayCollisions = false;
 
         // initialize the window beforehand
         try {
@@ -199,6 +201,7 @@ public class GameRenderer implements Runnable {
         else if (twoDown){
             twoDown = false;
             conn.send(new SwitchObject(me.getID(), false));
+            displayCollisions = !displayCollisions;
         }
 
         if (Mouse.isButtonDown(0)) {
@@ -264,7 +267,23 @@ public class GameRenderer implements Runnable {
         if (tabPressed) {
             draw.shadeScreen();
         }
+
+        if (displayCollisions) drawCollisions(phase);
     }
+
+    private void drawCollisions(int phase) {
+        Player p = new Player(new Vector2(0, 0), new Vector2(1, 0), 0, phase, new WeaponShotgun(), new WeaponShotgun(), playerID);
+        glColor4f(1,0,0,0.5f);
+        for (int i = 0; i < width; i+= 10) {
+            for (int j = 0; j < height; j+= 10) {
+                p.setPos(new Vector2(i, j));
+                if (!collisions.validPosition(p)) {
+                    draw.drawCircle(i, height-j, 5, 5);
+                }
+            }
+        }
+    }
+
 
     private void drawStencil() {
         int newPhase = pulse.getNewPhase();

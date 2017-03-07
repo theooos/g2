@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.awt.geom.Line2D.ptSegDist;
+
 /**
  * Created by peran on 3/6/17.
  * Used to handle all collisions
@@ -38,26 +40,22 @@ public class CollisionManager {
     }
 
     boolean pointWallCollision(int r, Vector2 point, int phase) {
-        for (Wall w: map.wallsInPhase(phase, true, false)) {
-            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+15)) return true;
+        for (Wall w: map.wallsInPhase(phase, false, false)) {
+            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+10)) {
+                System.out.println("my one: "+linePointDistance(w.getStartPos(), w.getEndPos(), point));
+                Vector2 v = w.getStartPos();
+                Vector2 w1 = w.getEndPos();
+                System.out.println("inbuilt: "+ptSegDist(v.getX(), v.getY(), w1.getX(), w1.getY(), point.getX(), point.getY()));
+
+                return true;
+            }
         }
 
         return false;
     }
 
     private float linePointDistance(Vector2 v, Vector2 w, Vector2 p) {
-        // Return minimum distance between line segment vw and point p
-        float l2 = Math.abs(v.getDistanceTo(w));
-        l2 = l2*l2; // i.e. |w-v|^2 -  avoid a sqrt
-        if (l2 == 0.0) return p.getDistanceTo(v);   // v == w case
-        // Consider the line extending the segment, parameterized as v + t (w - v).
-        // We find projection of point p onto the line.
-        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-        // We clamp t from [0,1] to handle points outside the segment vw.
-        float dot = ((p.sub(v)).dot(w.sub(v)) / l2);
-        float t = Math.max(0, Math.min(1, dot));
-        Vector2 projection = v.add(w.sub(v).mult(t));  // Projection falls on the segment
-        return p.getDistanceTo(projection);
+        return (float) ptSegDist(v.getX(), v.getY(), w.getX(), w.getY(), p.getX(), p.getY());
     }
 
     /**
