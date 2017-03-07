@@ -5,10 +5,7 @@ import networking.Connection;
 import objects.InitGame;
 import objects.MoveObject;
 import objects.Sendable;
-import server.game.DistDropOffProjectile;
-import server.game.Orb;
-import server.game.Player;
-import server.game.Projectile;
+import server.game.*;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +33,7 @@ public class ClientReceiver {
         connection.addFunctionEvent("Projectile", this::updatedProjectile);
         connection.addFunctionEvent("MoveObject", this::movePlayer);
         connection.addFunctionEvent("DistDropOffProjectile", this::updatedDistProjectile);
-        connection.addFunctionEvent("ScoreBoard", this::updatedScoreboard);
+        connection.addFunctionEvent("Scoreboard", this::updatedScoreboard);
     }
 
     private void setupGame(Sendable s) {
@@ -46,7 +43,7 @@ public class ClientReceiver {
         int mapID = i.getMapID();
         ConcurrentHashMap<Integer, Projectile> projectiles = new ConcurrentHashMap<>();
 
-        gd = new GameData(players, orbs, projectiles, mapID);
+        gd = new GameData(players, orbs, projectiles, mapID, new Scoreboard());
         out("Setting up game");
         new Thread(new GameRendererCreator(gd,connection,getID())).start();
 
@@ -106,8 +103,8 @@ public class ClientReceiver {
     }
 
     private void updatedScoreboard(Sendable s) {
-        Projectile p = (Projectile) s;
-        gd.updateProjectile(p);
+        Scoreboard sb = (Scoreboard) s;
+        gd.updateScoreboard(sb);
     }
 
     private void updatedDistProjectile(Sendable s) {
