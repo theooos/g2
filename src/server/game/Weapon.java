@@ -84,7 +84,7 @@ public class Weapon implements Sendable{
     ArrayList<Projectile> getShots(Player player) {
         ArrayList<Projectile> ps = new ArrayList<>();
         for (int i = 0; i < numProjectiles; i++) {
-            Projectile p = new Projectile(shotType);
+            Projectile p = shotType.clone();
             p.setDir(getDeviation(player.getDir()));
             p.setPos(player.getPos());
             p.setPhase(player.getPhase());
@@ -97,7 +97,6 @@ public class Weapon implements Sendable{
         if (currentHeat > maxHeat) {
             currentHeat = maxHeat;
         }
-        System.out.println("Current heat: "+currentHeat);
         refireDelay = refireTime;
         if (!isFullyAuto()) {
             player.setFiring(false);

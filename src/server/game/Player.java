@@ -35,11 +35,30 @@ public class Player extends MovableEntity {
         this.speed = 5;
         radius = 20;
         w1Out = true;
-        this.team = team;
         ID = id;
         firing = false;
         weaponOutHeat = 0;
         moveCounter = 0;
+    }
+
+    public Player(Player player) {
+        this.pos = player.getPos();
+        this.dir = player.getDir();
+        this.team = player.getTeam();
+        this.phase = player.getPhase();
+        this.damageable = player.getDamageable();
+        this.visible = player.getVisible();
+        maxHealth = 100;
+        this.health = player.getHealth();
+        this.w1 = player.w1;
+        this.w2 = player.w2;
+        this.speed = player.speed;
+        this.radius = player.getRadius();
+        this.w1Out = player.w1Out;
+        this.ID = player.getID();
+        this.firing = player.isFiring();
+        this.weaponOutHeat = player.getWeaponOutHeat();
+        this.moveCounter = player.getMoveCount();
     }
 
     public void live() {

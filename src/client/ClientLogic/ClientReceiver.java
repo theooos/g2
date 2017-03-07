@@ -5,6 +5,7 @@ import networking.Connection;
 import objects.InitGame;
 import objects.MoveObject;
 import objects.Sendable;
+import server.game.DistDropOffProjectile;
 import server.game.Orb;
 import server.game.Player;
 import server.game.Projectile;
@@ -34,6 +35,7 @@ public class ClientReceiver {
         connection.addFunctionEvent("Orb", this::updatedOrb);
         connection.addFunctionEvent("Projectile", this::updatedProjectile);
         connection.addFunctionEvent("MoveObject", this::movePlayer);
+        connection.addFunctionEvent("DistDropOffProjectile", this::updatedDistProjectile);
     }
 
     private void setupGame(Sendable s) {
@@ -99,6 +101,11 @@ public class ClientReceiver {
 
     private void updatedProjectile(Sendable s) {
         Projectile p = (Projectile) s;
+        gd.updateProjectile(p);
+    }
+
+    private void updatedDistProjectile(Sendable s) {
+        DistDropOffProjectile p = (DistDropOffProjectile) s;
         gd.updateProjectile(p);
     }
 

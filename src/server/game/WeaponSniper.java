@@ -18,7 +18,7 @@ public class WeaponSniper extends Weapon {
         //loads for snipers, less for fully auto guns
         bloomPerShot = 40;
         //how many degrees of accuracy is recovered per tick
-        recoilRecovery = 1;
+        recoilRecovery = 0.85;
         //the speed the weapon cools down
         coolDownRate = 0.5;
         //the amount of heat each firing of the weapon takes up

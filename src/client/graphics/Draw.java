@@ -57,7 +57,11 @@ class Draw {
     }
 
     void drawAura(Vector2 centre, float radius, float strokeWidth, float red, float green, float blue) {
-        GL11.glColor4f(red, green, blue, 1);
+        drawAura(centre, radius, strokeWidth, red, green, blue, 1);
+    }
+
+    void drawAura(Vector2 centre, float radius, float strokeWidth, float red, float green, float blue, float intensity) {
+        GL11.glColor4f(red, green, blue, intensity);
         GL11.glBegin(GL_QUAD_STRIP);
         float cx = centre.getX();
         float cy = height-centre.getY();
@@ -65,12 +69,12 @@ class Draw {
         GL11.glColor4f(red, green, blue, 0);
         GL11.glVertex2f(cx, cy+radius);
         for (int i = 1; i < 360; i++) {
-            GL11.glColor4f(red, green, blue, 1);
+            GL11.glColor4f(red, green, blue, intensity);
             GL11.glVertex2d(cx+((radius-strokeWidth)*Math.sin(Math.toRadians(i))), cy+((radius-strokeWidth)*Math.cos(Math.toRadians(i))));
             GL11.glColor4f(red, green, blue, 0);
             GL11.glVertex2d(cx+((radius)*Math.sin(Math.toRadians(i))), cy+((radius)*Math.cos(Math.toRadians(i))));
         }
-        GL11.glColor4f(red, green, blue, 1);
+        GL11.glColor4f(red, green, blue, intensity);
         GL11.glVertex2f(cx, cy+(radius-strokeWidth));
         GL11.glColor4f(red, green, blue, 0);
         GL11.glVertex2f(cx, cy+radius);

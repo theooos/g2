@@ -42,11 +42,6 @@ public class CollisionManager {
     boolean pointWallCollision(int r, Vector2 point, int phase) {
         for (Wall w: map.wallsInPhase(phase, false, false)) {
             if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+10)) {
-                System.out.println("my one: "+linePointDistance(w.getStartPos(), w.getEndPos(), point));
-                Vector2 v = w.getStartPos();
-                Vector2 w1 = w.getEndPos();
-                System.out.println("inbuilt: "+ptSegDist(v.getX(), v.getY(), w1.getX(), w1.getY(), point.getX(), point.getY()));
-
                 return true;
             }
         }
