@@ -22,9 +22,12 @@ class Pulse {
     private float strokeWidth;
     private float buffer;
     private int newPhase;
+    private boolean maxRadius;
+    private int max;
+    private boolean showOtherPhase;
 
 
-    Pulse(Vector2 start, float radius, float red, float green, float blue, float height, float width, float speed, float strokeWidth, int newPhase) {
+    Pulse(Vector2 start, float radius, float red, float green, float blue, float height, float width, float speed, float strokeWidth, int newPhase, boolean showOtherPhase) {
         this.start = start;
         this.radius = radius;
         this.red = red;
@@ -35,8 +38,30 @@ class Pulse {
         this.speed = speed;
         this.strokeWidth = strokeWidth;
         this.newPhase = newPhase;
+        this.showOtherPhase = showOtherPhase;
         buffer = 100;
         alive = true;
+        maxRadius = false;
+        max = 1;
+
+    }
+
+    Pulse(Vector2 start, float radius, float red, float green, float blue, float height, float width, float speed, float strokeWidth, int newPhase, int max, boolean showOtherPhase) {
+        this.start = start;
+        this.radius = radius;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.height = height;
+        this.width = width;
+        this.speed = speed;
+        this.strokeWidth = strokeWidth;
+        this.newPhase = newPhase;
+        this.showOtherPhase = showOtherPhase;
+        buffer = 100;
+        alive = true;
+        this.max = max;
+        maxRadius = true;
     }
 
     void draw() {
@@ -61,9 +86,11 @@ class Pulse {
         GL11.glVertex2f(cx, cy+radius);
         GL11.glEnd();
         radius += speed;
+        if (maxRadius && max < radius) {
+            alive = false;
+        }
         if (start.getX()+radius-buffer > width && start.getX()-radius+buffer < 0 && start.getY() + radius-buffer > height && start.getY() - radius+buffer < 0) {
             alive = false;
-            System.out.println("Pulse died");
         }
     }
 
@@ -81,5 +108,9 @@ class Pulse {
 
     int getNewPhase() {
         return newPhase;
+    }
+
+    public boolean isShowOtherPhase() {
+        return showOtherPhase;
     }
 }

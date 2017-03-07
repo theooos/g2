@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.glDepthMask;
+import static server.Server.out;
 
 /**
  * Provides the visuals for the game itself.
@@ -87,17 +88,10 @@ public class GameRenderer implements Runnable {
 
             map = new MapRenderer(gd.getMapID());
             Player me = gameData.getPlayer(playerID);
-            if (me.getPhase() == 0) {
-                //blue phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20, 0);
-            }
-            else {
-                //red phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20, 1);
-            }
+            pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1-me.getPhase(), height, width, 20, 20, 0, true);
 
         } catch (LWJGLException le) {
-            System.out.println("Game exiting - exception in initialization:");
+            System.err.println("Game exiting - exception in initialization:");
             le.printStackTrace();
             GameRenderer.gameRunning = false;
         }
@@ -161,14 +155,19 @@ public class GameRenderer implements Runnable {
         }
         else if (fDown){
             fDown = false;
-            conn.send(new PhaseObject(me.getID()));
-            if (me.getPhase() == 1) {
-                //switch to blue phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20, 0);
+            int newPhase = 0;
+            if (me.getPhase() == 0) {
+                newPhase = 1;
+            }
+            Player p = new Player(me);
+            p.setPhase(newPhase);
+            if (collisions.validPosition(p)) {
+                conn.send(new PhaseObject(me.getID()));
+                pulse = new Pulse(me.getPos(), me.getRadius(), newPhase, 0, 1-newPhase, height, width, 20, 20, newPhase, true);
             }
             else {
-                //switch to red phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20, 1);
+                //invalid phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 0.3f, 0.3f, 0.3f, height, width, 20, 20, me.getPhase(), 250, false);
             }
 
         }
@@ -252,7 +251,7 @@ public class GameRenderer implements Runnable {
         Player p = gameData.getPlayer(playerID);
         int phase = p.getPhase();
 
-        if (pulse.isAlive()) {
+        if (pulse.isAlive() && pulse.isShowOtherPhase()) {
             drawStencil();
         }
         else {
@@ -260,6 +259,9 @@ public class GameRenderer implements Runnable {
             map.renderMap(phase);
             drawOrbs(phase);
             drawPlayers(phase);
+            if (pulse.isAlive()) {
+                pulse.draw();
+            }
         }
         draw.drawHealthBar(p.getHealth(), p.getMaxHealth());
         draw.drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
@@ -268,11 +270,11 @@ public class GameRenderer implements Runnable {
             draw.shadeScreen();
         }
 
-        if (displayCollisions) drawCollisions(phase);
+        if (displayCollisions) drawCollisions();
     }
 
-    private void drawCollisions(int phase) {
-        Player p = new Player(new Vector2(0, 0), new Vector2(1, 0), 0, phase, new WeaponShotgun(), new WeaponShotgun(), playerID);
+    private void drawCollisions() {
+        Player p = new Player(gameData.getPlayer(playerID));
         glColor4f(1,0,0,0.5f);
         for (int i = 0; i < width; i+= 10) {
             for (int j = 0; j < height; j+= 10) {
@@ -283,7 +285,6 @@ public class GameRenderer implements Runnable {
             }
         }
     }
-
 
     private void drawStencil() {
         int newPhase = pulse.getNewPhase();
@@ -393,5 +394,4 @@ public class GameRenderer implements Runnable {
 
         return delta;
     }
-
 }
