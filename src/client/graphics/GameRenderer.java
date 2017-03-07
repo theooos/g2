@@ -87,7 +87,7 @@ public class GameRenderer implements Runnable {
 
             map = new MapRenderer(gd.getMapID());
             Player me = gameData.getPlayer(playerID);
-            pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1-me.getPhase(), height, width, 20, 20, 0, true);
+            pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1-me.getPhase(), height, width, 20, 20, me.getPhase(), true);
 
         } catch (LWJGLException le) {
             System.err.println("Game exiting - exception in initialization:");

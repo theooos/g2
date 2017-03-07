@@ -72,7 +72,7 @@ class Pulse {
         GL11.glVertex2f(cx, cy+(radius-strokeWidth));
         GL11.glColor4f(red, green, blue, 1);
         GL11.glVertex2f(cx, cy+radius);
-        for (int i = 1; i < 360; i++) {
+        for (int i = 1; i < 360; i+=3) {
             //y = hcosTheta
             //x = hsinTheta
             GL11.glColor4f(red, green, blue, 0);
