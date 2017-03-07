@@ -214,7 +214,6 @@ public class Game implements Runnable {
         for (Wall w: map.wallsInPhase(phase, true, false)) {
             if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+5)) return true;
         }
-
         return false;
     }
 
