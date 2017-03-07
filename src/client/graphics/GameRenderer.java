@@ -20,14 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.glDepthMask;
-import static server.Server.out;
 
 /**
  * Provides the visuals for the game itself.
  */
 public class GameRenderer implements Runnable {
 
-    private final String WINDOW_TITLE = "PhaseShift";
     private static boolean gameRunning = true;
     private int width = 800;
     private int height = 600;
@@ -74,6 +72,7 @@ public class GameRenderer implements Runnable {
         // initialize the window beforehand
         try {
             Display.setDisplayMode(new DisplayMode(width, height));
+            String WINDOW_TITLE = "PhaseShift";
             Display.setTitle(WINDOW_TITLE);
             Display.create();
 
@@ -351,8 +350,7 @@ public class GameRenderer implements Runnable {
 
                 if (p.getID() != playerID) {
                     positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()), p.getDir());
-                }
-                else {
+                } else {
                     Vector2 pos = new Vector2(p.getPos().getX(), height - p.getPos().getY());
                     Vector2 dir = getDirFromMouse(pos);
                     positionBullet(pos, dir);
@@ -365,10 +363,21 @@ public class GameRenderer implements Runnable {
 
     private void drawOrbs(int phase) {
         HashMap<Integer, Orb> orbs = gameData.getOrbs();
-        GL11.glColor3f(0.2f, 0.2f, 1f);
+        Player me = gameData.getPlayer(playerID);
         for (Orb o: orbs.values()) {
             if (phase == o.getPhase()) {
+                draw.drawAura(o.getPos(), o.getRadius()+5,5,0,0,0.8f);
+                GL11.glColor4f(0.2f, 0.2f, 1f, 1);
                 draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
+            }
+            else {
+                float dist = me.getPos().getDistanceTo(o.getPos());
+                if (dist < 150) {
+                    float fade = 0.7f-(dist/150f);
+                    draw.drawAura(o.getPos(), o.getRadius()+5,5,0,0,0.9f, fade);
+                    GL11.glColor4f(0.2f, 0.2f, 1f, fade);
+                    draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
+                }
             }
         }
     }
