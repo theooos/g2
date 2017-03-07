@@ -270,7 +270,7 @@ public class GameRenderer implements Runnable {
 
         if (displayCollisions) drawCollisions(phase);
     }
-
+    
     private void drawCollisions(int phase) {
         Player p = new Player(new Vector2(0, 0), new Vector2(1, 0), 0, phase, new WeaponShotgun(), new WeaponShotgun(), playerID);
         glColor4f(1,0,0,0.5f);
@@ -283,7 +283,6 @@ public class GameRenderer implements Runnable {
             }
         }
     }
-
 
     private void drawStencil() {
         int newPhase = pulse.getNewPhase();
