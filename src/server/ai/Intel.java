@@ -26,6 +26,8 @@ public class Intel {
     private ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
 
+    private CollisionManager collisionManager;
+
     /**
      * Constructs an intel object based on the given Players and Map.
      * @param players - The list of players.
@@ -37,17 +39,6 @@ public class Intel {
         this.targetLocation = null;
         this.targetPlayer = null;
         this.path = new ArrayList<>();
-    }
-
-
-    /**
-     * Assigns this Intel's owning entity.
-     * @param ent - The entity this intel object is to belong to.
-     */
-    public void assignEntity(MovableEntity ent){
-        this.ent = ent;
-        this.healthLastTick = ent.getHealth();
-        this.sight = new VisibilityPolygon(this.ent.getPhase(), this.map);
     }
 
     /**
@@ -81,9 +72,6 @@ public class Intel {
         this.players = players;
     }
 
-    public void setOrbs(HashMap<Integer, Orb> orbs){
-        this.allOrbs = orbs;
-    }
 
     public HashMap<Integer, Orb> getOrbs(){
         return allOrbs;
@@ -196,4 +184,15 @@ public class Intel {
         return sight;
     }
 
+    public void initForGame(MovableEntity ent, HashMap<Integer, Orb> orbs) {
+        this.ent = ent;
+        this.healthLastTick = ent.getHealth();
+        this.sight = new VisibilityPolygon(this.ent.getPhase(), this.map);
+        this.allOrbs = orbs;
+        collisionManager = new CollisionManager(players, orbs, map);
+    }
+
+    public boolean validPosition(){
+        return collisionManager.validPosition(ent);
+    }
 }
