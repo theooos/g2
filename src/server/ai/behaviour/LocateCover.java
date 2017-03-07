@@ -23,7 +23,7 @@ public class LocateCover extends Task {
     @Override
     public void doAction(){
         // SKELETON.
-        // PERQUISITE: Collisions, Room detection.
+        // PERQUISITE: CollisionManager, Room detection.
         Random gen = new Random();
         float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
         float ranY = (float) gen.nextInt(intel.getMap().getMapLength());

@@ -2,12 +2,13 @@ package server.game;
 
 /**
  * Created by peran on 27/01/17.
+ * All major entities inherit from this such as players, orbs, and projectiles
  */
 public class MovableEntity extends Entity {
     protected float speed;
     protected Vector2 dir;
-    protected int radius;
-    protected int team;
+    float radius;
+    int team;
 
     /**
      * A class intended for inheritence, should not be created
@@ -46,7 +47,7 @@ public class MovableEntity extends Entity {
     }
 
     public int getRadius() {
-        return radius;
+        return (int) radius;
     }
 
     public int getTeam() {

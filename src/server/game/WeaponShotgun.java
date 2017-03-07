@@ -8,7 +8,7 @@ public class WeaponShotgun extends Weapon {
     public WeaponShotgun() {
         super();
         name = "Shotgun";
-        shotType = new DistDropOffProjectile(40,30,10,new Vector2(0,0), new Vector2(0,0), 10, 0, null, 0);
+        shotType = new DistDropOffProjectile(30,35,20,new Vector2(0,0), new Vector2(0,0), 10, 0, null, 0);
         numProjectiles = 7;
         //the max inaccuracy from recoil alone
         maxRecoil = 5;
@@ -20,7 +20,7 @@ public class WeaponShotgun extends Weapon {
         //how many degrees of accuracy is recovered per tick
         recoilRecovery = .1;
         //the speed the weapon cools down
-        coolDownRate = 0.2;
+        coolDownRate = 0.3;
         //the amount of heat each firing of the weapon takes up
         heatPerShot = 25;
         //min time after firing a shot till the gun can fire again

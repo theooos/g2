@@ -27,6 +27,64 @@ class Draw {
         displayHeat = 0;
     }
 
+    private void flashDamage(float intensity) {
+        intensity = Math.min(1, intensity);
+        GL11.glBegin(GL_QUAD_STRIP);
+        float buffer = 60;
+
+        GL11.glColor4f(1, 0, 0, intensity/2);
+        GL11.glVertex2d(0,0);
+        GL11.glColor4f(1, 0, 0, 0);
+        GL11.glVertex2d(buffer, buffer);
+        GL11.glColor4f(1, 0, 0, intensity);
+        GL11.glVertex2d(width,0);
+        GL11.glColor4f(1, 0, 0, 0);
+        GL11.glVertex2d(width-buffer, buffer);
+        GL11.glColor4f(1, 0, 0, intensity);
+        GL11.glVertex2d(width, height);
+        GL11.glColor4f(1, 0, 0, 0);
+        GL11.glVertex2d(width-buffer, height-buffer);
+        GL11.glColor4f(1, 0, 0, intensity);
+        GL11.glVertex2d(0,height);
+        GL11.glColor4f(1, 0, 0, 0);
+        GL11.glVertex2d(buffer, height-buffer);
+        GL11.glColor4f(1, 0, 0, intensity/2);
+        GL11.glVertex2d(0,0);
+        GL11.glColor4f(1, 0, 0, 0);
+        GL11.glVertex2d(buffer, buffer);
+
+        GL11.glEnd();
+    }
+
+    void drawAura(Vector2 centre, float radius, float strokeWidth, float red, float green, float blue) {
+        drawAura(centre, radius, strokeWidth, red, green, blue, 1);
+    }
+
+    void drawAura(Vector2 centre, float radius, float strokeWidth, float red, float green, float blue, float intensity) {
+        GL11.glColor4f(red, green, blue, intensity);
+        GL11.glBegin(GL_QUAD_STRIP);
+        float cx = centre.getX();
+        float cy = height-centre.getY();
+        GL11.glVertex2f(cx, cy+(radius-strokeWidth));
+        GL11.glColor4f(red, green, blue, 0);
+        GL11.glVertex2f(cx, cy+radius);
+        for (int i = 1; i < 360; i++) {
+            GL11.glColor4f(red, green, blue, intensity);
+            GL11.glVertex2d(cx+((radius-strokeWidth)*Math.sin(Math.toRadians(i))), cy+((radius-strokeWidth)*Math.cos(Math.toRadians(i))));
+            GL11.glColor4f(red, green, blue, 0);
+            GL11.glVertex2d(cx+((radius)*Math.sin(Math.toRadians(i))), cy+((radius)*Math.cos(Math.toRadians(i))));
+        }
+        GL11.glColor4f(red, green, blue, intensity);
+        GL11.glVertex2f(cx, cy+(radius-strokeWidth));
+        GL11.glColor4f(red, green, blue, 0);
+        GL11.glVertex2f(cx, cy+radius);
+        GL11.glEnd();
+    }
+
+    void shadeScreen() {
+        GL11.glColor4f(1,1,1,0.6f);
+        verticalDraw(0,0,width,height);
+    }
 
     void drawHeatBar(double heat, double maxHeat) {
         float heatBarSensitivity = 0.1f;
@@ -77,6 +135,15 @@ class Draw {
 
         if (displayHealth > maxHealth) displayHealth = maxHealth;
         else if (displayHealth < 0) displayHealth = 0;
+
+        if ((displayHealth-oldHealth) < 0.3 && (displayHealth-oldHealth) > -0.3) {
+            displayHealth = oldHealth;
+        }
+
+        if (displayHealth != oldHealth) {
+            flashDamage((float) Math.min(1, Math.abs(healthTick)));
+        }
+
         int healthWidth = 10;
         int buffer = 20;
         float maxHeight = height-buffer*2;

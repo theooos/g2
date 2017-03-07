@@ -5,6 +5,7 @@ import networking.Connection;
 import objects.InitGame;
 import objects.MoveObject;
 import objects.Sendable;
+import server.game.DistDropOffProjectile;
 import server.game.Orb;
 import server.game.Player;
 import server.game.Projectile;
@@ -20,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientReceiver {
 
     private Connection connection;
-    private int mapID;
     private int playerID;
     private static boolean DEBUG = false;
     private GameData gd;
@@ -35,6 +35,7 @@ public class ClientReceiver {
         connection.addFunctionEvent("Orb", this::updatedOrb);
         connection.addFunctionEvent("Projectile", this::updatedProjectile);
         connection.addFunctionEvent("MoveObject", this::movePlayer);
+        connection.addFunctionEvent("DistDropOffProjectile", this::updatedDistProjectile);
     }
 
     private void setupGame(Sendable s) {
@@ -103,10 +104,16 @@ public class ClientReceiver {
         gd.updateProjectile(p);
     }
 
+    private void updatedDistProjectile(Sendable s) {
+        DistDropOffProjectile p = (DistDropOffProjectile) s;
+        gd.updateProjectile(p);
+    }
+
     private void movePlayer(Sendable s) {
         MoveObject m = (MoveObject) s;
         Player p = gd.getPlayer(m.getID());
         p.setPos(m.getPos());
+        p.setMoveCount(m.getMoveCounter());
         gd.updatePlayer(p);
     }
 }

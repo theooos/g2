@@ -68,8 +68,8 @@ public class MapRenderer {
     private void verticalDraw(float xStart, float yStart, float xEnd, float yEnd) {
         GL11.glColor3f(0.84f, 0.86f, 0.88f);
         GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart - EXTENT));
-        GL11.glVertex2f(checkX(xStart + EXTENT), checkY(height - yStart - EXTENT));
+        GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart+EXTENT));
+        GL11.glVertex2f(checkX(xStart + EXTENT), checkY(height - yStart+EXTENT));
         GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd + EXTENT));
         GL11.glVertex2f(checkX(xEnd - EXTENT), checkY(height - yEnd + EXTENT));
         GL11.glEnd();

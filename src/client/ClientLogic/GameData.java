@@ -19,7 +19,7 @@ public class GameData {
     private ConcurrentHashMap<Integer, Projectile> projectiles;
     private int mapID;
 
-    public GameData(ConcurrentHashMap players, HashMap orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id) {
+    GameData(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id) {
         this.players = players;
         this.orbs = orbs;
         this.projectiles = projectiles;
@@ -39,7 +39,7 @@ public class GameData {
 
     public ConcurrentHashMap<Integer, Projectile> getProjectiles() {return  projectiles;}
 
-    public void updateProjectile(Projectile p) {
+    void updateProjectile(Projectile p) {
         if (p.isAlive()) {
             projectiles.put(p.getID(), p);
         }
@@ -66,7 +66,7 @@ public class GameData {
      * update the hashmap of the orbs.
      * @param o the orb to be changed.
      */
-    public void updateOrb(Orb o) {
+    void updateOrb(Orb o) {
         orbs.put(o.getID(), o);
     }
 
@@ -77,7 +77,7 @@ public class GameData {
         players.put(p.getID(), p);
     }
 
-    public void updateMe(Player p) {
+    void updateMe(Player p) {
         Player me = players.get(p.getID());
         me.setPhase(p.getPhase());
         me.setHealth(p.getHealth());

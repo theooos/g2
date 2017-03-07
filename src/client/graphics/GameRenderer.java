@@ -13,25 +13,20 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import server.game.Player;
-import server.game.Projectile;
-import server.game.Vector2;
-import server.game.Orb;
+import server.game.*;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.glDepthMask;
-import static server.Server.out;
 
 /**
  * Provides the visuals for the game itself.
  */
 public class GameRenderer implements Runnable {
 
-    private final String WINDOW_TITLE = "PhaseShift";
-    public static boolean gameRunning = true;
+    private static boolean gameRunning = true;
     private int width = 800;
     private int height = 600;
 
@@ -43,14 +38,19 @@ public class GameRenderer implements Runnable {
     private GameData gameData;
     private MapRenderer map;
     private Connection conn;
+    private CollisionManager collisions;
+
     private boolean fDown;
     private boolean clickDown;
     private boolean eDown;
     private boolean oneDown;
     private boolean twoDown;
+    private boolean tabPressed;
+
     private Draw draw;
     private Pulse pulse;
 
+    private boolean displayCollisions;
 
     GameRenderer(GameData gd, Connection conn, int playerID) {
         super();
@@ -63,11 +63,16 @@ public class GameRenderer implements Runnable {
         eDown = false;
         oneDown = false;
         twoDown = false;
+        tabPressed = false;
+
         draw = new Draw(width, height);
+        collisions = new CollisionManager(gd);
+        displayCollisions = false;
 
         // initialize the window beforehand
         try {
             Display.setDisplayMode(new DisplayMode(width, height));
+            String WINDOW_TITLE = "PhaseShift";
             Display.setTitle(WINDOW_TITLE);
             Display.create();
 
@@ -82,17 +87,10 @@ public class GameRenderer implements Runnable {
 
             map = new MapRenderer(gd.getMapID());
             Player me = gameData.getPlayer(playerID);
-            if (me.getPhase() == 0) {
-                //blue phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20, 0);
-            }
-            else {
-                //red phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20, 1);
-            }
+            pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1-me.getPhase(), height, width, 20, 20, me.getPhase(), true);
 
         } catch (LWJGLException le) {
-            System.out.println("Game exiting - exception in initialization:");
+            System.err.println("Game exiting - exception in initialization:");
             le.printStackTrace();
             GameRenderer.gameRunning = false;
         }
@@ -150,19 +148,25 @@ public class GameRenderer implements Runnable {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
+
         if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
             fDown = true;
         }
         else if (fDown){
             fDown = false;
-            conn.send(new PhaseObject(me.getID()));
-            if (me.getPhase() == 1) {
-                //switch to blue phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 0, 0, 1, height, width, 20, 20, 0);
+            int newPhase = 0;
+            if (me.getPhase() == 0) {
+                newPhase = 1;
+            }
+            Player p = new Player(me);
+            p.setPhase(newPhase);
+            if (collisions.validPosition(p)) {
+                conn.send(new PhaseObject(me.getID()));
+                pulse = new Pulse(me.getPos(), me.getRadius(), newPhase, 0, 1-newPhase, height, width, 20, 20, newPhase, true);
             }
             else {
-                //switch to red phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 1, 0, 0, height, width, 20, 20, 1);
+                //invalid phase
+                pulse = new Pulse(me.getPos(), me.getRadius(), 0.3f, 0.3f, 0.3f, height, width, 20, 20, me.getPhase(), 250, false);
             }
 
         }
@@ -179,6 +183,8 @@ public class GameRenderer implements Runnable {
             }
         }
 
+        tabPressed = Keyboard.isKeyDown(Keyboard.KEY_TAB);
+
         if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
             oneDown = true;
         }
@@ -193,6 +199,7 @@ public class GameRenderer implements Runnable {
         else if (twoDown){
             twoDown = false;
             conn.send(new SwitchObject(me.getID(), false));
+            displayCollisions = !displayCollisions;
         }
 
         if (Mouse.isButtonDown(0)) {
@@ -215,8 +222,13 @@ public class GameRenderer implements Runnable {
 
         if(pos.getX() != xPos || pos.getY() != yPos) {
             me.setPos(new Vector2(xPos, yPos));
-            gameData.updatePlayer(me);
-            conn.send(new MoveObject(me.getPos(), me.getDir(), playerID));
+            if (collisions.validPosition(me)) {
+                gameData.updatePlayer(me);
+                conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
+            }
+            else {
+                me.setPos(pos);
+            }
         }
 
         updateFPS(); // update FPS Counter
@@ -238,7 +250,7 @@ public class GameRenderer implements Runnable {
         Player p = gameData.getPlayer(playerID);
         int phase = p.getPhase();
 
-        if (pulse.isAlive()) {
+        if (pulse.isAlive() && pulse.isShowOtherPhase()) {
             drawStencil();
         }
         else {
@@ -246,9 +258,31 @@ public class GameRenderer implements Runnable {
             map.renderMap(phase);
             drawOrbs(phase);
             drawPlayers(phase);
+            if (pulse.isAlive()) {
+                pulse.draw();
+            }
         }
         draw.drawHealthBar(p.getHealth(), p.getMaxHealth());
         draw.drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
+
+        if (tabPressed) {
+            draw.shadeScreen();
+        }
+
+        if (displayCollisions) drawCollisions();
+    }
+
+    private void drawCollisions() {
+        Player p = new Player(gameData.getPlayer(playerID));
+        glColor4f(1,0,0,0.5f);
+        for (int i = 0; i < width; i+= 10) {
+            for (int j = 0; j < height; j+= 10) {
+                p.setPos(new Vector2(i, j));
+                if (!collisions.validPosition(p)) {
+                    draw.drawCircle(i, height-j, 5, 5);
+                }
+            }
+        }
     }
 
     private void drawStencil() {
@@ -295,24 +329,33 @@ public class GameRenderer implements Runnable {
     private void drawPlayers(int phase) {
         ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
         int radius = players.get(0).getRadius();
+        float red;
+        float green;
+        float blue;
         for (Player p : players.values()) {
             if (p.getPhase() == phase) {
                 if (p.getTeam() == 0) {
-                    GL11.glColor3f(1, 0.33f, 0.26f);
+                    red = 1;
+                    green = 0.33f;
+                    blue = 0.26f;
                 } else {
-                    GL11.glColor3f(0.2f, 0.9f, 0.5f);
+                    red = 0.2f;
+                    green = 0.9f;
+                    blue = 0.5f;
                 }
+                draw.drawAura(p.getPos(), p.getRadius()+10, 10, red-0.2f, green-0.2f, blue-0.2f);
+                GL11.glColor3f(red, green, blue);
+
                 draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
 
                 if (p.getID() != playerID) {
                     positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()), p.getDir());
-                }
-                else {
+                } else {
                     Vector2 pos = new Vector2(p.getPos().getX(), height - p.getPos().getY());
                     Vector2 dir = getDirFromMouse(pos);
                     positionBullet(pos, dir);
                     p.setDir(dir);
-                    conn.send(new MoveObject(p.getPos(), p.getDir(), playerID));
+                    conn.send(new MoveObject(p.getPos(), p.getDir(), playerID, p.getMoveCount()));
                 }
             }
         }
@@ -320,10 +363,21 @@ public class GameRenderer implements Runnable {
 
     private void drawOrbs(int phase) {
         HashMap<Integer, Orb> orbs = gameData.getOrbs();
-        GL11.glColor3f(0.2f, 0.2f, 1f);
+        Player me = gameData.getPlayer(playerID);
         for (Orb o: orbs.values()) {
             if (phase == o.getPhase()) {
+                draw.drawAura(o.getPos(), o.getRadius()+5,5,0,0,0.8f);
+                GL11.glColor4f(0.2f, 0.2f, 1f, 1);
                 draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
+            }
+            else {
+                float dist = me.getPos().getDistanceTo(o.getPos());
+                if (dist < 150) {
+                    float fade = 0.7f-(dist/150f);
+                    draw.drawAura(o.getPos(), o.getRadius()+5,5,0,0,0.9f, fade);
+                    GL11.glColor4f(0.2f, 0.2f, 1f, fade);
+                    draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
+                }
             }
         }
     }
@@ -349,5 +403,4 @@ public class GameRenderer implements Runnable {
 
         return delta;
     }
-
 }

@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Game implements Runnable {
     private int countdown;
     private Map map;
+    private CollisionManager collisions;
 
     private ArrayList<Connection> playerConnections;
     private ConcurrentHashMap<Integer, Player> players;
@@ -53,6 +54,8 @@ public class Game implements Runnable {
         players = new ConcurrentHashMap<>();
         orbs = new HashMap<>();
         projectiles = new HashMap<>();
+
+        collisions = new CollisionManager(players, orbs, map);
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
@@ -93,7 +96,7 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create AI players
-        /*for (int i = playerConnections.size(); i < maxPlayers; i++) {
+        for (int i = playerConnections.size(); i < maxPlayers; i++) {
             //randomly select weapons for players
             Weapon w1;
             Weapon w2;
@@ -119,7 +122,7 @@ public class Game implements Runnable {
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             players.put(IDCounter, p);
             IDCounter++;
-        }*/
+        }
         //create team orbs
         for (int i = 0; i < maxPlayers; i++) {
             Orb o = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
@@ -150,7 +153,8 @@ public class Game implements Runnable {
                 if (!p.isAlive()) {
                     respawn(p);
                     if (!(p instanceof AIPlayer)) {
-                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID()));
+                        p.incMove();
+                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
                     }
                 }
                 if (p.isFiring()) fire(p);
@@ -164,7 +168,7 @@ public class Game implements Runnable {
             ArrayList<Integer> keys = new ArrayList<>();
 
             for (Projectile p : projectiles.values()) {
-                MovableEntity e = collidesWithPlayerOrBot(p);
+                MovableEntity e = collisions.collidesWithPlayerOrBot(p);
                 if (e != null) {
                     out(p.getPlayerID()+" just hit "+e.getID());
                     e.damage(p.getDamage());
@@ -178,16 +182,12 @@ public class Game implements Runnable {
                     p.kill();
                 }
 
-                if (projectileWallCollision(p.getRadius(), p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
+                if (collisions.projectileWallCollision(p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
                 p.live();
                 if (!p.isAlive()) {
                     keys.add(p.getID());
                 }
-            }
-
-            for (Integer i: keys) {
-                projectiles.remove(i);
             }
 
             countdown--;
@@ -198,9 +198,12 @@ public class Game implements Runnable {
                 isRunning = false;
             } else {
                 sendAllObjects();
+                for (Integer i: keys) {
+                    projectiles.remove(i);
+                }
             }
             try {
-                Thread.sleep(1000 /60);
+                Thread.sleep(1000/60);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -289,9 +292,9 @@ public class Game implements Runnable {
             valid = true;
             v = new Vector2(rand.nextInt(boundX)+100, rand.nextInt(boundY)+100);
 
-            if (pointWallCollision(minDist, v, 0)) valid = false;
-            else if (pointWallCollision(minDist, v, 1)) valid = false;
-            else if (collidesWithPlayerOrBot(minDist, v) != null) valid = false;
+            if (collisions.pointWallCollision(minDist, v, 0)) valid = false;
+            else if (collisions.pointWallCollision(minDist, v, 1)) valid = false;
+            else if (collisions.collidesWithPlayerOrBot(minDist, v) != null) valid = false;
         }
         return v;
     }
@@ -402,7 +405,7 @@ public class Game implements Runnable {
         return p1.getDistanceTo(p2) < (r1 + r2);
     }
 
-    
+
     public static float linePointDistance(Vector2 v, Vector2 w, Vector2 p) {
         // Return minimum distance between line segment vw and point p
         float l2 = Math.abs(v.getDistanceTo(w));
@@ -462,11 +465,6 @@ public class Game implements Runnable {
         out(s);
     }
 
-
-    private boolean validPosition(Player player) {
-        return !pointWallCollision(player.getRadius(), player.getPos(), player.getPhase()) && collidesWithPlayerOrBot(player) == null;
-    }
-
     /**
      * updates a received player to the received state
      * @param s a player object
@@ -476,17 +474,18 @@ public class Game implements Runnable {
         updatePlayerMove(m);
     }
 
-    /*private synchronized void removePlayer(int id) {
-        players.removeIf(p -> p.getID() == id);
-    }*/
-
     private synchronized void updatePlayerMove(MoveObject m) {
         Player p = players.get(m.getID());
-        MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID());
-        p.setDir(m.getDir());
-        p.setPos(m.getPos());
-        if (validPosition(p)) {
-            players.put(m.getID(), p);
+        MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount());
+        if (m.getMoveCounter() == p.getMoveCount()) {
+            p.setDir(m.getDir());
+            p.setPos(m.getPos());
+            if (collisions.validPosition(p)) {
+                players.put(m.getID(), p);
+            }
+            else {
+                playerConnections.get(p.getID()).send(old);
+            }
         }
         else {
             playerConnections.get(p.getID()).send(old);
