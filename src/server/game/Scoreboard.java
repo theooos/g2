@@ -4,8 +4,9 @@ import objects.Sendable;
 
 /**
  * Created by peran on 2/7/17.
+ *
  */
-public class Scoreboard implements Sendable{
+public class Scoreboard implements Sendable {
     private int team1Score;
     private int team2Score;
     private int maxScore;
@@ -33,7 +34,7 @@ public class Scoreboard implements Sendable{
         addScore(playerID, 10);
     }
 
-    public void killedZombie(int playerID) {
+    public void killedOrb(int playerID) {
         addScore(playerID, 5);
     }
 

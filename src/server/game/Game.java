@@ -172,12 +172,16 @@ public class Game implements Runnable {
                 MovableEntity e = collisions.collidesWithPlayerOrBot(p);
                 if (e != null) {
                     out(p.getPlayerID()+" just hit "+e.getID());
-                    e.damage(p.getDamage());
-                    if (!e.isAlive()) {
-                        if (e instanceof Orb) {
-                            sb.killedZombie(p.getPlayerID());
-                        } else {
-                            sb.killedPlayer(p.getPlayerID());
+                    //can't damage your team
+                    if (e.getTeam() != p.getTeam()) {
+                        e.damage(p.getDamage());
+                        //if the player has been killed
+                        if (!e.isAlive()) {
+                            if (e instanceof Orb) {
+                                sb.killedOrb(p.getPlayerID());
+                            } else {
+                                sb.killedPlayer(p.getPlayerID());
+                            }
                         }
                     }
                     p.kill();
