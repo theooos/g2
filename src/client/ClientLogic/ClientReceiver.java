@@ -36,6 +36,7 @@ public class ClientReceiver {
         connection.addFunctionEvent("Projectile", this::updatedProjectile);
         connection.addFunctionEvent("MoveObject", this::movePlayer);
         connection.addFunctionEvent("DistDropOffProjectile", this::updatedDistProjectile);
+        connection.addFunctionEvent("ScoreBoard", this::updatedScoreboard);
     }
 
     private void setupGame(Sendable s) {
@@ -100,6 +101,11 @@ public class ClientReceiver {
     }
 
     private void updatedProjectile(Sendable s) {
+        Projectile p = (Projectile) s;
+        gd.updateProjectile(p);
+    }
+
+    private void updatedScoreboard(Sendable s) {
         Projectile p = (Projectile) s;
         gd.updateProjectile(p);
     }
