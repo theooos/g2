@@ -22,7 +22,7 @@ public class Scoreboard implements Sendable {
         }
     }
 
-    public boolean scoreReached() {
+    boolean scoreReached() {
         return (team1Score >= maxScore || team2Score >= maxScore);
     }
 
@@ -30,11 +30,11 @@ public class Scoreboard implements Sendable {
         playerScore[playerID] += score;
     }
 
-    public void killedPlayer(int playerID) {
+    void killedPlayer(int playerID) {
         addScore(playerID, 10);
     }
 
-    public void killedOrb(int playerID) {
+    void killedOrb(int playerID) {
         addScore(playerID, 5);
     }
 
