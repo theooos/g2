@@ -18,15 +18,15 @@ public class GameData {
     private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
     private ConcurrentHashMap<Integer, Projectile> projectiles;
-    private Scoreboard scoreboard;
+    private Scoreboard sb;
     private int mapID;
 
-    GameData(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id, Scoreboard scoreboard) {
+    GameData(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id, Scoreboard sb) {
         this.players = players;
         this.orbs = orbs;
         this.projectiles = projectiles;
-        this.scoreboard = scoreboard;
         this.mapID = id;
+        this.sb = sb;
     }
 
     /**
@@ -89,12 +89,12 @@ public class GameData {
         players.put(p.getID(), me);
     }
 
-    Scoreboard getScoreboard()  {
-        return scoreboard;
+    void updateScoreboard(Scoreboard sb) {
+        this.sb = sb;
     }
 
-    void updateScoreboard(Scoreboard scoreboard) {
-        this.scoreboard = scoreboard;
+    public Scoreboard getSb() {
+        return sb;
     }
 
 }

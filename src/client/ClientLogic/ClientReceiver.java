@@ -43,7 +43,7 @@ public class ClientReceiver {
         int mapID = i.getMapID();
         ConcurrentHashMap<Integer, Projectile> projectiles = new ConcurrentHashMap<>();
 
-        gd = new GameData(players, orbs, projectiles, mapID, new Scoreboard());
+        gd = new GameData(players, orbs, projectiles, mapID, i.getSb());
         out("Setting up game");
         new Thread(new GameRendererCreator(gd,connection,getID())).start();
 

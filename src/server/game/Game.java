@@ -136,7 +136,7 @@ public class Game implements Runnable {
 
         countdown = 10*60*tick; //ten minutes
 
-        InitGame g = new InitGame(orbs, players, mapID);
+        InitGame g = new InitGame(orbs, players, mapID, sb);
         sendGameStart(g);
 
 
@@ -150,6 +150,8 @@ public class Game implements Runnable {
 
         boolean isRunning = true;
         while(isRunning){
+            boolean scoreboardChanged = false;
+
             for (Player p : players.values()) {
                 if (!p.isAlive()) {
                     respawn(p);
@@ -182,6 +184,7 @@ public class Game implements Runnable {
                             } else {
                                 sb.killedPlayer(p.getPlayerID());
                             }
+                            scoreboardChanged = true;
                         }
                     }
                     p.kill();
@@ -196,6 +199,10 @@ public class Game implements Runnable {
             }
 
             countdown--;
+
+            if (scoreboardChanged) {
+                sendToAllConnected(sb);
+            }
 
             //stops the countdown when the timer has run out
             if (countdown <= 0 || sb.scoreReached()) {
@@ -297,12 +304,12 @@ public class Game implements Runnable {
     }
 
     /**
-     * sends an entity to all connected players
-     * @param e the entity to send
+     * sends an object to all connected plays
+     * @param s the object to send
      */
-    private void sendToAllConnected(Entity e) {
+    private void sendToAllConnected(Sendable s) {
         for (Connection c: playerConnections) {
-            c.send(e);
+            c.send(s);
         }
     }
 
