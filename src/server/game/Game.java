@@ -125,7 +125,7 @@ public class Game implements Runnable {
         }
         //create team orbs
         for (int i = 0; i < maxPlayers; i++) {
-            Orb o = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
+            Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
             respawn(o);
             orbs.put(IDCounter, o);
             IDCounter++;
@@ -137,7 +137,7 @@ public class Game implements Runnable {
 
         countdown = 10*60*tick; //ten minutes
 
-        InitGame g = new InitGame(orbs, players, mapID);
+        InitGame g = new InitGame(orbs, players, mapID, sb);
         sendGameStart(g);
     }
 
@@ -149,6 +149,8 @@ public class Game implements Runnable {
 
         boolean isRunning = true;
         while(isRunning){
+            boolean scoreboardChanged = false;
+
             for (Player p : players.values()) {
                 if (!p.isAlive()) {
                     respawn(p);
@@ -171,12 +173,17 @@ public class Game implements Runnable {
                 MovableEntity e = collisions.collidesWithPlayerOrBot(p);
                 if (e != null) {
                     out(p.getPlayerID()+" just hit "+e.getID());
-                    e.damage(p.getDamage());
-                    if (!e.isAlive()) {
-                        if (e instanceof Orb) {
-                            sb.killedZombie(p.getPlayerID());
-                        } else {
-                            sb.killedPlayer(p.getPlayerID());
+                    //can't damage your team
+                    if (e.getTeam() != p.getTeam()) {
+                        e.damage(p.getDamage());
+                        //if the player has been killed
+                        if (!e.isAlive()) {
+                            if (e instanceof Orb) {
+                                sb.killedOrb(p.getPlayerID());
+                            } else {
+                                sb.killedPlayer(p.getPlayerID());
+                            }
+                            scoreboardChanged = true;
                         }
                     }
                     p.kill();
@@ -191,6 +198,10 @@ public class Game implements Runnable {
             }
 
             countdown--;
+
+            if (scoreboardChanged) {
+                sendToAllConnected(sb);
+            }
 
             //stops the countdown when the timer has run out
             if (countdown <= 0 || sb.scoreReached()) {
@@ -432,12 +443,12 @@ public class Game implements Runnable {
     }
 
     /**
-     * sends an entity to all connected players
-     * @param e the entity to send
+     * sends an object to all connected plays
+     * @param s the object to send
      */
-    private void sendToAllConnected(Entity e) {
+    private void sendToAllConnected(Sendable s) {
         for (Connection c: playerConnections) {
-            c.send(e);
+            c.send(s);
         }
     }
 

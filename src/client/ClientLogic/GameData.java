@@ -3,6 +3,7 @@ package client.ClientLogic;
 import server.game.Orb;
 import server.game.Player;
 import server.game.Projectile;
+import server.game.Scoreboard;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,13 +18,15 @@ public class GameData {
     private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
     private ConcurrentHashMap<Integer, Projectile> projectiles;
+    private Scoreboard sb;
     private int mapID;
 
-    GameData(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id) {
+    GameData(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id, Scoreboard sb) {
         this.players = players;
         this.orbs = orbs;
         this.projectiles = projectiles;
         this.mapID = id;
+        this.sb = sb;
     }
 
     /**
@@ -84,6 +87,14 @@ public class GameData {
         me.setWeaponOut(p.isWeaponOneOut());
         me.setWeaponOutHeat(p.getWeaponOutHeat());
         players.put(p.getID(), me);
+    }
+
+    void updateScoreboard(Scoreboard sb) {
+        this.sb = sb;
+    }
+
+    public Scoreboard getSb() {
+        return sb;
     }
 
 }
