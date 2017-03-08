@@ -62,8 +62,7 @@ public class Orb extends MovableEntity {
      */
     public void prepareOrbForGame(Intel intel, HashMap<Integer, Orb> orbs){
         this.intel = intel;
-        this.intel.assignEntity(this);
-        this.intel.setOrbs(orbs);
+        this.intel.initForGame(this, orbs);
         this.myBrain = new OrbBrain(intel);
     }
 }

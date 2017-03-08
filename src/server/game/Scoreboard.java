@@ -69,8 +69,16 @@ public class Scoreboard implements Sendable {
             else {
                 break;
             }
-
+            removed++;
         }
         return s;
+    }
+
+    protected Scoreboard clone() {
+        Scoreboard sb = new Scoreboard(maxScore, playerScore.length);
+        sb.team1Score = team1Score;
+        sb.team0Score = team0Score;
+        sb.playerScore = playerScore.clone();
+        return  sb;
     }
 }

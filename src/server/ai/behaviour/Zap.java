@@ -23,8 +23,10 @@ public class Zap extends Attack {
     @Override
     public boolean checkConditions() {
         assert (intel.ent() instanceof Orb);
-        return (intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos())
-                < intel.ent().getRadius());}
+        float distBetweenCent = intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos());
+        float absDistBetween = distBetweenCent - intel.ent().getRadius();
+        return (absDistBetween <= 40);
+    }
 
     @Override
     public void doAction() {

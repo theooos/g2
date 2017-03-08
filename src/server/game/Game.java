@@ -220,14 +220,6 @@ public class Game implements Runnable {
         }
     }
 
-    public static boolean pointWallCollision(int r, Vector2 point, int phase, Map map) {
-        for (Wall w: map.wallsInPhase(phase, true, false)) {
-            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+5)) return true;
-        }
-
-        return false;
-    }
-
     /**
      * Ends the game and msgs all clients
      */
@@ -300,49 +292,6 @@ public class Game implements Runnable {
     }
 
     /**
-     * Given a radius and a position, it checks to see if it collided with a bot
-     * that is still alive
-     * @param r the radius of the object
-     * @param pos the centre of the object
-     * @return the bot it is collided with.  Null if no collision
-     */
-    public static MovableEntity collidesWithBot(int r, Vector2 pos, HashMap<Integer, Orb> orbs) {
-
-        for (Orb o: orbs.values()) {
-            if (o.isAlive() && collided(r, pos, o.getRadius(), o.getPos())) return o;
-        }
-
-        return null;
-    }
-
-    /**
-     * returns true if the two entity have collided
-     * @param r1 the radius of the first entity
-     * @param p1 the position of the first entity
-     * @param r2 the radius of the second entity
-     * @param p2 the position of the second entity
-     */
-    public static boolean collided(int r1, Vector2 p1, int r2, Vector2 p2) {
-        return p1.getDistanceTo(p2) < (r1 + r2);
-    }
-
-
-    public static float linePointDistance(Vector2 v, Vector2 w, Vector2 p) {
-        // Return minimum distance between line segment vw and point p
-        float l2 = Math.abs(v.getDistanceTo(w));
-        l2 = l2*l2; // i.e. |w-v|^2 -  avoid a sqrt
-        if (l2 == 0.0) return p.getDistanceTo(v);   // v == w case
-        // Consider the line extending the segment, parameterized as v + t (w - v).
-        // We find projection of point p onto the line.
-        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-        // We clamp t from [0,1] to handle points outside the segment vw.
-        float dot = ((p.sub(v)).dot(w.sub(v)) / l2);
-        float t = Math.max(0, Math.min(1, dot));
-        Vector2 projection = v.add(w.sub(v).mult(t));  // Projection falls on the segment
-        return p.getDistanceTo(projection);
-    }
-
-    /**
      * sends the string to all players in the lobby
      * @param s the string to be sent
      */
@@ -358,7 +307,12 @@ public class Game implements Runnable {
      */
     private void sendToAllConnected(Sendable s) {
         for (Connection c: playerConnections) {
-            c.send(s);
+            if (s instanceof Scoreboard) {
+                sendScoreboard(c);
+            }
+            else {
+                c.send(s);
+            }
         }
     }
 
@@ -374,7 +328,7 @@ public class Game implements Runnable {
      * @param c the connected player
      */
     private void sendScoreboard(Connection c) {
-        c.send(sb);
+        c.send(sb.clone());
     }
 
     /**
