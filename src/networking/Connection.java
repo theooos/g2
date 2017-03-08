@@ -49,7 +49,6 @@ public class Connection {
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-            e.printStackTrace();
         }
         establishConnection();
     }
