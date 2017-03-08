@@ -141,7 +141,7 @@ public class Map {
         ArrayList<String> mapStrings = new ArrayList<>();
 
         try {
-            FileReader file = new FileReader(FULL_PATH + String.valueOf(0) + ".txt");
+            FileReader file = new FileReader(FULL_PATH + 2 + ".txt");
             BufferedReader input = new BufferedReader(file);
             String nextString;
             while ((nextString = input.readLine()) != null) {
