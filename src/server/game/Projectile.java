@@ -100,6 +100,10 @@ public class Projectile extends MovableEntity {
         this.p = p;
     }
 
+    void setTeam(int team) {
+        this.team = team;
+    }
+
     public Projectile clone() {
         return new Projectile(this);
     }

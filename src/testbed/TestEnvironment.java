@@ -58,8 +58,7 @@ public class TestEnvironment extends Observable {
             validDistance = player.getPos().getDistanceTo(orbPos) >= 50;
         }
 
-        orb = new Orb(orbPos, new Vector2(0, 1), 1, 1, 2);
-        //orb.prepareOrbForGame(intel);
+        orb = new Orb(orbPos, new Vector2(0, 1), 1, 2);
     }
 
     public boolean movePlayer(Vector2 direction){

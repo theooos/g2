@@ -89,6 +89,7 @@ public class Weapon implements Sendable{
             p.setPos(player.getPos());
             p.setPhase(player.getPhase());
             p.setPlayer(player);
+            p.setTeam(player.getTeam());
             ps.add(p);
         }
         currentRecoil += bloomPerShot;

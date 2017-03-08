@@ -23,6 +23,7 @@ public class Map {
     private int width;
     private int length;
     private String FULL_PATH;
+    private static final boolean LOCAL = true;
 
     // Short-term members:
     private ArrayList<Vector2> validSpace;
@@ -36,7 +37,14 @@ public class Map {
 
         String LOCAL_PATH = new File("").getAbsolutePath();
 //        System.out.println(LOCAL_PATH);
-        String PROJ_PATH = "/src/server/game/maps/";
+        String PROJ_PATH;
+        if (LOCAL) {
+            PROJ_PATH = "/src/server/game/maps/";
+        }
+        else {
+            PROJ_PATH = "/maps/";
+        }
+
         FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 
         this.mapID = mapID;
@@ -133,7 +141,7 @@ public class Map {
         ArrayList<String> mapStrings = new ArrayList<>();
 
         try {
-            FileReader file = new FileReader(FULL_PATH + String.valueOf(0) + ".txt");
+            FileReader file = new FileReader(FULL_PATH + 2 + ".txt");
             BufferedReader input = new BufferedReader(file);
             String nextString;
             while ((nextString = input.readLine()) != null) {
