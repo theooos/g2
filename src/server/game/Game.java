@@ -299,22 +299,6 @@ public class Game implements Runnable {
         return new Vector2((float)(Math.cos(Math.toRadians(ang))),(float)(Math.sin(Math.toRadians(ang))));
     }
 
-
-    /**
-     * Given a radius and a position, it checks to see if it collided with a player that
-     * is still alive
-     * @param r the radius of the object
-     * @param pos the centre of the object
-     * @return the player it is collided with.  Null if no collision
-     */
-    public static MovableEntity collidesWithPlayer(int r, Vector2 pos, ConcurrentHashMap<Integer, Player> players) {
-        for (Player p: players.values()) {
-            if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
-        }
-
-        return null;
-    }
-
     /**
      * Given a radius and a position, it checks to see if it collided with a bot
      * that is still alive

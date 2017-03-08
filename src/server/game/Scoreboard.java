@@ -12,7 +12,7 @@ public class Scoreboard implements Sendable {
     private int maxScore;
     private int[] playerScore;
 
-    public Scoreboard(int maxScore, int playerNum) {
+    Scoreboard(int maxScore, int playerNum) {
         this.maxScore = maxScore;
         team0Score = 0;
         team1Score = 0;
@@ -28,6 +28,7 @@ public class Scoreboard implements Sendable {
 
     private void addScore(Player p, int score) {
         playerScore[p.getID()] += score;
+        System.out.println(playerScore[p.getID()]);
         if (p.getTeam() == 0) {
             team0Score += score;
         }
@@ -62,7 +63,7 @@ public class Scoreboard implements Sendable {
                 }
             }
             if (index != -1) {
-                s += "Player " + index + " Score: "+max;
+                s += "Player " + index + " Score: "+max+"\n";
                 temp[index] = Integer.MIN_VALUE;
             }
             else {

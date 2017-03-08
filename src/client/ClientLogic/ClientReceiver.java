@@ -19,7 +19,7 @@ public class ClientReceiver {
 
     private Connection connection;
     private int playerID;
-    private static boolean DEBUG = false;
+    private static boolean DEBUG = true;
     private GameData gd;
 
     public ClientReceiver(Connection conn) {
