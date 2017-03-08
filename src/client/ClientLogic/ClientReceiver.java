@@ -104,6 +104,7 @@ public class ClientReceiver {
 
     private void updatedScoreboard(Sendable s) {
         Scoreboard sb = (Scoreboard) s;
+        out(s.toString());
         gd.updateScoreboard(sb);
     }
 
