@@ -14,8 +14,8 @@ import java.util.function.Consumer;
  */
 public class Connection {
 
-    private static String HOSTNAME = "localhost";
     private static int PORT = 3000;
+    private static final boolean LOCAL = true;
 
     private Socket socket;
     private NetworkSender toConnection;
@@ -27,6 +27,13 @@ public class Connection {
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
      */
     public Connection(){
+        String HOSTNAME;
+        if (LOCAL) {
+            HOSTNAME="localhost";
+        }
+        else {
+            HOSTNAME="46.101.84.55";
+        }
         try {
             socket = new Socket(HOSTNAME,PORT);
         } catch (IOException e) {
