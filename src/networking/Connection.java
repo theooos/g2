@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.function.Consumer;
 
 /**
@@ -37,6 +38,17 @@ public class Connection {
         try {
             socket = new Socket(HOSTNAME,PORT);
         } catch (IOException e) {
+            try {
+                if (!LOCAL) {
+                    HOSTNAME="localhost";
+                }
+                else {
+                    HOSTNAME="46.101.84.55";
+                }
+                socket = new Socket(HOSTNAME,PORT);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         }
         establishConnection();
