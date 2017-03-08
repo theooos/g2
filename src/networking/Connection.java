@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  */
 public class Connection {
 
-    private static String HOSTNAME = "localhost";
+    private static String HOSTNAME = "46.101.84.55";
     private static int PORT = 3000;
 
     private Socket socket;

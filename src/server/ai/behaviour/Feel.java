@@ -1,5 +1,6 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.OrbBrain;
 
@@ -7,20 +8,15 @@ import server.ai.OrbBrain;
  * Sets the emotional state of the entity, depending on some external factors.
  * Created by rhys on 2/16/17.
  */
-public class Feel extends Task {
+public class Feel {
 
     private boolean inPain;
     private boolean playerNearby;
+    private AIBrain brain;
 
-    public Feel(Intel intel, OrbBrain brain){
-        super(intel, brain);
+    public Feel(AIBrain brain){
         inPain = false;
         playerNearby = false;
-    }
-
-    @Override
-    public boolean checkConditions() {
-        return intel.ent().isAlive();
     }
 
     /**
@@ -33,20 +29,19 @@ public class Feel extends Task {
         this.playerNearby = playerNearby;
     }
 
-    @Override
-    public void doAction() {
+    public void doFinal() {
 
         // If the entity has lost health since the last tick, be scared.
         if (inPain){
-            brain.emotionTransition(OrbBrain.EmotionalState.SCARED);
+            brain.emotionTransition(AIBrain.EmotionalState.INTIMIDATED);
         }
         // If there is an enemy nearby, be angry.
         else if (playerNearby) {
-            brain.emotionTransition(OrbBrain.EmotionalState.ANGRY);
+            brain.emotionTransition(AIBrain.EmotionalState.AGGRESSIVE);
         }
         // Otherwise, just chill.
         else {
-            brain.emotionTransition(OrbBrain.EmotionalState.RELAXED);
+            brain.emotionTransition(AIBrain.EmotionalState.BORED);
         }
     }
 

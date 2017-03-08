@@ -7,16 +7,13 @@ import server.ai.behaviour.*;
  * the Orb's situation and surroundings into account.
  * Created by Rhys on 2/20/17.
  */
-public class OrbBrain {
-
-    public enum EmotionalState{SCARED, ANGRY, RELAXED}  // Denote the various emotions the Orb can be experiencing.
-    private EmotionalState curEmotion;                  // Stores the Orb's emotional state, which decides how it acts.
+public class OrbBrain extends AIBrain {
 
     private Intel intel;        // Stores information that the Orb needs for making decisions.
     private Check check;        // Allows the Orb to carry out a variety of checks pertaining to its surroundings.
     private Feel feel;          // Allows the Orb to determine its current emotional state.
     private Sequence flee;      // Allows the Orb to escape when it is SCARED.
-    private Sequence drift;     // Allows the Orb to drift aimlessly around the map when it is RELAXED.
+    private Sequence drift;     // Allows the Orb to drift aimlessly around the map when it is BORED.
     private FindPath pathfinder;// Given a target location, determines a path for how to get there.
     private Travel traveller;   // Allows the Orb to travel along a predetermined path.
     private Zap zapper;         // Allows the Orb to damage an enemy player when in touching range.
@@ -26,18 +23,13 @@ public class OrbBrain {
      * @param intel - The Intel object the brain utilises to make decisions.
      */
     public OrbBrain(Intel intel) {
-        this.intel = intel;
-        this.curEmotion = EmotionalState.RELAXED;
-        constructBehaviours();
+        super(intel);
     }
 
     /**
      * Initialises all tasks and task-sequences that the Orb can carry out.
      */
-    private void constructBehaviours(){
-
-        this.feel = new Feel(intel, this);
-        this.check = new Check(intel);
+    protected void constructBehaviours(){
 
         this.drift = new Sequence(intel, this);
         this.drift.add(new Dawdle(intel, this));
@@ -67,16 +59,16 @@ public class OrbBrain {
 
         // Find emotion.
         feel.setParameters(inPain, playerNear);
-        feel.run();
+        feel.doFinal();
 
         // Decide what to do.
-        if (curEmotion == EmotionalState.SCARED){
+        if (curEmotion == EmotionalState.INTIMIDATED){
             flee.doAction();
         }
-        else if (curEmotion == EmotionalState.RELAXED) {
+        else if (curEmotion == EmotionalState.BORED) {
             drift.doAction();
         }
-        else if (curEmotion == EmotionalState.ANGRY) {
+        else if (curEmotion == EmotionalState.AGGRESSIVE) {
             // Compute/re-compute travel path if the target has moved since the last tick.
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
                 intel.setTargetLocation(intel.getTargetPlayer().getPos());
@@ -97,13 +89,6 @@ public class OrbBrain {
     }
 
     /**
-     * @return the current emotional state of the Orb this Brain belongs to.
-     */
-    public EmotionalState getEmotion(){
-        return curEmotion;
-    }
-
-    /**
      * Sets the Orb's emotional state for this tick and compares it with the emotional state
      * of the last tick, resetting progress in all task-sequences if the emotional state has changed.
      * @param newEmotion - the Orb's emotional state for this tick.
@@ -116,14 +101,14 @@ public class OrbBrain {
             pathfinder.reset();
             zapper.reset();
             traveller.reset();
-            if (newEmotion == EmotionalState.RELAXED){
+            if (newEmotion == EmotionalState.BORED){
                 intel.ent().setSpeed(0.5F);
                 drift.start();
             }
-            else if (newEmotion == EmotionalState.ANGRY) {
+            else if (newEmotion == EmotionalState.AGGRESSIVE) {
                 intel.ent().setSpeed(1F);
             }
-            else if (newEmotion == EmotionalState.SCARED) {
+            else if (newEmotion == EmotionalState.INTIMIDATED) {
                 intel.ent().setSpeed(3F);
                 flee.start();
             }
