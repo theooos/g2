@@ -86,7 +86,7 @@ public class AStar {
                                 newer f_score is lower*/
 
                 else if((!queue.contains(child)) ||
-                        (temp_f_scores < child.f_scores)){
+                        (temp_f_scores > child.f_scores)){
 
                     child.parent = current;
                     child.g_scores = temp_g_scores;
