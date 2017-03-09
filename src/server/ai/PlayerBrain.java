@@ -36,7 +36,7 @@ public class PlayerBrain extends AIBrain {
         boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY);
 
         // Decide emotion.
-        
+
 
     }
 
