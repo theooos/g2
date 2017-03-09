@@ -38,7 +38,11 @@ public class CollisionManager {
         this.map = map;
     }
 
-    
+    int collidesWithPowerUp(Player p) {
+        for (PowerUp pu: powerUps.values()) {
+            
+        }
+    }
 
     public boolean validPosition(MovableEntity entity) {
         return !pointWallCollision(entity.getRadius(), entity.getPos(), entity.getPhase()) && collidesWithPlayerOrBot(entity) == null;
