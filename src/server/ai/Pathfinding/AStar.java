@@ -1,11 +1,16 @@
-package client.AI;
+package server.ai.Pathfinding;
+import server.ai.Intel;
+
 import java.util.*;
 /**
  * Created by Ciprian on 03/05/17.
  */
 public class AStar {
-
-
+    Intel intel;
+    public AStar (Intel intel)
+    {
+        this.intel=intel;
+    }
     public static List<Node> printPath(Node target){
         List<Node> path = new ArrayList<Node>();
 
@@ -18,7 +23,7 @@ public class AStar {
         return path;
     }
 
-    public static void AstarSearch(Node source, Node goal){
+     public void AstarSearch(Node source, Node goal){
 
         Set<Node> explored = new HashSet<Node>();
 

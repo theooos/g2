@@ -1,7 +1,10 @@
-package client.AI;
+package server.ai.Pathfinding;
 
+import server.game.CollisionManager;
 import server.game.Map;
 import server.game.Vector2;
+
+import java.text.CollationElementIterator;
 
 import static java.lang.Math.abs;
 
@@ -17,19 +20,24 @@ public class Node{
     public double f_scores = 0;
     public Edge[] adjacencies;
     public Node parent;
-
-    public Node(Vector2 position, int hVal){
+    public int radius;
+    public int phase;
+    private CollisionManager;
+    public Node(Vector2 position, int hVal,int radius,int phase){
         this.xValue=(int)position.getX();
         this.yValue=(int) position.getY();
+        this.phase=phase;
+        this.radius=radius;
         h_scores = hVal;
+        players=
     }
-    public boolean checkWall(Map map)
+    public boolean checCollision()
     {
-        return true;
+        return ;
     }
-    public int manhattanDistance(Vector2 enemy,boolean isWall)
+    public int manhattanDistance(Vector2 enemy)
     {
-        if(!isWall)
+        if(!checkCollision())
             return abs((int)enemy.getX()-this.getX())+abs((int) enemy.getY()-this.getY());//calculates the absolute value of the manhattan distance
     return abs((int)enemy.getX()-this.getX())+abs((int) enemy.getY()-this.getY())-10000;//if the coordinates are walls then we will minimise the cost as much as possible
     }
@@ -46,6 +54,8 @@ public class Node{
     {
         this.h_scores=hScores;
     }
+    public void setRadius(int radius){this.radius=radius;}
+    public void setPhase(int phase){this.phase=phase;}
     public int getX()
     {
         return this.xValue;
@@ -54,6 +64,8 @@ public class Node{
     {
         return this.yValue;
     }
+    public int getRadius(){return this.radius;}
+    public int getPhase(){return this.phase;}
     public Vector2 coordinates(){
         return  new Vector2(xValue,yValue);
     }

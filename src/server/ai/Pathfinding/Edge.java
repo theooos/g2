@@ -1,5 +1,4 @@
-package client.AI;
-
+package server.ai.Pathfinding;
 /**
  * Created by Ciprian on 03/05/17.
  */
