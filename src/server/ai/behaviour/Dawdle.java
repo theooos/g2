@@ -16,7 +16,7 @@ public class Dawdle extends Task {
     private int counter;
     private int timer;
     private Vector2 returnPos;
-    private final double INIT_PROB = 0.99;
+    private final double INIT_PROB = 0.95;
 
     public Dawdle(Intel intel, OrbBrain brain) {
         super(intel, brain);
@@ -32,8 +32,6 @@ public class Dawdle extends Task {
 
     @Override
     public void doAction(){
-        System.out.println("Dawdling!");
-
         Orb orb = (Orb) intel.ent();
 
         if (timer % 8 == 0){
@@ -50,10 +48,11 @@ public class Dawdle extends Task {
 
         // Decide whether or not the Orb is finished dawdling.
         if (gen.nextDouble() >= INIT_PROB){
-            System.out.println("Finished dawdling!");
             timer = 0;
             counter = 0;
             end();
+        } else {
+            counter += 0.0001;
         }
     }
 

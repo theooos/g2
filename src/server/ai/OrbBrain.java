@@ -117,11 +117,11 @@ public class OrbBrain {
             zapper.reset();
             traveller.reset();
             if (newEmotion == EmotionalState.RELAXED){
-                intel.ent().setSpeed(1F);
+                intel.ent().setSpeed(0.5F);
                 drift.start();
             }
             else if (newEmotion == EmotionalState.ANGRY) {
-                intel.ent().setSpeed(1.5F);
+                intel.ent().setSpeed(1F);
             }
             else if (newEmotion == EmotionalState.SCARED) {
                 intel.ent().setSpeed(3F);

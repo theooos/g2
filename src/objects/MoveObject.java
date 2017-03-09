@@ -10,11 +10,13 @@ public class MoveObject implements Sendable {
     private Vector2 pos;
     private Vector2 dir;
     private int ID;
+    private int moveCounter;
 
-    public MoveObject(Vector2 pos, Vector2 dir, int id) {
+    public MoveObject(Vector2 pos, Vector2 dir, int id, int moveCounter) {
         this.dir = dir;
         this.ID = id;
         this.pos = pos;
+        this.moveCounter = moveCounter;
     }
 
     public Vector2 getPos() {
@@ -31,6 +33,10 @@ public class MoveObject implements Sendable {
 
     public java.lang.String toString(){
         return "Pos: " + pos + " Dir: " + dir + " ID: " + ID;
+    }
+
+    public int getMoveCounter() {
+        return moveCounter;
     }
 }
 

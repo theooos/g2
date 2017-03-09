@@ -2,7 +2,7 @@ package server.game;
 
 public class Projectile extends MovableEntity {
 
-    int damage;
+    float damage;
     int lifespan;
     private Player p;
 
@@ -39,10 +39,10 @@ public class Projectile extends MovableEntity {
     }
 
     /**
-     * A constructor to copy an exsisting projectile
+     * A constructor to copy an existing projectile
      * @param p the projectile to copy
      */
-    public Projectile(Projectile p) {
+    private Projectile(Projectile p) {
         this.health = 10;
         this.damage = p.damage;
         this.lifespan = p.lifespan;
@@ -70,10 +70,10 @@ public class Projectile extends MovableEntity {
     }
 
     int getDamage() {
-        return damage;
+        return (int) damage;
     }
 
-    protected void tickLife() {
+    private void tickLife() {
         lifespan--;
         if (lifespan < 1) {
             setHealth(0);
@@ -98,5 +98,13 @@ public class Projectile extends MovableEntity {
 
     void setPlayer(Player p) {
         this.p = p;
+    }
+
+    void setTeam(int team) {
+        this.team = team;
+    }
+
+    public Projectile clone() {
+        return new Projectile(this);
     }
 }

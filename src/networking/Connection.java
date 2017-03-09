@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.function.Consumer;
 
 /**
@@ -14,8 +15,8 @@ import java.util.function.Consumer;
  */
 public class Connection {
 
-    private static String HOSTNAME = "localhost";
     private static int PORT = 3000;
+    private static final boolean LOCAL = true;
 
     private Socket socket;
     private NetworkSender toConnection;
@@ -27,10 +28,27 @@ public class Connection {
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
      */
     public Connection(){
+        String HOSTNAME;
+        if (LOCAL) {
+            HOSTNAME="localhost";
+        }
+        else {
+            HOSTNAME="46.101.84.55";
+        }
         try {
             socket = new Socket(HOSTNAME,PORT);
         } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                if (!LOCAL) {
+                    HOSTNAME="localhost";
+                }
+                else {
+                    HOSTNAME="46.101.84.55";
+                }
+                socket = new Socket(HOSTNAME,PORT);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
         establishConnection();
     }

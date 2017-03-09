@@ -35,16 +35,16 @@ public class Travel extends Task {
         ent.setDir(deviate(target));
 
         // Checks for collisions,
-        Vector2 newLoc = ent.getPos().add(ent.getDir().mult(ent.getSpeed()));
-        if (collision(newLoc)) {
+        Vector2 oldPos = ent.getPos();
+        ent.setPos(oldPos.add(ent.getDir().mult(ent.getSpeed())));
+        if (!intel.validPosition()) {
+            ent.setPos(oldPos);
             end();
         } else {
-            // Moves the entity.
-            ent.setPos(newLoc);
-
             // Check if the checkpoint has been reached.
-            boolean reached = intel.checkpoint().getDistanceTo(ent.getPos())
-                    <= ent.getRadius();
+            float distance = ent.getPos().getDistanceTo(intel.checkpoint());
+            distance = distance - ent.getRadius();
+            boolean reached = distance <= 35;
 
             // Update the entity's state for the next tick.
             if (reached && intel.isFinalDestination()){
@@ -76,20 +76,4 @@ public class Travel extends Task {
 
         return (new Vector2(newX, newY)).normalise();
     }
-
-    private boolean collision(Vector2 newLoc){
-        int r = intel.ent().getRadius();
-
-        Entity obstruction = Game.collidesWithBot(r, newLoc, intel.getOrbs());
-        boolean collidedWithOrb = !(obstruction.equals(null)) && !(obstruction.getID() == intel.ent().getID());
-        if (collidedWithOrb){
-            return true;
-        }
-
-        boolean collidedWithWall = Game.pointWallCollision(r, newLoc, intel.ent().getPhase(), intel.getMap());
-
-        return collidedWithWall;
-    }
-
-
 }

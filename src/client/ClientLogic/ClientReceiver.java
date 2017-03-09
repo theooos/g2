@@ -5,9 +5,7 @@ import networking.Connection;
 import objects.InitGame;
 import objects.MoveObject;
 import objects.Sendable;
-import server.game.Orb;
-import server.game.Player;
-import server.game.Projectile;
+import server.game.*;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientReceiver {
 
     private Connection connection;
-    private int mapID;
     private int playerID;
     private static boolean DEBUG = false;
     private GameData gd;
@@ -35,6 +32,8 @@ public class ClientReceiver {
         connection.addFunctionEvent("Orb", this::updatedOrb);
         connection.addFunctionEvent("Projectile", this::updatedProjectile);
         connection.addFunctionEvent("MoveObject", this::movePlayer);
+        connection.addFunctionEvent("DistDropOffProjectile", this::updatedDistProjectile);
+        connection.addFunctionEvent("Scoreboard", this::updatedScoreboard);
     }
 
     private void setupGame(Sendable s) {
@@ -44,7 +43,7 @@ public class ClientReceiver {
         int mapID = i.getMapID();
         ConcurrentHashMap<Integer, Projectile> projectiles = new ConcurrentHashMap<>();
 
-        gd = new GameData(players, orbs, projectiles, mapID);
+        gd = new GameData(players, orbs, projectiles, mapID, i.getSb());
         out("Setting up game");
         new Thread(new GameRendererCreator(gd,connection,getID())).start();
 
@@ -103,10 +102,21 @@ public class ClientReceiver {
         gd.updateProjectile(p);
     }
 
+    private void updatedScoreboard(Sendable s) {
+        Scoreboard sb = (Scoreboard) s;
+        gd.updateScoreboard(sb);
+    }
+
+    private void updatedDistProjectile(Sendable s) {
+        DistDropOffProjectile p = (DistDropOffProjectile) s;
+        gd.updateProjectile(p);
+    }
+
     private void movePlayer(Sendable s) {
         MoveObject m = (MoveObject) s;
         Player p = gd.getPlayer(m.getID());
         p.setPos(m.getPos());
+        p.setMoveCount(m.getMoveCounter());
         gd.updatePlayer(p);
     }
 }
