@@ -34,15 +34,15 @@ public class Feel {
 
         // If the entity has lost health since the last tick, be scared.
         if (inPain){
-            brain.emotionTransition(AIBrain.EmotionalState.INTIMIDATED);
+            brain.setEmotion(AIBrain.EmotionalState.INTIMIDATED);
         }
         // If there is an enemy nearby, be angry.
         else if (playerNearby) {
-            brain.emotionTransition(AIBrain.EmotionalState.AGGRESSIVE);
+            brain.setEmotion(AIBrain.EmotionalState.AGGRESSIVE);
         }
         // Otherwise, just chill.
         else {
-            brain.emotionTransition(AIBrain.EmotionalState.BORED);
+            brain.setEmotion(AIBrain.EmotionalState.BORED);
         }
     }
 

@@ -27,8 +27,7 @@ public class PlayerBrain extends AIBrain {
 
     }
 
-    @Override
-    public void emotionTransition(EmotionalState newEmotion) {
+    protected void handleEmotion() {
 
     }
 }

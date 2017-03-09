@@ -42,9 +42,19 @@ public abstract class AIBrain {
 
     protected abstract void configureBehaviours();
 
+    protected abstract void handleEmotion();
+
     public abstract void doSomething();
 
-    public abstract void emotionTransition(EmotionalState newEmotion);
+
+    public void setEmotion(EmotionalState newEmotion) {
+        if (newEmotion != curEmotion) {
+            behaviours.resetAll();
+            curEmotion = newEmotion;
+            handleEmotion();
+        }
+    }
+
 
     /**
      * @return the current emotional state of the AI Unit this Brain belongs to.

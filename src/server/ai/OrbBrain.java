@@ -20,7 +20,8 @@ public class OrbBrain extends AIBrain {
     }
 
     /**
-     * Initialises all tasks and task-sequences that the Orb can carry out.
+     * Arranges the available behaviours into sequences that the Orb
+     * will carry out under specific circumstances.
      */
     protected void configureBehaviours(){
 
@@ -42,9 +43,9 @@ public class OrbBrain extends AIBrain {
 
         // Decide emotion.
         if (playerNear) {
-            emotionTransition(EmotionalState.AGGRESSIVE);
+            setEmotion(EmotionalState.AGGRESSIVE);
         } else {
-            emotionTransition(EmotionalState.BORED);
+            setEmotion(EmotionalState.BORED);
         }
 
         // Decide what to do.
@@ -72,22 +73,16 @@ public class OrbBrain extends AIBrain {
     }
 
     /**
-     * Sets the Orb's emotional state for this tick and compares it with the emotional state
-     * of the last tick, resetting progress in all task-sequences if the emotional state has changed.
-     * @param newEmotion - the Orb's emotional state for this tick.
+     * Determines how the Orb behaves when it experiences a change in emotion.
      */
-    public void emotionTransition(EmotionalState newEmotion){
-        if (newEmotion != curEmotion) {
-            behaviours.resetAll();
-            if (newEmotion == EmotionalState.BORED){
-                intel.ent().setSpeed(0.5F);
-                drift.start();
-            }
-            else if (newEmotion == EmotionalState.AGGRESSIVE) {
-                intel.ent().setSpeed(1F);
-            }
+    protected void handleEmotion() {
 
-            curEmotion = newEmotion;
+        if (curEmotion == EmotionalState.BORED) {
+            intel.ent().setSpeed(0.5F);
+            drift.start();
+        } else if (curEmotion == EmotionalState.AGGRESSIVE) {
+            intel.ent().setSpeed(1F);
         }
     }
+
 }
