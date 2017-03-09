@@ -34,6 +34,8 @@ public class ClientReceiver {
         connection.addFunctionEvent("MoveObject", this::movePlayer);
         connection.addFunctionEvent("DistDropOffProjectile", this::updatedDistProjectile);
         connection.addFunctionEvent("Scoreboard", this::updatedScoreboard);
+        connection.addFunctionEvent("PowerUp", this::updatedPowerUp);
+
     }
 
     private void setupGame(Sendable s) {
@@ -43,7 +45,7 @@ public class ClientReceiver {
         int mapID = i.getMapID();
         ConcurrentHashMap<Integer, Projectile> projectiles = new ConcurrentHashMap<>();
 
-        gd = new GameData(players, orbs, projectiles, mapID, i.getSb());
+        gd = new GameData(players, orbs, projectiles, mapID, i.getSb(), i.getPowerUps());
         out("Setting up game");
         new Thread(new GameRendererCreator(gd,connection,getID())).start();
 
@@ -100,6 +102,11 @@ public class ClientReceiver {
     private void updatedProjectile(Sendable s) {
         Projectile p = (Projectile) s;
         gd.updateProjectile(p);
+    }
+
+    private void updatedPowerUp(Sendable s) {
+        PowerUp p = (PowerUp) s;
+        gd.updatePowerUp(p);
     }
 
     private void updatedScoreboard(Sendable s) {

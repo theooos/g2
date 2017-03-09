@@ -258,6 +258,7 @@ public class GameRenderer implements Runnable {
             map.renderMap(phase);
             drawOrbs(phase);
             drawPlayers(phase);
+            drawPowerUps(phase);
             if (pulse.isAlive()) {
                 pulse.draw();
             }
@@ -294,6 +295,7 @@ public class GameRenderer implements Runnable {
         map.renderMap(oldPhase);
         drawOrbs(oldPhase);
         drawPlayers(oldPhase);
+        drawPowerUps(oldPhase);
 
         GL11.glEnable(GL11.GL_STENCIL_TEST);
 
@@ -319,6 +321,7 @@ public class GameRenderer implements Runnable {
         map.renderMap(newPhase);
         drawOrbs(newPhase);
         drawPlayers(newPhase);
+        drawPowerUps(newPhase);
 
         GL11.glDisable(GL11.GL_STENCIL_TEST);
 
@@ -390,6 +393,30 @@ public class GameRenderer implements Runnable {
         for (Projectile p : projectiles.values()) {
             if (phase == p.getPhase()) {
                 if (p.getTeam() == 0) {
+                    red = 0.7f;
+                    green = 0.1f;
+                    blue = 0.1f;
+                } else {
+                    red = 0.1f;
+                    green = 1f;
+                    blue = 0.1f;
+                }
+                glColor3f(red, green, blue);
+                float radius = p.getRadius();
+                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
+                draw.drawAura(p.getPos(),radius+radius/2,radius/2, red, green, blue);
+            }
+        }
+    }
+
+    private void drawPowerUps(int phase) {
+        HashMap<Integer, PowerUp> powerUps = gameData.getPowerUps();
+        float red;
+        float green;
+        float blue;
+        for (PowerUp p : powerUps.values()) {
+            if (phase == p.getPhase()) {
+                if (p.getType() == PowerUp.Type.health) {
                     red = 0.7f;
                     green = 0.1f;
                     blue = 0.1f;

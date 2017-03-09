@@ -25,30 +25,36 @@ class Draw {
         displayHeat = 0;
     }
 
-    private void flashDamage(float intensity) {
+    private void flashDamage(float intensity, boolean hurt) {
         intensity = Math.min(1, intensity);
         glBegin(GL_QUAD_STRIP);
         float buffer = 60;
+        float red = 0;
+        float green = 1;
+        if (hurt) {
+            red = 1;
+            green = 0;
+        }
 
-        glColor4f(1, 0, 0, intensity/2);
+        glColor4f(red, green, 0, intensity/2);
         glVertex2d(0,0);
-        glColor4f(1, 0, 0, 0);
+        glColor4f(red, green, 0, 0);
         glVertex2d(buffer, buffer);
-        glColor4f(1, 0, 0, intensity);
+        glColor4f(red, green, 0, intensity);
         glVertex2d(width,0);
-        glColor4f(1, 0, 0, 0);
+        glColor4f(red, green, 0, 0);
         glVertex2d(width-buffer, buffer);
-        glColor4f(1, 0, 0, intensity);
+        glColor4f(red, green, 0, intensity);
         glVertex2d(width, height);
-        glColor4f(1, 0, 0, 0);
+        glColor4f(red, green, 0, 0);
         glVertex2d(width-buffer, height-buffer);
-        glColor4f(1, 0, 0, intensity);
+        glColor4f(red, green, 0, intensity);
         glVertex2d(0,height);
-        glColor4f(1, 0, 0, 0);
+        glColor4f(red, green, 0, 0);
         glVertex2d(buffer, height-buffer);
-        glColor4f(1, 0, 0, intensity/2);
+        glColor4f(red, green, 0, intensity/2);
         glVertex2d(0,0);
-        glColor4f(1, 0, 0, 0);
+        glColor4f(red, green, 0, 0);
         glVertex2d(buffer, buffer);
 
         glEnd();
@@ -139,7 +145,7 @@ class Draw {
         }
 
         if (displayHealth != oldHealth) {
-            flashDamage((float) Math.min(1, Math.abs(healthTick)));
+            flashDamage((float) Math.min(1, Math.abs(healthTick)), (healthTick < 0));
         }
 
         int healthWidth = 10;

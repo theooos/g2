@@ -138,11 +138,12 @@ public class Game implements Runnable {
 
         for (int i = 0; i < maxPlayers/2; i++) {
             PowerUp p;
+            int phase = rand.nextInt(2);
             if (i%2 == 0) {
-                p = new PowerUp(respawnCoords(), PowerUp.Type.health, i);
+                p = new PowerUp(respawnCoords(), PowerUp.Type.health, i, phase);
             }
             else {
-                p = new PowerUp(respawnCoords(), PowerUp.Type.heat, i);
+                p = new PowerUp(respawnCoords(), PowerUp.Type.heat, i, phase);
             }
 
             powerUps.put(i, p);
@@ -150,7 +151,7 @@ public class Game implements Runnable {
 
         countdown = 4*60*tick; //four minutes
 
-        InitGame g = new InitGame(orbs, players, mapID, sb);
+        InitGame g = new InitGame(orbs, players, mapID, sb, powerUps);
         sendGameStart(g);
     }
 
@@ -174,6 +175,18 @@ public class Game implements Runnable {
                 }
                 if (p.isFiring()) fire(p);
                 p.live();
+                PowerUp pu = (collisions.collidesWithPowerUp(p));
+                if (pu != null) {
+                    pu.setChanged(true);
+                    pu.setPos(respawnCoords());
+                    pu.setPhase(rand.nextInt(2));
+                    if (pu.getType() == PowerUp.Type.health) {
+                        p.setHealth(p.getMaxHealth());
+                    }
+                    else if (pu.getType() == PowerUp.Type.heat) {
+                        p.setWeaponOutHeat(0);
+                    }
+                }
             }
             for (Orb o : orbs.values()) {
                 if (!o.isAlive()) respawn(o);
@@ -256,6 +269,12 @@ public class Game implements Runnable {
         }
         for (Projectile p: projectiles.values()) {
             sendToAllConnected(p);
+        }
+        for (PowerUp p: powerUps.values()) {
+            if (p.isChanged()) {
+                p.setChanged(false);
+                sendToAllConnected(p);
+            }
         }
     }
 

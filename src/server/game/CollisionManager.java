@@ -31,17 +31,20 @@ public class CollisionManager {
         }
     }
 
-    CollisionManager(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, Map map, HashMap<Integer, PowerUp> powerUps) {
+    public CollisionManager(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, Map map, HashMap<Integer, PowerUp> powerUps) {
         this.players = players;
         this.powerUps = powerUps;
         this.orbs = orbs;
         this.map = map;
     }
 
-    int collidesWithPowerUp(Player p) {
+    PowerUp collidesWithPowerUp(Player p) {
         for (PowerUp pu: powerUps.values()) {
-            
+            if (p.getPhase() == pu.getPhase() && pointsCollided(p.getRadius(), p.getPos(), pu.getRadius(), pu.getPos())) {
+                return pu;
+            }
         }
+        return null;
     }
 
     public boolean validPosition(MovableEntity entity) {

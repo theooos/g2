@@ -189,7 +189,7 @@ public class Intel {
         this.healthLastTick = ent.getHealth();
         this.sight = new VisibilityPolygon(this.ent.getPhase(), this.map);
         this.allOrbs = orbs;
-        collisionManager = new CollisionManager(players, orbs, map);
+        collisionManager = new CollisionManager(players, orbs, map, new HashMap<>());
     }
 
     public boolean validPosition(){

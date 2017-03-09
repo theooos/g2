@@ -63,7 +63,7 @@ class Lobby {
      */
     private void startCountdown() {
         if (!countdownRunning) {
-            countdown = 60;
+            countdown = 0;
             t = new Timer();
             countdownRunning = true;
             msgToAllConnected("Minimum number of players is reached, countdown starting");
