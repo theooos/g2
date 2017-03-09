@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class Check {
 
-    public enum CheckMode { HEALTH, PROXIMITY, RANGE, TARGET_MOVED }
+    public enum CheckMode { HEALTH, PROXIMITY, RANGE, COUNTER_ATTACK_VIABLE, TARGET_MOVED }
     private Intel intel;        // The intelligence this object uses to perform its checks.
 
     /**

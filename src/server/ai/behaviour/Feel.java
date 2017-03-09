@@ -10,30 +10,30 @@ import server.ai.OrbBrain;
  */
 public class Feel {
 
-    private boolean inPain;
+    private boolean lowHealth;
     private boolean playerNearby;
     private AIBrain brain;
 
     public Feel(AIBrain brain){
-        inPain = false;
+        lowHealth = false;
         playerNearby = false;
         this.brain = brain;
     }
 
     /**
      * Feeds this task the information it needs to decide how the entity is feeling.
-     * @param inPain - Whether or not the entity has lost health since the last tick.
+     * @param lowHealth - Whether or not the entity has lost health since the last tick.
      * @param playerNearby - Whether or not there is an enemy player in the entity's field of vision.
      */
-    public void setParameters(boolean inPain, boolean playerNearby){
-        this.inPain = inPain;
+    public void setParameters(boolean lowHealth, boolean playerNearby){
+        this.lowHealth = lowHealth;
         this.playerNearby = playerNearby;
     }
 
     public void doFinal() {
 
         // If the entity has lost health since the last tick, be scared.
-        if (inPain){
+        if (lowHealth){
             brain.setEmotion(AIBrain.EmotionalState.INTIMIDATED);
         }
         // If there is an enemy nearby, be angry.
