@@ -4,22 +4,14 @@ package server.game;
  * Created by peran on 27/01/17.
  * All major entities inherit from this such as players, orbs, and projectiles
  */
-public class MovableEntity extends Entity {
+public abstract class MovableEntity extends Entity {
     protected float speed;
     protected Vector2 dir;
     float radius;
     int team;
 
-    /**
-     * A class intended for inheritence, should not be created
-     */
-    public MovableEntity() {
-        super();
-    }
-
     protected void move() {
         this.pos = pos.add(dir.mult(speed));
-
     }
 
     public Vector2 hypoMove() {

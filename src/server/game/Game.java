@@ -22,6 +22,7 @@ public class Game implements Runnable {
     private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
     private HashMap<Integer, Projectile> projectiles;
+    private HashMap<Integer, PowerUp> powerUps;
 
     private Random rand;
 
@@ -48,13 +49,14 @@ public class Game implements Runnable {
         out("Total players: "+playerConnections.size());
 
         rand = new Random();
-        sb = new Scoreboard(100, maxPlayers);
+        sb = new Scoreboard(250, maxPlayers);
 
         players = new ConcurrentHashMap<>();
         orbs = new HashMap<>();
         projectiles = new HashMap<>();
+        powerUps = new HashMap<>();
 
-        collisions = new CollisionManager(players, orbs, map);
+        collisions = new CollisionManager(players, orbs, map, powerUps);
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
@@ -132,6 +134,18 @@ public class Game implements Runnable {
             // Inform the Orbs.
             Intel intel = new Intel(players, map);
             o.prepareOrbForGame(intel, orbs);
+        }
+
+        for (int i = 0; i < maxPlayers/2; i++) {
+            PowerUp p;
+            if (i%2 == 0) {
+                p = new PowerUp(respawnCoords(), PowerUp.Type.health, i);
+            }
+            else {
+                p = new PowerUp(respawnCoords(), PowerUp.Type.heat, i);
+            }
+
+            powerUps.put(i, p);
         }
 
         countdown = 4*60*tick; //four minutes

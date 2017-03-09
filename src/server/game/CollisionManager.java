@@ -17,10 +17,12 @@ public class CollisionManager {
     private Map map;
     private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
+    private HashMap<Integer, PowerUp> powerUps;
 
     public CollisionManager(GameData gd) {
         players = gd.getPlayers();
         orbs = gd.getOrbs();
+        powerUps = gd.getPowerUps();
 
         try {
             map = new Map(gd.getMapID());
@@ -29,11 +31,14 @@ public class CollisionManager {
         }
     }
 
-    public CollisionManager(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, Map map) {
+    CollisionManager(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, Map map, HashMap<Integer, PowerUp> powerUps) {
         this.players = players;
+        this.powerUps = powerUps;
         this.orbs = orbs;
         this.map = map;
     }
+
+    
 
     public boolean validPosition(MovableEntity entity) {
         return !pointWallCollision(entity.getRadius(), entity.getPos(), entity.getPhase()) && collidesWithPlayerOrBot(entity) == null;
