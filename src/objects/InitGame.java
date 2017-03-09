@@ -2,24 +2,26 @@ package objects;
 
 import server.game.Player;
 import server.game.Orb;
+import server.game.Scoreboard;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by theo on 14/02/2017.
+ * Used as an object to set up the start of the game
  */
 public class InitGame implements Sendable{
     private HashMap<Integer,Orb> orbs;
     private ConcurrentHashMap<Integer,Player> players;
     private int mapID;
+    private Scoreboard sb;
 
-    public InitGame(HashMap<Integer,Orb> orbs, ConcurrentHashMap<Integer,Player> players, int mapID){
+    public InitGame(HashMap<Integer,Orb> orbs, ConcurrentHashMap<Integer,Player> players, int mapID, Scoreboard sb){
         this.orbs = orbs;
         this.players = players;
         this.mapID = mapID;
+        this.sb = sb;
     }
 
     public ConcurrentHashMap<Integer,Player> getPlayers() {
@@ -32,5 +34,9 @@ public class InitGame implements Sendable{
 
     public int getMapID() {
         return mapID;
+    }
+
+    public Scoreboard getSb() {
+        return sb;
     }
 }

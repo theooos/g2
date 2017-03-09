@@ -29,14 +29,18 @@ public class CollisionManager {
         }
     }
 
-    CollisionManager(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, Map map) {
+    public CollisionManager(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, Map map) {
         this.players = players;
         this.orbs = orbs;
         this.map = map;
     }
 
-    public boolean validPosition(Player player) {
-        return !pointWallCollision(player.getRadius(), player.getPos(), player.getPhase()) && collidesWithPlayerOrBot(player) == null;
+    public boolean validPosition(MovableEntity entity) {
+        return !pointWallCollision(entity.getRadius(), entity.getPos(), entity.getPhase()) && collidesWithPlayerOrBot(entity) == null;
+    }
+
+    public boolean orbValidPosition(Orb o) {
+        return !pointWallCollision(o.getRadius(), o.getPos(), o.getPhase()) && collidesWithBot(o) == null;
     }
 
     boolean pointWallCollision(int r, Vector2 point, int phase) {
@@ -83,6 +87,19 @@ public class CollisionManager {
             }
         }
 
+        Vector2 nextPos = e.getPos().add(e.getDir().mult(e.getSpeed()));
+
+        for (MovableEntity et: entities.values()) {
+            float minDist = linePointDistance(e.getPos(), nextPos, et.getPos());
+            if (minDist < (e.getRadius() + et.getRadius())) {
+                return et;
+            }
+        }
+        return collidesWithBot(e);
+    }
+
+    MovableEntity collidesWithBot(MovableEntity e) {
+        HashMap<Integer, MovableEntity> entities = new HashMap<>();
         for(Orb o: orbs.values()) {
             if (!(o.equals(e) ||  o.getPhase() != e.getPhase())) {
                 entities.put(o.getID(), o);

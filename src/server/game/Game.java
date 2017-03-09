@@ -4,7 +4,6 @@ import networking.Connection;
 import objects.*;
 import server.ai.Intel;
 
-import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.lang.String;
 import java.util.*;
@@ -125,7 +124,7 @@ public class Game implements Runnable {
         }
         //create team orbs
         for (int i = 0; i < maxPlayers; i++) {
-            Orb o = new Orb(respawnCoords(), randomDir(),i % 2, rand.nextInt(2), IDCounter);
+            Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
             respawn(o);
             orbs.put(IDCounter, o);
             IDCounter++;
@@ -137,7 +136,7 @@ public class Game implements Runnable {
 
         countdown = 10*60*tick; //ten minutes
 
-        InitGame g = new InitGame(orbs, players, mapID);
+        InitGame g = new InitGame(orbs, players, mapID, sb);
         sendGameStart(g);
     }
 
@@ -149,6 +148,8 @@ public class Game implements Runnable {
 
         boolean isRunning = true;
         while(isRunning){
+            boolean scoreboardChanged = false;
+
             for (Player p : players.values()) {
                 if (!p.isAlive()) {
                     respawn(p);
@@ -171,12 +172,17 @@ public class Game implements Runnable {
                 MovableEntity e = collisions.collidesWithPlayerOrBot(p);
                 if (e != null) {
                     out(p.getPlayerID()+" just hit "+e.getID());
-                    e.damage(p.getDamage());
-                    if (!e.isAlive()) {
-                        if (e instanceof Orb) {
-                            sb.killedZombie(p.getPlayerID());
-                        } else {
-                            sb.killedPlayer(p.getPlayerID());
+                    //can't damage your team
+                    if (e.getTeam() != p.getTeam()) {
+                        e.damage(p.getDamage());
+                        //if the player has been killed
+                        if (!e.isAlive()) {
+                            if (e instanceof Orb) {
+                                sb.killedOrb(p.getPlayerID());
+                            } else {
+                                sb.killedPlayer(p.getPlayerID());
+                            }
+                            scoreboardChanged = true;
                         }
                     }
                     p.kill();
@@ -191,6 +197,10 @@ public class Game implements Runnable {
             }
 
             countdown--;
+
+            if (scoreboardChanged) {
+                sendToAllConnected(sb);
+            }
 
             //stops the countdown when the timer has run out
             if (countdown <= 0 || sb.scoreReached()) {
@@ -208,32 +218,6 @@ public class Game implements Runnable {
                 e.printStackTrace();
             }
         }
-    }
-
-    private boolean pointWallCollision(int r, Vector2 point, int phase) {
-        for (Wall w: map.wallsInPhase(phase, true, false)) {
-            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+5)) return true;
-        }
-        return false;
-    }
-
-    public static boolean pointWallCollision(int r, Vector2 point, int phase, Map map) {
-        for (Wall w: map.wallsInPhase(phase, true, false)) {
-            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+5)) return true;
-        }
-
-        return false;
-    }
-
-    private boolean projectileWallCollision(int r, Vector2 p1, Vector2 dir, float speed, int phase) {
-        Vector2 p2 = p1.add(dir.mult(speed));
-        Line2D l1 = new Line2D.Float(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-        for (Wall w: map.wallsInPhase(phase, true, false)) {
-            Line2D l2 = new Line2D.Float(w.getStartPos().getX(), w.getStartPos().getY(), w.getEndPos().getX(), w.getEndPos().getY());
-            if (l2.intersectsLine(l1)) return true;
-        }
-
-        return false;
     }
 
     /**
@@ -308,119 +292,6 @@ public class Game implements Runnable {
     }
 
     /**
-     * Given a radius and a position, it checks to see if it collided with a player or bot
-     * that is still alive
-     * @param r the radius of the object
-     * @param pos the centre of the object
-     * @return the player or bot it is collided with.  Null if no collision
-     */
-    private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos) {
-        for (Player p: players.values()) {
-            if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
-        }
-
-        for (Orb o: orbs.values()) {
-            if (o.isAlive() && collided(r, pos, o.getRadius(), o.getPos())) return o;
-        }
-
-        return null;
-    }
-
-    /**
-     * Given a radius and a position, it checks to see if it collided with a player that
-     * is still alive
-     * @param r the radius of the object
-     * @param pos the centre of the object
-     * @return the player it is collided with.  Null if no collision
-     */
-    public static MovableEntity collidesWithPlayer(int r, Vector2 pos, ConcurrentHashMap<Integer, Player> players) {
-        for (Player p: players.values()) {
-            if (p.isAlive() && collided(r, pos, p.getRadius(), p.getPos())) return p;
-        }
-
-        return null;
-    }
-
-    /**
-     * Given a radius and a position, it checks to see if it collided with a bot
-     * that is still alive
-     * @param r the radius of the object
-     * @param pos the centre of the object
-     * @return the bot it is collided with.  Null if no collision
-     */
-    public static MovableEntity collidesWithBot(int r, Vector2 pos, HashMap<Integer, Orb> orbs) {
-
-        for (Orb o: orbs.values()) {
-            if (o.isAlive() && collided(r, pos, o.getRadius(), o.getPos())) return o;
-        }
-
-        return null;
-    }
-
-    /**
-     * Checks to see if the entity collides with an entity that isn't itself.
-     * @param e the movable entity to check collisions with
-     * @return the entity if there is a collision, null if there isn't
-     */
-    private MovableEntity collidesWithPlayerOrBot(MovableEntity e) {
-        HashMap<Integer, MovableEntity> entities = new HashMap<>();
-
-        for(Player p: players.values()) {
-            if (!(p.equals(e) ||  p.getPhase() != e.getPhase())) {
-                if (!(e instanceof Projectile)) {
-                    entities.put(p.getID(), p);
-                }
-                else if (!((Projectile) e).getPlayer().equals(p)){
-                    entities.put(p.getID(), p);
-                }
-            }
-        }
-
-        for(Orb o: orbs.values()) {
-            if (!(o.equals(e) ||  o.getPhase() != e.getPhase())) {
-                entities.put(o.getID(), o);
-            }
-        }
-
-        Vector2 nextPos = e.getPos().add(e.getDir().mult(e.getSpeed()));
-
-        for (MovableEntity et: entities.values()) {
-            float minDist = linePointDistance(e.getPos(), nextPos, et.getPos());
-            if (minDist < (e.getRadius() + et.getRadius())) {
-                return et;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * returns true if the two entity have collided
-     * @param r1 the radius of the first entity
-     * @param p1 the position of the first entity
-     * @param r2 the radius of the second entity
-     * @param p2 the position of the second entity
-     */
-    public static boolean collided(int r1, Vector2 p1, int r2, Vector2 p2) {
-        return p1.getDistanceTo(p2) < (r1 + r2);
-    }
-
-
-    public static float linePointDistance(Vector2 v, Vector2 w, Vector2 p) {
-        // Return minimum distance between line segment vw and point p
-        float l2 = Math.abs(v.getDistanceTo(w));
-        l2 = l2*l2; // i.e. |w-v|^2 -  avoid a sqrt
-        if (l2 == 0.0) return p.getDistanceTo(v);   // v == w case
-        // Consider the line extending the segment, parameterized as v + t (w - v).
-        // We find projection of point p onto the line.
-        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-        // We clamp t from [0,1] to handle points outside the segment vw.
-        float dot = ((p.sub(v)).dot(w.sub(v)) / l2);
-        float t = Math.max(0, Math.min(1, dot));
-        Vector2 projection = v.add(w.sub(v).mult(t));  // Projection falls on the segment
-        return p.getDistanceTo(projection);
-    }
-
-    /**
      * sends the string to all players in the lobby
      * @param s the string to be sent
      */
@@ -431,12 +302,12 @@ public class Game implements Runnable {
     }
 
     /**
-     * sends an entity to all connected players
-     * @param e the entity to send
+     * sends an object to all connected plays
+     * @param s the object to send
      */
-    private void sendToAllConnected(Entity e) {
+    private void sendToAllConnected(Sendable s) {
         for (Connection c: playerConnections) {
-            c.send(e);
+            c.send(s);
         }
     }
 

@@ -1,9 +1,7 @@
 package client.graphics;
 
-import org.lwjgl.opengl.GL11;
-import server.game.Vector2;
-
 import static org.lwjgl.opengl.GL11.*;
+import server.game.Vector2;
 
 
 /**
@@ -29,31 +27,31 @@ class Draw {
 
     private void flashDamage(float intensity) {
         intensity = Math.min(1, intensity);
-        GL11.glBegin(GL_QUAD_STRIP);
+        glBegin(GL_QUAD_STRIP);
         float buffer = 60;
 
-        GL11.glColor4f(1, 0, 0, intensity/2);
-        GL11.glVertex2d(0,0);
-        GL11.glColor4f(1, 0, 0, 0);
-        GL11.glVertex2d(buffer, buffer);
-        GL11.glColor4f(1, 0, 0, intensity);
-        GL11.glVertex2d(width,0);
-        GL11.glColor4f(1, 0, 0, 0);
-        GL11.glVertex2d(width-buffer, buffer);
-        GL11.glColor4f(1, 0, 0, intensity);
-        GL11.glVertex2d(width, height);
-        GL11.glColor4f(1, 0, 0, 0);
-        GL11.glVertex2d(width-buffer, height-buffer);
-        GL11.glColor4f(1, 0, 0, intensity);
-        GL11.glVertex2d(0,height);
-        GL11.glColor4f(1, 0, 0, 0);
-        GL11.glVertex2d(buffer, height-buffer);
-        GL11.glColor4f(1, 0, 0, intensity/2);
-        GL11.glVertex2d(0,0);
-        GL11.glColor4f(1, 0, 0, 0);
-        GL11.glVertex2d(buffer, buffer);
+        glColor4f(1, 0, 0, intensity/2);
+        glVertex2d(0,0);
+        glColor4f(1, 0, 0, 0);
+        glVertex2d(buffer, buffer);
+        glColor4f(1, 0, 0, intensity);
+        glVertex2d(width,0);
+        glColor4f(1, 0, 0, 0);
+        glVertex2d(width-buffer, buffer);
+        glColor4f(1, 0, 0, intensity);
+        glVertex2d(width, height);
+        glColor4f(1, 0, 0, 0);
+        glVertex2d(width-buffer, height-buffer);
+        glColor4f(1, 0, 0, intensity);
+        glVertex2d(0,height);
+        glColor4f(1, 0, 0, 0);
+        glVertex2d(buffer, height-buffer);
+        glColor4f(1, 0, 0, intensity/2);
+        glVertex2d(0,0);
+        glColor4f(1, 0, 0, 0);
+        glVertex2d(buffer, buffer);
 
-        GL11.glEnd();
+        glEnd();
     }
 
     void drawAura(Vector2 centre, float radius, float strokeWidth, float red, float green, float blue) {
@@ -61,28 +59,28 @@ class Draw {
     }
 
     void drawAura(Vector2 centre, float radius, float strokeWidth, float red, float green, float blue, float intensity) {
-        GL11.glColor4f(red, green, blue, intensity);
-        GL11.glBegin(GL_QUAD_STRIP);
+        glColor4f(red, green, blue, intensity);
+        glBegin(GL_QUAD_STRIP);
         float cx = centre.getX();
         float cy = height-centre.getY();
-        GL11.glVertex2f(cx, cy+(radius-strokeWidth));
-        GL11.glColor4f(red, green, blue, 0);
-        GL11.glVertex2f(cx, cy+radius);
+        glVertex2f(cx, cy+(radius-strokeWidth));
+        glColor4f(red, green, blue, 0);
+        glVertex2f(cx, cy+radius);
         for (int i = 1; i < 360; i++) {
-            GL11.glColor4f(red, green, blue, intensity);
-            GL11.glVertex2d(cx+((radius-strokeWidth)*Math.sin(Math.toRadians(i))), cy+((radius-strokeWidth)*Math.cos(Math.toRadians(i))));
-            GL11.glColor4f(red, green, blue, 0);
-            GL11.glVertex2d(cx+((radius)*Math.sin(Math.toRadians(i))), cy+((radius)*Math.cos(Math.toRadians(i))));
+            glColor4f(red, green, blue, intensity);
+            glVertex2d(cx+((radius-strokeWidth)*Math.sin(Math.toRadians(i))), cy+((radius-strokeWidth)*Math.cos(Math.toRadians(i))));
+            glColor4f(red, green, blue, 0);
+            glVertex2d(cx+((radius)*Math.sin(Math.toRadians(i))), cy+((radius)*Math.cos(Math.toRadians(i))));
         }
-        GL11.glColor4f(red, green, blue, intensity);
-        GL11.glVertex2f(cx, cy+(radius-strokeWidth));
-        GL11.glColor4f(red, green, blue, 0);
-        GL11.glVertex2f(cx, cy+radius);
-        GL11.glEnd();
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(cx, cy+(radius-strokeWidth));
+        glColor4f(red, green, blue, 0);
+        glVertex2f(cx, cy+radius);
+        glEnd();
     }
 
     void shadeScreen() {
-        GL11.glColor4f(1,1,1,0.6f);
+        glColor4f(1,1,1,0.6f);
         verticalDraw(0,0,width,height);
     }
 
@@ -112,7 +110,7 @@ class Draw {
         float heatRatio = (float) (displayHeat/maxHeat);
         float green = (204f/255f)*(1-heatRatio);
 
-        GL11.glColor3f(heatRatio, green, 0f);
+        glColor3f(heatRatio, green, 0f);
         verticalDraw(width - (buffer+heatWidth), buffer+(1-heatRatio)*maxHeight, heatWidth, maxHeight*heatRatio);
     }
 
@@ -149,7 +147,7 @@ class Draw {
         float maxHeight = height-buffer*2;
         float healthRatio = (float) (displayHealth/maxHealth);
         float green = (204f/255f)*healthRatio;
-        GL11.glColor3f(1-healthRatio, green, 0f);
+        glColor3f(1-healthRatio, green, 0f);
         verticalDraw(buffer, buffer+(1-healthRatio)*maxHeight, healthWidth, maxHeight*healthRatio);
     }
 
@@ -161,7 +159,7 @@ class Draw {
         float x = r;//we start at angle = 0
         float y = 0;
 
-        GL11.glBegin(GL_TRIANGLE_FAN);
+        glBegin(GL_TRIANGLE_FAN);
 
         for (int i = 0; i < num_segments; i++) {
             glVertex2f(x + cx, y + cy);//output vertex
@@ -179,16 +177,16 @@ class Draw {
             x *= radial_factor;
             y *= radial_factor;
         }
-        GL11.glEnd();
+        glEnd();
     }
 
     private void verticalDraw(float xStart, float yStart, float rectWidth, float rectHeight) {
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2f(checkX(xStart), checkY(height - yStart));
-        GL11.glVertex2f(checkX(xStart + rectWidth), checkY(height - yStart));
-        GL11.glVertex2f(checkX(xStart + rectWidth), checkY(height - (yStart+rectHeight)));
-        GL11.glVertex2f(checkX(xStart), checkY(height - (yStart+rectHeight)));
-        GL11.glEnd();
+        glBegin(GL_QUADS);
+        glVertex2f(checkX(xStart), checkY(height - yStart));
+        glVertex2f(checkX(xStart + rectWidth), checkY(height - yStart));
+        glVertex2f(checkX(xStart + rectWidth), checkY(height - (yStart+rectHeight)));
+        glVertex2f(checkX(xStart), checkY(height - (yStart+rectHeight)));
+        glEnd();
     }
 
     /**

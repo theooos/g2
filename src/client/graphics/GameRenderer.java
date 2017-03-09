@@ -367,7 +367,7 @@ public class GameRenderer implements Runnable {
         for (Orb o: orbs.values()) {
             if (phase == o.getPhase()) {
                 draw.drawAura(o.getPos(), o.getRadius()+5,5,0,0,0.8f);
-                GL11.glColor4f(0.2f, 0.2f, 1f, 1);
+                glColor4f(0.2f, 0.2f, 1f, 1);
                 draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
             }
             else {
@@ -375,7 +375,7 @@ public class GameRenderer implements Runnable {
                 if (dist < 150) {
                     float fade = 0.7f-(dist/150f);
                     draw.drawAura(o.getPos(), o.getRadius()+5,5,0,0,0.9f, fade);
-                    GL11.glColor4f(0.2f, 0.2f, 1f, fade);
+                    glColor4f(0.2f, 0.2f, 1f, fade);
                     draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
                 }
             }
@@ -384,14 +384,24 @@ public class GameRenderer implements Runnable {
 
     private void drawProjectiles(int phase) {
         ConcurrentHashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
+        float red;
+        float green;
+        float blue;
         for (Projectile p : projectiles.values()) {
             if (phase == p.getPhase()) {
                 if (p.getTeam() == 0) {
-                    GL11.glColor3f(1f, 0.1f, 0.1f);
+                    red = 0.7f;
+                    green = 0.1f;
+                    blue = 0.1f;
                 } else {
-                    GL11.glColor3f(0.1f, 1f, 0.1f);
+                    red = 0.1f;
+                    green = 1f;
+                    blue = 0.1f;
                 }
-                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), p.getRadius(), 100);
+                glColor3f(red, green, blue);
+                float radius = p.getRadius();
+                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
+                draw.drawAura(p.getPos(),radius+radius/2,radius/2, red, green, blue);
             }
         }
     }

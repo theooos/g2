@@ -21,10 +21,12 @@ public abstract class AIBrain {
     protected BehaviourSet behaviours;
 
     public AIBrain(Intel intel) {
-        this.intel = intel;
         this.curEmotion = EmotionalState.BORED;
-        this.feel = new Feel(this);
+        this.intel = intel;
         this.check = new Check(intel);
+        this.feel = new Feel(this);
+        this.behaviours = new BehaviourSet();
+
         constructBehaviours();
         configureBehaviours();
     }
