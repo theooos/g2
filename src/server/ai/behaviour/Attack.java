@@ -1,5 +1,6 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.OrbBrain;
 
@@ -8,7 +9,7 @@ import server.ai.OrbBrain;
  */
 public abstract class Attack extends Task {
 
-    public Attack(Intel intel, OrbBrain brain){
+    public Attack(Intel intel, AIBrain brain){
         super(intel, brain);
     }
 

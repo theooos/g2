@@ -1,5 +1,6 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.OrbBrain;
 
@@ -14,7 +15,7 @@ public class Sequence extends Task {
     private ArrayList<Task> subTasks;
     private Task curTask;
 
-    public Sequence(Intel intel, OrbBrain brain) {
+    public Sequence(Intel intel, AIBrain brain) {
         super(intel, brain);
         this.subTasks = new ArrayList<>();
         this.curTask = null;

@@ -1,5 +1,6 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.OrbBrain;
 import server.game.Orb;
@@ -15,7 +16,7 @@ public class Zap extends Attack {
     private final double FREQUENCY = 7;
     private double ctr;
 
-    public Zap(Intel intel, OrbBrain brain) {
+    public Zap(Intel intel, AIBrain brain) {
         super(intel, brain);
         this.ctr = 0;
     }

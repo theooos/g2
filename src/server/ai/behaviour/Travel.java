@@ -1,5 +1,6 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.OrbBrain;
 import server.game.Entity;
@@ -15,7 +16,7 @@ import java.util.Random;
  */
 public class Travel extends Task {
 
-    public Travel(Intel intel, OrbBrain brain){
+    public Travel(Intel intel, AIBrain brain){
         super(intel, brain);
     }
 

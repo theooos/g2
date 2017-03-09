@@ -17,6 +17,7 @@ public class Feel {
     public Feel(AIBrain brain){
         inPain = false;
         playerNearby = false;
+        this.brain = brain;
     }
 
     /**

@@ -26,9 +26,19 @@ public abstract class AIBrain {
         this.feel = new Feel(this);
         this.check = new Check(intel);
         constructBehaviours();
+        configureBehaviours();
     }
 
-    protected abstract void constructBehaviours();
+    private void constructBehaviours(){
+        behaviours.addBehaviour(new Dawdle(intel, this), "Dawdle");
+        behaviours.addBehaviour(new FindPath(intel, this), "FindPath");
+        behaviours.addBehaviour(new LocateCover(intel, this), "LocateCover");
+        behaviours.addBehaviour(new Travel(intel, this), "Travel");
+        behaviours.addBehaviour(new Wander(intel, this), "Wander");
+        behaviours.addBehaviour(new Zap(intel, this), "Zap");
+    }
+
+    protected abstract void configureBehaviours();
 
     public abstract void doSomething();
 

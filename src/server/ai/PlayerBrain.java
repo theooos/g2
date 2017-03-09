@@ -18,7 +18,7 @@ public class PlayerBrain extends AIBrain {
     }
 
     @Override
-    protected void constructBehaviours() {
+    protected void configureBehaviours() {
 
     }
 

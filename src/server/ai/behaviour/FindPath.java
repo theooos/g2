@@ -1,5 +1,6 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.OrbBrain;
 import server.game.Vector2;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  */
 public class FindPath extends Task {
 
-    public FindPath(Intel intel, OrbBrain brain) {
+    public FindPath(Intel intel, AIBrain brain) {
         super(intel, brain);
     }
 
