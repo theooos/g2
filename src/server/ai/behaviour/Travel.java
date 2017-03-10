@@ -3,6 +3,7 @@ package server.ai.behaviour;
 import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.OrbBrain;
+import server.ai.PlayerBrain;
 import server.game.Entity;
 import server.game.Game;
 import server.game.MovableEntity;
@@ -71,7 +72,13 @@ public class Travel extends Task {
         } else if (targetDirection.getY() < 0) {
             ang += Math.PI;
         }
-        ang += Math.toRadians(gen.nextInt(30));
+
+        int inaccuracy = 30;
+        if (brain instanceof PlayerBrain) {
+            PlayerBrain pbrain = (PlayerBrain) brain;
+            inaccuracy = pbrain.getStressLevel();
+        }
+        ang += Math.toRadians(gen.nextInt(inaccuracy));
         float newX = (float)(Math.sin(ang));
         float newY = (float)(Math.cos(ang));
 
