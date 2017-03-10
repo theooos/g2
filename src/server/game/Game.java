@@ -185,6 +185,7 @@ public class Game implements Runnable {
                     }
                     else if (pu.getType() == PowerUp.Type.heat) {
                         p.setWeaponOutHeat(0);
+                        p.getActiveWeapon().setCurrentHeat(0);
                     }
                 }
             }
