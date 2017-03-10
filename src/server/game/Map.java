@@ -1,11 +1,13 @@
 package server.game;
 
-import java.awt.geom.Line2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Represents a game map.
@@ -81,6 +83,14 @@ public class Map {
         }
 
         return relWalls;
+    }
+
+    /**
+     * @return the maximmum capacity of the map
+     */
+    public int getMapCapacity()
+    {
+        return this.mapCapacity;
     }
 
     /**

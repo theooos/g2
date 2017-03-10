@@ -1,5 +1,6 @@
 package server.ai.Pathfinding;
 import server.ai.Intel;
+import server.game.Vector2;
 
 import java.util.*;
 /**
@@ -23,6 +24,43 @@ public class AStar {
         return path;
     }
 
+    private Node getNode(int x,int y,Node[] [] nodes)
+    {
+        int width=this.intel.getMap().getMapWidth();
+        int height=this.intel.getMap().getMapLength();
+
+        for(int i=0;i<height;i++)
+            for(int j=0;j<width;j++)
+                if(x==j&&y==i)
+                    return nodes[i][j];
+        return null;
+    }
+     public void makeGraph()
+     {
+    server.game.Map map=this.intel.getMap();
+    int width=map.getMapWidth();
+    int height=map.getMapLength();
+    Node[][] nodes;
+
+         nodes = new Node[width][height];
+
+         for ( int row = 0; row < height; row++ )
+         {
+             for ( int col = 0; col < width; col++ )
+             {
+                nodes[row][col]=new Node(new Vector2(row,col),1,intel);
+
+             }
+          makeAdjances(nodes);
+         }
+
+
+     }
+
+     public void makeAdjances(Node[][] nodes)
+     {
+
+     }
      public void AstarSearch(Node source, Node goal){
 
         Set<Node> explored = new HashSet<Node>();

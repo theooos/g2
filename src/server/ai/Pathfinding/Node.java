@@ -24,6 +24,14 @@ public class Node{
     public int phase;
     private CollisionManager collisions;
 
+    public Node(Vector2 position,int radius,Intel intel){
+        this.xValue=(int)position.getX();
+        this.yValue=(int) position.getY();
+        this.phase=phase;
+        this.radius=radius;
+
+    }
+
     public Node(Vector2 position, int hVal,int radius,int phase,Intel intel){
         this.xValue=(int)position.getX();
         this.yValue=(int) position.getY();
