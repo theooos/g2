@@ -104,4 +104,8 @@ public class PlayerBrain extends AIBrain {
     public int getStressLevel(){
         return stress;
     }
+
+    public void setStrategy(String strategy) {
+        this.currentStrategy = (Attack) behaviours.getBehaviour(strategy);
+    }
 }

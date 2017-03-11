@@ -26,4 +26,8 @@ public class AIPlayer extends Player {
         return this.w2;
     }
 
+    public void toggleWeapon(){
+        setWeaponOut(!w1Out);
+    }
+
 }

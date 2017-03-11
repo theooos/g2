@@ -22,12 +22,29 @@ public class Strategise extends PlayerTask {
 
     @Override
     public void doAction() {
+        float distance = intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos());
+
+        // Waiting on ability to calculate range of weapons.
+        // Very basic strategising in the meantime.
+        if (haveSniper()) {
+            brain.setStrategy("Snipe");
+            equipSniper();
+        } else {
+            brain.setStrategy("SprayNPray");
+            equipShotgun();
+        }
 
     }
 
     private boolean haveSniper(){
         return (intel.ent().getWeapon1() instanceof WeaponSniper) ||
                 (intel.ent().getWeapon2() instanceof WeaponSniper);
+    }
+
+    private void equipSniper(){
+        if (!(intel.ent().getActiveWeapon() instanceof WeaponSniper)) {
+            intel.ent().toggleWeapon();
+        }
     }
 
     private boolean haveSMG(){
@@ -38,6 +55,12 @@ public class Strategise extends PlayerTask {
     private boolean haveShotgun(){
         return (intel.ent().getWeapon1() instanceof WeaponShotgun) ||
                 (intel.ent().getWeapon2() instanceof WeaponShotgun);
+    }
+
+    private void equipShotgun() {
+        if (!(intel.ent().getActiveWeapon() instanceof WeaponShotgun)) {
+            intel.ent().toggleWeapon();
+        }
     }
 
 }

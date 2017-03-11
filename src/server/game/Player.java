@@ -9,7 +9,7 @@ public class Player extends MovableEntity {
 
     protected Weapon w1;
     protected Weapon w2;
-    private boolean w1Out;
+    protected boolean w1Out;
     private boolean firing;
     private double weaponOutHeat;
     private int moveCounter;
