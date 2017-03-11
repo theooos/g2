@@ -35,7 +35,7 @@ public class AStar {
                     return nodes[i][j];
         return null;
     }
-     public void makeGraph()
+     public void makeGraph(Node goal,int phase)
      {
     server.game.Map map=this.intel.getMap();
     int width=map.getMapWidth();
@@ -48,19 +48,44 @@ public class AStar {
          {
              for ( int col = 0; col < width; col++ )
              {
-                nodes[row][col]=new Node(new Vector2(row,col),1,intel);
+                nodes[row][col]=new Node(new Vector2(row,col),1,phase,intel,goal.coordinates());
 
              }
-          makeAdjances(nodes);
+          makeAdjances(nodes,goal.coordinates());
          }
 
 
      }
 
-     public void makeAdjances(Node[][] nodes)
+     public void makeAdjances(Node[][] nodes,Vector2 goal)
      {
+         server.game.Map map=this.intel.getMap();
+         int width=map.getMapWidth();
+         int height=map.getMapLength();
+        for (int row=0;row<height;row++)
+        {
 
+            for(int col=0;col<width;col++)
+            {
+            nodes[row][col].setAdjacencies(
+                    new  Edge[]{
+                            new Edge(nodes[row-1][col],nodes[row-1][col].h_scores),
+                            new Edge(nodes[row-1][col-1],nodes[row-1][col-1].h_scores),
+                            new Edge(nodes[row-1][col+1],nodes[row-1][col+1].h_scores),
+                            new Edge(nodes[row][col-1],nodes[row][col-1].h_scores),
+                            new Edge(nodes[row][col+1],nodes[row][col+1].h_scores),
+                            new Edge(nodes[row-1][col],nodes[row-1][col].h_scores),
+                            new Edge(nodes[row-1][col-1],nodes[row-1][col-1].h_scores),
+                            new Edge(nodes[row-1][col+1],nodes[row-1][col+1].h_scores)
+            });
+
+
+
+            }
+        }
      }
+
+
      public void AstarSearch(Node source, Node goal){
 
         Set<Node> explored = new HashSet<Node>();

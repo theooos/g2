@@ -24,20 +24,12 @@ public class Node{
     public int phase;
     private CollisionManager collisions;
 
-    public Node(Vector2 position,int radius,Intel intel){
+    public Node(Vector2 position, int radius,int phase,Intel intel,Vector2 enemy){
         this.xValue=(int)position.getX();
         this.yValue=(int) position.getY();
         this.phase=phase;
         this.radius=radius;
-
-    }
-
-    public Node(Vector2 position, int hVal,int radius,int phase,Intel intel){
-        this.xValue=(int)position.getX();
-        this.yValue=(int) position.getY();
-        this.phase=phase;
-        this.radius=radius;
-        h_scores = hVal;
+        h_scores=manhattanDistance(enemy);
         ConcurrentHashMap<Integer,Player> players=intel.getPlayers();
         HashMap<Integer,Orb> orbs=intel.getOrbs();
         Map map=intel.getMap();
@@ -68,6 +60,10 @@ public class Node{
         this.h_scores=hScores;
     }
     public void setRadius(int radius){this.radius=radius;}
+    public void setAdjacencies(Edge[] edges)
+    {
+        this.adjacencies=edges;
+    }
     public void setPhase(int phase){this.phase=phase;}
     public int getX()
     {
