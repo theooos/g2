@@ -93,7 +93,7 @@ public class Player extends MovableEntity {
         return firing;
     }
 
-    void setFiring(boolean firing) {
+    public void setFiring(boolean firing) {
         this.firing = firing;
     }
 

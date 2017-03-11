@@ -32,7 +32,7 @@ public class Travel extends Task {
         MovableEntity ent = intel.ent();
         // Sets the entity to face in direction of the target location.
         Vector2 target = ent.getPos().vectorTowards(intel.checkpoint())/*.normalise()*/;
-        ent.setDir(deviate(target));
+        ent.setDir(Vector2.deviate(target, 30));
 
         // Checks for collisions,
         Vector2 oldPos = ent.getPos();
@@ -59,27 +59,5 @@ public class Travel extends Task {
     public void run(){
         System.err.println("Travel is not a single-tick task.");
         System.exit(1);
-    }
-
-    private Vector2 deviate(Vector2 targetDirection){
-
-        Random gen = new Random();
-        double ang = Math.atan(targetDirection.getX()/targetDirection.getY());
-        if (Double.isInfinite(ang)) {
-            ang = 0;
-        } else if (targetDirection.getY() < 0) {
-            ang += Math.PI;
-        }
-
-        int inaccuracy = 30;
-        if (brain instanceof PlayerBrain) {
-            PlayerBrain pbrain = (PlayerBrain) brain;
-            inaccuracy = pbrain.getStressLevel();
-        }
-        ang += Math.toRadians(gen.nextInt(inaccuracy));
-        float newX = (float)(Math.sin(ang));
-        float newY = (float)(Math.cos(ang));
-
-        return (new Vector2(newX, newY)).normalise();
     }
 }

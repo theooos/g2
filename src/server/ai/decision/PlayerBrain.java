@@ -2,7 +2,6 @@ package server.ai.decision;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.behaviour.Attack;
 import server.ai.behaviour.Sequence;
 
 import java.util.Random;
@@ -20,7 +19,7 @@ public class PlayerBrain extends AIBrain {
 
     private Random gen;
     private int tickCount;
-    private Attack currentStrategy;
+    private Sequence currentStrategy;
     private int stress;
 
     public PlayerBrain(Intel intel) {
@@ -106,6 +105,6 @@ public class PlayerBrain extends AIBrain {
     }
 
     public void setStrategy(String strategy) {
-        this.currentStrategy = (Attack) behaviours.getBehaviour(strategy);
+        this.currentStrategy = (Sequence) behaviours.getBehaviour(strategy);
     }
 }

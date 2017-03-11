@@ -143,4 +143,20 @@ public class Vector2 implements Sendable{
     public Vector2 clampedTo(int size) {
         return (normalise()).mult(size);
     }
+
+    public static Vector2 deviate(Vector2 targetDirection, int inaccuracy){
+
+        Random gen = new Random();
+        double ang = Math.atan(targetDirection.getX()/targetDirection.getY());
+        if (Double.isInfinite(ang)) {
+            ang = 0;
+        } else if (targetDirection.getY() < 0) {
+            ang += Math.PI;
+        }
+        ang += Math.toRadians(gen.nextInt(inaccuracy));
+        float newX = (float)(Math.sin(ang));
+        float newY = (float)(Math.cos(ang));
+
+        return (new Vector2(newX, newY)).normalise();
+    }
 }

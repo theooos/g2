@@ -3,6 +3,7 @@ package server.game;
 import networking.Connection;
 import objects.*;
 import server.ai.Intel;
+import server.ai.decision.OrbIntel;
 
 import java.io.IOException;
 import java.lang.String;
@@ -130,7 +131,7 @@ public class Game implements Runnable {
             IDCounter++;
 
             // Inform the Orbs.
-            Intel intel = new Intel(players, map);
+            OrbIntel intel = new OrbIntel(players, map);
             o.prepareOrbForGame(intel, orbs);
         }
 
