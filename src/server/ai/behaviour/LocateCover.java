@@ -2,7 +2,6 @@ package server.ai.behaviour;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.OrbBrain;
 import server.game.Vector2;
 
 import java.util.Random;

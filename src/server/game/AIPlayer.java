@@ -18,4 +18,12 @@ public class AIPlayer extends Player {
         //movement based on more advanced ai code
     }
 
+    public Weapon getWeapon1() {
+        return this.w1;
+    }
+
+    public Weapon getWeapon2() {
+        return this.w2;
+    }
+
 }

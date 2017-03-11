@@ -1,8 +1,6 @@
 package server.ai.behaviour;
 
 import server.ai.AIBrain;
-import server.ai.Intel;
-import server.ai.OrbBrain;
 
 /**
  * Sets the emotional state of the entity, depending on some external factors.

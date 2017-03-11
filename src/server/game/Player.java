@@ -7,8 +7,8 @@ package server.game;
  */
 public class Player extends MovableEntity {
 
-    private Weapon w1;
-    private Weapon w2;
+    protected Weapon w1;
+    protected Weapon w2;
     private boolean w1Out;
     private boolean firing;
     private double weaponOutHeat;

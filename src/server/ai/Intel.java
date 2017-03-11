@@ -13,17 +13,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * A packet of the necessary data that AI units need to make decisions.
  * Created by Rhys on 2/15/17.
  */
-public class Intel {
+public abstract class Intel {
 
-    private MovableEntity ent;          // The entity this information is used by.
-    private ConcurrentHashMap<Integer, Player> players;  // A list of all the players in the game.
-    private HashMap<Integer, Orb> allOrbs;
-    private Map map;                    // The map the current game is being played on.
-    private int healthLastTick;         // The entity's health during the previous tick.
-    private Vector2 targetLocation;     // Where the entity is currently aiming to reach.
-    private Player targetPlayer;        // The player the entity is currently hunting.
-    private VisibilityPolygon sight;    // The entity's field of vision.
-    private ArrayList<Vector2> path;    // A sequence of points through which the entity
+    protected MovableEntity ent;
+    protected ConcurrentHashMap<Integer, Player> players;  // A list of all the players in the game.
+    protected HashMap<Integer, Orb> allOrbs;
+    protected Map map;                    // The map the current game is being played on.
+    protected Vector2 targetLocation;     // Where the entity is currently aiming to reach.
+    protected Player targetPlayer;        // The player the entity is currently hunting.
+    protected VisibilityPolygon sight;    // The entity's field of vision.
+    protected ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
 
     private CollisionManager collisionManager;
@@ -39,13 +38,6 @@ public class Intel {
         this.targetLocation = null;
         this.targetPlayer = null;
         this.path = new ArrayList<>();
-    }
-
-    /**
-     * @return the entity that owns this intel object.
-     */
-    public MovableEntity ent(){
-        return ent;
     }
 
     /**
@@ -90,21 +82,6 @@ public class Intel {
      */
     public void setMap(Map map) {
         this.map = map;
-    }
-
-    /**
-     * @return the health-value of the entity during the last tick.
-     */
-    public int healthLastTick() {
-        return healthLastTick;
-    }
-
-    /**
-     * Stores the entity's current health-value.
-     * @param health - The health-value to be stored.
-     */
-    public void rememberHealth(int health) {
-        this.healthLastTick = health;
     }
 
     /**
@@ -186,7 +163,6 @@ public class Intel {
 
     public void initForGame(MovableEntity ent, HashMap<Integer, Orb> orbs) {
         this.ent = ent;
-        this.healthLastTick = ent.getHealth();
         this.sight = new VisibilityPolygon(this.ent.getPhase(), this.map);
         this.allOrbs = orbs;
         collisionManager = new CollisionManager(players, orbs, map);

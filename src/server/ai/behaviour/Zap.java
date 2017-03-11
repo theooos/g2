@@ -2,7 +2,6 @@ package server.ai.behaviour;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.OrbBrain;
 import server.game.Orb;
 import server.game.Player;
 

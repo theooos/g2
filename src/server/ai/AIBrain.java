@@ -1,5 +1,6 @@
 package server.ai;
 
+import server.ai.decision.Check;
 import server.ai.behaviour.*;
 
 /**

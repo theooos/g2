@@ -1,6 +1,6 @@
 package server.game;
 
-import server.ai.OrbBrain;
+import server.ai.decision.OrbBrain;
 import server.ai.Intel;
 import server.ai.vision.VisibilityPolygon;
 

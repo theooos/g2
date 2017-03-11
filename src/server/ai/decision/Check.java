@@ -1,4 +1,4 @@
-package server.ai;
+package server.ai.decision;
 
 import server.ai.Intel;
 import server.ai.vision.VisibilityPolygon;

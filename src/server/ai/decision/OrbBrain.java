@@ -1,5 +1,7 @@
-package server.ai;
+package server.ai.decision;
 
+import server.ai.AIBrain;
+import server.ai.Intel;
 import server.ai.behaviour.*;
 
 /**
