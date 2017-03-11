@@ -12,8 +12,8 @@ import java.util.ArrayList;
  */
 public class Sequence extends Task {
 
-    private ArrayList<Task> subTasks;
-    private Task curTask;
+    protected ArrayList<Task> subTasks;
+    protected Task curTask;
 
     public Sequence(Intel intel, AIBrain brain) {
         super(intel, brain);

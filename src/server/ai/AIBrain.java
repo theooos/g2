@@ -63,4 +63,8 @@ public abstract class AIBrain {
     public EmotionalState getEmotion() {
         return curEmotion;
     }
+
+    public Task getBehaviour(String behaviour){
+        return behaviours.getBehaviour(behaviour);
+    }
 }

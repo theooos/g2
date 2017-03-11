@@ -24,7 +24,8 @@ public class Weapon implements Sendable{
     private Random rand;
     int refireTime;
     private int refireDelay;
-    boolean fullyAuto;String name;
+    boolean fullyAuto;
+    String name;
 
     Weapon() {
         name = "Default";
@@ -135,6 +136,10 @@ public class Weapon implements Sendable{
 
     public int getMaxHeat() {
          return maxHeat;
+    }
+
+    public int getRefireTime(){
+        return refireTime;
     }
 
 }

@@ -8,11 +8,11 @@ import server.game.Vector2;
 /**
  * Created by rhys on 3/11/17.
  */
-public class Snipe extends PlayerTask {
+public class Fire extends PlayerTask {
 
     private int timer;
 
-    public Snipe(PlayerIntel intel, PlayerBrain brain) {
+    public Fire(PlayerIntel intel, PlayerBrain brain) {
         super(intel, brain);
         this.timer = 0;
     }
@@ -31,13 +31,14 @@ public class Snipe extends PlayerTask {
             intel.ent().setDir(dir);
         }
 
-        // Every 30 ticks (half a second):
-        if (timer == 30) {
+        // Fire as often as possible (give or take):
+        int fireFreq = intel.ent().getActiveWeapon().getRefireTime() + 10;
+        if (timer == fireFreq) {
             intel.ent().setFiring(true);
         }
 
         // After every 30th tick.
-        if (timer > 30) {
+        if (timer > fireFreq) {
             intel.ent().setFiring(false);
             timer = 0;
         }
