@@ -1,4 +1,4 @@
-package server.ai.vision;
+package server.ai.decision;
 
 import server.ai.Intel;
 import server.game.AIPlayer;
@@ -23,5 +23,11 @@ public class PlayerIntel extends Intel {
         return (AIPlayer) ent;
     }
 
+    public int healthLastTick() {
+        return healthLastTick;
+    }
 
+    public void rememberHealth(int healthLastTick) {
+        this.healthLastTick = healthLastTick;
+    }
 }

@@ -1,4 +1,4 @@
-package server.ai.behaviour;
+package server.ai;
 
 import server.ai.AIBrain;
 import server.ai.Intel;

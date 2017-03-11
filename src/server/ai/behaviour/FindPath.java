@@ -2,6 +2,7 @@ package server.ai.behaviour;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
+import server.ai.Task;
 import server.game.Vector2;
 
 import java.util.ArrayList;

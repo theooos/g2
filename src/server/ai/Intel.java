@@ -24,7 +24,6 @@ public abstract class Intel {
     protected VisibilityPolygon sight;    // The entity's field of vision.
     protected ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
-
     private CollisionManager collisionManager;
 
     /**
@@ -38,6 +37,10 @@ public abstract class Intel {
         this.targetLocation = null;
         this.targetPlayer = null;
         this.path = new ArrayList<>();
+    }
+
+    public MovableEntity ent() {
+        return ent;
     }
 
     /**

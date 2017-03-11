@@ -2,6 +2,7 @@ package server.ai.behaviour;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
+import server.ai.Task;
 import server.ai.decision.PlayerBrain;
 import server.game.MovableEntity;
 import server.game.Vector2;

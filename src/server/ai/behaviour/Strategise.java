@@ -1,15 +1,17 @@
 package server.ai.behaviour;
 
 import server.ai.AIBrain;
-import server.ai.Intel;
+import server.ai.PlayerTask;
+import server.ai.decision.PlayerBrain;
+import server.ai.decision.PlayerIntel;
 import server.game.*;
 
 /**
  * Created by rhys on 3/11/17.
  */
-public class Strategise extends Task {
+public class Strategise extends PlayerTask {
 
-    public Strategise(Intel intel, AIBrain brain){
+    public Strategise(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
     }
 
@@ -24,18 +26,18 @@ public class Strategise extends Task {
     }
 
     private boolean haveSniper(){
-        AIPlayer ent = (AIPlayer) intel.ent();
-        return (ent.getWeapon1() instanceof WeaponSniper) || (ent.getWeapon2() instanceof WeaponSniper);
+        return (intel.ent().getWeapon1() instanceof WeaponSniper) ||
+                (intel.ent().getWeapon2() instanceof WeaponSniper);
     }
 
     private boolean haveSMG(){
-        AIPlayer ent = (AIPlayer) intel.ent();
-        return (ent.getWeapon1() instanceof WeaponSMG) || (ent.getWeapon2() instanceof WeaponSMG);
+        return (intel.ent().getWeapon1() instanceof WeaponSMG) ||
+                (intel.ent().getWeapon2() instanceof WeaponSMG);
     }
 
     private boolean haveShotgun(){
-        AIPlayer ent = (AIPlayer) intel.ent();
-        return (ent.getWeapon1() instanceof WeaponShotgun) || (ent.getWeapon2() instanceof WeaponShotgun);
+        return (intel.ent().getWeapon1() instanceof WeaponShotgun) ||
+                (intel.ent().getWeapon2() instanceof WeaponShotgun);
     }
 
 }

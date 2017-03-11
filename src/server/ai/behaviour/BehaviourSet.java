@@ -1,7 +1,8 @@
 package server.ai.behaviour;
 
+import server.ai.Task;
+
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Created by rhys on 3/8/17.

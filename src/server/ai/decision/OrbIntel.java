@@ -1,5 +1,6 @@
-package server.ai;
+package server.ai.decision;
 
+import server.ai.Intel;
 import server.game.*;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +23,7 @@ public class OrbIntel extends Intel {
     /**
      * @return the Orb that owns this intel object.
      */
-    public Orb orb(){
+    public Orb ent(){
         return (Orb) ent;
     }
 

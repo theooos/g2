@@ -34,9 +34,10 @@ public class Check {
 
         // Returns true if the entity has lost health since the last tick.
         if (mode == CheckMode.HEALTH) {
-            int curHealth = intel.ent().getHealth();
-            boolean healthDown = (intel.healthLastTick() > curHealth);
-            if (healthDown) intel.rememberHealth(curHealth);
+            PlayerIntel pIntel = (PlayerIntel) intel;
+            int curHealth = pIntel.ent().getHealth();
+            boolean healthDown = (pIntel.healthLastTick() > curHealth);
+            if (healthDown) pIntel.rememberHealth(curHealth);
             return healthDown;
         }
 

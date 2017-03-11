@@ -2,6 +2,7 @@ package server.ai.behaviour;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
+import server.ai.Task;
 
 /**
  * Created by rhys on 2/16/17.
