@@ -88,9 +88,12 @@ public class OrbBrain extends AIBrain {
 
         if (curEmotion == EmotionalState.BORED) {
             intel.ent().setSpeed(0.5F);
+            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
             drift.start();
         } else if (curEmotion == EmotionalState.AGGRESSIVE) {
             intel.ent().setSpeed(1F);
+            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
+
         }
     }
 

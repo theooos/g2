@@ -13,8 +13,19 @@ import java.util.ArrayList;
  */
 public class FindPath extends Task {
 
+    private boolean lineOfSight;
+
     public FindPath(Intel intel, AIBrain brain) {
         super(intel, brain);
+    }
+
+    /**
+     * Determines whether this path-finding object needs to
+     * use A* search to find a path or not.
+     * @param lineOfSight
+     */
+    public void setSimplePath(boolean lineOfSight){
+        this.lineOfSight = lineOfSight;
     }
 
     @Override
@@ -25,13 +36,16 @@ public class FindPath extends Task {
 
     @Override
     public void doAction() {
-        // SKELETON METHOD.
-        // PERQUISITE: Collision Detection, DoorwayDetection.
         ArrayList<Vector2> path = new ArrayList<>();
-        path.add(intel.getTargetLocation());
-        intel.resetPath(path);
+        if (lineOfSight) {
+            path.add(intel.getTargetLocation());
+            intel.resetPath(path);
+        } else {
+            // SKELETON CODE
+            // PERQUISITE: A*
+            path.add(intel.getTargetLocation());
+            intel.resetPath(path);
+        }
         end();
     }
-
-
 }

@@ -100,16 +100,19 @@ public class PlayerBrain extends AIBrain {
     protected void handleEmotion() {
         if (curEmotion == EmotionalState.INTIMIDATED) {
             System.out.println("Player "+ intel.ent().getID() + " is now intimidated.");
+            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
             this.stress = 80;
         }
         else if (curEmotion == EmotionalState.AGGRESSIVE) {
             System.out.println("Player "+ intel.ent().getID() + " is now aggressive.");
             this.stress = 50;
+            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
             behaviours.getBehaviour("Strategise").run();
         }
         else if (curEmotion == EmotionalState.BORED) {
             System.out.println("Player "+ intel.ent().getID() + " is now bored.");
             this.stress = 0;
+            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
             hunt.start();
         }
     }
