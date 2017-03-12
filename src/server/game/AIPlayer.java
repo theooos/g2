@@ -2,12 +2,16 @@ package server.game;
 
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
-import server.ai.vision.VisibilityPolygon;
 
 import java.util.HashMap;
 
 /**
- * Created by peran on 01/02/17.
+ * Represents an artificially intelligent entity that attempts to play the
+ * game in a similar way to a human. AI Players share the same abilities as
+ * human-controlled players: phase-shifting, weapon-firing and - because of
+ * the top-down nature of the game - the ability to see enemy players that
+ * aren't in direct line of sight.
+ * Created by Rhys and Peran on 01/02/17.
  */
 public class AIPlayer extends Player {
 
@@ -20,10 +24,6 @@ public class AIPlayer extends Player {
 
     public void live() {
         myBrain.doSomething();
-    }
-
-    public VisibilityPolygon getSight() {
-        return intel.getSight();
     }
 
     public void preparePlayerForGame(PlayerIntel intel, HashMap<Integer, Orb> orbs){

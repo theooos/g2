@@ -1,6 +1,7 @@
 package server.ai;
 
 import server.ai.vision.VisibilityPolygon;
+import server.ai.vision.Visualiser;
 import server.game.*;
 
 import javax.lang.model.type.ArrayType;
@@ -21,7 +22,7 @@ public abstract class Intel {
     protected Map map;                    // The map the current game is being played on.
     protected Vector2 targetLocation;     // Where the entity is currently aiming to reach.
     protected Player targetPlayer;        // The player the entity is currently hunting.
-    protected VisibilityPolygon sight;    // The entity's field of vision.
+    protected Visualiser sight;
     protected ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
     protected CollisionManager collisionManager;
@@ -155,19 +156,17 @@ public abstract class Intel {
         this.targetPlayer = targetPlayer;
     }
 
-    public VisibilityPolygon updateSight(){
-        sight.visibilityFrom(ent.getPos());
-        return sight;
-    }
-
-    public VisibilityPolygon getSight() {
-        return sight;
-    }
 
     public void initForGame(MovableEntity ent, HashMap<Integer, Orb> orbs) {
         this.ent = ent;
-        this.sight = new VisibilityPolygon(this.ent.getPhase(), this.map);
         this.allOrbs = orbs;
+        constructVisualiser();
         collisionManager = new CollisionManager(players, orbs, map);
+    }
+
+    protected abstract void constructVisualiser();
+
+    public ConcurrentHashMap<Integer, Player> getEnemyPlayersInSight(){
+        return sight.getPlayersInSight(ent.getPos().toPoint(), ent.getPhase());
     }
 }

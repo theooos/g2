@@ -4,9 +4,7 @@ import server.ai.decision.Check;
 import server.ai.behaviour.*;
 
 /**
- * Represents the brain of an AI-controlled player, making decisions on the
- * player's behalf while taking the player's situation and surroundings into
- * account.
+ * Abstract representation of an AI-controlled unit's brain.
  * Created by Rhys on 3/8/17.
  */
 public abstract class AIBrain {

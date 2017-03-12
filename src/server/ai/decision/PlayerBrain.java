@@ -8,6 +8,9 @@ import server.ai.behaviour.*;
 import java.util.Random;
 
 /**
+ * Represents the brain of an AI-controlled player, making decisions on the
+ * player's behalf while taking the player's situation and surroundings into
+ * account.
  * Created by rhys on 3/8/17.
  */
 public class PlayerBrain extends AIBrain {
@@ -48,7 +51,7 @@ public class PlayerBrain extends AIBrain {
     public void doSomething() {
         // Perform checks.
         boolean lowHealth = check.doCheck(Check.CheckMode.HEALTH);
-        boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY_PLY);
+        boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY);
 
         // Decide emotion.
         feel.setParameters(lowHealth, playerNear);
@@ -97,6 +100,9 @@ public class PlayerBrain extends AIBrain {
 
     }
 
+    /**
+     * Determines how the AI Player behaves when it experiences a change in emotion.
+     */
     protected void handleEmotion() {
         if (curEmotion == EmotionalState.INTIMIDATED) {
             System.out.println("Player "+ intel.ent().getID() + " is now intimidated.");

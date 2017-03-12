@@ -7,6 +7,7 @@ import server.game.Vector2;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Can perform a variety of checks on the entity or its environment.
@@ -16,8 +17,7 @@ public class Check {
 
     public enum CheckMode {
         HEALTH,
-        PROXIMITY_ORB,
-        PROXIMITY_PLY,
+        PROXIMITY,
         RANGE,
         COUNTER_ATTACK_VIABLE,
         TARGET_MOVED }
@@ -47,20 +47,8 @@ public class Check {
         }
 
         // Returns true if there is an enemy player within the entity's field of vision.
-        else if (mode == CheckMode.PROXIMITY_ORB) {
-            ArrayList<Integer> playersInSight = getPlayersInSight(false);
-            if (playersInSight.size() > 0){
-                targetNearestPlayer(playersInSight);
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-        // Returns true if there is an enemy player within the entity's field of vision.
-        else if (mode == CheckMode.PROXIMITY_PLY) {
-            ArrayList<Integer> playersInSight = getPlayersInSight(true);
+        else if (mode == CheckMode.PROXIMITY) {
+            ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight();
             if (playersInSight.size() > 0){
                 targetNearestPlayer(playersInSight);
                 return true;
@@ -98,38 +86,18 @@ public class Check {
     /**
      * For efficiency purposes, targets the nearest enemy player upon detection and
      * stores the player in the intel object.
-     * @param playersInSight - the list of IDs of enemy players within visible range.
+     * @param playersInSight - the enemy players within visible range.
      */
-    private void targetNearestPlayer(ArrayList<Integer> playersInSight){
+    private void targetNearestPlayer(ConcurrentHashMap<Integer, Player> playersInSight){
         float closestDistance = -1;
-        int closestPiD = -1;
-        for (int i : playersInSight){
-            float thisDistance = intel.ent().getPos().getDistanceTo(intel.getPlayer(i).getPos());
+        Player closestPlayer = null;
+        for (java.util.Map.Entry<Integer, Player> p : playersInSight.entrySet()){
+            float thisDistance = intel.ent().getPos().getDistanceTo(p.getValue().getPos());
             if (closestDistance < 0 || thisDistance < closestDistance){
                 closestDistance = thisDistance;
-                closestPiD = i;
+                closestPlayer = p.getValue();
             }
         }
-        intel.setTargetPlayer(intel.getPlayer(closestPiD));
-    }
-
-    /**
-     * Returns the IDs of enemy players that the entity can currently see.
-     * @return a list of Integers corresponding to the IDs of players within the player list.
-     */
-    private ArrayList<Integer> getPlayersInSight(boolean onlyInPhase){
-        VisibilityPolygon sight = intel.updateSight();
-        ArrayList<Integer> playersInSight = new ArrayList<>();
-
-        for (Player p : intel.getPlayers().values()){
-            boolean phaseMatch = intel.ent().getPhase() == p.getPhase();
-            boolean teamMatch = intel.ent().getTeam() == p.getTeam();
-            if (!teamMatch &&
-                    (!(!phaseMatch && onlyInPhase)) &&
-                    sight.contains(p.getPos().toPoint())){
-                playersInSight.add(p.getID());
-            }
-        }
-        return playersInSight;
+        intel.setTargetPlayer(closestPlayer);
     }
 }

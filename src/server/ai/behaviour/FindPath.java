@@ -22,7 +22,8 @@ public class FindPath extends Task {
     /**
      * Determines whether this path-finding object needs to
      * use A* search to find a path or not.
-     * @param lineOfSight
+     * @param lineOfSight - set to true if the target is within line of sight
+     *                    of the entity.
      */
     public void setSimplePath(boolean lineOfSight){
         this.lineOfSight = lineOfSight;

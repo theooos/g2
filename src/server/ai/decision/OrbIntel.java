@@ -1,6 +1,7 @@
 package server.ai.decision;
 
 import server.ai.Intel;
+import server.ai.vision.Visualiser;
 import server.game.*;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +30,11 @@ public class OrbIntel extends Intel {
 
     public boolean validPosition(){
         return collisionManager.orbValidPosition((Orb)ent);
+    }
+
+    @Override
+    protected void constructVisualiser() {
+        this.sight = new Visualiser(map, players, ent.getID());
     }
 
 }
