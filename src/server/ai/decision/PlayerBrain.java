@@ -2,7 +2,11 @@ package server.ai.decision;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
+import server.ai.Task;
+import server.ai.behaviour.Fire;
 import server.ai.behaviour.Sequence;
+import server.ai.behaviour.SprayNPray;
+import server.ai.behaviour.Strategise;
 
 import java.util.Random;
 
@@ -11,29 +15,32 @@ import java.util.Random;
  */
 public class PlayerBrain extends AIBrain {
 
-    private Sequence flee;
     private Sequence rage;
-    private Sequence attack;
     private Sequence chase;
     private Sequence hunt;
 
+    private PlayerIntel intel;
     private Random gen;
     private int tickCount;
-    private Sequence currentStrategy;
+    private Task currentStrategy;
     private int stress;
 
-    public PlayerBrain(Intel intel) {
+    public PlayerBrain(PlayerIntel intel) {
         super(intel);
+        this.intel = intel;
         this.gen = new Random();
         tickCount = 0;
     }
 
+    protected void constructBehaviours(){
+        super.constructBehaviours();
+        behaviours.addBehaviour(new Strategise(intel, this), "Strategise");
+        behaviours.addBehaviour(new Fire(intel, this), "Fire");
+        behaviours.addBehaviour(new SprayNPray(intel, this), "SprayNPray");
+    }
     @Override
     protected void configureBehaviours() {
-        this.flee = new Sequence(intel, this);
-        flee.add(behaviours.getBehaviour("LocateCover"));
-        flee.add(behaviours.getBehaviour("FindPath"));
-
+        System.out.println("Player's behConfig called.");
         this.hunt = new Sequence(intel, this);
         hunt.add(behaviours.getBehaviour("Wander"));
         hunt.add(behaviours.getBehaviour("FindPath"));
@@ -55,10 +62,16 @@ public class PlayerBrain extends AIBrain {
             // IMPLEMENT THE CHECK.
             boolean retaliationViable = check.doCheck(Check.CheckMode.COUNTER_ATTACK_VIABLE);
             if (retaliationViable) {
-                // IMPLEMENT THE BEHAVIOUR.
-                behaviours.getBehaviour("CounterAttack").run();
+                if (!behaviours.getBehaviour("Retaliate").isRunning()){
+                    behaviours.getBehaviour("Retaliate").start();
+                }
+                    behaviours.getBehaviour("Retaliate").doAction();
+            } else {
+                if (!behaviours.getBehaviour("Escape").isRunning()) {
+                    behaviours.getBehaviour("Escape").start();
+                }
+                behaviours.getBehaviour("Escape").doAction();
             }
-            behaviours.getBehaviour("Travel").doAction();
          }
 
         else if (curEmotion == EmotionalState.AGGRESSIVE) {
@@ -72,11 +85,7 @@ public class PlayerBrain extends AIBrain {
             }
             // Execute strategy.
             tickCount++;
-            if (!currentStrategy.isRunning()) {
-                currentStrategy.start();
-            } else {
-                currentStrategy.doAction();
-            }
+            currentStrategy.doAction();
         }
 
         else if (curEmotion == EmotionalState.BORED) {
@@ -88,7 +97,6 @@ public class PlayerBrain extends AIBrain {
     protected void handleEmotion() {
         if (curEmotion == EmotionalState.INTIMIDATED) {
             this.stress = 80;
-            flee.run();
         }
         else if (curEmotion == EmotionalState.AGGRESSIVE) {
             this.stress = 50;
@@ -105,6 +113,6 @@ public class PlayerBrain extends AIBrain {
     }
 
     public void setStrategy(String strategy) {
-        this.currentStrategy = (Sequence) behaviours.getBehaviour(strategy);
+        this.currentStrategy = behaviours.getBehaviour(strategy);
     }
 }

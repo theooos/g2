@@ -28,11 +28,9 @@ public abstract class AIBrain {
         this.feel = new Feel(this);
         this.behaviours = new BehaviourSet();
 
-        constructBehaviours();
-        configureBehaviours();
     }
 
-    private void constructBehaviours(){
+    protected void constructBehaviours(){
         behaviours.addBehaviour(new Dawdle(intel, this), "Dawdle");
         behaviours.addBehaviour(new FindPath(intel, this), "FindPath");
         behaviours.addBehaviour(new LocateCover(intel, this), "LocateCover");
@@ -56,7 +54,6 @@ public abstract class AIBrain {
         }
     }
 
-
     /**
      * @return the current emotional state of the AI Unit this Brain belongs to.
      */
@@ -66,5 +63,10 @@ public abstract class AIBrain {
 
     public Task getBehaviour(String behaviour){
         return behaviours.getBehaviour(behaviour);
+    }
+
+    public void equip(){
+        constructBehaviours();
+        configureBehaviours();
     }
 }

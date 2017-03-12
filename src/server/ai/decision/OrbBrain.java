@@ -3,6 +3,7 @@ package server.ai.decision;
 import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.behaviour.*;
+import server.game.Orb;
 
 /**
  * Represents the brain of an Orb, making decisions on the Orb's behalf while taking
@@ -11,14 +12,16 @@ import server.ai.behaviour.*;
  */
 public class OrbBrain extends AIBrain {
 
+    private OrbIntel intel;
     private Sequence drift;     // Allows the Orb to drift aimlessly around the map when it is BORED.
 
     /**
      * Constructs an Orb's Brain - the decision maker of an Orb.
      * @param intel - The Intel object the brain utilises to make decisions.
      */
-    public OrbBrain(Intel intel) {
+    public OrbBrain(OrbIntel intel) {
         super(intel);
+        this.intel = intel;
     }
 
     /**
@@ -26,7 +29,7 @@ public class OrbBrain extends AIBrain {
      * will carry out under specific circumstances.
      */
     protected void configureBehaviours(){
-
+        System.out.println("Orb's behConfig called.");
         this.drift = new Sequence(intel, this);
         this.drift.add(behaviours.getBehaviour("Dawdle"));
         this.drift.add(behaviours.getBehaviour("Wander"));
@@ -81,6 +84,7 @@ public class OrbBrain extends AIBrain {
 
         if (curEmotion == EmotionalState.BORED) {
             intel.ent().setSpeed(0.5F);
+            System.out.println("Is drift null? : " + (drift == null));
             drift.start();
         } else if (curEmotion == EmotionalState.AGGRESSIVE) {
             intel.ent().setSpeed(1F);

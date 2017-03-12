@@ -4,6 +4,7 @@ import networking.Connection;
 import objects.*;
 import server.ai.Intel;
 import server.ai.decision.OrbIntel;
+import server.ai.decision.PlayerIntel;
 
 import java.io.IOException;
 import java.lang.String;
@@ -130,9 +131,18 @@ public class Game implements Runnable {
             orbs.put(IDCounter, o);
             IDCounter++;
 
-            // Inform the Orbs.
+            // Ready Orbs for game.
             OrbIntel intel = new OrbIntel(players, map);
             o.prepareOrbForGame(intel, orbs);
+        }
+
+        // Ready AI Players for game.
+        for (int i = 0; i < players.size(); i++){
+            Player p = players.get(i);
+            if (p instanceof AIPlayer){
+                PlayerIntel intel = new PlayerIntel(players, map);
+                ((AIPlayer) p).preparePlayerForGame(intel, orbs);
+            }
         }
 
         countdown = 10*60*tick; //ten minutes
