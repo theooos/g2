@@ -24,12 +24,9 @@ public class Fire extends PlayerTask {
     public void doAction(){
         timer++;
 
-        // Every 5 ticks:
-        if (timer%5 == 0) {
-            Vector2 dir = intel.ent().getPos().vectorTowards(intel.getTargetPlayer().getPos());
-            dir = Vector2.deviate(dir, brain.getStressLevel());
-            intel.ent().setDir(dir);
-        }
+        Vector2 dir = intel.ent().getPos().vectorTowards(intel.getTargetPlayer().getPos());
+        dir = Vector2.deviate(dir, 2);
+        intel.ent().setDir(dir);
 
         // Fire as often as possible (give or take):
         int fireFreq = intel.ent().getActiveWeapon().getRefireTime() + 10;

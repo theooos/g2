@@ -14,7 +14,13 @@ import java.util.ArrayList;
  */
 public class Check {
 
-    public enum CheckMode { HEALTH, PROXIMITY, RANGE, COUNTER_ATTACK_VIABLE, TARGET_MOVED }
+    public enum CheckMode {
+        HEALTH,
+        PROXIMITY_ORB,
+        PROXIMITY_PLY,
+        RANGE,
+        COUNTER_ATTACK_VIABLE,
+        TARGET_MOVED }
     private Intel intel;        // The intelligence this object uses to perform its checks.
 
     /**
@@ -41,8 +47,20 @@ public class Check {
         }
 
         // Returns true if there is an enemy player within the entity's field of vision.
-        else if (mode == CheckMode.PROXIMITY) {
-            ArrayList<Integer> playersInSight = getPlayersInSight();
+        else if (mode == CheckMode.PROXIMITY_ORB) {
+            ArrayList<Integer> playersInSight = getPlayersInSight(false);
+            if (playersInSight.size() > 0){
+                targetNearestPlayer(playersInSight);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        // Returns true if there is an enemy player within the entity's field of vision.
+        else if (mode == CheckMode.PROXIMITY_PLY) {
+            ArrayList<Integer> playersInSight = getPlayersInSight(true);
             if (playersInSight.size() > 0){
                 targetNearestPlayer(playersInSight);
                 return true;
@@ -99,12 +117,16 @@ public class Check {
      * Returns the IDs of enemy players that the entity can currently see.
      * @return a list of Integers corresponding to the IDs of players within the player list.
      */
-    private ArrayList<Integer> getPlayersInSight(){
+    private ArrayList<Integer> getPlayersInSight(boolean onlyInPhase){
         VisibilityPolygon sight = intel.updateSight();
         ArrayList<Integer> playersInSight = new ArrayList<>();
 
         for (Player p : intel.getPlayers().values()){
-            if (p.getTeam() != intel.ent().getTeam() && sight.contains(p.getPos().toPoint())){
+            boolean phaseMatch = intel.ent().getPhase() == p.getPhase();
+            boolean teamMatch = intel.ent().getTeam() == p.getTeam();
+            if (!teamMatch &&
+                    (!(!phaseMatch && onlyInPhase)) &&
+                    sight.contains(p.getPos().toPoint())){
                 playersInSight.add(p.getID());
             }
         }

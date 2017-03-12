@@ -125,7 +125,7 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create team orbs
-        for (int i = 0; i < maxPlayers; i++) {
+        /*for (int i = 0; i < maxPlayers; i++) {
             Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
             respawn(o);
             orbs.put(IDCounter, o);
@@ -134,7 +134,7 @@ public class Game implements Runnable {
             // Ready Orbs for game.
             OrbIntel intel = new OrbIntel(players, map);
             o.prepareOrbForGame(intel, orbs);
-        }
+        }*/
 
         // Ready AI Players for game.
         for (int i = 0; i < players.size(); i++){
@@ -182,7 +182,7 @@ public class Game implements Runnable {
             for (Projectile p : projectiles.values()) {
                 MovableEntity e = collisions.collidesWithPlayerOrBot(p);
                 if (e != null) {
-                    out(p.getPlayerID()+" just hit "+e.getID());
+                   // out(p.getPlayerID()+" just hit "+e.getID());
                     //can't damage your team
                     if (e.getTeam() != p.getTeam()) {
                         e.damage(p.getDamage());
@@ -374,7 +374,7 @@ public class Game implements Runnable {
     }
 
     private void toggleFire(Sendable s) {
-        out("Toggling fire");
+        //out("Toggling fire");
         FireObject f = (FireObject) s;
         Player p = players.get(f.getPlayerID());
         p.setFiring(f.isStartFire());
@@ -384,14 +384,14 @@ public class Game implements Runnable {
         PhaseObject phase = (PhaseObject) s;
         Player p = players.get(phase.getID());
         p.togglePhase();
-        out("ID"+p.getID()+": Switching phase");
+        //out("ID"+p.getID()+": Switching phase");
     }
 
     private void switchWeapon(Sendable s) {
         SwitchObject sw = (SwitchObject) s;
         Player p = players.get(sw.getID());
         p.setWeaponOut(sw.takeWeaponOneOut());
-        out("ID"+p.getID()+": Switching weapon");
+        //out("ID"+p.getID()+": Switching weapon");
     }
 
     /**
@@ -407,7 +407,7 @@ public class Game implements Runnable {
                 p.setID(IDCounter);
                 IDCounter++;
                 projectiles.put(p.getID(), p);
-                out("Shot Fired");
+                //out("Shot Fired");
             }
         }
     }

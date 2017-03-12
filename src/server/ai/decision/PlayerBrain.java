@@ -48,7 +48,7 @@ public class PlayerBrain extends AIBrain {
     public void doSomething() {
         // Perform checks.
         boolean lowHealth = check.doCheck(Check.CheckMode.HEALTH);
-        boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY);
+        boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY_PLY);
 
         // Decide emotion.
         feel.setParameters(lowHealth, playerNear);
@@ -76,10 +76,16 @@ public class PlayerBrain extends AIBrain {
             // Give the AI a 50% chance of rethinking strategy after at least 2 seconds.
             if ((tickCount/60) >= 2) {
                 if (gen.nextDouble() >= 0.5) {
+                    System.out.println("Rethinking strategy.");
                     behaviours.getBehaviour("Strategise").run();
                     tickCount = 0;
                 }
             }
+            // Compute/re-compute travel path if the target has moved since the last tick.
+            if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
+                intel.setTargetLocation(intel.getTargetPlayer().getPos());
+            }
+
             // Execute strategy.
             tickCount++;
             currentStrategy.doAction();

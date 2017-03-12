@@ -65,6 +65,10 @@ public abstract class AIBrain {
         return behaviours.getBehaviour(behaviour);
     }
 
+    public void resetBehaviours(){
+        behaviours.resetAll();
+    }
+
     public void equip(){
         constructBehaviours();
         configureBehaviours();

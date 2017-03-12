@@ -48,7 +48,7 @@ public class OrbBrain extends AIBrain {
     public void doSomething(){
 
         // Perform checks.
-        boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY);
+        boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY_ORB);
 
         // Decide emotion.
         if (playerNear) {

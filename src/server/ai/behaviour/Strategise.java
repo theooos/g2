@@ -22,24 +22,24 @@ public class Strategise extends PlayerTask {
 
     @Override
     public void doAction() {
-        if (intel == null) System.out.println("Intel is null.");
-        if (intel.ent() == null) System.out.println("AI Player is null.");
-        if (intel.getTargetPlayer() == null) System.out.println("Target player is null.");
+        brain.resetBehaviours();
 
         float distance = intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos());
 
         // Waiting on ability to calculate range of weapons.
         // Very basic strategising in the meantime.
-        if (haveSniper()) {
+        /*if (haveSniper()) {
+            System.out.println("Sniping!");
             brain.setStrategy("Fire");
             equipSniper();
             brain.getBehaviour("Fire").start();
         } else {
+            System.out.println("Sprayin'!");*/
             brain.setStrategy("SprayNPray");
             equipShotgun();
             brain.getBehaviour("SprayNPray").start();
 
-        }
+        /*}*/
 
         end();
     }
