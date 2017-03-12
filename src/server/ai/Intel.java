@@ -24,7 +24,7 @@ public abstract class Intel {
     protected VisibilityPolygon sight;    // The entity's field of vision.
     protected ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
-    private CollisionManager collisionManager;
+    protected CollisionManager collisionManager;
 
     /**
      * Constructs an intel object based on the given Players and Map.
@@ -169,9 +169,5 @@ public abstract class Intel {
         this.sight = new VisibilityPolygon(this.ent.getPhase(), this.map);
         this.allOrbs = orbs;
         collisionManager = new CollisionManager(players, orbs, map);
-    }
-
-    public boolean validPosition(){
-        return collisionManager.orbValidPosition((Orb)ent);
     }
 }

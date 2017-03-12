@@ -1,5 +1,6 @@
 package server.ai;
 
+import server.ai.behaviour.Float;
 import server.ai.decision.Check;
 import server.ai.behaviour.*;
 
@@ -34,7 +35,6 @@ public abstract class AIBrain {
         behaviours.addBehaviour(new Dawdle(intel, this), "Dawdle");
         behaviours.addBehaviour(new FindPath(intel, this), "FindPath");
         behaviours.addBehaviour(new LocateCover(intel, this), "LocateCover");
-        behaviours.addBehaviour(new Travel(intel, this), "Travel");
         behaviours.addBehaviour(new Wander(intel, this), "Wander");
         behaviours.addBehaviour(new Zap(intel, this), "Zap");
     }

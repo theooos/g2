@@ -27,4 +27,8 @@ public class OrbIntel extends Intel {
         return (Orb) ent;
     }
 
+    public boolean validPosition(){
+        return collisionManager.orbValidPosition((Orb)ent);
+    }
+
 }

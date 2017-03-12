@@ -3,10 +3,7 @@ package server.ai.decision;
 import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.Task;
-import server.ai.behaviour.Fire;
-import server.ai.behaviour.Sequence;
-import server.ai.behaviour.SprayNPray;
-import server.ai.behaviour.Strategise;
+import server.ai.behaviour.*;
 
 import java.util.Random;
 
@@ -34,13 +31,13 @@ public class PlayerBrain extends AIBrain {
 
     protected void constructBehaviours(){
         super.constructBehaviours();
+        behaviours.addBehaviour(new Travel(intel, this), "Travel");
         behaviours.addBehaviour(new Strategise(intel, this), "Strategise");
         behaviours.addBehaviour(new Fire(intel, this), "Fire");
         behaviours.addBehaviour(new SprayNPray(intel, this), "SprayNPray");
     }
     @Override
     protected void configureBehaviours() {
-        System.out.println("Player's behConfig called.");
         this.hunt = new Sequence(intel, this);
         hunt.add(behaviours.getBehaviour("Wander"));
         hunt.add(behaviours.getBehaviour("FindPath"));
@@ -96,13 +93,16 @@ public class PlayerBrain extends AIBrain {
 
     protected void handleEmotion() {
         if (curEmotion == EmotionalState.INTIMIDATED) {
+            System.out.println("Player "+ intel.ent().getID() + " is now intimidated.");
             this.stress = 80;
         }
         else if (curEmotion == EmotionalState.AGGRESSIVE) {
+            System.out.println("Player "+ intel.ent().getID() + " is now aggressive.");
             this.stress = 50;
             behaviours.getBehaviour("Strategise").run();
         }
         else if (curEmotion == EmotionalState.BORED) {
+            System.out.println("Player "+ intel.ent().getID() + " is now bored.");
             this.stress = 0;
             hunt.start();
         }

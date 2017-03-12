@@ -40,7 +40,7 @@ public class Check {
             return healthDown;
         }
 
-        // Returns true if there is a player within the entity's field of vision.
+        // Returns true if there is an enemy player within the entity's field of vision.
         else if (mode == CheckMode.PROXIMITY) {
             ArrayList<Integer> playersInSight = getPlayersInSight();
             if (playersInSight.size() > 0){
@@ -78,9 +78,9 @@ public class Check {
 
 
     /**
-     * For efficiency purposes, targets the nearest player upon detection and
+     * For efficiency purposes, targets the nearest enemy player upon detection and
      * stores the player in the intel object.
-     * @param playersInSight - the list of IDs of players within visible range.
+     * @param playersInSight - the list of IDs of enemy players within visible range.
      */
     private void targetNearestPlayer(ArrayList<Integer> playersInSight){
         float closestDistance = -1;
@@ -96,7 +96,7 @@ public class Check {
     }
 
     /**
-     * Returns the IDs of players that the Orb can currently see.
+     * Returns the IDs of enemy players that the entity can currently see.
      * @return a list of Integers corresponding to the IDs of players within the player list.
      */
     private ArrayList<Integer> getPlayersInSight(){
@@ -104,9 +104,8 @@ public class Check {
         ArrayList<Integer> playersInSight = new ArrayList<>();
 
         for (Player p : intel.getPlayers().values()){
-            if (sight.contains(p.getPos().toPoint())){
+            if (p.getTeam() != intel.ent().getTeam() && sight.contains(p.getPos().toPoint())){
                 playersInSight.add(p.getID());
-                //System.out.println("Orb thinks player is at " + p.getPos() + ".");
             }
         }
         return playersInSight;

@@ -30,4 +30,8 @@ public class PlayerIntel extends Intel {
     public void rememberHealth(int healthLastTick) {
         this.healthLastTick = healthLastTick;
     }
+
+    public boolean validPosition(){
+        return collisionManager.validPosition(ent);
+    }
 }

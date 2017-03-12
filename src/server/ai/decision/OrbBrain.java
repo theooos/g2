@@ -3,6 +3,7 @@ package server.ai.decision;
 import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.behaviour.*;
+import server.ai.behaviour.Float;
 import server.game.Orb;
 
 /**
@@ -24,17 +25,20 @@ public class OrbBrain extends AIBrain {
         this.intel = intel;
     }
 
+    protected void constructBehaviours(){
+        super.constructBehaviours();
+        behaviours.addBehaviour(new Float(intel, this), "Float");
+    }
     /**
      * Arranges the available behaviours into sequences that the Orb
      * will carry out under specific circumstances.
      */
     protected void configureBehaviours(){
-        System.out.println("Orb's behConfig called.");
         this.drift = new Sequence(intel, this);
         this.drift.add(behaviours.getBehaviour("Dawdle"));
         this.drift.add(behaviours.getBehaviour("Wander"));
         this.drift.add(behaviours.getBehaviour("FindPath"));
-        this.drift.add(behaviours.getBehaviour("Travel"));
+        this.drift.add(behaviours.getBehaviour("Float"));
     }
 
     /**
@@ -62,12 +66,12 @@ public class OrbBrain extends AIBrain {
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
                 intel.setTargetLocation(intel.getTargetPlayer().getPos());
                 behaviours.getBehaviour("FindPath").run();
-                behaviours.getBehaviour("Travel").start();
+                behaviours.getBehaviour("Float").start();
             } // Or if it hasn't...
             else {
-                // Travel towards the target player if they're out of attacking range.
+                // Float towards the target player if they're out of attacking range.
                 if (!check.doCheck(Check.CheckMode.RANGE)) {
-                    behaviours.getBehaviour("Travel").doAction();
+                    behaviours.getBehaviour("Float").doAction();
                 }
                 // Or, if the target is in range, zap them.
                 else {
@@ -84,7 +88,6 @@ public class OrbBrain extends AIBrain {
 
         if (curEmotion == EmotionalState.BORED) {
             intel.ent().setSpeed(0.5F);
-            System.out.println("Is drift null? : " + (drift == null));
             drift.start();
         } else if (curEmotion == EmotionalState.AGGRESSIVE) {
             intel.ent().setSpeed(1F);
