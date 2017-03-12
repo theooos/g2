@@ -51,6 +51,7 @@ public class GameRenderer implements Runnable {
     private Pulse pulse;
 
     private boolean displayCollisions;
+    private float rotation;
 
     GameRenderer(GameData gd, Connection conn, int playerID) {
         super();
@@ -58,6 +59,7 @@ public class GameRenderer implements Runnable {
         this.gameData = gd;
         this.playerID = playerID;
 
+        rotation = 0;
         fDown = false;
         clickDown = false;
         eDown = false;
@@ -137,6 +139,9 @@ public class GameRenderer implements Runnable {
     }
 
     private void update(int delta) {
+
+        rotation += 0.15f*delta;
+//        rotation %= rotation%Math.PI;
 
         Player me = gameData.getPlayer(playerID);
         Vector2 pos = me.getPos();
@@ -427,8 +432,7 @@ public class GameRenderer implements Runnable {
                 }
                 glColor3f(red, green, blue);
                 float radius = p.getRadius();
-                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
-                draw.drawAura(p.getPos(),radius+radius/2,radius/2, red, green, blue);
+                draw.drawQuad(p.getPos().getX(), p.getPos().getY(), rotation, radius);
             }
         }
     }

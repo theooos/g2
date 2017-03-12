@@ -1,6 +1,8 @@
 package client.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
+
+import org.lwjgl.opengl.GL11;
 import server.game.Vector2;
 
 
@@ -25,6 +27,49 @@ class Draw {
         displayHeat = 0;
     }
 
+    void drawQuad(Vector2 centre, float rotation, float radius, float red, float green, float blue) {
+        glPushMatrix();
+        float cx = centre.getX();
+        float cy = height-centre.getY();
+        glTranslatef(cx, cy, 0);
+        glRotatef(rotation, 0f, 0f, 1f);
+        glTranslatef(-cx, -cy, 0);
+        glBegin(GL_QUADS);
+        glVertex2f(cx-radius, height-(centre.getY()-radius));
+        glVertex2f(cx+radius, height-(centre.getY()-radius));
+        glVertex2f(cx+radius, height-(centre.getY()+radius));
+        glVertex2f(cx-radius, height-(centre.getY()+radius));
+        glEnd();
+        glPopMatrix();
+
+        glBegin(GL_QUAD_STRIP);
+        float buffer = 60;
+
+        float intensity = 0.8f;
+        glColor4f(red, green, blue, 0);
+        glVertex2f(cx-radius*3/2,cy+radius*3/2);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(cx-radius, cy-radius);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(cx+radius*3/2,cy-radius*3/2);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(cx+radius, cy-radius);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(width, height);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(width-buffer, height-buffer);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(0,height);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(buffer, height-buffer);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(0,0);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(buffer, buffer);
+
+        glEnd();
+    }
+
     private void flashDamage(float intensity, boolean hurt) {
         intensity = Math.min(1, intensity);
         glBegin(GL_QUAD_STRIP);
@@ -37,25 +82,25 @@ class Draw {
         }
 
         glColor4f(red, green, 0, intensity/2);
-        glVertex2d(0,0);
+        glVertex2f(0,0);
         glColor4f(red, green, 0, 0);
-        glVertex2d(buffer, buffer);
+        glVertex2f(buffer, buffer);
         glColor4f(red, green, 0, intensity);
-        glVertex2d(width,0);
+        glVertex2f(width,0);
         glColor4f(red, green, 0, 0);
-        glVertex2d(width-buffer, buffer);
+        glVertex2f(width-buffer, buffer);
         glColor4f(red, green, 0, intensity);
-        glVertex2d(width, height);
+        glVertex2f(width, height);
         glColor4f(red, green, 0, 0);
-        glVertex2d(width-buffer, height-buffer);
+        glVertex2f(width-buffer, height-buffer);
         glColor4f(red, green, 0, intensity);
-        glVertex2d(0,height);
+        glVertex2f(0,height);
         glColor4f(red, green, 0, 0);
-        glVertex2d(buffer, height-buffer);
+        glVertex2f(buffer, height-buffer);
         glColor4f(red, green, 0, intensity/2);
-        glVertex2d(0,0);
+        glVertex2f(0,0);
         glColor4f(red, green, 0, 0);
-        glVertex2d(buffer, buffer);
+        glVertex2f(buffer, buffer);
 
         glEnd();
     }
