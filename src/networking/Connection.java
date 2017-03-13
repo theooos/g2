@@ -7,7 +7,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.function.Consumer;
 
 /**
@@ -24,15 +23,18 @@ public class Connection {
     private NetworkEventHandler handler = new NetworkEventHandler();
 
     private static boolean debug = true;
+
     /**
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
      */
     public Connection() throws IOException {
-        if(establishSocket()) establishConnection();
+        if (establishSocket()) establishConnection();
+        handler.addFunction("String", System.out::println);
     }
 
     /**
      * FOR USE ONLY BY SERVER. Initialises the connection to a client.
+     *
      * @param socket The server socket.
      */
     public Connection(Socket socket) throws IOException {
@@ -49,8 +51,8 @@ public class Connection {
 
         String HOSTNAME = LOCAL ? "localhost" : "46.101.84.55";
 
-        for (int i = 1; i <= attempts; i++){
-            socket = new Socket(HOSTNAME,PORT);
+        for (int i = 1; i <= attempts; i++) {
+            socket = new Socket(HOSTNAME, PORT);
             return true;
         }
         return false;
@@ -62,7 +64,8 @@ public class Connection {
     private boolean establishConnection() throws IOException {
         int attempts = 3;
 
-        retries: for (int i = 1; i <= attempts; i++){
+        retries:
+        for (int i = 1; i <= attempts; i++) {
             toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
             fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler);
             break retries;
@@ -78,7 +81,7 @@ public class Connection {
     /**
      * Closes all streams.
      */
-    private void closeConnection(){
+    private void closeConnection() {
         try {
             toConnection.close();
             fromConnection.close();
@@ -90,9 +93,10 @@ public class Connection {
 
     /**
      * Creates a ServerSocket for use by the server.
+     *
      * @return The socket.
      */
-    public static ServerSocket getServerSocket(){
+    public static ServerSocket getServerSocket() {
         try {
             return new ServerSocket(PORT);
         } catch (IOException e) {
@@ -103,33 +107,35 @@ public class Connection {
 
     /**
      * Sends a Sendable object the partner.
+     *
      * @param obj Sendable item.
      */
-    public void send(Sendable obj){
+    public void send(Sendable obj) {
         toConnection.queueForSending(obj);
     }
 
     /**
      * This re-initialises the connection in case of an error.
      */
-    public void resetConnection(){
+    public void resetConnection() {
         closeConnection();
-        try{
+        try {
             establishConnection();
-        } catch (Exception e){
+        } catch (Exception e) {
             System.err.println("Failed to reset connection.");
         }
     }
 
-    public void addFunctionEvent(String className, Consumer<Sendable> consumer){
+    public void addFunctionEvent(String className, Consumer<Sendable> consumer) {
         handler.addFunction(className, consumer);
     }
 
     /**
      * For debugging use only. Remove all references for production.
+     *
      * @param o Object to print.
      */
-    static void out(Object o){
-        if(debug) System.out.println("[NETWORK] "+o);
+    static void out(Object o) {
+        if (debug) System.out.println("[NETWORK] " + o);
     }
 }
