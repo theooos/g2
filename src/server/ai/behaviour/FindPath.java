@@ -40,6 +40,7 @@ public class FindPath extends Task {
 
     @Override
     public void doAction() {
+        System.out.println("IT S ALIvE");
         ArrayList<Vector2> path = new ArrayList<>();
         if (lineOfSight) {
             path.add(intel.getTargetLocation());
@@ -54,6 +55,7 @@ public class FindPath extends Task {
             List<Node> printPath=aStar.printPath(target);
             for (Node node:printPath ) {
                 path.add(new Vector2(node.getX(),node.getY()));
+
             }
 
 

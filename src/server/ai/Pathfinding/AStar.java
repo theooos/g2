@@ -58,7 +58,7 @@ public class AStar {
             }
 
         }
-        System.out.println("Size"+height*width);
+
         makeAdjances(nodes,goal.coordinates());
         this.nodes=nodes;
 
@@ -129,7 +129,7 @@ public class AStar {
         queue.add(source);
 
         boolean found = false;
-
+         System.out.println(queue.poll().adjacencies==null);
         while((!queue.isEmpty())&&(!found)){
 
             //the node in having the lowest f_score value
@@ -141,7 +141,7 @@ public class AStar {
             if(current.xValue==goal.xValue && current.yValue==goal.yValue){
                 found = true;
             }
-            System.out.println(current.adjacencies==null);
+
 
             //check every child of current node
             for(Edge e : current.adjacencies){
