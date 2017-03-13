@@ -1,5 +1,6 @@
 package client;
 
+import Audio.GameEffects;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
@@ -23,13 +24,12 @@ public class Client {
     private Mode currentMode = Mode.SPLASH;
 
     private TextRenderer textRenderer;
-    private TextureLoader textureLoader;
+    public static TextureLoader textureLoader;
 
     private StartScreenRenderer startScreen = new StartScreenRenderer();
 
     private Client() {
         initialise();
-
         loop();
     }
 
@@ -45,7 +45,7 @@ public class Client {
             // let subsystem paint
             switch (currentMode){
                 case SPLASH:
-                    startScreen.renderInterface();
+                    startScreen.render();
                     break;
                 case GAME:
                     break;
@@ -55,10 +55,8 @@ public class Client {
 
             // update window contents
             Display.update();
+            Display.sync(60);
         }
-    }
-
-    private void showMenu() {
     }
 
     private void initialise() {
@@ -87,6 +85,10 @@ public class Client {
             textureLoader.initialise();
 
             textRenderer = new TextRenderer();
+
+            GameEffects.init();
+            GameEffects.volume = GameEffects.Volume.LOW;
+            GameEffects.MUSIC.play();
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");

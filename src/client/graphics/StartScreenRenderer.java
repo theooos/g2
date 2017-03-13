@@ -2,7 +2,6 @@ package client.graphics;
 
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
-import client.ui.StartScreen;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -11,14 +10,48 @@ import org.lwjgl.util.vector.Vector2f;
  */
 public class StartScreenRenderer {
 
-    public InterfaceTexture play;
-    public InterfaceTexture about;
-    public InterfaceTexture instructions;
-    public InterfaceTexture abttext;
-    public InterfaceTexture goBack;
-    public InterfaceTexture lobby;
+    private enum Screen {MAIN,ABOUT,LOBBY}
 
-    public static int PHASE = 0;
+    private InterfaceTexture play;
+    private InterfaceTexture about;
+    private InterfaceTexture instructions;
+    private InterfaceTexture aboutText;
+    private InterfaceTexture goBack;
+    private InterfaceTexture lobby;
+
+    private Screen currentScreen = Screen.MAIN;
+    private static int PHASE = 0;
+
+    private static Layer interfaceLayer = new Layer();
+    private static Layer aboutLayer = new Layer();
+    private static Layer lobbyLayer = new Layer();
+
+    public void render(){
+
+        if(goBack.isClicked()) currentScreen = Screen.MAIN;
+        if(about.isClicked()) currentScreen = Screen.ABOUT;
+        if(lobby.isClicked()) currentScreen = Screen.LOBBY;
+
+        switch(currentScreen){
+            case MAIN:
+                createInterface();
+                renderInterface();
+                break;
+            case ABOUT:
+                aboutText();
+                renderAbout();
+                break;
+            case LOBBY:
+                unspawnForLobby();
+                renderLobby();
+        }
+    }
+
+    private void unSpawnAll(){
+        unspawnMenu();
+        goBack.unSpawn();
+        aboutText.unSpawn();
+    }
 
     public void createInterface()
     {
@@ -28,24 +61,24 @@ public class StartScreenRenderer {
         lobby = new InterfaceTexture(ISprite.LOBBY);
 
         //play.spawn(0,GameRenderer.correctCoordinates(new Vector2f((float)300.0,(float)100.0)),PHASE,GameRenderer.mainUI);
-        lobby.spawn(0, new Vector2f((float) 300.0, (float) 100.0), PHASE, StartScreen.interfaceLayer);
-        about.spawn(1, new Vector2f((float)300.0,(float)250.0),PHASE, StartScreen.interfaceLayer);
-        instructions.spawn(2,new Vector2f((float)300.0,(float)400.0),PHASE, StartScreen.interfaceLayer);
+        lobby.spawn(0, new Vector2f((float) 300.0, (float) 100.0), PHASE, interfaceLayer);
+        about.spawn(1, new Vector2f((float)300.0,(float)250.0),PHASE, interfaceLayer);
+        instructions.spawn(2,new Vector2f((float)300.0,(float)400.0),PHASE, interfaceLayer);
     }
 
     public void createPlay()
     {
         play = new InterfaceTexture(ISprite.START);
-        play.spawn(0, new Vector2f((float)300.0,(float)100.0),PHASE, StartScreen.lobbyLayer);
+        play.spawn(0, new Vector2f((float)300.0,(float)100.0),PHASE, lobbyLayer);
     }
 
     public void aboutText()
     {
-        abttext = new InterfaceTexture(ISprite.ABOUTTEXT);
-        abttext.spawn(0, new Vector2f((float)300.0,(float)100.0),PHASE, StartScreen.aboutLayer);
+        aboutText = new InterfaceTexture(ISprite.ABOUTTEXT);
+        aboutText.spawn(0, new Vector2f((float)300.0,(float)100.0),PHASE, aboutLayer);
 
         goBack = new InterfaceTexture(ISprite.GOBACK);
-        goBack.spawn(1, new Vector2f((float)300.0,(float)450.0),PHASE, StartScreen.aboutLayer);
+        goBack.spawn(1, new Vector2f((float)300.0,(float)450.0),PHASE, aboutLayer);
     }
 
     public void unspawnMenu()
@@ -81,14 +114,14 @@ public class StartScreenRenderer {
     {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         //GameRenderer.mainUI.render(PHASE);
-        StartScreen.interfaceLayer.render(PHASE);
+        interfaceLayer.render(PHASE);
     }
 
     public void renderAbout()
     {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         //GameRenderer.aboutUI.render(PHASE);
-        StartScreen.aboutLayer.render(PHASE);
+        aboutLayer.render(PHASE);
     }
 
     public void renderLobby()
@@ -96,6 +129,6 @@ public class StartScreenRenderer {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         //Layer startButton = startm.getStartButton();
         //startButton.render();
-        StartScreen.lobbyLayer.render(PHASE);
+        lobbyLayer.render(PHASE);
     }
 }

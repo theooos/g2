@@ -1,9 +1,9 @@
 package client.graphics.Sprites;
 
+import client.Client;
 import client.graphics.GameRenderer;
 import client.graphics.Layer;
 import client.graphics.Texture;
-import client.ui.StartScreen;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -53,7 +53,7 @@ public abstract class Sprite implements ISprite {
 
     protected void initInterface()
     {
-        this.texture = StartScreen.textureHandler.getTexture(type);
+        this.texture = Client.textureLoader.getTexture(type);
         this.original_width = this.texture.getTextureWidth();
         this.original_height = this.texture.getTextureHeight();
         this.width = this.original_width * ratio;
