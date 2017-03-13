@@ -50,11 +50,12 @@ public class AStar {
          {
              for ( int col = 0; col < width; col++ )
              {
-                nodes[row][col]=new Node(new Vector2(row,col),1,phase,intel,goal.coordinates());
+                nodes[row][col]=new Node(new Vector2(row,col),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
 
              }
-          makeAdjances(nodes,goal.coordinates());
+
          }
+         makeAdjances(nodes,goal.coordinates());
         this.nodes=nodes;
 
      }

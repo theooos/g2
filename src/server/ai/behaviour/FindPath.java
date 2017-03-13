@@ -53,7 +53,7 @@ public class FindPath extends Task {
             aStar.AstarSearch(start,target);
             List<Node> printPath=aStar.printPath(target);
             for (Node node:printPath ) {
-                path.add(new Vector2(node.getX(),node.getY()));    
+                path.add(new Vector2(node.getX(),node.getY()));
             }
 
 
