@@ -28,6 +28,7 @@ class Draw {
     }
 
     void drawQuad(Vector2 centre, float rotation, float radius, float red, float green, float blue) {
+        glColor4f(red, green, blue, 1);
         glPushMatrix();
         float cx = centre.getX();
         float cy = height-centre.getY();
@@ -40,34 +41,34 @@ class Draw {
         glVertex2f(cx+radius, height-(centre.getY()+radius));
         glVertex2f(cx-radius, height-(centre.getY()+radius));
         glEnd();
-        glPopMatrix();
 
         glBegin(GL_QUAD_STRIP);
-        float buffer = 60;
 
         float intensity = 0.8f;
         glColor4f(red, green, blue, 0);
-        glVertex2f(cx-radius*3/2,cy+radius*3/2);
+        glVertex2f(cx-radius*2,cy-radius*2);  //outer bottom left
         glColor4f(red, green, blue, intensity);
-        glVertex2f(cx-radius, cy-radius);
+        glVertex2f(cx-radius, cy-radius); //inner bottom left
         glColor4f(red, green, blue, 0);
-        glVertex2f(cx+radius*3/2,cy-radius*3/2);
+        glVertex2f(cx+radius*2,cy-radius*2); //outer bottom right
         glColor4f(red, green, blue, intensity);
-        glVertex2f(cx+radius, cy-radius);
+        glVertex2f(cx+radius, cy-radius); //inner bottom right
         glColor4f(red, green, blue, 0);
-        glVertex2f(width, height);
+        glVertex2f(cx+radius*2, cy+radius*2); //outer top right
         glColor4f(red, green, blue, intensity);
-        glVertex2f(width-buffer, height-buffer);
+        glVertex2f(cx+radius, cy+radius); //inner top right
         glColor4f(red, green, blue, 0);
-        glVertex2f(0,height);
+        glVertex2f(cx-radius*2,cy+radius*2); //outer top left
         glColor4f(red, green, blue, intensity);
-        glVertex2f(buffer, height-buffer);
+        glVertex2f(cx-radius, cy+radius); //inner top left
         glColor4f(red, green, blue, 0);
-        glVertex2f(0,0);
+        glVertex2f(cx-radius*2,cy-radius*2);  //outer bottom left
         glColor4f(red, green, blue, intensity);
-        glVertex2f(buffer, buffer);
+        glVertex2f(cx-radius, cy-radius); //inner bottom left
 
         glEnd();
+
+        glPopMatrix();
     }
 
     private void flashDamage(float intensity, boolean hurt) {

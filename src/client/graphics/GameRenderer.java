@@ -430,9 +430,8 @@ public class GameRenderer implements Runnable {
                     green = 1f;
                     blue = 0.1f;
                 }
-                glColor3f(red, green, blue);
                 float radius = p.getRadius();
-                draw.drawQuad(p.getPos().getX(), p.getPos().getY(), rotation, radius);
+                draw.drawQuad(p.getPos(), rotation, radius, red, green, blue);
             }
         }
     }
