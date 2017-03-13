@@ -400,6 +400,7 @@ public class Game implements Runnable {
      */
     private void fire(Player player) {
         Weapon w = player.getActiveWeapon();
+        //out("ID"+player.getID()+": Tries to fire");
         if (w.canFire()) {
             out("ID"+player.getID()+": Just Fired");
             ArrayList<Projectile> ps = w.getShots(player);
@@ -407,7 +408,6 @@ public class Game implements Runnable {
                 p.setID(IDCounter);
                 IDCounter++;
                 projectiles.put(p.getID(), p);
-                //out("Shot Fired");
             }
         }
     }
