@@ -58,7 +58,7 @@ public class AStar {
             }
 
         }
-
+        System.out.println("Size"+height*width);
         makeAdjances(nodes,goal.coordinates());
         this.nodes=nodes;
 
@@ -84,12 +84,14 @@ public class AStar {
                     new  Edge[]{
                             new Edge(nodes[col-1][row],nodes[col-1][row].h_scores),
                             new Edge(nodes[col-1][row-1],nodes[col-1][row-1].h_scores),
-                            new Edge(nodes[col-1][row+1],nodes[col-1][row+1].h_scores),
                             new Edge(nodes[col][row-1],nodes[col][row-1].h_scores),
-                            new Edge(nodes[col][row+1],nodes[col][row+1].h_scores),
                             new Edge(nodes[col-1][row],nodes[col-1][row].h_scores),
-                            new Edge(nodes[col-1][row-1],nodes[col-1][row-1].h_scores),
-                            new Edge(nodes[col-1][row+1],nodes[col-1][row+1].h_scores)
+
+
+                            new Edge(nodes[col+1][row-1],nodes[col-1][row-1].h_scores),
+                            new Edge(nodes[col-1][row+1],nodes[col-1][row+1].h_scores),
+                            new Edge(nodes[col+1][row+1],nodes[col+1][row+1].h_scores),
+                            new Edge(nodes[col][row+1],nodes[col][row+1].h_scores)
             });
 
 
