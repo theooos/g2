@@ -29,16 +29,15 @@ public class Node{
         this.yValue=(int) position.getY();
         this.phase=phase;
         this.radius=radius;
-        h_scores=manhattanDistance(enemy);
         ConcurrentHashMap<Integer,Player> players=intel.getPlayers();
         HashMap<Integer,Orb> orbs=intel.getOrbs();
         Map map=intel.getMap();
         this.collisions=new CollisionManager(players,orbs,map);
-
+        h_scores=manhattanDistance(enemy);
     }
+
     public boolean checkCollision()
     {
-       // System.out.println(getRadius()==null);
         return collisions.validPosition(coordinates(),getRadius(),getPhase());
     }
     public int manhattanDistance(Vector2 enemy)

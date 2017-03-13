@@ -37,28 +37,31 @@ public class AStar {
                     return nodes[i][j];
         return null;
     }
-     public void makeGraph(Node goal,int phase)
-     {
-    server.game.Map map=this.intel.getMap();
-    int width=map.getMapWidth();
-    int height=map.getMapLength();
-    Node[][] nodes;
 
-         nodes = new Node[width][height];
+    public void makeGraph(Node goal,int phase)
+    {
+        server.game.Map map=this.intel.getMap();
+        int width=map.getMapWidth();
+        int height=map.getMapLength();
+        Node[][] nodes;
 
-         for ( int row = 0; row < height; row++ )
-         {
-             for ( int col = 0; col < width; col++ )
-             {
+        nodes = new Node[width][height];
+
+        for ( int row = 0; row < (height - 1); row++ )
+        {
+            for ( int col = 0; col < (width - 1); col++ )
+            {
+                System.out.println("Row: " + row);
+                System.out.println("Col: " + col);
                 nodes[row][col]=new Node(new Vector2(row,col),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
 
-             }
+            }
 
-         }
-         makeAdjances(nodes,goal.coordinates());
+        }
+        makeAdjances(nodes,goal.coordinates());
         this.nodes=nodes;
 
-     }
+    }
 
      public void makeAdjances(Node[][] nodes,Vector2 goal)
      {
