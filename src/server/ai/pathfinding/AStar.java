@@ -1,4 +1,4 @@
-package server.ai.Pathfinding;
+package server.ai.pathfinding;
 import server.ai.Intel;
 import server.game.Vector2;
 

@@ -97,7 +97,7 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create AI players
-        for (int i = playerConnections.size(); i < maxPlayers; i++) {
+        /*for (int i = playerConnections.size(); i < maxPlayers; i++) {
             //randomly select weapons for players
             Weapon w1;
             Weapon w2;
@@ -123,7 +123,7 @@ public class Game implements Runnable {
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             players.put(IDCounter, p);
             IDCounter++;
-        }
+        }*/
         //create team orbs
         for (int i = 0; i < maxPlayers; i++) {
             Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);

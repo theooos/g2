@@ -2,8 +2,8 @@ package server.ai.behaviour;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.Pathfinding.AStar;
-import server.ai.Pathfinding.Node;
+import server.ai.pathfinding.AStar;
+import server.ai.pathfinding.Node;
 import server.ai.Task;
 import server.game.Vector2;
 
@@ -46,7 +46,6 @@ public class FindPath extends Task {
             path.add(intel.getTargetLocation());
             intel.resetPath(path);
         } else {
-            // SKELETON CODE
             AStar aStar=new AStar(intel);
             Node target=new Node(intel.getTargetLocation(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
             aStar.makeGraph(target,intel.ent().getPhase());
@@ -57,10 +56,6 @@ public class FindPath extends Task {
                 path.add(new Vector2(node.getX(),node.getY()));
 
             }
-
-
-            // PERQUISITE: A*
-
             intel.resetPath(path);
         }
         end();
