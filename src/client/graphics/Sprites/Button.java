@@ -13,7 +13,7 @@ public class Button extends Sprite {
     public Button(int type){
         this.type = type;
         this.setRatio(1f);
-        this.init();
+        this.initGameSprite();
     }
 
     public boolean isMouseOver(){

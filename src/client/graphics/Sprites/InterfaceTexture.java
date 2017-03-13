@@ -7,6 +7,6 @@ public class InterfaceTexture extends Sprite {
     public InterfaceTexture(int type) {
         this.type = type;
         this.setRatio(0.3f);
-        initInterface();
+        initInterfaceSprite();
     }
 }

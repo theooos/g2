@@ -50,7 +50,7 @@ public abstract class Sprite implements ISprite {
     private float textureLeft = 0;
     private float textureRight = 1;
 
-    protected void init() {
+    protected void initGameSprite() {
         this.texture = GameRenderer.textureHandler.getTexture(type);
         this.original_width = this.texture.getTextureWidth();
         this.original_height = this.texture.getTextureHeight();
@@ -58,7 +58,7 @@ public abstract class Sprite implements ISprite {
         this.height = this.original_height * ratio;
     }
 
-    protected void initInterface() {
+    void initInterfaceSprite() {
         this.texture = Client.textureLoader.getTexture(type);
         this.original_width = this.texture.getTextureWidth();
         this.original_height = this.texture.getTextureHeight();
