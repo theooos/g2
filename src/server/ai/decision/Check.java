@@ -64,7 +64,8 @@ public class Check {
     }
 
     private boolean orbNearbyCheck(){
-        if (((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(intel.ent().getPos(), intel.ge) )
+        return false;
+        //if (((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(intel.ent().getPos(), intel.ge) )
     }
 
     private boolean proximityCheck(){

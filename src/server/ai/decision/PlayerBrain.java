@@ -49,18 +49,13 @@ public class PlayerBrain extends AIBrain {
 
     @Override
     public void doSomething() {
-        // Perform checks.
-        boolean lowHealth = check.doCheck(Check.CheckMode.HEALTH);
-        boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY);
-
         // Decide emotion.
-        feel.setParameters(lowHealth, playerNear);
         feel.doFinal();
 
         // Decide how to behave...
         if (curEmotion == EmotionalState.INTIMIDATED){
             // IMPLEMENT THE CHECK.
-            boolean retaliationViable = check.doCheck(Check.CheckMode.COUNTER_ATTACK_VIABLE);
+            boolean retaliationViable = check.doCheck(Check.CheckMode.RETALIATION_VIABLE);
             if (retaliationViable) {
                 if (!behaviours.getBehaviour("Retaliate").isRunning()){
                     behaviours.getBehaviour("Retaliate").start();
