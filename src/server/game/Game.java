@@ -30,6 +30,8 @@ public class Game implements Runnable {
     private Scoreboard sb;
     private int IDCounter;
 
+    private final boolean ORBS = false;
+
     private final boolean DEBUG = true;
 
 
@@ -124,16 +126,19 @@ public class Game implements Runnable {
             players.put(IDCounter, p);
             IDCounter++;
         }
-        //create team orbs
-        for (int i = 0; i < maxPlayers; i++) {
-            Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
-            respawn(o);
-            orbs.put(IDCounter, o);
-            IDCounter++;
 
-            // Ready Orbs for game.
-            OrbIntel intel = new OrbIntel(players, map);
-            o.prepareOrbForGame(intel, orbs);
+        if (ORBS){
+            // Create Orbs.
+            for (int i = 0; i < maxPlayers; i++) {
+                Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
+                respawn(o);
+                orbs.put(IDCounter, o);
+                IDCounter++;
+
+                // Ready Orbs for game.
+                OrbIntel intel = new OrbIntel(players, map);
+                o.prepareOrbForGame(intel, orbs);
+            }
         }
 
         // Ready AI Players for game.

@@ -1,12 +1,9 @@
 package server.ai.decision;
 
 import server.ai.Intel;
-import server.ai.vision.VisibilityPolygon;
 import server.game.Player;
 import server.game.Vector2;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,11 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Check {
 
     public enum CheckMode {
-        HEALTH,
+        LOW_HEALTH,
+        ORB_NEARBY,
         PROXIMITY,
         RANGE,
-        COUNTER_ATTACK_VIABLE,
+        RETALIATION_VIABLE,
         TARGET_MOVED }
+
+    private final int LOW_HEALTH_THRESHOLD = 30;
     private Intel intel;        // The intelligence this object uses to perform its checks.
 
     /**
@@ -38,50 +38,68 @@ public class Check {
      */
     public boolean doCheck(CheckMode mode) {
 
-        // Returns true if the entity has lost health since the last tick.
-        if (mode == CheckMode.HEALTH) {
-            int curHealth = ((PlayerIntel)(intel)).ent().getHealth();
-            boolean healthDown = (((PlayerIntel)(intel)).healthLastTick() > curHealth);
-            if (healthDown) ((PlayerIntel)(intel)).rememberHealth(curHealth);
-            return healthDown;
+        if (mode == CheckMode.LOW_HEALTH) {
+            return lowHealthCheck();
         }
-
-        // Returns true if there is an enemy player within the entity's field of vision.
+        else if (mode == CheckMode.ORB_NEARBY) {
+            return orbNearbyCheck();
+        }
         else if (mode == CheckMode.PROXIMITY) {
-            ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight();
-            if (playersInSight.size() > 0){
-                targetNearestPlayer(playersInSight);
-                return true;
-            }
-            else {
-                return false;
-            }
+            return proximityCheck();
         }
-
-        // Returns true if the Orb is in attacking range of the targeted player.
         else if (mode == CheckMode.RANGE) {
-            Vector2 targetPos = intel.getTargetPlayer().getPos();
-            Vector2 currentPos = intel.ent().getPos();
-            float distance = currentPos.getDistanceTo(targetPos);
-            float range = intel.ent().getRadius() + intel.getTargetPlayer().getRadius();
-            return (distance <= range);
+            return rangeCheck();
         }
-
-        // Returns true if the targeted player has moved since the last tick.
+        else if (mode == CheckMode.RETALIATION_VIABLE){
+            return retaliationViableCheck();
+        }
         else if (mode == CheckMode.TARGET_MOVED) {
-            if (intel.getTargetLocation() == null) {
-                return true;
-            }
-            Vector2 targetPos = intel.getTargetLocation();
-            Vector2 playerAt = intel.getTargetPlayer().getPos();
-            float distance = targetPos.getDistanceTo(playerAt);
-            float accErr = intel.ent().getRadius();
-            return (distance > accErr);
-
+            return targetMovedCheck();
         }
         else return false;
     }
 
+    private boolean lowHealthCheck(){
+        return intel.ent().getHealth() <= LOW_HEALTH_THRESHOLD;
+    }
+
+    private boolean orbNearbyCheck(){
+        if (((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(intel.ent().getPos(), intel.ge) )
+    }
+
+    private boolean proximityCheck(){
+        ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight();
+        if (playersInSight.size() > 0){
+            targetNearestPlayer(playersInSight);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    private boolean rangeCheck(){
+        Vector2 targetPos = intel.getTargetPlayer().getPos();
+        Vector2 currentPos = intel.ent().getPos();
+        float distance = currentPos.getDistanceTo(targetPos);
+        float range = intel.ent().getRadius() + intel.getTargetPlayer().getRadius();
+        return (distance <= range);
+    }
+
+    private boolean retaliationViableCheck(){
+        return false;
+    }
+
+    private boolean targetMovedCheck(){
+        if (intel.getTargetLocation() == null) {
+            return true;
+        }
+        Vector2 targetPos = intel.getTargetLocation();
+        Vector2 playerAt = intel.getTargetPlayer().getPos();
+        float distance = targetPos.getDistanceTo(playerAt);
+        float accErr = intel.ent().getRadius();
+        return (distance > accErr);
+    }
 
     /**
      * For efficiency purposes, targets the nearest enemy player upon detection and

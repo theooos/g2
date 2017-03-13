@@ -2,6 +2,7 @@ package server.ai;
 
 import server.ai.decision.Check;
 import server.ai.behaviour.*;
+import server.ai.decision.Feel;
 
 /**
  * Abstract representation of an AI-controlled unit's brain.
@@ -11,6 +12,7 @@ public abstract class AIBrain {
 
     public enum EmotionalState{
         INTIMIDATED,
+        IRRITATED,
         VENGEFUL,
         AGGRESSIVE,
         DETERMINED,
@@ -26,7 +28,7 @@ public abstract class AIBrain {
         this.curEmotion = EmotionalState.BORED;
         this.intel = intel;
         this.check = new Check(intel);
-        this.feel = new Feel(this);
+        this.feel = new Feel(this, check);
         this.behaviours = new BehaviourSet();
 
     }
