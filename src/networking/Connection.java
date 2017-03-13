@@ -27,56 +27,52 @@ public class Connection {
     /**
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
      */
-    public Connection(){
-        String HOSTNAME;
-        if (LOCAL) {
-            HOSTNAME="localhost";
-        }
-        else {
-            HOSTNAME="46.101.84.55";
-        }
-        try {
-            socket = new Socket(HOSTNAME,PORT);
-        } catch (IOException e) {
-            try {
-                if (!LOCAL) {
-                    HOSTNAME="localhost";
-                }
-                else {
-                    HOSTNAME="46.101.84.55";
-                }
-                socket = new Socket(HOSTNAME,PORT);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-        establishConnection();
+    public Connection() throws IOException {
+        if(establishSocket()) establishConnection();
     }
 
     /**
      * FOR USE ONLY BY SERVER. Initialises the connection to a client.
      * @param socket The server socket.
      */
-    public Connection(Socket socket) {
+    public Connection(Socket socket) throws IOException {
         this.socket = socket;
         out("Connection made to client.");
         establishConnection();
     }
 
     /**
+     * Generates the socket.
+     */
+    private boolean establishSocket() throws IOException {
+        int attempts = 3;
+
+        String HOSTNAME = LOCAL ? "localhost" : "46.101.84.55";
+
+        for (int i = 1; i <= attempts; i++){
+            socket = new Socket(HOSTNAME,PORT);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Creates the input and output streams.
      */
-    private void establishConnection(){
-        try {
+    private boolean establishConnection() throws IOException {
+        int attempts = 3;
+
+        retries: for (int i = 1; i <= attempts; i++){
             toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
             fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler);
-        } catch (IOException e) {
-            out("Failed to establish connection.");
+            break retries;
         }
+
         out("Connection made to server.");
         new Thread(toConnection).start();
         new Thread(fromConnection).start();
         new Thread(handler).start();
+        return true;
     }
 
     /**
@@ -118,7 +114,11 @@ public class Connection {
      */
     public void resetConnection(){
         closeConnection();
-        establishConnection();
+        try{
+            establishConnection();
+        } catch (Exception e){
+            System.err.println("Failed to reset connection.");
+        }
     }
 
     public void addFunctionEvent(String className, Consumer<Sendable> consumer){

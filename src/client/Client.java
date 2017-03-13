@@ -9,6 +9,8 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
+import java.io.IOException;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class Client {
@@ -121,7 +123,11 @@ public class Client {
     }
 
     public void establishConnection() {
-        connection = new Connection();
+        try {
+            connection = new Connection();
+        } catch (IOException e) {
+            System.err.println("Failed to make connection.");
+        }
     }
 
     public static void main(String argv[]) {

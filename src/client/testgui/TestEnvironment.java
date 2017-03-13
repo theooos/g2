@@ -24,7 +24,12 @@ public class TestEnvironment extends Observable {
         super();
         entities = new ArrayList<>();
 
-        Connection connection = new Connection();
+        Connection connection = null;
+        try {
+            connection = new Connection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("Player", this::addEntity);
