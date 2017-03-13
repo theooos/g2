@@ -36,6 +36,13 @@ public class Node{
         h_scores=manhattanDistance(enemy);
     }
 
+    
+    public void addAdjancency(Edge newEdge)
+    {
+        this.adjacencies[adjacencies.length]=newEdge;
+    }
+
+
     public boolean checkCollision()
     {
         return collisions.validPosition(coordinates(),getRadius(),getPhase());

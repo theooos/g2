@@ -53,6 +53,7 @@ public class FindPath extends Task {
             Node start=new Node(intel.ent().getPos(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
             aStar.AstarSearch(start,target);
             List<Node> printPath=aStar.printPath(target);
+
             for (Node node:printPath ) {
                 path.add(new Vector2(node.getX(),node.getY()));
 
