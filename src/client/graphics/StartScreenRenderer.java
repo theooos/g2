@@ -1,136 +1,138 @@
 package client.graphics;
 
+import client.Client;
+import client.ClientLogic.GameData;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by bianca on 05/03/2017.
  */
 public class StartScreenRenderer {
 
-    private enum Screen {MAIN,ABOUT,LOBBY}
+    private enum Screen {MAIN, ABOUT, LOADING, LOBBY}
+    private Screen currentScreen = Screen.MAIN;
 
     private InterfaceTexture play;
     private InterfaceTexture about;
     private InterfaceTexture instructions;
-    private InterfaceTexture aboutText;
-    private InterfaceTexture goBack;
-    private InterfaceTexture lobby;
+    private InterfaceTexture about_text;
+    private InterfaceTexture go_back;
+    private InterfaceTexture join_game;
 
-    private Screen currentScreen = Screen.MAIN;
     private static int PHASE = 0;
 
     private static Layer interfaceLayer = new Layer();
     private static Layer aboutLayer = new Layer();
+    private static Layer loadingLayer = new Layer();
     private static Layer lobbyLayer = new Layer();
 
-    public StartScreenRenderer(){
-        createInterface();
-        aboutText();
+    private boolean hasClicked = false;
+
+    private Consumer<Void> connectFunction;
+
+    public StartScreenRenderer(Consumer<Void> connectFunction) {
+        this.connectFunction = connectFunction;
+        readyInterfaceLayer();
+        readyAboutLayer();
+        readyLoadingLayer();
     }
 
-    public void render(){
-
-        if(goBack.isClicked()) currentScreen = Screen.MAIN;
-        if(about.isClicked()) currentScreen = Screen.ABOUT;
-        if(lobby.isClicked()) currentScreen = Screen.LOBBY;
-
-        switch(currentScreen){
+    public void render() {
+        handleClicked();
+        switch (currentScreen) {
             case MAIN:
                 renderInterface();
                 break;
             case ABOUT:
                 renderAbout();
                 break;
+            case LOADING:
+                renderLoading();
+                break;
             case LOBBY:
                 renderLobby();
         }
     }
 
-    private void unSpawnAll(){
-        unspawnMenu();
-        goBack.unSpawn();
-        aboutText.unSpawn();
+    private void handleClicked() {
+        if(!Mouse.isButtonDown(0)) hasClicked = false;
+
+        if (go_back.isClicked()) {
+            hasClicked = true;
+            currentScreen = Screen.MAIN;
+        }
+        if (about.isClicked()) {
+            hasClicked = true;
+            currentScreen = Screen.ABOUT;
+        }
+        if (join_game.isClicked()) {
+            hasClicked = true;
+            currentScreen = Screen.LOBBY;
+            connectFunction.accept(null);
+        }
     }
 
-    public void createInterface()
-    {
-        //play = new ButtonTexture(ISprite.START);
+    // ****** THESE PREPARE EACH LAYER ******
+
+    private void readyInterfaceLayer() {
         about = new InterfaceTexture(ISprite.ABOUT);
         instructions = new InterfaceTexture(ISprite.HELP);
-        lobby = new InterfaceTexture(ISprite.LOBBY);
+        join_game = new InterfaceTexture(ISprite.LOBBY);
 
-        //play.spawn(0,GameRenderer.correctCoordinates(new Vector2f((float)300.0,(float)100.0)),PHASE,GameRenderer.mainUI);
-        lobby.spawn(0, new Vector2f((float) 300.0, (float) 100.0), PHASE, interfaceLayer);
-        about.spawn(1, new Vector2f((float)300.0,(float)250.0),PHASE, interfaceLayer);
-        instructions.spawn(2,new Vector2f((float)300.0,(float)400.0),PHASE, interfaceLayer);
+        about.spawn(1, new Vector2f((float) 300.0, (float) 100.0), PHASE, interfaceLayer);
+        instructions.spawn(2, new Vector2f((float) 300.0, (float) 250.0), PHASE, interfaceLayer);
+        join_game.spawn(0, new Vector2f((float) 300.0, (float) 400.0), PHASE, interfaceLayer);
     }
 
-    public void createPlay()
-    {
-        play = new InterfaceTexture(ISprite.START);
-        play.spawn(0, new Vector2f((float)300.0,(float)100.0),PHASE, lobbyLayer);
+    private void readyAboutLayer() {
+        about_text = new InterfaceTexture(ISprite.ABOUTTEXT);
+        go_back = new InterfaceTexture(ISprite.GOBACK);
+
+        about_text.spawn(0, new Vector2f((float) 300.0, (float) 100.0), PHASE, aboutLayer);
+        go_back.spawn(1, new Vector2f((float) 300.0, (float) 450.0), PHASE, aboutLayer);
     }
 
-    public void aboutText()
-    {
-        aboutText = new InterfaceTexture(ISprite.ABOUTTEXT);
-        aboutText.spawn(0, new Vector2f((float)300.0,(float)100.0),PHASE, aboutLayer);
-
-        goBack = new InterfaceTexture(ISprite.GOBACK);
-        goBack.spawn(1, new Vector2f((float)300.0,(float)450.0),PHASE, aboutLayer);
+    private void readyLoadingLayer(){
+        InterfaceTexture temporary_filler = new InterfaceTexture(ISprite.ORB_P1);
+        temporary_filler.spawn(0,new Vector2f((float) 300.0, (float) 100.0),PHASE,loadingLayer);
     }
 
-    public void unspawnMenu()
-    {
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
-        GL11.glClearDepth(1.0f); // Depth Buffer Setup
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+    public void readyLobbyLayer(GameData gameData) {
 
-        lobby.unSpawn();
-        instructions.unSpawn();
-        about.unSpawn();
     }
 
-    public void unspawnLobby()
-    {
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
-        GL11.glClearDepth(1.0f); // Depth Buffer Setup
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        play.unSpawn();
-    }
 
-    public void unspawnForLobby()
-    {
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
-        GL11.glClearDepth(1.0f); // Depth Buffer Setup
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        instructions.unSpawn();
-        about.unSpawn();
-    }
+    // ****** THESE RENDER EACH LAYER ******
 
-    public void renderInterface()
-    {
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        //GameRenderer.mainUI.render(PHASE);
+    private void renderInterface() {
+        clearScreen();
         interfaceLayer.render(PHASE);
     }
 
-    public void renderAbout()
-    {
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        //GameRenderer.aboutUI.render(PHASE);
+    private void renderAbout() {
+        clearScreen();
         aboutLayer.render(PHASE);
     }
 
-    public void renderLobby()
-    {
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        //Layer startButton = startm.getStartButton();
-        //startButton.render();
+    private void renderLoading(){
+        clearScreen();
+        loadingLayer.render(PHASE);
+    }
+
+    private void renderLobby() {
+        clearScreen();
         lobbyLayer.render(PHASE);
+    }
+
+    private void clearScreen() {
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 }

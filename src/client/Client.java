@@ -4,6 +4,7 @@ import Audio.GameEffects;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
+import networking.Connection;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -13,6 +14,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Client {
 
     public enum Mode {SPLASH, GAME}
+    private Mode currentMode = Mode.SPLASH;
 
     private static final String WINDOW_TITLE = "PhaseShift";
     private static final int SCREEN_HEIGHT = 600;
@@ -20,8 +22,9 @@ public class Client {
     private static int SCREEN_TEXTURE_ID = 0;
     private static final boolean FULLSCREEN = false;
 
+    private Connection connection;
+
     private boolean running = true;
-    private Mode currentMode = Mode.SPLASH;
 
     public static TextureLoader textureLoader;
     private TextRenderer textRenderer;
@@ -34,16 +37,14 @@ public class Client {
     }
 
     private void loop() {
-        while(!Display.isCloseRequested() && running){
+        while (!Display.isCloseRequested() && running) {
             // clear screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
 
-            startScreen.createInterface();
-            startScreen.aboutText();
             // let subsystem paint
-            switch (currentMode){
+            switch (currentMode) {
                 case SPLASH:
                     startScreen.render();
                     break;
@@ -86,7 +87,7 @@ public class Client {
 
             textRenderer = new TextRenderer();
 
-            startScreen = new StartScreenRenderer();
+            startScreen = new StartScreenRenderer(e -> establishConnection());
 
             GameEffects.init();
             GameEffects.volume = GameEffects.Volume.LOW;
@@ -104,7 +105,7 @@ public class Client {
             // get modes
             DisplayMode[] dm = org.lwjgl.util.Display.getAvailableDisplayModes(SCREEN_WIDTH, SCREEN_HEIGHT, -1, -1, -1, -1, 60, 60);
 
-            org.lwjgl.util.Display.setDisplayMode(dm, new String[] {
+            org.lwjgl.util.Display.setDisplayMode(dm, new String[]{
                     "width=" + SCREEN_WIDTH,
                     "height=" + SCREEN_HEIGHT,
                     "freq=" + 60,
@@ -117,6 +118,10 @@ public class Client {
         }
 
         return false;
+    }
+
+    public void establishConnection() {
+        connection = new Connection();
     }
 
     public static void main(String argv[]) {
