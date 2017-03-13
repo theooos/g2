@@ -51,13 +51,14 @@ public class AStar {
         {
             for ( int col = 0; col < (width - 1); col++ )
             {
-                System.out.println("Row: " + row);
-                System.out.println("Col: " + col);
+              //  System.out.println("Row: " + row);
+                //System.out.println("Col: " + col);
                 nodes[col][row]=new Node(new Vector2(col,row),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
 
             }
 
         }
+        System.out.println("Size"+height*width);
         makeAdjances(nodes,goal.coordinates());
         this.nodes=nodes;
 
@@ -68,21 +69,27 @@ public class AStar {
          server.game.Map map=this.intel.getMap();
          int width=map.getMapWidth();
          int height=map.getMapLength();
-        for (int row=0;row<height;row++)
+         System.out.println("Size 2:"+height*width);
+         System.out.println(nodes==null);
+        for (int row=1;row<height-2;row++)
         {
 
-            for(int col=0;col<width;col++)
+            for(int col=1;col<width-2;col++)
             {
-            nodes[row][col].setAdjacencies(
+               // System.out.println("Check:"+nodes[col][row]==null);
+
+
+
+            nodes[col][row].setAdjacencies(
                     new  Edge[]{
-                            new Edge(nodes[row-1][col],nodes[row-1][col].h_scores),
-                            new Edge(nodes[row-1][col-1],nodes[row-1][col-1].h_scores),
-                            new Edge(nodes[row-1][col+1],nodes[row-1][col+1].h_scores),
-                            new Edge(nodes[row][col-1],nodes[row][col-1].h_scores),
-                            new Edge(nodes[row][col+1],nodes[row][col+1].h_scores),
-                            new Edge(nodes[row-1][col],nodes[row-1][col].h_scores),
-                            new Edge(nodes[row-1][col-1],nodes[row-1][col-1].h_scores),
-                            new Edge(nodes[row-1][col+1],nodes[row-1][col+1].h_scores)
+                            new Edge(nodes[col-1][row],nodes[col-1][row].h_scores),
+                            new Edge(nodes[col-1][row-1],nodes[col-1][row-1].h_scores),
+                            new Edge(nodes[col-1][row+1],nodes[col-1][row+1].h_scores),
+                            new Edge(nodes[col][row-1],nodes[col][row-1].h_scores),
+                            new Edge(nodes[col][row+1],nodes[col][row+1].h_scores),
+                            new Edge(nodes[col-1][row],nodes[col-1][row].h_scores),
+                            new Edge(nodes[col-1][row-1],nodes[col-1][row-1].h_scores),
+                            new Edge(nodes[col-1][row+1],nodes[col-1][row+1].h_scores)
             });
 
 
@@ -134,6 +141,7 @@ public class AStar {
             if(current.xValue==goal.xValue && current.yValue==goal.yValue){
                 found = true;
             }
+            System.out.println(current.adjacencies==null);
 
             //check every child of current node
             for(Edge e : current.adjacencies){
