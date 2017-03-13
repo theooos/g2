@@ -112,7 +112,7 @@ public class StartScreenRenderer {
 
     }
 
-    
+
     // ****** THESE RENDER EACH LAYER ******
 
     private void renderInterface() {

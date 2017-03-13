@@ -6,6 +6,8 @@ import objects.MoveObject;
 import objects.Sendable;
 import server.game.*;
 
+import java.util.function.Consumer;
+
 
 /**
  * Created by Patrick on 2/11/2017.
@@ -14,12 +16,14 @@ import server.game.*;
 public class ClientReceiver {
 
     private Connection connection;
+    private Consumer<GameData> beginGame;
     private int playerID;
     private static boolean DEBUG = true;
     private GameData gameData;
 
-    public ClientReceiver(Connection conn) {
-        this.connection = conn;
+    public ClientReceiver(Connection connection, Consumer<GameData> beginGame) {
+        this.connection = connection;
+        this.beginGame = beginGame;
 
         connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("String", this::getID);
@@ -37,7 +41,7 @@ public class ClientReceiver {
     private void setupGame(Sendable s) {
         InitGame initGame = (InitGame) s;
         gameData = new GameData(initGame);
-        out("The game is now executing.");
+        beginGame.accept(gameData);
     }
 
     private void getID(Object o) {
@@ -46,6 +50,7 @@ public class ClientReceiver {
 
         switch (t) {
             case "ID":
+                out("FUCK! "+t);
                 String idS = information.substring(2);
                 int id = Integer.parseInt(idS);
                 this.setID(id);

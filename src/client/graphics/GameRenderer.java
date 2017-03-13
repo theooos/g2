@@ -53,7 +53,7 @@ public class GameRenderer implements Runnable {
     private boolean displayCollisions;
     private float rotation;
 
-    GameRenderer(GameData gd, Connection conn, int playerID) {
+    public GameRenderer(GameData gd, Connection conn, int playerID) {
         super();
         this.conn = conn;
         this.gameData = gd;

@@ -2,6 +2,8 @@ package client;
 
 import client.Audio.GameEffects;
 import client.ClientLogic.ClientReceiver;
+import client.ClientLogic.GameData;
+import client.graphics.GameRenderer;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
@@ -34,6 +36,7 @@ public class Client {
     private TextRenderer textRenderer;
 
     private StartScreenRenderer startScreen;
+    private GameRenderer gameRenderer;
 
     private Client() {
         initialise();
@@ -124,10 +127,14 @@ public class Client {
         return false;
     }
 
-    public void establishConnection() {
+    private void beginGame(GameData gameData){
+        gameRenderer = new GameRenderer(gameData,connection,0);
+    }
+
+    private void establishConnection() {
         try {
             connection = new Connection();
-            clientReceiver = new ClientReceiver(connection);
+            clientReceiver = new ClientReceiver(connection,this::beginGame);
         } catch (IOException e) {
             System.err.println("Failed to make connection.");
         }
