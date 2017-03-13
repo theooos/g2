@@ -29,7 +29,6 @@ public class Connection {
      */
     public Connection() throws IOException {
         if (establishSocket()) establishConnection();
-        handler.addFunction("String", System.out::println);
     }
 
     /**

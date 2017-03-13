@@ -6,8 +6,6 @@ import objects.MoveObject;
 import objects.Sendable;
 import server.game.*;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 
 /**
  * Created by Patrick on 2/11/2017.
@@ -18,11 +16,12 @@ public class ClientReceiver {
     private Connection connection;
     private int playerID;
     private static boolean DEBUG = true;
-    private GameData gd;
+    private GameData gameData;
 
     public ClientReceiver(Connection conn) {
         this.connection = conn;
 
+        connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("String", this::getID);
         connection.addFunctionEvent("InitGame", this::setupGame);
         connection.addFunctionEvent("Player", this::updatedPlayer);
@@ -33,12 +32,11 @@ public class ClientReceiver {
         connection.addFunctionEvent("DistDropOffProjectile", this::updatedDistProjectile);
         connection.addFunctionEvent("Scoreboard", this::updatedScoreboard);
         connection.addFunctionEvent("PowerUp", this::updatedPowerUp);
-
     }
 
     private void setupGame(Sendable s) {
         InitGame initGame = (InitGame) s;
-        gd = new GameData(initGame);
+        gameData = new GameData(initGame);
         out("The game is now executing.");
     }
 
@@ -49,13 +47,8 @@ public class ClientReceiver {
         switch (t) {
             case "ID":
                 String idS = information.substring(2);
-
                 int id = Integer.parseInt(idS);
-
                 this.setID(id);
-
-            default:
-                System.out.println("[CLIENT] " + information);
                 break;
         }
     }
@@ -63,7 +56,6 @@ public class ClientReceiver {
     public void out(Object o) {
         if (DEBUG) System.out.println("[CLIENT] " + o);
     }
-
 
     private void setID(int id) {
         this.playerID = id;
@@ -76,45 +68,45 @@ public class ClientReceiver {
     private void updatedPlayer(Sendable s) {
         Player p = (Player) s;
         if (p.getID() != playerID) {
-            gd.updatePlayer(p);
+            gameData.updatePlayer(p);
         }
         else {
-            gd.updateMe(p);
+            gameData.updateMe(p);
         }
     }
 
     private void updatedOrb(Sendable s) {
         Orb o = (Orb) s;
-        gd.updateOrb(o);
+        gameData.updateOrb(o);
 
     }
 
     private void updatedProjectile(Sendable s) {
         Projectile p = (Projectile) s;
-        gd.updateProjectile(p);
+        gameData.updateProjectile(p);
     }
 
     private void updatedPowerUp(Sendable s) {
         PowerUp p = (PowerUp) s;
-        gd.updatePowerUp(p);
+        gameData.updatePowerUp(p);
     }
 
     private void updatedScoreboard(Sendable s) {
         Scoreboard sb = (Scoreboard) s;
         out(s.toString());
-        gd.updateScoreboard(sb);
+        gameData.updateScoreboard(sb);
     }
 
     private void updatedDistProjectile(Sendable s) {
         DistDropOffProjectile p = (DistDropOffProjectile) s;
-        gd.updateProjectile(p);
+        gameData.updateProjectile(p);
     }
 
     private void movePlayer(Sendable s) {
         MoveObject m = (MoveObject) s;
-        Player p = gd.getPlayer(m.getID());
+        Player p = gameData.getPlayer(m.getID());
         p.setPos(m.getPos());
         p.setMoveCount(m.getMoveCounter());
-        gd.updatePlayer(p);
+        gameData.updatePlayer(p);
     }
 }

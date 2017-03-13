@@ -112,31 +112,22 @@ public class StartScreenRenderer {
 
     }
 
-
-
+    
     // ****** THESE RENDER EACH LAYER ******
 
     private void renderInterface() {
-        clearScreen();
         interfaceLayer.render(PHASE);
     }
 
     private void renderAbout() {
-        clearScreen();
         aboutLayer.render(PHASE);
     }
 
     private void renderLoading(){
-        clearScreen();
         loadingLayer.render(PHASE);
     }
 
     private void renderLobby() {
-        clearScreen();
         lobbyLayer.render(PHASE);
-    }
-
-    private void clearScreen() {
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 }
