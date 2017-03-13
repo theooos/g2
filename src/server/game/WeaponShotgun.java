@@ -5,6 +5,7 @@ package server.game;
  * A slow firing, close range weapon with multiple pellets
  */
 public class WeaponShotgun extends Weapon {
+
     public WeaponShotgun() {
         super();
         name = "Shotgun";

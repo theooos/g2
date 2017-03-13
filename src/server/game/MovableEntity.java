@@ -7,7 +7,7 @@ package server.game;
 public class MovableEntity extends Entity {
     protected float speed;
     protected Vector2 dir;
-    float radius;
+    protected float radius;
     int team;
 
     /**

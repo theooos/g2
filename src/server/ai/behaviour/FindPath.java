@@ -1,7 +1,8 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.OrbBrain;
+import server.ai.Task;
 import server.game.Vector2;
 
 import java.util.ArrayList;
@@ -12,8 +13,20 @@ import java.util.ArrayList;
  */
 public class FindPath extends Task {
 
-    public FindPath(Intel intel, OrbBrain brain) {
+    private boolean lineOfSight;
+
+    public FindPath(Intel intel, AIBrain brain) {
         super(intel, brain);
+    }
+
+    /**
+     * Determines whether this path-finding object needs to
+     * use A* search to find a path or not.
+     * @param lineOfSight - set to true if the target is within line of sight
+     *                    of the entity.
+     */
+    public void setSimplePath(boolean lineOfSight){
+        this.lineOfSight = lineOfSight;
     }
 
     @Override
@@ -24,13 +37,16 @@ public class FindPath extends Task {
 
     @Override
     public void doAction() {
-        // SKELETON METHOD.
-        // PERQUISITE: Collision Detection, DoorwayDetection.
         ArrayList<Vector2> path = new ArrayList<>();
-        path.add(intel.getTargetLocation());
-        intel.resetPath(path);
+        if (lineOfSight) {
+            path.add(intel.getTargetLocation());
+            intel.resetPath(path);
+        } else {
+            // SKELETON CODE
+            // PERQUISITE: A*
+            path.add(intel.getTargetLocation());
+            intel.resetPath(path);
+        }
         end();
     }
-
-
 }

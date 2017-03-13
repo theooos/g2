@@ -7,9 +7,9 @@ package server.game;
  */
 public class Player extends MovableEntity {
 
-    private Weapon w1;
-    private Weapon w2;
-    private boolean w1Out;
+    protected Weapon w1;
+    protected Weapon w2;
+    protected boolean w1Out;
     private boolean firing;
     private double weaponOutHeat;
     private int moveCounter;
@@ -93,7 +93,7 @@ public class Player extends MovableEntity {
         return firing;
     }
 
-    void setFiring(boolean firing) {
+    public void setFiring(boolean firing) {
         this.firing = firing;
     }
 

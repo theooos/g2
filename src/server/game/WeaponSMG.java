@@ -4,7 +4,8 @@ package server.game;
  * Created by peran on 2/13/17.
  * A fast firing, low damage weapon type
  */
-class WeaponSMG extends Weapon {
+public class WeaponSMG extends Weapon {
+
     public WeaponSMG() {
         super();
         name = "SMG";

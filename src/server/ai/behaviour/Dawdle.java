@@ -1,7 +1,8 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.OrbBrain;
+import server.ai.Task;
 import server.game.Orb;
 import server.game.Vector2;
 
@@ -18,7 +19,7 @@ public class Dawdle extends Task {
     private Vector2 returnPos;
     private final double INIT_PROB = 0.95;
 
-    public Dawdle(Intel intel, OrbBrain brain) {
+    public Dawdle(Intel intel, AIBrain brain) {
         super(intel, brain);
         this.gen = new Random();
         this.counter = 0;

@@ -1,7 +1,7 @@
-package server.ai.behaviour;
+package server.ai;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.OrbBrain;
 
 /**
  * Represents a leaf task of the Behaviour Tree.
@@ -12,9 +12,9 @@ public abstract class Task {
     public enum runState{DORMANT, RUNNING, FINISHED}
     protected runState curRunState;
     protected Intel intel;
-    protected OrbBrain brain;
+    protected AIBrain brain;
 
-    public Task(Intel intel, OrbBrain brain) {
+    public Task(Intel intel, AIBrain brain) {
         this.intel = intel;
         this.brain = brain;
         this.curRunState = runState.DORMANT;

@@ -1,21 +1,24 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
+import server.ai.Intel;
 import server.ai.OrbTask;
-import server.ai.PlayerTask;
+import server.ai.Task;
 import server.ai.decision.OrbBrain;
 import server.ai.decision.OrbIntel;
 import server.ai.decision.PlayerBrain;
-import server.ai.decision.PlayerIntel;
 import server.game.MovableEntity;
 import server.game.Vector2;
+
+import java.util.Random;
 
 /**
  * Allows the entity to follow a path.
  * Created by rhys on 2/16/17.
  */
-public class Travel extends PlayerTask {
+public class Float extends OrbTask {
 
-    public Travel(PlayerIntel intel, PlayerBrain brain){
+    public Float(OrbIntel intel, OrbBrain brain){
         super(intel, brain);
     }
 
@@ -32,7 +35,7 @@ public class Travel extends PlayerTask {
         MovableEntity ent = intel.ent();
         // Sets the entity to face in direction of the target location.
         Vector2 target = ent.getPos().vectorTowards(intel.checkpoint())/*.normalise()*/;
-        ent.setDir(Vector2.deviate(target, 1));
+        ent.setDir(Vector2.deviate(target, 30));
 
         // Checks for collisions,
         Vector2 oldPos = ent.getPos();

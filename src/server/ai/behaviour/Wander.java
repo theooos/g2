@@ -1,7 +1,8 @@
 package server.ai.behaviour;
 
+import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.OrbBrain;
+import server.ai.Task;
 import server.game.Vector2;
 
 import java.util.Random;
@@ -12,7 +13,7 @@ import java.util.Random;
  */
 public class Wander extends Task {
 
-    public Wander(Intel intel, OrbBrain brain) {
+    public Wander(Intel intel, AIBrain brain) {
         super(intel, brain);
     }
 
