@@ -1,6 +1,6 @@
 package client;
 
-import Audio.GameEffects;
+import client.Audio.GameEffects;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;

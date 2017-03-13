@@ -51,7 +51,7 @@ public abstract class Sprite implements ISprite {
     private float textureRight = 1;
 
     protected void initGameSprite() {
-        this.texture = GameRenderer.textureHandler.getTexture(type);
+//        this.texture = GameRenderer.textureHandler.getTexture(type);
         this.original_width = this.texture.getTextureWidth();
         this.original_height = this.texture.getTextureHeight();
         this.width = this.original_width * ratio;

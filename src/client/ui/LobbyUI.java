@@ -25,7 +25,7 @@ class LobbyUI extends JPanel {
 
     public void createLobby(Container pane, String clientUsername) {
 
-        Client client = new Client();
+//        Client client = new Client();
 
         pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
