@@ -53,7 +53,7 @@ public class AStar {
             {
                 System.out.println("Row: " + row);
                 System.out.println("Col: " + col);
-                nodes[row][col]=new Node(new Vector2(row,col),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
+                nodes[col][row]=new Node(new Vector2(col,row),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
 
             }
 
