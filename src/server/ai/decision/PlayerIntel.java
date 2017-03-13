@@ -12,9 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PlayerIntel extends Intel {
 
-    private int healthLastTick;
-
-
     public PlayerIntel(ConcurrentHashMap<Integer, Player> players, Map map){
         super(players, map);
     }
@@ -28,15 +25,11 @@ public class PlayerIntel extends Intel {
         this.sight = new Visualiser(map, players, allOrbs, ent.getID());
     }
 
-    public int healthLastTick() {
-        return healthLastTick;
-    }
-
-    public void rememberHealth(int healthLastTick) {
-        this.healthLastTick = healthLastTick;
-    }
-
     public boolean validPosition(){
         return collisionManager.validPosition(ent);
+    }
+
+    public Visualiser getVisualiser(){
+        return sight;
     }
 }

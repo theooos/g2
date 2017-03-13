@@ -86,20 +86,27 @@ public class Visualiser {
      * @param phase - The phase within which vision is being checked.
      * @return the collection of orbs in sight.
      */
-    public ConcurrentHashMap<Integer, Orb> getOrbsInSight(Point2D pov, int phase){
+    public ConcurrentHashMap<Integer, Orb> getOrbsInSight(Point2D pov, int phase, float range){
         ConcurrentHashMap<Integer, Orb> visOrbs = new ConcurrentHashMap<>();
         ArrayList<Line2D> iLines = getIntersectionLines(phase);
         HashMap<Integer, Line2D> oLines = getOrbTestingLines(pov, phase);
 
         for (java.util.Map.Entry<Integer, Line2D> p : oLines.entrySet()) {
-            boolean intersection = false;
-            for (Line2D w : iLines) {
-                if (p.getValue().intersectsLine(w)){
-                    intersection = true;
-                    break;
+            boolean interested = true;
+            double dx = Math.abs(p.getValue().getX2() - p.getValue().getX1());
+            double dy = Math.abs(p.getValue().getY2() - p.getValue().getY1());
+            if (Math.hypot(dx, dy) > range){
+                interested = false;
+            } else {
+                for (Line2D w : iLines) {
+                    if (p.getValue().intersectsLine(w)){
+                        interested = false;
+                        break;
+                    }
                 }
             }
-            if (!intersection) {
+
+            if (!interested) {
                 int pID = p.getKey();
                 visOrbs.put(pID, orbs.get(pID));
             }
