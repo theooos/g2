@@ -23,10 +23,10 @@ public class Client {
     private boolean running = true;
     private Mode currentMode = Mode.SPLASH;
 
-    private TextRenderer textRenderer;
     public static TextureLoader textureLoader;
+    private TextRenderer textRenderer;
 
-    private StartScreenRenderer startScreen = new StartScreenRenderer();
+    private StartScreenRenderer startScreen;
 
     private Client() {
         initialise();
@@ -85,6 +85,8 @@ public class Client {
             textureLoader.initialise();
 
             textRenderer = new TextRenderer();
+
+            startScreen = new StartScreenRenderer();
 
             GameEffects.init();
             GameEffects.volume = GameEffects.Volume.LOW;

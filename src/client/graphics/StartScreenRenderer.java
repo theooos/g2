@@ -26,6 +26,11 @@ public class StartScreenRenderer {
     private static Layer aboutLayer = new Layer();
     private static Layer lobbyLayer = new Layer();
 
+    public StartScreenRenderer(){
+        createInterface();
+        aboutText();
+    }
+
     public void render(){
 
         if(goBack.isClicked()) currentScreen = Screen.MAIN;
@@ -34,15 +39,12 @@ public class StartScreenRenderer {
 
         switch(currentScreen){
             case MAIN:
-                createInterface();
                 renderInterface();
                 break;
             case ABOUT:
-                aboutText();
                 renderAbout();
                 break;
             case LOBBY:
-                unspawnForLobby();
                 renderLobby();
         }
     }

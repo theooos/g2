@@ -4,8 +4,11 @@ import client.Client;
 import client.graphics.GameRenderer;
 import client.graphics.Layer;
 import client.graphics.Texture;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
+
+import java.awt.*;
 
 public abstract class Sprite implements ISprite {
 
@@ -98,6 +101,18 @@ public abstract class Sprite implements ISprite {
             GL11.glVertex2f(width,height);
         }
         GL11.glEnd();
+    }
+
+    public boolean isClicked(){
+        Rectangle r = new Rectangle();
+        r.x = (int)(this.getPosition().getX() - this.width);
+        r.y = (int)(this.getPosition().getY() - this.height);
+        r.width = 2 * (int)this.width;
+        r.height = 2 * (int) this.height;
+
+        int mouseX= Mouse.getX();
+        int mouseY=Mouse.getY();
+        return r.contains(new Point(mouseX, mouseY)) && Mouse.isButtonDown(0);
     }
 
     public Vector2f getPosition(){
