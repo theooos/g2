@@ -89,9 +89,9 @@ public class Client {
 
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
-            GameEffects.init();
-            GameEffects.volume = GameEffects.Volume.LOW;
-            GameEffects.MUSIC.play();
+//            GameEffects.init();
+//            GameEffects.volume = GameEffects.Volume.LOW;
+//            GameEffects.MUSIC.play();
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
