@@ -62,20 +62,24 @@ public class StartScreenRenderer {
     }
 
     private void handleClicked() {
-        if(!Mouse.isButtonDown(0)) hasClicked = false;
+        if(hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
 
-        if (go_back.isClicked()) {
-            hasClicked = true;
-            currentScreen = Screen.MAIN;
-        }
-        if (about.isClicked()) {
-            hasClicked = true;
-            currentScreen = Screen.ABOUT;
-        }
-        if (join_game.isClicked()) {
-            hasClicked = true;
-            currentScreen = Screen.LOBBY;
-            connectFunction.accept(null);
+        if(!hasClicked) {
+            if (go_back.isClicked()) {
+                currentScreen = Screen.MAIN;
+                hasClicked = true;
+                return;
+            }
+            if (about.isClicked()) {
+                currentScreen = Screen.ABOUT;
+                hasClicked = true;
+                return;
+            }
+            if (join_game.isClicked()) {
+                currentScreen = Screen.LOBBY;
+                connectFunction.accept(null);
+                hasClicked = true;
+            }
         }
     }
 
