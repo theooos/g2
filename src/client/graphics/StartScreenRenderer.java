@@ -76,7 +76,7 @@ public class StartScreenRenderer {
                 return;
             }
             if (join_game.isClicked()) {
-                currentScreen = Screen.LOBBY;
+                currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
                 hasClicked = true;
             }

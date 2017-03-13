@@ -1,6 +1,7 @@
 package client;
 
 import client.Audio.GameEffects;
+import client.ClientLogic.ClientReceiver;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
@@ -25,6 +26,7 @@ public class Client {
     private static final boolean FULLSCREEN = false;
 
     private Connection connection;
+    private ClientReceiver clientReceiver;
 
     private boolean running = true;
 
@@ -125,6 +127,7 @@ public class Client {
     public void establishConnection() {
         try {
             connection = new Connection();
+            clientReceiver = new ClientReceiver(connection);
         } catch (IOException e) {
             System.err.println("Failed to make connection.");
         }

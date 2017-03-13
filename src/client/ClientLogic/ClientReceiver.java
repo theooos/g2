@@ -1,13 +1,11 @@
 package client.ClientLogic;
 
-import client.graphics.GameRendererCreator;
 import networking.Connection;
 import objects.InitGame;
 import objects.MoveObject;
 import objects.Sendable;
 import server.game.*;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -39,16 +37,8 @@ public class ClientReceiver {
     }
 
     private void setupGame(Sendable s) {
-        InitGame i = (InitGame) s;
-        ConcurrentHashMap<Integer, Player> players = i.getPlayers();
-        HashMap<Integer, Orb> orbs = i.getOrb();
-        int mapID = i.getMapID();
-        ConcurrentHashMap<Integer, Projectile> projectiles = new ConcurrentHashMap<>();
-
-        gd = new GameData(players, orbs, projectiles, mapID, i.getSb(), i.getPowerUps());
-        out("Setting up game");
-        new Thread(new GameRendererCreator(gd,connection,getID())).start();
-
+        InitGame initGame = (InitGame) s;
+        gd = new GameData(initGame);
         out("The game is now executing.");
     }
 

@@ -31,7 +31,7 @@ public class InitGame implements Sendable{
         return players;
     }
 
-    public HashMap<Integer,Orb> getOrb() {
+    public HashMap<Integer,Orb> getOrbs() {
         return orbs;
     }
 
@@ -39,7 +39,7 @@ public class InitGame implements Sendable{
         return mapID;
     }
 
-    public Scoreboard getSb() {
+    public Scoreboard getScoreboard() {
         return sb;
     }
 

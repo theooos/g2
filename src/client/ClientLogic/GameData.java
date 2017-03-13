@@ -1,5 +1,6 @@
 package client.ClientLogic;
 
+import objects.InitGame;
 import server.game.*;
 
 import java.util.HashMap;
@@ -16,16 +17,16 @@ public class GameData {
     private HashMap<Integer, Orb> orbs;
     private ConcurrentHashMap<Integer, Projectile> projectiles;
     private HashMap<Integer, PowerUp> powerUps;
-    private Scoreboard sb;
+    private Scoreboard scoreboard;
     private int mapID;
 
-    GameData(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, ConcurrentHashMap<Integer, Projectile> projectiles, int id, Scoreboard sb, HashMap<Integer, PowerUp> powerUps) {
-        this.players = players;
-        this.orbs = orbs;
-        this.projectiles = projectiles;
-        this.mapID = id;
-        this.sb = sb;
-        this.powerUps = powerUps;
+    GameData(InitGame initGame) {
+        this.players = initGame.getPlayers();
+        this.orbs = initGame.getOrbs();
+        this.projectiles = new ConcurrentHashMap<>();
+        this.mapID = initGame.getMapID();
+        this.scoreboard = initGame.getScoreboard();
+        this.powerUps = initGame.getPowerUps();
     }
 
     /**
@@ -89,11 +90,11 @@ public class GameData {
     }
 
     void updateScoreboard(Scoreboard sb) {
-        this.sb = sb;
+        this.scoreboard = sb;
     }
 
-    public Scoreboard getSb() {
-        return sb;
+    public Scoreboard getScoreboard() {
+        return scoreboard;
     }
 
     public HashMap<Integer, PowerUp> getPowerUps() {
