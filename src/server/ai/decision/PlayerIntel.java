@@ -1,7 +1,6 @@
 package server.ai.decision;
 
 import server.ai.Intel;
-import server.ai.vision.Visualiser;
 import server.game.AIPlayer;
 import server.game.Map;
 import server.game.Player;

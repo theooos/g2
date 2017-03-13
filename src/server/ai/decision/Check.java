@@ -1,12 +1,9 @@
 package server.ai.decision;
 
 import server.ai.Intel;
-import server.ai.vision.VisibilityPolygon;
 import server.game.Player;
 import server.game.Vector2;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

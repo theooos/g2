@@ -1,13 +1,10 @@
 package server.ai;
 
-import server.ai.vision.VisibilityPolygon;
-import server.ai.vision.Visualiser;
+import server.ai.decision.Visualiser;
 import server.game.*;
 
-import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
