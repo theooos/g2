@@ -2,10 +2,13 @@ package server.ai.behaviour;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
+import server.ai.Pathfinding.AStar;
+import server.ai.Pathfinding.Node;
 import server.ai.Task;
 import server.game.Vector2;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Defines a behaviour where the entity maps a path to the target.
@@ -43,8 +46,19 @@ public class FindPath extends Task {
             intel.resetPath(path);
         } else {
             // SKELETON CODE
+            AStar aStar=new AStar(intel);
+            Node target=new Node(intel.getTargetLocation(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
+            aStar.makeGraph(target,intel.ent().getPhase());
+            Node start=new Node(intel.ent().getPos(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
+            aStar.AstarSearch(start,target);
+            List<Node> printPath=aStar.printPath(target);
+            for (Node node:printPath ) {
+                path.add(new Vector2(node.getX(),node.getY()));    
+            }
+
+
             // PERQUISITE: A*
-            path.add(intel.getTargetLocation());
+
             intel.resetPath(path);
         }
         end();

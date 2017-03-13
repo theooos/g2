@@ -8,11 +8,13 @@ import java.util.*;
  */
 public class AStar {
     Intel intel;
+    Node[][] nodes;
     public AStar (Intel intel)
     {
         this.intel=intel;
     }
-    public static List<Node> printPath(Node target){
+
+    public  List<Node> printPath(Node target){
         List<Node> path = new ArrayList<Node>();
 
         for(Node node = target; node!=null; node = node.parent){
@@ -53,7 +55,7 @@ public class AStar {
              }
           makeAdjances(nodes,goal.coordinates());
          }
-
+        this.nodes=nodes;
 
      }
 
