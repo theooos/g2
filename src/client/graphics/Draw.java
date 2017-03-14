@@ -2,7 +2,6 @@ package client.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import org.lwjgl.opengl.GL11;
 import server.game.Vector2;
 
 
@@ -133,6 +132,11 @@ class Draw {
 
     void shadeScreen() {
         glColor4f(1,1,1,0.6f);
+        verticalDraw(0,0,width,height);
+    }
+
+    void colourBackground(int phase) {
+        glColor4f(phase*0.1f,0,(1-phase)*0.1f,1f);
         verticalDraw(0,0,width,height);
     }
 

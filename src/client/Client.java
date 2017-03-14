@@ -61,7 +61,7 @@ public class Client {
                     gameRenderer.render();
                     break;
                 default:
-                    System.out.println("Not in a mode.");
+                    System.err.println("Not in a mode.");
             }
 
             // update window contents
@@ -128,7 +128,7 @@ public class Client {
 //            GameEffects.MUSIC.play();
 
         } catch (LWJGLException le) {
-            System.out.println("Game exiting - exception in initialization:");
+            System.err.println("Game exiting - exception in initialization:");
             le.printStackTrace();
             running = false;
         }
@@ -148,7 +148,7 @@ public class Client {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Unable to enter fullscreen, continuing in windowed mode");
+            System.err.println("Unable to enter fullscreen, continuing in windowed mode");
         }
 
         return false;

@@ -99,8 +99,8 @@ public class GameRenderer {
 
     private void update(int delta) {
 
-        rotation += 0.15f * delta;
-//        rotation %= rotation%Math.PI;
+        rotation += 1.5f;
+        rotation %= 360;
 
         Player me = gameData.getPlayer(playerID);
         Vector2 pos = me.getPos();
@@ -204,6 +204,7 @@ public class GameRenderer {
 
         Player p = gameData.getPlayer(playerID);
         int phase = p.getPhase();
+        draw.colourBackground(phase);
 
         if (pulse.isAlive() && pulse.isShowOtherPhase()) {
             drawStencil();
@@ -244,7 +245,7 @@ public class GameRenderer {
         int newPhase = pulse.getNewPhase();
         int oldPhase = 1;
         if (newPhase == 1) oldPhase = 0;
-
+        draw.colourBackground(oldPhase);
         drawProjectiles(oldPhase);
         map.renderMap(oldPhase);
         drawOrbs(oldPhase);
@@ -271,6 +272,7 @@ public class GameRenderer {
 
         GL11.glColor3f(0, 0, 0);
         draw.drawCircle(pulse.getStart().getX(), height - pulse.getStart().getY(), pulse.getRadius(), 500);
+        draw.colourBackground(newPhase);
         drawProjectiles(newPhase);
         map.renderMap(newPhase);
         drawOrbs(newPhase);
