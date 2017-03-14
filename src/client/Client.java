@@ -6,6 +6,7 @@ import client.graphics.GameRenderer;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
+import com.sun.prism.paint.Color;
 import networking.Connection;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -120,7 +121,7 @@ public class Client {
             textureLoader.initialise();
 
             textRenderer = new TextRenderer();
-
+            textRenderer.drawText("AAAACCC",50,30, java.awt.Color.RED);
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
 //            GameEffects.init();
