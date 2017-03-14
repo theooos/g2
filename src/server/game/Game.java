@@ -130,7 +130,7 @@ public class Game implements Runnable {
 
         if (ORBS){
             // Create Orbs.
-            for (int i = 0; i < maxPlayers; i++) {
+            for (int i = 0; i < 1; i++) {
                 Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
                 respawn(o);
                 orbs.put(IDCounter, o);
