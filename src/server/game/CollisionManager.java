@@ -39,9 +39,10 @@ public class CollisionManager {
         return !pointWallCollision(entity.getRadius(), entity.getPos(), entity.getPhase()) && collidesWithPlayerOrBot(entity) == null;
     }
 
-    public boolean validPosition(Vector2 pos, int radius, int phase) {
+    public boolean validPosition(Vector2 pos, int radius, int phase){
         return !pointWallCollision(radius, pos, phase) && collidesWithPlayerOrBot(radius, pos, phase) == null;
     }
+
     public boolean orbValidPosition(Orb o) {
         return !pointWallCollision(o.getRadius(), o.getPos(), o.getPhase()) && collidesWithBot(o) == null;
     }
@@ -140,7 +141,7 @@ public class CollisionManager {
     }
 
     MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase) {
-        for (Player p: players.values()) {
+        for (Player p : players.values()){
             if (p.getPhase() == phase && p.isAlive() && pointsCollided(r, pos, p.getRadius(), p.getPos())) return p;
         }
 

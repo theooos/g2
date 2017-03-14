@@ -1,14 +1,11 @@
 package server.ai;
 
+import server.ai.decision.Visualiser;
 import server.ai.pathfinding.AStar;
-import server.ai.vision.VisibilityPolygon;
-import server.ai.vision.Visualiser;
 import server.game.*;
 
-import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -22,7 +19,7 @@ public abstract class Intel {
     protected HashMap<Integer, Orb> allOrbs;
     protected Map map;                    // The map the current game is being played on.
     protected Vector2 targetLocation;     // Where the entity is currently aiming to reach.
-    protected Player targetPlayer;        // The player the entity is currently hunting.
+    protected MovableEntity relevantEnt;  // The entity this entity is currently interested in.
     protected Visualiser sight;
     protected ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
@@ -38,7 +35,7 @@ public abstract class Intel {
         this.players = players;
         this.map = map;
         this.targetLocation = null;
-        this.targetPlayer = null;
+        this.relevantEnt = null;
         this.path = new ArrayList<>();
         this.pathfinder = new AStar(this);
     }
@@ -147,16 +144,16 @@ public abstract class Intel {
     /**
      * @return the player the entity is currently hunting.
      */
-    public Player getTargetPlayer() {
-        return targetPlayer;
+    public MovableEntity getRelevantEntity() {
+        return relevantEnt;
     }
 
     /**
      * Stores the player the entity is intending to hunt next.
-     * @param targetPlayer - the next target player.
+     * @param relEnt - the next target player.
      */
-    public void setTargetPlayer(Player targetPlayer) {
-        this.targetPlayer = targetPlayer;
+    public void setRelevantEntity(MovableEntity relEnt) {
+        this.relevantEnt = relEnt;
     }
 
 
@@ -167,10 +164,18 @@ public abstract class Intel {
         collisionManager = new CollisionManager(players, orbs, map);
     }
 
+    public boolean isValidSpace(Vector2 pos){
+        return collisionManager.validPosition(pos, ent.getRadius(), ent.getPhase());
+    }
+
     protected abstract void constructVisualiser();
 
     public ConcurrentHashMap<Integer, Player> getEnemyPlayersInSight(){
         return sight.getPlayersInSight(ent.getPos().toPoint(), ent.getPhase());
+    }
+
+    public boolean inSight(Vector2 pos){
+        return sight.inSight(ent.getPos().toPoint(), pos.toPoint(), ent.getPhase());
     }
 
     public AStar pathfinder(){

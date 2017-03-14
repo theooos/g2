@@ -18,15 +18,16 @@ public class AIPlayer extends Player {
     transient private PlayerIntel intel;
     transient private PlayerBrain myBrain;
 
-    public AIPlayer(Vector2 pos, Vector2 dir, int team, int phase, Weapon w1, Weapon w2, int id) {
+    AIPlayer(Vector2 pos, Vector2 dir, int team, int phase, Weapon w1, Weapon w2, int id) {
         super(pos, dir, team, phase, w1, w2, id);
     }
 
     public void live() {
+        getActiveWeapon().live();
         myBrain.doSomething();
     }
 
-    public void preparePlayerForGame(PlayerIntel intel, HashMap<Integer, Orb> orbs){
+    void preparePlayerForGame(PlayerIntel intel, HashMap<Integer, Orb> orbs){
         this.intel = intel;
         this.intel.initForGame(this, orbs);
         this.myBrain = new PlayerBrain(intel);

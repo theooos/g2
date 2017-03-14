@@ -1,9 +1,7 @@
 package server.game;
 
 import server.ai.decision.OrbBrain;
-import server.ai.Intel;
 import server.ai.decision.OrbIntel;
-import server.ai.vision.VisibilityPolygon;
 
 import java.util.HashMap;
 

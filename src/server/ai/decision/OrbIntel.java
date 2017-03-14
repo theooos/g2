@@ -1,7 +1,6 @@
 package server.ai.decision;
 
 import server.ai.Intel;
-import server.ai.vision.Visualiser;
 import server.game.*;
 
 import java.util.concurrent.ConcurrentHashMap;

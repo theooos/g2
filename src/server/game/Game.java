@@ -31,6 +31,8 @@ public class Game implements Runnable {
     private Scoreboard sb;
     private int IDCounter;
 
+    private final boolean ORBS = true;
+
     private final boolean DEBUG = true;
 
 
@@ -126,16 +128,18 @@ public class Game implements Runnable {
             IDCounter++;
         }*/
 
-        //create team orbs
-        for (int i = 0; i < maxPlayers; i++) {
-            Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
-            respawn(o);
-            orbs.put(IDCounter, o);
-            IDCounter++;
+        if (ORBS){
+            // Create Orbs.
+            for (int i = 0; i < maxPlayers; i++) {
+                Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
+                respawn(o);
+                orbs.put(IDCounter, o);
+                IDCounter++;
 
-            // Ready Orbs for game.
-            OrbIntel intel = new OrbIntel(players, map);
-            o.prepareOrbForGame(intel, orbs);
+                // Ready Orbs for game.
+                OrbIntel intel = new OrbIntel(players, map);
+                o.prepareOrbForGame(intel, orbs);
+            }
         }
 
         // Ready AI Players for game.
@@ -402,6 +406,7 @@ public class Game implements Runnable {
      */
     private void fire(Player player) {
         Weapon w = player.getActiveWeapon();
+        //out("ID"+player.getID()+": Tries to fire");
         if (w.canFire()) {
             out("ID"+player.getID()+": Just Fired");
             ArrayList<Projectile> ps = w.getShots(player);
@@ -409,7 +414,6 @@ public class Game implements Runnable {
                 p.setID(IDCounter);
                 IDCounter++;
                 projectiles.put(p.getID(), p);
-                //out("Shot Fired");
             }
         }
     }

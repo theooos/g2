@@ -18,13 +18,13 @@ public class Fire extends PlayerTask {
     }
 
     public boolean checkConditions(){
-        return (intel.getTargetPlayer()!= null);
+        return (intel.getRelevantEntity()!= null);
     }
 
     public void doAction(){
         timer++;
 
-        Vector2 dir = intel.ent().getPos().vectorTowards(intel.getTargetPlayer().getPos());
+        Vector2 dir = intel.ent().getPos().vectorTowards(intel.getRelevantEntity().getPos());
         dir = Vector2.deviate(dir, 2);
         intel.ent().setDir(dir);
 
@@ -32,6 +32,8 @@ public class Fire extends PlayerTask {
         int fireFreq = intel.ent().getActiveWeapon().getRefireTime() + 10;
         if (timer == fireFreq) {
             intel.ent().setFiring(true);
+            System.out.println(intel.ent());
+            System.out.println("Firing in AI player");
         }
 
         // After every 30th tick.
