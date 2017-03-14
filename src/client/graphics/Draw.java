@@ -2,6 +2,7 @@ package client.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import client.ClientSettings;
 import org.lwjgl.opengl.GL11;
 import server.game.Vector2;
 
@@ -11,16 +12,12 @@ import server.game.Vector2;
  *  used for draw methods
  */
 class Draw {
-    private int width;
-    private int height;
     private int oldHealth;
     private double displayHealth;
     private double oldHeat;
     private double displayHeat;
 
-    Draw(int width, int height) {
-        this.width = width;
-        this.height = height;
+    Draw() {
         oldHealth = 0;
         displayHealth = 100;
         oldHeat = 0;
@@ -31,15 +28,15 @@ class Draw {
         glColor4f(red, green, blue, 1);
         glPushMatrix();
         float cx = centre.getX();
-        float cy = height-centre.getY();
+        float cy = ClientSettings.SCREEN_HEIGHT-centre.getY();
         glTranslatef(cx, cy, 0);
         glRotatef(rotation, 0f, 0f, 1f);
         glTranslatef(-cx, -cy, 0);
         glBegin(GL_QUADS);
-        glVertex2f(cx-radius, height-(centre.getY()-radius));
-        glVertex2f(cx+radius, height-(centre.getY()-radius));
-        glVertex2f(cx+radius, height-(centre.getY()+radius));
-        glVertex2f(cx-radius, height-(centre.getY()+radius));
+        glVertex2f(cx-radius, ClientSettings.SCREEN_HEIGHT-(centre.getY()-radius));
+        glVertex2f(cx+radius, ClientSettings.SCREEN_HEIGHT-(centre.getY()-radius));
+        glVertex2f(cx+radius, ClientSettings.SCREEN_HEIGHT-(centre.getY()+radius));
+        glVertex2f(cx-radius, ClientSettings.SCREEN_HEIGHT-(centre.getY()+radius));
         glEnd();
 
         glBegin(GL_QUAD_STRIP);
@@ -87,17 +84,17 @@ class Draw {
         glColor4f(red, green, 0, 0);
         glVertex2f(buffer, buffer);
         glColor4f(red, green, 0, intensity);
-        glVertex2f(width,0);
+        glVertex2f(ClientSettings.SCREEN_WIDTH,0);
         glColor4f(red, green, 0, 0);
-        glVertex2f(width-buffer, buffer);
+        glVertex2f(ClientSettings.SCREEN_WIDTH-buffer, buffer);
         glColor4f(red, green, 0, intensity);
-        glVertex2f(width, height);
+        glVertex2f(ClientSettings.SCREEN_WIDTH, ClientSettings.SCREEN_HEIGHT);
         glColor4f(red, green, 0, 0);
-        glVertex2f(width-buffer, height-buffer);
+        glVertex2f(ClientSettings.SCREEN_WIDTH-buffer, ClientSettings.SCREEN_HEIGHT-buffer);
         glColor4f(red, green, 0, intensity);
-        glVertex2f(0,height);
+        glVertex2f(0,ClientSettings.SCREEN_HEIGHT);
         glColor4f(red, green, 0, 0);
-        glVertex2f(buffer, height-buffer);
+        glVertex2f(buffer, ClientSettings.SCREEN_HEIGHT-buffer);
         glColor4f(red, green, 0, intensity/2);
         glVertex2f(0,0);
         glColor4f(red, green, 0, 0);
@@ -114,7 +111,7 @@ class Draw {
         glColor4f(red, green, blue, intensity);
         glBegin(GL_QUAD_STRIP);
         float cx = centre.getX();
-        float cy = height-centre.getY();
+        float cy = ClientSettings.SCREEN_HEIGHT-centre.getY();
         glVertex2f(cx, cy+(radius-strokeWidth));
         glColor4f(red, green, blue, 0);
         glVertex2f(cx, cy+radius);
@@ -133,7 +130,7 @@ class Draw {
 
     void shadeScreen() {
         glColor4f(1,1,1,0.6f);
-        verticalDraw(0,0,width,height);
+        verticalDraw(0,0,ClientSettings.SCREEN_WIDTH,ClientSettings.SCREEN_HEIGHT);
     }
 
     void drawHeatBar(double heat, double maxHeat) {
@@ -158,12 +155,12 @@ class Draw {
 
         int heatWidth = 10;
         int buffer = 20;
-        float maxHeight = height-buffer*2;
+        float maxHeight = ClientSettings.SCREEN_HEIGHT-buffer*2;
         float heatRatio = (float) (displayHeat/maxHeat);
         float green = (204f/255f)*(1-heatRatio);
 
         glColor3f(heatRatio, green, 0f);
-        verticalDraw(width - (buffer+heatWidth), buffer+(1-heatRatio)*maxHeight, heatWidth, maxHeight*heatRatio);
+        verticalDraw(ClientSettings.SCREEN_WIDTH - (buffer+heatWidth), buffer+(1-heatRatio)*maxHeight, heatWidth, maxHeight*heatRatio);
     }
 
     void drawHealthBar(double health, double maxHealth) {
@@ -196,7 +193,7 @@ class Draw {
 
         int healthWidth = 10;
         int buffer = 20;
-        float maxHeight = height-buffer*2;
+        float maxHeight = ClientSettings.SCREEN_HEIGHT-buffer*2;
         float healthRatio = (float) (displayHealth/maxHealth);
         float green = (204f/255f)*healthRatio;
         glColor3f(1-healthRatio, green, 0f);
@@ -234,10 +231,10 @@ class Draw {
 
     private void verticalDraw(float xStart, float yStart, float rectWidth, float rectHeight) {
         glBegin(GL_QUADS);
-        glVertex2f(checkX(xStart), checkY(height - yStart));
-        glVertex2f(checkX(xStart + rectWidth), checkY(height - yStart));
-        glVertex2f(checkX(xStart + rectWidth), checkY(height - (yStart+rectHeight)));
-        glVertex2f(checkX(xStart), checkY(height - (yStart+rectHeight)));
+        glVertex2f(checkX(xStart), checkY(ClientSettings.SCREEN_HEIGHT - yStart));
+        glVertex2f(checkX(xStart + rectWidth), checkY(ClientSettings.SCREEN_HEIGHT - yStart));
+        glVertex2f(checkX(xStart + rectWidth), checkY(ClientSettings.SCREEN_HEIGHT - (yStart+rectHeight)));
+        glVertex2f(checkX(xStart), checkY(ClientSettings.SCREEN_HEIGHT - (yStart+rectHeight)));
         glEnd();
     }
 
@@ -249,7 +246,7 @@ class Draw {
      */
     private float checkX(float x) {
         if (x < 0) x = 0;
-        if (x > width) x = width;
+        if (x > ClientSettings.SCREEN_WIDTH) x = ClientSettings.SCREEN_WIDTH;
         return x;
     }
 
@@ -261,7 +258,7 @@ class Draw {
      */
     private float checkY(float y) {
         if (y < 0) y = 0;
-        if (y > height) y = height;
+        if (y > ClientSettings.SCREEN_HEIGHT) y = ClientSettings.SCREEN_HEIGHT;
         return y;
     }
 }

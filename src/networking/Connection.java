@@ -1,5 +1,6 @@
 package networking;
 
+import client.ClientSettings;
 import objects.Sendable;
 
 import java.io.IOException;
@@ -13,9 +14,6 @@ import java.util.function.Consumer;
  * This holds the connection between Server and Client, and can be used by either.
  */
 public class Connection {
-
-    private static int PORT = 3000;
-    private static final boolean LOCAL = true;
 
     private Socket socket;
     private NetworkSender toConnection;
@@ -48,10 +46,10 @@ public class Connection {
     private boolean establishSocket() throws IOException {
         int attempts = 3;
 
-        String HOSTNAME = LOCAL ? "localhost" : "46.101.84.55";
+        String HOSTNAME = ClientSettings.LOCAL ? "localhost" : ClientSettings.SERVER_IP;
 
         for (int i = 1; i <= attempts; i++) {
-            socket = new Socket(HOSTNAME, PORT);
+            socket = new Socket(HOSTNAME, ClientSettings.PORT);
             return true;
         }
         return false;
@@ -97,7 +95,7 @@ public class Connection {
      */
     public static ServerSocket getServerSocket() {
         try {
-            return new ServerSocket(PORT);
+            return new ServerSocket(ClientSettings.PORT);
         } catch (IOException e) {
             out("Failed to connect through server socket.");
         }

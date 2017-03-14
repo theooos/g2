@@ -1,11 +1,11 @@
 package client;
 
-import objects.GameData;
 import client.graphics.GameRenderer;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
 import networking.Connection;
+import objects.GameData;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -18,13 +18,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Client {
 
     public enum Mode {SPLASH, GAME}
-
     private Mode currentMode = Mode.SPLASH;
-
-    private static final String WINDOW_TITLE = "PhaseShift";
-    private static final int SCREEN_HEIGHT = 600;
-    private static final int SCREEN_WIDTH = 800;
-    private static final boolean FULLSCREEN = false;
 
     private Connection connection;
     private ClientReceiver clientReceiver;
@@ -73,7 +67,7 @@ public class Client {
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 1, -1);
+        GL11.glOrtho(0, ClientSettings.SCREEN_WIDTH, 0, ClientSettings.SCREEN_HEIGHT, 1, -1);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -83,9 +77,9 @@ public class Client {
         // initialize the window beforehand
         try {
             //setDisplayMode();
-            Display.setDisplayMode(new DisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT));
-            Display.setTitle(WINDOW_TITLE);
-            Display.setFullscreen(FULLSCREEN);
+            Display.setDisplayMode(new DisplayMode(ClientSettings.SCREEN_WIDTH, ClientSettings.SCREEN_HEIGHT));
+            Display.setTitle(ClientSettings.WINDOW_TITLE);
+            Display.setFullscreen(ClientSettings.FULLSCREEN);
             Display.create();
 
             GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
@@ -95,7 +89,7 @@ public class Client {
             GL11.glDepthMask(false);
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
-            GL11.glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 1, -1);
+            GL11.glOrtho(0, ClientSettings.SCREEN_WIDTH, 0, ClientSettings.SCREEN_HEIGHT, 1, -1);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -106,9 +100,9 @@ public class Client {
 
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
-//            GameEffects.init();
-//            GameEffects.volume = GameEffects.Volume.LOW;
-//            GameEffects.MUSIC.play();
+//            Audio.init();
+//            Audio.volume = Audio.Volume.LOW;
+//            Audio.MUSIC.play();
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
