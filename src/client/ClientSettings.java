@@ -5,6 +5,8 @@ package client;
  */
 public class ClientSettings {
 
+    public static final boolean DEBUG = true;
+
     // ***** DISPLAY SETTINGS *****
 
     public static final String WINDOW_TITLE = "PhaseShift";
