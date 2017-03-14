@@ -57,9 +57,9 @@ public class AStar {
         {
             nodes[i][0]=new Node(new Vector2(i,0),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
         }
-        for ( int row = radius; row < (height - 2); row+=radius )
+        for ( int row = radius; row < (height - radius); row+=radius )
         {
-            for ( int col = radius; col < (width - 2); col+=radius )
+            for ( int col = radius; col < (width - radius); col+=radius )
             {
               //  System.out.println("Row: " + row);
                 //System.out.println("Col: " + col);
