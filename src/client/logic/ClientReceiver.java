@@ -1,4 +1,4 @@
-package client.ClientLogic;
+package client.logic;
 
 import networking.Connection;
 import objects.InitGame;

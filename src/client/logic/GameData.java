@@ -1,4 +1,4 @@
-package client.ClientLogic;
+package client.logic;
 
 import objects.InitGame;
 import server.game.*;

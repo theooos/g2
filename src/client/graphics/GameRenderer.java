@@ -1,17 +1,15 @@
 package client.graphics;
 
-import client.ClientLogic.GameData;
+import client.logic.GameData;
 import networking.Connection;
 import objects.FireObject;
 import objects.MoveObject;
 import objects.PhaseObject;
 import objects.SwitchObject;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import server.game.*;
 
@@ -203,9 +201,10 @@ public class GameRenderer {
 
     public void render() {
         update(getDelta());
+        System.out.println(gameData);
 
         // Clear the screen and depth buffer
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+//        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         Player p = gameData.getPlayer(playerID);
         int phase = p.getPhase();

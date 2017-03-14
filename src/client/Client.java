@@ -1,8 +1,7 @@
 package client;
 
-import client.Audio.GameEffects;
-import client.ClientLogic.ClientReceiver;
-import client.ClientLogic.GameData;
+import client.logic.ClientReceiver;
+import client.logic.GameData;
 import client.graphics.GameRenderer;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;

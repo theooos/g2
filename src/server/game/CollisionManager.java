@@ -1,6 +1,6 @@
 package server.game;
 
-import client.ClientLogic.GameData;
+import client.logic.GameData;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;

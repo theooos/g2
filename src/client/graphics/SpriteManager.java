@@ -1,6 +1,6 @@
 package client.graphics;
 
-import client.ClientLogic.GameData;
+import client.logic.GameData;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.OrbTexture;
 import client.graphics.Sprites.PlayerTexture;

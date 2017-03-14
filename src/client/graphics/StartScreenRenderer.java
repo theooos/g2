@@ -1,15 +1,12 @@
 package client.graphics;
 
-import client.Client;
-import client.ClientLogic.GameData;
+import client.logic.GameData;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Created by bianca on 05/03/2017.

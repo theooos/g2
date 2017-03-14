@@ -1,11 +1,10 @@
-package client.Audio;
+package client.audio;
 
 /**
  * Created by Patrick on 2/21/2017.
  */
 
 import javax.sound.sampled.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
