@@ -1,12 +1,11 @@
 package server;
 
 import networking.Connection;
+import objects.LobbyData;
+import objects.Sendable;
 import server.game.Game;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Created by peran on 25/01/17.
@@ -19,7 +18,7 @@ class Lobby {
     private boolean countdownRunning;
     private int countdown;
     private Timer t;
-    private int map;
+    private int mapID;
     private boolean gameRunning;
 
     Lobby(int maxSize) {
@@ -30,9 +29,9 @@ class Lobby {
         minSize = maxSize/2;
         t = new Timer();
         Random rand = new Random();
-        map = rand.nextInt(mapMax);
-        //map = 2;
-        System.out.println(map);
+        mapID = rand.nextInt(mapMax);
+        //mapID = 2;
+        System.out.println(mapID);
         gameRunning = false;
     }
 
@@ -50,12 +49,21 @@ class Lobby {
      */
     void addConnection(Connection c) {
         players.add(c);
-        msgToAllConnected("Player connected");
-        c.send(new objects.String("You are in a "+maxSize+" player lobby with "+players.size()+" players in it"));
+        sendAllNewLobbyInfo();
         if (players.size() >= minSize) {
             startCountdown();
         }
+    }
 
+    /**
+     * This sends all connected players all the updated lobby information.
+     */
+    private void sendAllNewLobbyInfo() {
+        ArrayList<Integer> playerIDs = new ArrayList<>();
+        for(int i = 0; i < players.size(); i++){
+            playerIDs.add(i);
+        }
+        sendToAll(new LobbyData(playerIDs,mapID));
     }
 
     /**
@@ -98,8 +106,12 @@ class Lobby {
      * @param s the string to be sent
      */
     private void msgToAllConnected(String s) {
+        sendToAll(new objects.String(s));
+    }
+
+    private void sendToAll(Sendable sendable){
         for (Connection c: players) {
-            c.send(new objects.String(s));
+            c.send(sendable);
         }
     }
 
@@ -109,7 +121,7 @@ class Lobby {
     private void startGame() {
         msgToAllConnected("Game loading....");
         gameRunning = true;
-        new Thread(new Game(players, maxSize, map)).start();
+        new Thread(new Game(players, maxSize, mapID)).start();
     }
 
     boolean isGameRunning() {

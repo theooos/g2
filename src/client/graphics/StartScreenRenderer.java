@@ -16,7 +16,6 @@ public class StartScreenRenderer {
     private enum Screen {MAIN, ABOUT, LOADING, LOBBY}
     private Screen currentScreen = Screen.MAIN;
 
-    private InterfaceTexture play;
     private InterfaceTexture about;
     private InterfaceTexture instructions;
     private InterfaceTexture about_text;
@@ -56,6 +55,7 @@ public class StartScreenRenderer {
                 break;
             case LOBBY:
                 renderLobby();
+                handleClickedLobby();
         }
     }
 
@@ -85,6 +85,15 @@ public class StartScreenRenderer {
                 hasClicked = true;
                 return;
             }
+        }
+    }
+
+
+    private void handleClickedLobby() {
+        if(hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
+
+        if(!hasClicked) {
+            // do stuff
         }
     }
 
