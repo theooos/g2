@@ -41,7 +41,6 @@ public class Float extends OrbTask {
         Vector2 oldPos = ent.getPos();
         ent.setPos(oldPos.add(ent.getDir().mult(ent.getSpeed())));
         if (!intel.validPosition()) {
-            System.out.println("Stuck.");
             ent.setPos(oldPos);
             end();
         } else {

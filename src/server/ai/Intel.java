@@ -161,6 +161,10 @@ public abstract class Intel {
         collisionManager = new CollisionManager(players, orbs, map);
     }
 
+    public boolean isValidSpace(Vector2 pos){
+        return collisionManager.validPosition(pos, ent.getRadius(), ent.getPhase());
+    }
+
     protected abstract void constructVisualiser();
 
     public ConcurrentHashMap<Integer, Player> getEnemyPlayersInSight(){

@@ -29,7 +29,6 @@ public class ForceShiftPhase extends PlayerTask {
         }
         // If a phase-shift hasn't been attempted yet, try it.
         else if (!intel.phaseShiftAttempted()) {
-            System.out.println("Forcing Phase-Shift!");
             brain.getBehaviour("ShiftPhase").run();
         }
         // If it has, check for failure.
@@ -38,18 +37,15 @@ public class ForceShiftPhase extends PlayerTask {
             if (!intel.phaseShiftSuccessful()){
                 // If re-attempt has also failed, give up.
                 if (brain.getBehaviour("QuickMove").hasFinished()){
-                    System.out.println("Giving up Phase-Shift!");
                     end();
                 }
                 // if trying for the first time:
                 else {
-                    System.out.println("Re-trying Phase-Shift!");
                     brain.getBehaviour("QuickMove").start();
                 }
             }
             // If succeeded:
             else {
-                System.out.println("Phase-shift Success!");
                 end();
             }
         }

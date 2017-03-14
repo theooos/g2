@@ -10,6 +10,8 @@
 // Inner Walls:
 400, 100, 400, 500, 1, false
 400, 500, 600, 500, 1, false
+400, 100, 400, 500, 0, false
+200, 100, 400, 100, 0, false
 
 ##
 // Spawn Locations

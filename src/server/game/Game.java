@@ -30,7 +30,7 @@ public class Game implements Runnable {
     private Scoreboard sb;
     private int IDCounter;
 
-    private final boolean ORBS = false;
+    private final boolean ORBS = true;
 
     private final boolean DEBUG = true;
 
