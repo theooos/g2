@@ -69,8 +69,6 @@ public class AStar {
          server.game.Map map=this.intel.getMap();
          int width=map.getMapWidth();
          int height=map.getMapLength();
-         System.out.println("Size 2:"+height*width);
-         System.out.println(nodes==null);
         for (int row=1;row<height-2;row++)
         {
 

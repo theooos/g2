@@ -5,6 +5,7 @@ import objects.*;
 import server.ai.Intel;
 import server.ai.decision.OrbIntel;
 import server.ai.decision.PlayerIntel;
+import server.ai.pathfinding.AStar;
 
 import java.io.IOException;
 import java.lang.String;
@@ -124,6 +125,7 @@ public class Game implements Runnable {
             players.put(IDCounter, p);
             IDCounter++;
         }*/
+
         //create team orbs
         for (int i = 0; i < maxPlayers; i++) {
             Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
