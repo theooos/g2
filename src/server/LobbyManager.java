@@ -21,6 +21,7 @@ class LobbyManager {
     void addConnection(Connection c) {
 
         c.addFunctionEvent("String", Server::out);
+        c.addFunctionEvent("MoveObject", e -> System.out.println("Received: "+e));
         c.send(new String("You are being cared for by the lobby manager."));
 
         boolean added = false;

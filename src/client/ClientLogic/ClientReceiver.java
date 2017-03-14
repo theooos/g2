@@ -50,7 +50,6 @@ public class ClientReceiver {
 
         switch (t) {
             case "ID":
-                out("FUCK! "+t);
                 String idS = information.substring(2);
                 int id = Integer.parseInt(idS);
                 this.setID(id);

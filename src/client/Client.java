@@ -11,6 +11,7 @@ import networking.Connection;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
@@ -19,6 +20,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Client {
 
     public enum Mode {SPLASH, GAME}
+
     private Mode currentMode = Mode.SPLASH;
 
     private static final String WINDOW_TITLE = "PhaseShift";
@@ -56,6 +58,8 @@ public class Client {
                     startScreen.render();
                     break;
                 case GAME:
+                    changeDisplaySettings();
+                    gameRenderer.run();
                     break;
                 default:
                     System.out.println("Not in a mode.");
@@ -65,6 +69,15 @@ public class Client {
             Display.update();
             Display.sync(60);
         }
+    }
+
+    private void changeDisplaySettings() {
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 1, -1);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     private void initialise() {
@@ -127,14 +140,15 @@ public class Client {
         return false;
     }
 
-    private void beginGame(GameData gameData){
-        gameRenderer = new GameRenderer(gameData,connection,0);
+    private void beginGame(GameData gameData) {
+        gameRenderer = new GameRenderer(gameData, connection, 0);
+        currentMode = Mode.GAME;
     }
 
     private void establishConnection() {
         try {
             connection = new Connection();
-            clientReceiver = new ClientReceiver(connection,this::beginGame);
+            clientReceiver = new ClientReceiver(connection, this::beginGame);
         } catch (IOException e) {
             System.err.println("Failed to make connection.");
         }
