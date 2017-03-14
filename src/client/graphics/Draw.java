@@ -135,6 +135,11 @@ class Draw {
         verticalDraw(0,0,width,height);
     }
 
+    void colourBackground(int phase) {
+        glColor4f(phase*0.1f,0,(1-phase)*0.1f,1f);
+        verticalDraw(0,0,width,height);
+    }
+
     void drawHeatBar(double heat, double maxHeat) {
         float heatBarSensitivity = 0.1f;
         if (heat != oldHeat) {
