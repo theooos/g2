@@ -26,7 +26,7 @@ public class Strategise extends PlayerTask {
     public void doAction() {
         brain.resetBehaviours();
 
-        float distance = intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos());
+        float distance = intel.ent().getPos().getDistanceTo(intel.getRelevantEntity().getPos());
 
         // Waiting on ability to calculate range of weapons.
         // Very basic strategising in the meantime.

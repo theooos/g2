@@ -159,4 +159,9 @@ public class Vector2 implements Sendable{
 
         return (new Vector2(newX, newY)).normalise();
     }
+
+    public static Vector2 randomVector(int size){
+        Random gen = new Random();
+        return new Vector2(gen.nextFloat()*size, gen.nextFloat()*size);
+    }
 }

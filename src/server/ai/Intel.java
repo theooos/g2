@@ -18,7 +18,7 @@ public abstract class Intel {
     protected HashMap<Integer, Orb> allOrbs;
     protected Map map;                    // The map the current game is being played on.
     protected Vector2 targetLocation;     // Where the entity is currently aiming to reach.
-    protected Player targetPlayer;        // The player the entity is currently hunting.
+    protected MovableEntity relevantEnt;  // The entity this entity is currently interested in.
     protected Visualiser sight;
     protected ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
@@ -33,7 +33,7 @@ public abstract class Intel {
         this.players = players;
         this.map = map;
         this.targetLocation = null;
-        this.targetPlayer = null;
+        this.relevantEnt = null;
         this.path = new ArrayList<>();
     }
 
@@ -141,16 +141,16 @@ public abstract class Intel {
     /**
      * @return the player the entity is currently hunting.
      */
-    public Player getTargetPlayer() {
-        return targetPlayer;
+    public MovableEntity getRelevantEntity() {
+        return relevantEnt;
     }
 
     /**
      * Stores the player the entity is intending to hunt next.
-     * @param targetPlayer - the next target player.
+     * @param relEnt - the next target player.
      */
-    public void setTargetPlayer(Player targetPlayer) {
-        this.targetPlayer = targetPlayer;
+    public void setRelevantEntity(MovableEntity relEnt) {
+        this.relevantEnt = relEnt;
     }
 
 
@@ -165,5 +165,9 @@ public abstract class Intel {
 
     public ConcurrentHashMap<Integer, Player> getEnemyPlayersInSight(){
         return sight.getPlayersInSight(ent.getPos().toPoint(), ent.getPhase());
+    }
+
+    public boolean inSight(Vector2 pos){
+        return sight.inSight(ent.getPos().toPoint(), pos.toPoint(), ent.getPhase());
     }
 }

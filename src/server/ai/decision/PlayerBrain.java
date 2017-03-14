@@ -1,7 +1,6 @@
 package server.ai.decision;
 
 import server.ai.AIBrain;
-import server.ai.Intel;
 import server.ai.Task;
 import server.ai.behaviour.*;
 
@@ -15,6 +14,7 @@ import java.util.Random;
  */
 public class PlayerBrain extends AIBrain {
 
+    private Sequence flee;
     private Sequence rage;
     private Sequence chase;
     private Sequence hunt;
@@ -38,6 +38,9 @@ public class PlayerBrain extends AIBrain {
         behaviours.addBehaviour(new Strategise(intel, this), "Strategise");
         behaviours.addBehaviour(new Fire(intel, this), "Fire");
         behaviours.addBehaviour(new SprayNPray(intel, this), "SprayNPray");
+        behaviours.addBehaviour(new ShiftPhase(intel, this), "ShiftPhase");
+        behaviours.addBehaviour(new QuickMove(intel,this), "QuickMove");
+        behaviours.addBehaviour(new ForceShiftPhase(intel, this), "ForceShiftPhase");
     }
     @Override
     protected void configureBehaviours() {
@@ -45,6 +48,12 @@ public class PlayerBrain extends AIBrain {
         hunt.add(behaviours.getBehaviour("Wander"));
         hunt.add(behaviours.getBehaviour("FindPath"));
         hunt.add(behaviours.getBehaviour("Travel"));
+
+        this.flee = new Sequence(intel, this);
+        flee.add(behaviours.getBehaviour("ForceShiftPhase"));
+        flee.add(behaviours.getBehaviour("LocateCover"));
+        flee.add(behaviours.getBehaviour("FindPath"));
+        flee.add(behaviours.getBehaviour("Travel"));
     }
 
     @Override
@@ -54,34 +63,21 @@ public class PlayerBrain extends AIBrain {
 
         // Decide how to behave...
         if (curEmotion == EmotionalState.INTIMIDATED){
-            // IMPLEMENT THE CHECK.
-            boolean retaliationViable = check.doCheck(Check.CheckMode.RETALIATION_VIABLE);
-            if (retaliationViable) {
-                if (!behaviours.getBehaviour("Retaliate").isRunning()){
-                    behaviours.getBehaviour("Retaliate").start();
-                }
-                    behaviours.getBehaviour("Retaliate").doAction();
-            } else {
-                if (!behaviours.getBehaviour("Escape").isRunning()) {
-                    behaviours.getBehaviour("Escape").start();
-                }
-                behaviours.getBehaviour("Escape").doAction();
-            }
-         }
+            flee.doAction();
+        }
 
         else if (curEmotion == EmotionalState.AGGRESSIVE) {
 
             // Give the AI a 50% chance of rethinking strategy after at least 2 seconds.
             if ((tickCount/60) >= 2) {
                 if (gen.nextDouble() >= 0.5) {
-                    System.out.println("Rethinking strategy.");
                     behaviours.getBehaviour("Strategise").run();
                     tickCount = 0;
                 }
             }
-            // Compute/re-compute travel path if the target has moved since the last tick.
+            // Compute/relevantEnt-compute travel path if the target has moved since the last tick.
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
-                intel.setTargetLocation(intel.getTargetPlayer().getPos());
+                intel.setTargetLocation(intel.getRelevantEntity().getPos());
             }
 
             // Execute strategy.
@@ -101,17 +97,15 @@ public class PlayerBrain extends AIBrain {
     protected void handleEmotion() {
         if (curEmotion == EmotionalState.INTIMIDATED) {
             System.out.println("Player "+ intel.ent().getID() + " is now intimidated.");
-            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
             this.stress = 80;
+            flee.start();
         }
         else if (curEmotion == EmotionalState.AGGRESSIVE) {
-            System.out.println("Player "+ intel.ent().getID() + " is now aggressive.");
             this.stress = 50;
             ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
             behaviours.getBehaviour("Strategise").run();
         }
         else if (curEmotion == EmotionalState.BORED) {
-            System.out.println("Player "+ intel.ent().getID() + " is now bored.");
             this.stress = 0;
             ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
             hunt.start();
@@ -124,5 +118,9 @@ public class PlayerBrain extends AIBrain {
 
     public void setStrategy(String strategy) {
         this.currentStrategy = behaviours.getBehaviour(strategy);
+    }
+
+    public boolean performCheck(Check.CheckMode mode){
+        return check.doCheck(mode);
     }
 }

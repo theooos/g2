@@ -52,6 +52,28 @@ public class Visualiser {
     }
 
     /**
+     * Determines whether a point 'dest' can be seen from another point 'pov' within
+     * the given phase.
+     * @param pov - The point of view.
+     * @param dest - The destination towards which line of sight will be verified.
+     * @param phase - The phase within which line of sight will be verified.
+     * @return true if the destination can be seen from the POV.
+     */
+    public boolean inSight(Point2D pov, Point2D dest, int phase){
+        ArrayList<Line2D> iLines = getIntersectionLines(phase);
+        Line2D lineOfSight = new Line2D.Double(pov, dest);
+        boolean canSee = true;
+        for (Line2D w : iLines){
+            if (w.intersectsLine(lineOfSight)) {
+                canSee = false;
+                break;
+            }
+        }
+        return canSee;
+
+    }
+
+    /**
      * Returns the collection of opponent players where the line between the player's position
      * and the POV is not intersected by any walls within the game map.
      * @param pov - The position from which vision is being checked.

@@ -1,9 +1,13 @@
 package server.ai.decision;
 
 import server.ai.Intel;
+import server.game.MovableEntity;
+import server.game.Orb;
 import server.game.Player;
 import server.game.Vector2;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,7 +22,8 @@ public class Check {
         PROXIMITY,
         RANGE,
         RETALIATION_VIABLE,
-        TARGET_MOVED }
+        TARGET_MOVED,
+        CLOSEST_ENEMY}
 
     private final int LOW_HEALTH_THRESHOLD = 30;
     private Intel intel;        // The intelligence this object uses to perform its checks.
@@ -56,6 +61,9 @@ public class Check {
         else if (mode == CheckMode.TARGET_MOVED) {
             return targetMovedCheck();
         }
+        else if (mode == CheckMode.CLOSEST_ENEMY) {
+            return closestEnemyCheck();
+        }
         else return false;
     }
 
@@ -80,10 +88,10 @@ public class Check {
     }
 
     private boolean rangeCheck(){
-        Vector2 targetPos = intel.getTargetPlayer().getPos();
+        Vector2 targetPos = intel.getRelevantEntity().getPos();
         Vector2 currentPos = intel.ent().getPos();
         float distance = currentPos.getDistanceTo(targetPos);
-        float range = intel.ent().getRadius() + intel.getTargetPlayer().getRadius();
+        float range = intel.ent().getRadius() + intel.getRelevantEntity().getRadius();
         return (distance <= range);
     }
 
@@ -96,10 +104,39 @@ public class Check {
             return true;
         }
         Vector2 targetPos = intel.getTargetLocation();
-        Vector2 playerAt = intel.getTargetPlayer().getPos();
+        Vector2 playerAt = intel.getRelevantEntity().getPos();
         float distance = targetPos.getDistanceTo(playerAt);
         float accErr = intel.ent().getRadius();
         return (distance > accErr);
+    }
+
+    private boolean closestEnemyCheck(){
+        MovableEntity closestEnt = null;
+        float closestDist = -1;
+
+        ConcurrentHashMap<Integer, Player> risks1 = intel.getEnemyPlayersInSight();
+        for (java.util.Map.Entry<Integer, Player> e : risks1.entrySet()){
+            float distance = intel.ent().getPos().getDistanceTo(e.getValue().getPos());
+            if (closestDist < 0 || distance < closestDist){
+                closestDist = distance;
+                closestEnt = e.getValue();
+            }
+        }
+
+        ConcurrentHashMap<Integer, Orb> risks2 = ((PlayerIntel)(intel)).getOrbsInSight();
+        for (java.util.Map.Entry<Integer, Orb> e : risks2.entrySet()){
+            float distance = intel.ent().getPos().getDistanceTo(e.getValue().getPos());
+            if (closestDist < 0 || distance < closestDist){
+                closestDist = distance;
+                closestEnt = e.getValue();
+            }
+        }
+
+        if (closestDist == -1 || closestEnt == null){
+            return false;
+        }
+        intel.setRelevantEntity(closestEnt);
+        return true;
     }
 
     /**
@@ -117,6 +154,6 @@ public class Check {
                 closestPlayer = p.getValue();
             }
         }
-        intel.setTargetPlayer(closestPlayer);
+        intel.setRelevantEntity(closestPlayer);
     }
 }

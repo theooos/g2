@@ -1,10 +1,8 @@
 package server.ai.decision;
 
 import server.ai.AIBrain;
-import server.ai.Intel;
 import server.ai.behaviour.*;
 import server.ai.behaviour.Float;
-import server.game.Orb;
 
 /**
  * Represents the brain of an Orb, making decisions on the Orb's behalf while taking
@@ -62,14 +60,14 @@ public class OrbBrain extends AIBrain {
             drift.doAction();
         }
         else if (curEmotion == EmotionalState.AGGRESSIVE) {
-            // Compute/re-compute travel path if the target has moved since the last tick.
+            // Compute/relevantEnt-compute travel path if the target has moved since the last tick.
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
-                intel.setTargetLocation(intel.getTargetPlayer().getPos());
+                intel.setTargetLocation(intel.getRelevantEntity().getPos());
                 behaviours.getBehaviour("FindPath").run();
                 behaviours.getBehaviour("Float").start();
             } // Or if it hasn't...
             else {
-                // Float towards the target player if they're out of attacking range.
+                // Float towards the target player if they'relevantEnt out of attacking range.
                 if (!check.doCheck(Check.CheckMode.RANGE)) {
                     behaviours.getBehaviour("Float").doAction();
                 }

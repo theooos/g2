@@ -3,6 +3,7 @@ package server.ai.behaviour;
 import server.ai.AIBrain;
 import server.ai.Intel;
 import server.ai.Task;
+import server.game.MovableEntity;
 import server.game.Orb;
 import server.game.Player;
 
@@ -24,7 +25,7 @@ public class Zap extends Task {
     @Override
     public boolean checkConditions() {
         assert (intel.ent() instanceof Orb);
-        float distBetweenCent = intel.ent().getPos().getDistanceTo(intel.getTargetPlayer().getPos());
+        float distBetweenCent = intel.ent().getPos().getDistanceTo(intel.getRelevantEntity().getPos());
         float absDistBetween = distBetweenCent - intel.ent().getRadius();
         return (absDistBetween <= 40);
     }
@@ -32,7 +33,7 @@ public class Zap extends Task {
     @Override
     public void doAction() {
         if (ctr == FREQUENCY) {
-            Player target = intel.getTargetPlayer();
+            MovableEntity target = intel.getRelevantEntity();
             target.damage(24);
             ctr = 0;
         } else {
