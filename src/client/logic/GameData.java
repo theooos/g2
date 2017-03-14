@@ -36,17 +36,18 @@ public class GameData {
         return players;
     }
 
-    public Player getPlayer(int playerID){
+    public Player getPlayer(int playerID) {
         return players.get(playerID);
     }
 
-    public ConcurrentHashMap<Integer, Projectile> getProjectiles() {return  projectiles;}
+    public ConcurrentHashMap<Integer, Projectile> getProjectiles() {
+        return projectiles;
+    }
 
     void updateProjectile(Projectile p) {
         if (p.isAlive()) {
             projectiles.put(p.getID(), p);
-        }
-        else {
+        } else {
             projectiles.remove(p.getID());
         }
     }
@@ -67,6 +68,7 @@ public class GameData {
 
     /**
      * update the hashmap of the orbs.
+     *
      * @param o the orb to be changed.
      */
     void updateOrb(Orb o) {
@@ -105,4 +107,19 @@ public class GameData {
         powerUps.put(powerUp.getID(), powerUp);
     }
 
+    public String toString() {
+        String string = "~ PLAYERS ~\n";
+        for (Player player : players.values()) {
+            string += player + "\n";
+        }
+        string += "~ ORBS ~\n";
+        for (Orb orb : orbs.values()) {
+            string += orb + "\n";
+        }
+        string = "~ PROJECTILES ~\n";
+        for (Projectile projectile : projectiles.values()) {
+            string += projectile + "\n";
+        }
+        return string;
+    }
 }
