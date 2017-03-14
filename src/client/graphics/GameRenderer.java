@@ -201,10 +201,6 @@ public class GameRenderer {
 
     public void render() {
         update(getDelta());
-        System.out.println(gameData);
-
-        // Clear the screen and depth buffer
-//        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         Player p = gameData.getPlayer(playerID);
         int phase = p.getPhase();

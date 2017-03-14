@@ -2,7 +2,6 @@ package client.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import org.lwjgl.opengl.GL11;
 import server.game.Vector2;
 
 

@@ -43,7 +43,7 @@ public class TestEnvironment extends Observable {
         try {
             map = new Map(0);
         } catch (IOException e) {
-            System.out.println("Invalid MapID.");
+            System.err.println("Invalid MapID.");
             e.printStackTrace();
             System.exit(0);
         }

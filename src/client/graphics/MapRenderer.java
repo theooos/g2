@@ -9,25 +9,21 @@ import java.util.ArrayList;
 
 /**
  * Created by bianca on 14/02/2017.
+ * Used to display maps when in game
  */
-public class MapRenderer {
+class MapRenderer {
 
     private Map map;
-    private int mapID;
     private int width;
     private int height;
-    private ArrayList<Wall> walls;
 
     private final int EXTENT = 10;
 
-    public MapRenderer(int mapID) {
+    MapRenderer(int mapID) {
         try {
             map = new Map(mapID);
-            this.mapID = mapID;
             this.height = map.getMapLength();
             this.width = map.getMapWidth();
-            //System.out.println("height is: " + height);
-            //System.out.println("width is: " + width);
 
         } catch (IOException e) {
 //            System.out.println("Invalid MapID.");
@@ -39,9 +35,9 @@ public class MapRenderer {
     /**
      * Create all components of the map
      */
-    public void renderMap(int phase) {
+    void renderMap(int phase) {
 
-        walls = map.wallsInPhase(phase, true, false);
+        ArrayList<Wall> walls = map.wallsInPhase(phase, true, false);
 
         for (Wall w : walls) {
             float xStart = w.getStartPos().getX();

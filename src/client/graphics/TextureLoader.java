@@ -71,7 +71,7 @@ public class TextureLoader {
                 {
                     case BufferedImage.TYPE_4BYTE_ABGR:  convertFromARGBToBGRA(data);break;
                     case BufferedImage.TYPE_3BYTE_BGR:  convertFromBGRToRGB(data);   break;
-                    default: System.out.println("Unknown type:"+buffImage.getType()); break;
+                    default: System.err.println("Unknown type of image:"+buffImage.getType()); break;
                 }
                 imageCache.put(path, buffImage);
             }
