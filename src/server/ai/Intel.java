@@ -1,5 +1,6 @@
 package server.ai;
 
+import server.ai.pathfinding.AStar;
 import server.ai.vision.VisibilityPolygon;
 import server.ai.vision.Visualiser;
 import server.game.*;
@@ -26,6 +27,7 @@ public abstract class Intel {
     protected ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
     protected CollisionManager collisionManager;
+    protected AStar pathfinder;
 
     /**
      * Constructs an intel object based on the given Players and Map.
@@ -38,6 +40,7 @@ public abstract class Intel {
         this.targetLocation = null;
         this.targetPlayer = null;
         this.path = new ArrayList<>();
+        this.pathfinder = new AStar(this);
     }
 
     public MovableEntity ent() {
@@ -168,5 +171,9 @@ public abstract class Intel {
 
     public ConcurrentHashMap<Integer, Player> getEnemyPlayersInSight(){
         return sight.getPlayersInSight(ent.getPos().toPoint(), ent.getPhase());
+    }
+
+    public AStar pathfinder(){
+        return pathfinder;
     }
 }

@@ -1,4 +1,4 @@
-package server.ai.Pathfinding;
+package server.ai.pathfinding;
 /**
  * Created by Ciprian on 03/05/17.
  */

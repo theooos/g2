@@ -2,8 +2,8 @@ package server.ai.behaviour;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.Pathfinding.AStar;
-import server.ai.Pathfinding.Node;
+import server.ai.pathfinding.AStar;
+import server.ai.pathfinding.Node;
 import server.ai.Task;
 import server.game.Vector2;
 
@@ -40,28 +40,25 @@ public class FindPath extends Task {
 
     @Override
     public void doAction() {
-        System.out.println("IT S ALIvE");
+
         ArrayList<Vector2> path = new ArrayList<>();
         if (lineOfSight) {
             path.add(intel.getTargetLocation());
             intel.resetPath(path);
         } else {
-            // SKELETON CODE
-            AStar aStar=new AStar(intel);
             Node target=new Node(intel.getTargetLocation(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
-            aStar.makeGraph(target,intel.ent().getPhase());
             Node start=new Node(intel.ent().getPos(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
-            aStar.AstarSearch(start,target);
-            List<Node> printPath=aStar.printPath(target);
-
+            System.out.println("Making graph...");
+            intel.pathfinder().makeGraph(target,intel.ent().getPhase());
+            System.out.println("Searching...");
+            intel.pathfinder().AstarSearch(start,target);
+            System.out.println("Returning path...");
+            List<Node> printPath=intel.pathfinder().printPath(target);
+            System.out.println("Finishing path-find.");
             for (Node node:printPath ) {
                 path.add(new Vector2(node.getX(),node.getY()));
 
             }
-
-
-            // PERQUISITE: A*
-
             intel.resetPath(path);
         }
         end();
