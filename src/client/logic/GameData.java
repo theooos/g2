@@ -116,7 +116,7 @@ public class GameData {
         for (Orb orb : orbs.values()) {
             string += orb + "\n";
         }
-        string = "~ PROJECTILES ~\n";
+        string += "~ PROJECTILES ~\n";
         for (Projectile projectile : projectiles.values()) {
             string += projectile + "\n";
         }

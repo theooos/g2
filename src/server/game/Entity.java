@@ -73,4 +73,8 @@ public abstract class Entity implements objects.Sendable {
     public void setID(int i) {
         this.ID = i;
     }
+
+    public String toString(){
+        return "ID: "+getID()+" POS: "+getPos()+" PHASE: "+getPhase();
+    }
 }
