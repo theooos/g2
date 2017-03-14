@@ -1,7 +1,5 @@
 package objects;
 
-import networking.Connection;
-
 import java.util.ArrayList;
 import java.util.List;
 

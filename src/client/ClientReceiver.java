@@ -16,14 +16,12 @@ import java.util.function.Consumer;
  */
 public class ClientReceiver {
 
-    private Connection connection;
     private Consumer<GameData> beginGame;
     private int playerID;
     private static boolean DEBUG = true;
     private GameData gameData;
 
     public ClientReceiver(Connection connection, Consumer<GameData> beginGame) {
-        this.connection = connection;
         this.beginGame = beginGame;
 
         connection.addFunctionEvent("String", this::out);

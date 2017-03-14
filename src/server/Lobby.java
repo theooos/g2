@@ -48,10 +48,11 @@ class Lobby {
      * @param c the connected player
      */
     void addConnection(Connection c) {
-        players.add(c);
-        sendAllNewLobbyInfo();
-        if (players.size() >= minSize) {
-            startCountdown();
+        if(players.add(c)){
+            sendAllNewLobbyInfo();
+            if (players.size() >= minSize) {
+                startCountdown();
+            }
         }
     }
 

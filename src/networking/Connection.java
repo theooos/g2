@@ -71,9 +71,9 @@ public class Connection {
         }
 
         out("Connection made to server.");
+        new Thread(handler).start();
         new Thread(toConnection).start();
         new Thread(fromConnection).start();
-        new Thread(handler).start();
         return true;
     }
 

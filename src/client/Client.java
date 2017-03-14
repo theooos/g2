@@ -89,21 +89,6 @@ public class Client {
             Display.setFullscreen(FULLSCREEN);
             Display.create();
 
-            /* enable textures since we're going to use these for our sprites
-            glEnable(GL_TEXTURE_2D);
-
-            // disable the OpenGL depth test since we're rendering 2D graphics
-            glDisable(GL_DEPTH_TEST);
-
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-
-            glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, -1, 1);
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-            glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-*/
-
             GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
             GL11.glClearDepth(1.0f); // Depth Buffer Setup
             GL11.glDisable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
@@ -133,26 +118,6 @@ public class Client {
         }
     }
 
-    private boolean setDisplayMode() {
-        try {
-            // get modes
-            DisplayMode[] dm = org.lwjgl.util.Display.getAvailableDisplayModes(SCREEN_WIDTH, SCREEN_HEIGHT, -1, -1, -1, -1, 60, 60);
-
-            org.lwjgl.util.Display.setDisplayMode(dm, new String[]{
-                    "width=" + SCREEN_WIDTH,
-                    "height=" + SCREEN_HEIGHT,
-                    "freq=" + 60,
-                    "bpp=" + org.lwjgl.opengl.Display.getDisplayMode().getBitsPerPixel()
-            });
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Unable to enter fullscreen, continuing in windowed mode");
-        }
-
-        return false;
-    }
-
     private void beginGame(GameData gameData) {
         gameRenderer = new GameRenderer(gameData, connection, 0);
         currentMode = Mode.GAME;
@@ -162,6 +127,7 @@ public class Client {
         try {
             connection = new Connection();
             clientReceiver = new ClientReceiver(connection, this::beginGame);
+            connection.addFunctionEvent("LobbyData",startScreen::setupLobby);
         } catch (IOException e) {
             System.err.println("Failed to make connection.");
         }
