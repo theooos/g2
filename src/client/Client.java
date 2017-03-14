@@ -1,7 +1,6 @@
 package client;
 
-import client.logic.ClientReceiver;
-import client.logic.GameData;
+import objects.GameData;
 import client.graphics.GameRenderer;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;

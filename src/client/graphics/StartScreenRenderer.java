@@ -1,6 +1,6 @@
 package client.graphics;
 
-import client.logic.GameData;
+import objects.GameData;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
 import org.lwjgl.input.Mouse;

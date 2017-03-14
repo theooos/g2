@@ -1,6 +1,7 @@
-package client.logic;
+package client;
 
 import networking.Connection;
+import objects.GameData;
 import objects.InitGame;
 import objects.MoveObject;
 import objects.Sendable;

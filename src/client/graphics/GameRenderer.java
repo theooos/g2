@@ -1,6 +1,6 @@
 package client.graphics;
 
-import client.logic.GameData;
+import objects.GameData;
 import networking.Connection;
 import objects.FireObject;
 import objects.MoveObject;
