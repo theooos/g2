@@ -24,7 +24,7 @@ import static org.lwjgl.opengl.GL11.glDepthMask;
 /**
  * Provides the visuals for the game itself.
  */
-public class GameRenderer implements Runnable {
+public class GameRenderer {
 
     private static boolean gameRunning = true;
     private int width = 800;
@@ -75,11 +75,6 @@ public class GameRenderer implements Runnable {
         map = new MapRenderer(gd.getMapID());
         Player me = gameData.getPlayer(playerID);
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), height, width, 20, 20, me.getPhase(), true);
-    }
-
-    public void run() {
-        update(getDelta());
-        render();
     }
 
     private Vector2 getDirFromMouse(Vector2 pos) {
@@ -206,7 +201,9 @@ public class GameRenderer implements Runnable {
         fps++;
     }
 
-    private void render() {
+    public void render() {
+        update(getDelta());
+
         // Clear the screen and depth buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
