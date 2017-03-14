@@ -24,19 +24,18 @@ public class Client {
     private static final String WINDOW_TITLE = "PhaseShift";
     private static final int SCREEN_HEIGHT = 600;
     private static final int SCREEN_WIDTH = 800;
-    private static int SCREEN_TEXTURE_ID = 0;
     private static final boolean FULLSCREEN = false;
 
     private Connection connection;
     private ClientReceiver clientReceiver;
-
-    private boolean running = true;
+    private int playerID;
 
     public static TextureLoader textureLoader;
     private TextRenderer textRenderer;
-
     private StartScreenRenderer startScreen;
     private GameRenderer gameRenderer;
+
+    private boolean running = true;
 
     private Client() {
         initialise();
@@ -119,7 +118,7 @@ public class Client {
     }
 
     private void beginGame(GameData gameData) {
-        gameRenderer = new GameRenderer(gameData, connection, 0);
+        gameRenderer = new GameRenderer(gameData, connection, playerID);
         currentMode = Mode.GAME;
     }
 
@@ -127,9 +126,23 @@ public class Client {
         try {
             connection = new Connection();
             clientReceiver = new ClientReceiver(connection, this::beginGame);
+            connection.addFunctionEvent("String",this::getID);
             connection.addFunctionEvent("LobbyData",startScreen::setupLobby);
         } catch (IOException e) {
             System.err.println("Failed to make connection.");
+        }
+    }
+
+    private void getID(Object o) {
+        String information = o.toString();
+        String t = information.substring(0, 2);
+
+        switch (t) {
+            case "ID":
+                String idS = information.substring(2);
+                int id = Integer.parseInt(idS);
+                playerID = id;
+                break;
         }
     }
 

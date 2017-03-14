@@ -25,7 +25,6 @@ public class ClientReceiver {
         this.beginGame = beginGame;
 
         connection.addFunctionEvent("String", this::out);
-        connection.addFunctionEvent("String", this::getID);
         connection.addFunctionEvent("InitGame", this::setupGame);
         connection.addFunctionEvent("Player", this::updatedPlayer);
         connection.addFunctionEvent("AIPlayer", this::updatedPlayer);
@@ -41,19 +40,6 @@ public class ClientReceiver {
         InitGame initGame = (InitGame) s;
         gameData = new GameData(initGame);
         beginGame.accept(gameData);
-    }
-
-    private void getID(Object o) {
-        String information = o.toString();
-        String t = information.substring(0, 2);
-
-        switch (t) {
-            case "ID":
-                String idS = information.substring(2);
-                int id = Integer.parseInt(idS);
-                this.setID(id);
-                break;
-        }
     }
 
     public void out(Object o) {
