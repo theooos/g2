@@ -3,6 +3,7 @@ package server.ai.Pathfinding;
 import server.ai.Intel;
 import server.game.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +19,8 @@ public class Node{
     public double g_scores;
     public  int h_scores;
     public double f_scores = 0;
-    public Edge[] adjacencies;
+    ArrayList<Edge> adjacencies= new ArrayList<>();
+   // public Edge[] ;
     public Node parent;
     public int radius;
     public int phase;
@@ -36,10 +38,14 @@ public class Node{
         h_scores=manhattanDistance(enemy);
     }
 
-    
+    public void addAdjancencies(ArrayList<Edge> moreEdges)
+    {
+        this.adjacencies.addAll(moreEdges);
+    }
     public void addAdjancency(Edge newEdge)
     {
-        this.adjacencies[adjacencies.length]=newEdge;
+ //       this.adjacencies[adjacencies.length]=newEdge;
+        this.adjacencies.add(newEdge);
     }
 
 
@@ -68,7 +74,7 @@ public class Node{
         this.h_scores=hScores;
     }
     public void setRadius(int radius){this.radius=radius;}
-    public void setAdjacencies(Edge[] edges)
+    public void setAdjacencies(ArrayList<Edge> edges)
     {
         this.adjacencies=edges;
     }

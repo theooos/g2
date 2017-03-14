@@ -46,20 +46,43 @@ public class AStar {
         Node[][] nodes;
 
         nodes = new Node[width][height];
-
-        for ( int row = 0; row < (height - 1); row++ )
+        for(int i=0;i<height;i++)
         {
-            for ( int col = 0; col < (width - 1); col++ )
+            nodes[0][i]=new Node(new Vector2(0,i),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
+            nodes[0][i].setH_scores(10000);
+        }
+
+        for(int i=0;i<width;i++)
+        {
+            nodes[i][0]=new Node(new Vector2(i,0),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
+        }
+        for ( int row = 1; row < (height - 2); row++ )
+        {
+            for ( int col = 1; col < (width - 2); col++ )
             {
               //  System.out.println("Row: " + row);
                 //System.out.println("Col: " + col);
                 nodes[col][row]=new Node(new Vector2(col,row),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
 
+                ArrayList<Edge> adj = new ArrayList<Edge>();
+
+                adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
+                adj.add(new Edge(nodes[col-1][row-1],nodes[col-1][row-1].h_scores));
+                adj.add( new Edge(nodes[col][row-1],nodes[col][row-1].h_scores));
+                adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
+                //adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
+                //System.out.println(nodes[col][row]==null);
+                nodes[col][row].addAdjancencies(adj);
+
+                nodes[col-1][row].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-1][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-1][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
             }
 
         }
         System.out.println("Size"+height*width);
-        makeAdjances(nodes,goal.coordinates());
+      //  makeAdjances(nodes,goal.coordinates());
         this.nodes=nodes;
 
     }
@@ -78,8 +101,7 @@ public class AStar {
             {
                // System.out.println("Check:"+nodes[col][row]==null);
 
-
-
+        /*
             nodes[col][row].setAdjacencies(
                     new  Edge[]{
                             new Edge(nodes[col-1][row],nodes[col-1][row].h_scores),
@@ -94,7 +116,7 @@ public class AStar {
                             new Edge(nodes[col][row+1],nodes[col][row+1].h_scores)
             });
 
-
+*/
 
             }
         }
