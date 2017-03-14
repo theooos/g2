@@ -41,6 +41,7 @@ public class AStar {
     public void makeGraph(Node goal,int phase)
     {
         server.game.Map map=this.intel.getMap();
+        int radius=this.intel.ent().getRadius();
         int width=map.getMapWidth();
         int height=map.getMapLength();
         Node[][] nodes;
@@ -56,9 +57,9 @@ public class AStar {
         {
             nodes[i][0]=new Node(new Vector2(i,0),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
         }
-        for ( int row = 1; row < (height - 2); row++ )
+        for ( int row = radius; row < (height - 2); row+=radius )
         {
-            for ( int col = 1; col < (width - 2); col++ )
+            for ( int col = radius; col < (width - 2); col+=radius )
             {
               //  System.out.println("Row: " + row);
                 //System.out.println("Col: " + col);
@@ -66,18 +67,18 @@ public class AStar {
 
                 ArrayList<Edge> adj = new ArrayList<Edge>();
 
-                adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
-                adj.add(new Edge(nodes[col-1][row-1],nodes[col-1][row-1].h_scores));
-                adj.add( new Edge(nodes[col][row-1],nodes[col][row-1].h_scores));
-                adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
+                adj.add(new Edge(nodes[col-radius][row],nodes[col-radius][row].h_scores));
+                adj.add(new Edge(nodes[col-radius][row-radius],nodes[col-radius][row-radius].h_scores));
+                adj.add( new Edge(nodes[col][row-radius],nodes[col][row-radius].h_scores));
+                adj.add(new Edge(nodes[col-radius][row],nodes[col-radius][row].h_scores));
                 //adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
                 //System.out.println(nodes[col][row]==null);
                 nodes[col][row].addAdjancencies(adj);
 
-                nodes[col-1][row].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col-1][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col-1][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-radius][row].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-radius][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-radius][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
             }
 
         }
