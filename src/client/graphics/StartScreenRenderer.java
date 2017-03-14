@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.function.Consumer;
 
 /**
- * Created by bianca on 05/03/2017.
+ * Holds all the
  */
 public class StartScreenRenderer {
 
@@ -42,13 +42,14 @@ public class StartScreenRenderer {
     }
 
     public void render() {
-        handleClicked();
         switch (currentScreen) {
             case MAIN:
                 renderInterface();
+                handleClickedMain();
                 break;
             case ABOUT:
                 renderAbout();
+                handleClickedAbout();
                 break;
             case LOADING:
                 renderLoading();
@@ -58,15 +59,10 @@ public class StartScreenRenderer {
         }
     }
 
-    private void handleClicked() {
+    private void handleClickedMain() {
         if(hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
 
         if(!hasClicked) {
-            if (go_back.isClicked()) {
-                currentScreen = Screen.MAIN;
-                hasClicked = true;
-                return;
-            }
             if (about.isClicked()) {
                 currentScreen = Screen.ABOUT;
                 hasClicked = true;
@@ -76,6 +72,18 @@ public class StartScreenRenderer {
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
                 hasClicked = true;
+            }
+        }
+    }
+
+    private void handleClickedAbout() {
+        if(hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
+
+        if(!hasClicked) {
+            if (go_back.isClicked()) {
+                currentScreen = Screen.MAIN;
+                hasClicked = true;
+                return;
             }
         }
     }
