@@ -10,11 +10,8 @@ import server.game.Vector2;
  */
 public class Fire extends PlayerTask {
 
-    private int timer;
-
     public Fire(PlayerIntel intel, PlayerBrain brain) {
         super(intel, brain);
-        this.timer = 0;
     }
 
     public boolean checkConditions(){
@@ -22,22 +19,13 @@ public class Fire extends PlayerTask {
     }
 
     public void doAction(){
-        timer++;
 
+        // Set the player to (roughly) face the player.
         Vector2 dir = intel.ent().getPos().vectorTowards(intel.getRelevantEntity().getPos());
         dir = Vector2.deviate(dir, 2);
         intel.ent().setDir(dir);
 
-        // Fire as often as possible (give or take):
-        int fireFreq = intel.ent().getActiveWeapon().getRefireTime() + 10;
-        if (timer == fireFreq) {
-            intel.ent().setFiring(true);
-        }
-
-        // After every 30th tick.
-        if (timer > fireFreq) {
-            intel.ent().setFiring(false);
-            timer = 0;
-        }
+        // Fire!
+        intel.ent().setFiring(true);
     }
 }

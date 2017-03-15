@@ -122,7 +122,7 @@ public class Weapon implements Sendable{
         return (new Vector2(newX, newY)).normalise();
     }
 
-    private boolean isFullyAuto() {
+    public boolean isFullyAuto() {
          return fullyAuto;
     }
 
@@ -141,5 +141,4 @@ public class Weapon implements Sendable{
     public int getRefireTime(){
         return refireTime;
     }
-
 }

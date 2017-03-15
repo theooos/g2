@@ -106,7 +106,11 @@ public class Check {
         Vector2 playerAt = intel.getRelevantEntity().getPos();
         float distance = targetPos.getDistanceTo(playerAt);
         float accErr = intel.ent().getRadius();
-        return (distance > accErr);
+        if (distance > accErr) {
+            intel.setTargetLocation(playerAt);
+            return true;
+        }
+        return false;
     }
 
     private boolean closestEnemyCheck(){

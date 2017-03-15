@@ -37,10 +37,11 @@ public class PlayerBrain extends AIBrain {
         behaviours.addBehaviour(new Travel(intel, this), "Travel");
         behaviours.addBehaviour(new Strategise(intel, this), "Strategise");
         behaviours.addBehaviour(new Fire(intel, this), "Fire");
-        behaviours.addBehaviour(new SprayNPray(intel, this), "SprayNPray");
         behaviours.addBehaviour(new ShiftPhase(intel, this), "ShiftPhase");
         behaviours.addBehaviour(new QuickMove(intel,this), "QuickMove");
         behaviours.addBehaviour(new ForceShiftPhase(intel, this), "ForceShiftPhase");
+        behaviours.addBehaviour(new Attack(intel, this), "Attack");
+        behaviours.addBehaviour(new Retreat(intel, this), "Retreat");
     }
     @Override
     protected void configureBehaviours() {
@@ -122,5 +123,9 @@ public class PlayerBrain extends AIBrain {
 
     public boolean performCheck(Check.CheckMode mode){
         return check.doCheck(mode);
+    }
+
+    public void executeStrategy(){
+        currentStrategy.start();
     }
 }
