@@ -8,7 +8,7 @@ import java.util.*;
  */
 public class AStar {
     Intel intel;
-    Node[][] nodes;
+    public Node[][] nodeses;
     public AStar (Intel intel)
     {
         this.intel=intel;
@@ -20,22 +20,14 @@ public class AStar {
         for(Node node = target; node!=null; node = node.parent){
             path.add(node);
         }
-
         Collections.reverse(path);
 
         return path;
     }
 
-    private Node getNode(int x,int y,Node[] [] nodes)
+    public Node getNode(int x,int y)
     {
-        int width=this.intel.getMap().getMapWidth();
-        int height=this.intel.getMap().getMapLength();
-
-        for(int i=0;i<height;i++)
-            for(int j=0;j<width;j++)
-                if(x==j&&y==i)
-                    return nodes[i][j];
-        return null;
+        return nodeses[y][x];
     }
 
     public void makeGraph(Node goal,int phase)
@@ -57,76 +49,44 @@ public class AStar {
         {
             nodes[i][0]=new Node(new Vector2(i,0),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
         }
-        for ( int row = radius; row < (height - radius); row+=radius )
+
+        for ( int row = 1; row < (height - 1); row+=1 )
         {
-            for ( int col = radius; col < (width - radius); col+=radius )
+            for ( int col = 1; col < (width - 1); col+=1 )
             {
-              //  System.out.println("Row: " + row);
+
                 //System.out.println("Col: " + col);
                 nodes[col][row]=new Node(new Vector2(col,row),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
 
                 ArrayList<Edge> adj = new ArrayList<Edge>();
 
-                adj.add(new Edge(nodes[col-radius][row],nodes[col-radius][row].h_scores));
-                adj.add(new Edge(nodes[col-radius][row-radius],nodes[col-radius][row-radius].h_scores));
-                adj.add( new Edge(nodes[col][row-radius],nodes[col][row-radius].h_scores));
-                adj.add(new Edge(nodes[col-radius][row],nodes[col-radius][row].h_scores));
+                adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
+                adj.add(new Edge(nodes[col-1][row-1],nodes[col-1][row-1].h_scores));
+                adj.add( new Edge(nodes[col][row-1],nodes[col][row-1].h_scores));
+                adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
                 //adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
                 //System.out.println(nodes[col][row]==null);
                 nodes[col][row].addAdjancencies(adj);
 
-                nodes[col-radius][row].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col-radius][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col-radius][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-1][row].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-1][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-1][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
             }
 
         }
-        System.out.println("Size"+height*width);
-      //  makeAdjances(nodes,goal.coordinates());
-        this.nodes=nodes;
+
+        this.nodeses=nodes;
 
     }
 
-     public void makeAdjances(Node[][] nodes,Vector2 goal)
-     {
-         server.game.Map map=this.intel.getMap();
-         int width=map.getMapWidth();
-         int height=map.getMapLength();
-        for (int row=1;row<height-2;row++)
-        {
-
-            for(int col=1;col<width-2;col++)
-            {
-               // System.out.println("Check:"+nodes[col][row]==null);
-
-        /*
-            nodes[col][row].setAdjacencies(
-                    new  Edge[]{
-                            new Edge(nodes[col-1][row],nodes[col-1][row].h_scores),
-                            new Edge(nodes[col-1][row-1],nodes[col-1][row-1].h_scores),
-                            new Edge(nodes[col][row-1],nodes[col][row-1].h_scores),
-                            new Edge(nodes[col-1][row],nodes[col-1][row].h_scores),
-
-
-                            new Edge(nodes[col+1][row-1],nodes[col-1][row-1].h_scores),
-                            new Edge(nodes[col-1][row+1],nodes[col-1][row+1].h_scores),
-                            new Edge(nodes[col+1][row+1],nodes[col+1][row+1].h_scores),
-                            new Edge(nodes[col][row+1],nodes[col][row+1].h_scores)
-            });
-
-*/
-
-            }
-        }
-     }
 
 
      public void AstarSearch(Node source, Node goal){
 
         Set<Node> explored = new HashSet<Node>();
-
-        PriorityQueue<Node> queue = new PriorityQueue<Node>(20,
+        //    System.out.println("Checking if it s receiving what it should-->"+source.adjacencies.toString());
+        PriorityQueue<Node> queue = new PriorityQueue<Node>(200,
                 new Comparator<Node>(){
                     //override compare method
                     public int compare(Node i, Node j){
@@ -150,18 +110,19 @@ public class AStar {
         source.g_scores = 0;
 
         queue.add(source);
-
+      //  System.out.println(source.adjacencies.size());
         boolean found = false;
-         System.out.println(queue.poll().adjacencies==null);
-        while((!queue.isEmpty())&&(!found)){
 
+        while((!queue.isEmpty())&&(!found)){
+                //System.out.println(queue.toString());
             //the node in having the lowest f_score value
             Node current = queue.poll();
 
             explored.add(current);
-
+           // System.out.println(explored.toString());
             //goal found
-            if(current.xValue==goal.xValue && current.yValue==goal.yValue){
+            if(current.coordinates().equals(goal.coordinates())){
+
                 found = true;
             }
 
@@ -170,6 +131,7 @@ public class AStar {
             for(Edge e : current.adjacencies){
                 Node child = e.target;
                 double cost = e.cost;
+              //  System.out.print(cost+" ");
                 double temp_g_scores = current.g_scores + cost;
                 double temp_f_scores = temp_g_scores + child.h_scores;
 
@@ -186,7 +148,7 @@ public class AStar {
                                 newer f_score is lower*/
 
                 else if((!queue.contains(child)) ||
-                        (temp_f_scores > child.f_scores)){
+                        (temp_f_scores < child.f_scores)){
 
                     child.parent = current;
                     child.g_scores = temp_g_scores;

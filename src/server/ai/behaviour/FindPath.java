@@ -2,9 +2,8 @@ package server.ai.behaviour;
 
 import server.ai.AIBrain;
 import server.ai.Intel;
-import server.ai.pathfinding.AStar;
-import server.ai.pathfinding.Node;
 import server.ai.Task;
+import server.ai.pathfinding.Node;
 import server.game.Vector2;
 
 import java.util.ArrayList;
@@ -50,16 +49,22 @@ public class FindPath extends Task {
             Node start=new Node(intel.ent().getPos(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
             System.out.println("Making graph...");
             intel.pathfinder().makeGraph(target,intel.ent().getPhase());
+
             System.out.println("Searching...");
-            intel.pathfinder().AstarSearch(start,target);
+            intel.pathfinder().AstarSearch(intel.pathfinder.getNode(start.getY(),start.getX()),intel.pathfinder.getNode(target.getY(),target.getX()));
             System.out.println("Returning path...");
-            List<Node> printPath=intel.pathfinder().printPath(target);
+
+            List<Node> printPath=intel.pathfinder().printPath(intel.pathfinder.getNode(target.getY(),target.getX()));
+
             System.out.println("Finishing path-find.");
             for (Node node:printPath ) {
                 path.add(new Vector2(node.getX(),node.getY()));
 
             }
+
+
             intel.resetPath(path);
+
         }
         end();
     }

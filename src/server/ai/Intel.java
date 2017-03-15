@@ -24,7 +24,7 @@ public abstract class Intel {
     protected ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
     protected CollisionManager collisionManager;
-    protected AStar pathfinder;
+    public AStar pathfinder;
 
     /**
      * Constructs an intel object based on the given Players and Map.

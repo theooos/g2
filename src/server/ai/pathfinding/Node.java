@@ -19,7 +19,7 @@ public class Node{
     public double g_scores;
     public  int h_scores;
     public double f_scores = 0;
-    ArrayList<Edge> adjacencies= new ArrayList<>();
+   public ArrayList<Edge> adjacencies= new ArrayList<>();
    // public Edge[] ;
     public Node parent;
     public int radius;
@@ -44,7 +44,7 @@ public class Node{
     }
     public void addAdjancency(Edge newEdge)
     {
- //       this.adjacencies[adjacencies.length]=newEdge;
+
         this.adjacencies.add(newEdge);
     }
 
@@ -56,9 +56,9 @@ public class Node{
     public int manhattanDistance(Vector2 enemy)
     {
 
-        if(!checkCollision())
+        if(checkCollision())
             return abs((int)enemy.getX()-this.getX())+abs((int) enemy.getY()-this.getY());//calculates the absolute value of the manhattan distance
-    return abs((int)enemy.getX()-this.getX())+abs((int) enemy.getY()-this.getY())+10000;//if the coordinates are walls then we will minimise the cost as much as possible
+    return abs((int)enemy.getX()-this.getX())+abs((int) enemy.getY()-this.getY())+100000;//if the coordinates are walls then we will minimise the cost as much as possible
     }
     public void setX(int x)
     {
