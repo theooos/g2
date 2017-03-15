@@ -56,7 +56,6 @@ public class ClientReceiver {
             gameData.updatePlayer(p);
         }
         else {
-            out("updating me with id "+p.getID());
             gameData.updateMe(p);
         }
     }
