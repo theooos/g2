@@ -1,22 +1,24 @@
 package client.graphics;
 
-import client.logic.GameData;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
+import objects.LobbyData;
+import objects.Sendable;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.util.Display;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.function.Consumer;
 
 /**
- * Created by bianca on 05/03/2017.
+ * Holds all the
  */
 public class StartScreenRenderer {
 
     private enum Screen {MAIN, ABOUT, LOADING, LOBBY}
+
     private Screen currentScreen = Screen.MAIN;
 
-    private InterfaceTexture play;
     private InterfaceTexture about;
     private InterfaceTexture instructions;
     private InterfaceTexture about_text;
@@ -28,7 +30,8 @@ public class StartScreenRenderer {
     private static Layer interfaceLayer = new Layer();
     private static Layer aboutLayer = new Layer();
     private static Layer loadingLayer = new Layer();
-    private static Layer lobbyLayer = new Layer();
+
+    private LobbyData lobbyData;
 
     private boolean hasClicked = false;
 
@@ -42,31 +45,28 @@ public class StartScreenRenderer {
     }
 
     public void render() {
-        handleClicked();
         switch (currentScreen) {
             case MAIN:
                 renderInterface();
+                handleClickedMain();
                 break;
             case ABOUT:
                 renderAbout();
+                handleClickedAbout();
                 break;
             case LOADING:
                 renderLoading();
                 break;
             case LOBBY:
                 renderLobby();
+                handleClickedLobby();
         }
     }
 
-    private void handleClicked() {
-        if(hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
+    private void handleClickedMain() {
+        if (hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
 
-        if(!hasClicked) {
-            if (go_back.isClicked()) {
-                currentScreen = Screen.MAIN;
-                hasClicked = true;
-                return;
-            }
+        if (!hasClicked) {
             if (about.isClicked()) {
                 currentScreen = Screen.ABOUT;
                 hasClicked = true;
@@ -77,6 +77,27 @@ public class StartScreenRenderer {
                 connectFunction.accept(null);
                 hasClicked = true;
             }
+        }
+    }
+
+    private void handleClickedAbout() {
+        if (hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
+
+        if (!hasClicked) {
+            if (go_back.isClicked()) {
+                currentScreen = Screen.MAIN;
+                hasClicked = true;
+                return;
+            }
+        }
+    }
+
+
+    private void handleClickedLobby() {
+        if (hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
+
+        if (!hasClicked) {
+            // do stuff
         }
     }
 
@@ -100,13 +121,14 @@ public class StartScreenRenderer {
         go_back.spawn(1, new Vector2f((float) 300.0, (float) 450.0), PHASE, aboutLayer);
     }
 
-    private void readyLoadingLayer(){
+    private void readyLoadingLayer() {
         InterfaceTexture temporary_filler = new InterfaceTexture(ISprite.ORB_P1);
-        temporary_filler.spawn(0,new Vector2f((float) 300.0, (float) 100.0),PHASE,loadingLayer);
+        temporary_filler.spawn(0, new Vector2f((float) 300.0, (float) 100.0), PHASE, loadingLayer);
     }
 
-    public void readyLobbyLayer(GameData gameData) {
-
+    public void setupLobby(Sendable sendable) {
+        lobbyData = (LobbyData) sendable;
+        currentScreen = Screen.LOBBY;
     }
 
 
@@ -114,17 +136,28 @@ public class StartScreenRenderer {
 
     private void renderInterface() {
         interfaceLayer.render(PHASE);
+        TextRenderer textRenderer = new TextRenderer();
+        textRenderer.drawText("Test", 0, 0);
     }
 
     private void renderAbout() {
         aboutLayer.render(PHASE);
     }
 
-    private void renderLoading(){
+    private void renderLoading() {
         loadingLayer.render(PHASE);
     }
 
     private void renderLobby() {
-        lobbyLayer.render(PHASE);
+        int xAlign = 50;
+        TextRenderer textRenderer = new TextRenderer();
+        textRenderer.drawText("Map: " + lobbyData.getMapID(), xAlign, 540);
+
+        int yCoord = 500;
+        textRenderer.drawText("Players: ", xAlign, yCoord);
+        for (Integer player : lobbyData.getPlayers()) {
+            yCoord = yCoord - 30;
+            textRenderer.drawText(player.toString(), xAlign, yCoord);
+        }
     }
 }

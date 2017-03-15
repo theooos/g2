@@ -1,6 +1,7 @@
 package client.graphics;
 
-import client.logic.GameData;
+import client.ClientSettings;
+import objects.GameData;
 import networking.Connection;
 import objects.FireObject;
 import objects.MoveObject;
@@ -24,8 +25,7 @@ import static org.lwjgl.opengl.GL11.glDepthMask;
  */
 public class GameRenderer {
 
-    private int width = 800;
-    private int height = 600;
+    private static boolean gameRunning = true;
 
     private long lastFrame;
     private int fps;
@@ -64,14 +64,14 @@ public class GameRenderer {
         twoDown = false;
         tabPressed = false;
 
-        draw = new Draw(width, height);
+        draw = new Draw();
         collisions = new CollisionManager(gd);
         displayCollisions = false;
 
 
         map = new MapRenderer(gd.getMapID());
         Player me = gameData.getPlayer(playerID);
-        pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), height, width, 20, 20, me.getPhase(), true);
+        pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
     }
 
     private Vector2 getDirFromMouse(Vector2 pos) {
@@ -128,10 +128,10 @@ public class GameRenderer {
                 p.setPhase(newPhase);
                 if (collisions.validPosition(p)) {
                     conn.send(new PhaseObject(me.getID()));
-                    pulse = new Pulse(me.getPos(), me.getRadius(), newPhase, 0, 1 - newPhase, height, width, 20, 20, newPhase, true);
+                    pulse = new Pulse(me.getPos(), me.getRadius(), newPhase, 0, 1 - newPhase, 20, 20, newPhase, true);
                 } else {
                     //invalid phase
-                    pulse = new Pulse(me.getPos(), me.getRadius(), 0.3f, 0.3f, 0.3f, height, width, 20, 20, me.getPhase(), 250, false);
+                    pulse = new Pulse(me.getPos(), me.getRadius(), 0.3f, 0.3f, 0.3f, 20, 20, me.getPhase(), 250, false);
                 }
 
             }
@@ -187,7 +187,7 @@ public class GameRenderer {
                 }
             }
 
-            Vector2 tempPos = new Vector2(pos.getX(), height - pos.getY());
+            Vector2 tempPos = new Vector2(pos.getX(), ClientSettings.SCREEN_HEIGHT - pos.getY());
             Vector2 dir = getDirFromMouse(tempPos);
             if (!me.getDir().equals(dir)) {
                 me.setDir(dir);
@@ -245,11 +245,11 @@ public class GameRenderer {
     private void drawCollisions() {
         Player p = new Player(gameData.getPlayer(playerID));
         glColor4f(1, 0, 0, 0.5f);
-        for (int i = 0; i < width; i += 10) {
-            for (int j = 0; j < height; j += 10) {
+        for (int i = 0; i < ClientSettings.SCREEN_WIDTH; i += 10) {
+            for (int j = 0; j < ClientSettings.SCREEN_HEIGHT; j += 10) {
                 p.setPos(new Vector2(i, j));
                 if (!collisions.validPosition(p)) {
-                    draw.drawCircle(i, height - j, 5, 5);
+                    draw.drawCircle(i, ClientSettings.SCREEN_HEIGHT - j, 5, 5);
                 }
             }
         }
@@ -259,6 +259,7 @@ public class GameRenderer {
         int newPhase = pulse.getNewPhase();
         int oldPhase = 1;
         if (newPhase == 1) oldPhase = 0;
+
         draw.colourBackground(oldPhase);
         drawProjectiles(oldPhase);
         map.renderMap(oldPhase);
@@ -275,7 +276,7 @@ public class GameRenderer {
         glDepthMask(false); // Don't write to depth buffer
         glClear(GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
 
-        draw.drawCircle(pulse.getStart().getX(), height - pulse.getStart().getY(), pulse.getRadius(), 500);
+        draw.drawCircle(pulse.getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse.getStart().getY(), pulse.getRadius(), 500);
 
         glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
         glStencilMask(0x00); // Don't write anything to stencil buffer
@@ -285,7 +286,7 @@ public class GameRenderer {
         //GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         GL11.glColor3f(0, 0, 0);
-        draw.drawCircle(pulse.getStart().getX(), height - pulse.getStart().getY(), pulse.getRadius(), 500);
+        draw.drawCircle(pulse.getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse.getStart().getY(), pulse.getRadius(), 500);
         draw.colourBackground(newPhase);
         drawProjectiles(newPhase);
         map.renderMap(newPhase);
@@ -326,9 +327,9 @@ public class GameRenderer {
                 draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
                 GL11.glColor3f(red, green, blue);
 
-                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
+                draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
 
-                positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()), p.getDir());
+                positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir());
             }
         }
     }
@@ -353,14 +354,14 @@ public class GameRenderer {
             if (phase == o.getPhase()) {
                 draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red-0.1f, green-0.1f, blue-0.1f);
                 glColor4f(red, green, blue, 1);
-                draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
+                draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
             } else {
                 float dist = me.getPos().getDistanceTo(o.getPos());
                 if (dist < 150) {
                     float fade = 0.7f - (dist / 150f);
                     draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red-0.1f, green-0.1f, blue-0.1f, fade);
                     glColor4f(red, green, blue, fade);
-                    draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
+                    draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
                 }
             }
         }
@@ -384,7 +385,7 @@ public class GameRenderer {
                 }
                 glColor3f(red, green, blue);
                 float radius = p.getRadius();
-                draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
+                draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
                 draw.drawAura(p.getPos(), radius + radius / 2, radius / 2, red, green, blue);
             }
         }

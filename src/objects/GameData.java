@@ -1,6 +1,5 @@
-package client.logic;
+package objects;
 
-import objects.InitGame;
 import server.game.*;
 
 import java.util.HashMap;
@@ -20,7 +19,7 @@ public class GameData {
     private Scoreboard scoreboard;
     private int mapID;
 
-    GameData(InitGame initGame) {
+    public GameData(InitGame initGame) {
         this.players = initGame.getPlayers();
         this.orbs = initGame.getOrbs();
         this.projectiles = new ConcurrentHashMap<>();
@@ -44,7 +43,7 @@ public class GameData {
         return projectiles;
     }
 
-    void updateProjectile(Projectile p) {
+    public void updateProjectile(Projectile p) {
         if (p.isAlive()) {
             projectiles.put(p.getID(), p);
         } else {
@@ -71,7 +70,7 @@ public class GameData {
      *
      * @param o the orb to be changed.
      */
-    void updateOrb(Orb o) {
+    public void updateOrb(Orb o) {
         orbs.put(o.getID(), o);
     }
 
@@ -82,7 +81,7 @@ public class GameData {
         players.put(p.getID(), p);
     }
 
-    void updateMe(Player p) {
+    public void updateMe(Player p) {
         Player me = players.get(p.getID());
         me.setPhase(p.getPhase());
         me.setHealth(p.getHealth());
@@ -91,7 +90,7 @@ public class GameData {
         players.put(p.getID(), me);
     }
 
-    void updateScoreboard(Scoreboard sb) {
+    public void updateScoreboard(Scoreboard sb) {
         this.scoreboard = sb;
     }
 
@@ -107,8 +106,8 @@ public class GameData {
         powerUps.put(powerUp.getID(), powerUp);
     }
 
-    public String toString() {
-        String string = "~ PLAYERS ~\n";
+    public java.lang.String toString() {
+        java.lang.String string = "~ PLAYERS ~\n";
         for (Player player : players.values()) {
             string += player + "\n";
         }

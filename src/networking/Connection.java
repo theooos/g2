@@ -1,5 +1,6 @@
 package networking;
 
+import client.ClientSettings;
 import objects.Sendable;
 
 import java.io.IOException;
@@ -14,15 +15,10 @@ import java.util.function.Consumer;
  */
 public class Connection {
 
-    private static int PORT = 3000;
-    private static final boolean LOCAL = true;
-
     private Socket socket;
     private NetworkSender toConnection;
     private NetworkListener fromConnection;
     private NetworkEventHandler handler = new NetworkEventHandler();
-
-    private static boolean debug = true;
 
     /**
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
@@ -48,10 +44,10 @@ public class Connection {
     private boolean establishSocket() throws IOException {
         int attempts = 3;
 
-        String HOSTNAME = LOCAL ? "localhost" : "46.101.84.55";
+        String HOSTNAME = ClientSettings.LOCAL ? "localhost" : ClientSettings.SERVER_IP;
 
         for (int i = 1; i <= attempts; i++) {
-            socket = new Socket(HOSTNAME, PORT);
+            socket = new Socket(HOSTNAME, ClientSettings.PORT);
             return true;
         }
         return false;
@@ -71,9 +67,9 @@ public class Connection {
         }
 
         out("Connection made to server.");
+        new Thread(handler).start();
         new Thread(toConnection).start();
         new Thread(fromConnection).start();
-        new Thread(handler).start();
         return true;
     }
 
@@ -97,7 +93,7 @@ public class Connection {
      */
     public static ServerSocket getServerSocket() {
         try {
-            return new ServerSocket(PORT);
+            return new ServerSocket(ClientSettings.PORT);
         } catch (IOException e) {
             out("Failed to connect through server socket.");
         }
@@ -135,6 +131,6 @@ public class Connection {
      * @param o Object to print.
      */
     static void out(Object o) {
-        if (debug) System.out.println("[NETWORK] " + o);
+        if (ClientSettings.DEBUG) System.out.println("[NETWORK] " + o);
     }
 }

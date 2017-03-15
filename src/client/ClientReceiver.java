@@ -1,6 +1,7 @@
-package client.logic;
+package client;
 
 import networking.Connection;
+import objects.GameData;
 import objects.InitGame;
 import objects.MoveObject;
 import objects.Sendable;
@@ -15,18 +16,15 @@ import java.util.function.Consumer;
  */
 public class ClientReceiver {
 
-    private Connection connection;
     private Consumer<GameData> beginGame;
     private int playerID;
     private static boolean DEBUG = true;
     private GameData gameData;
 
     public ClientReceiver(Connection connection, Consumer<GameData> beginGame) {
-        this.connection = connection;
         this.beginGame = beginGame;
 
         connection.addFunctionEvent("String", this::out);
-        connection.addFunctionEvent("String", this::getID);
         connection.addFunctionEvent("InitGame", this::setupGame);
         connection.addFunctionEvent("Player", this::updatedPlayer);
         connection.addFunctionEvent("AIPlayer", this::updatedPlayer);
@@ -42,19 +40,6 @@ public class ClientReceiver {
         InitGame initGame = (InitGame) s;
         gameData = new GameData(initGame);
         beginGame.accept(gameData);
-    }
-
-    private void getID(Object o) {
-        String information = o.toString();
-        String t = information.substring(0, 2);
-
-        switch (t) {
-            case "ID":
-                String idS = information.substring(2);
-                int id = Integer.parseInt(idS);
-                this.setID(id);
-                break;
-        }
     }
 
     public void out(Object o) {

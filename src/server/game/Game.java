@@ -195,7 +195,6 @@ public class Game implements Runnable {
                 if (!p.isAlive()) {
                     p.live();
                     if (p.canRespawn()) {
-                        out("Respawning power up");
                         respawn(p);
                     }
                 }
@@ -212,7 +211,7 @@ public class Game implements Runnable {
                 if (e != null) {
                     out(p.getPlayerID()+" just hit "+e.getID());
                     //can't damage your team
-                    if (e.getTeam() != p.getTeam()) {
+                    if (e.getTeam() != p.getTeam() && p.isAlive()) {
                         e.damage(p.getDamage());
                         //if the player has been killed
                         if (!e.isAlive()) {
