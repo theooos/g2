@@ -2,6 +2,7 @@ package client.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import client.ClientSettings;
 import server.game.Vector2;
 
 
@@ -17,9 +18,9 @@ class Draw {
     private double oldHeat;
     private double displayHeat;
 
-    Draw(int width, int height) {
-        this.width = width;
-        this.height = height;
+    Draw() {
+        this.width = ClientSettings.SCREEN_WIDTH;
+        this.height = ClientSettings.SCREEN_HEIGHT;
         oldHealth = 0;
         displayHealth = 100;
         oldHeat = 0;

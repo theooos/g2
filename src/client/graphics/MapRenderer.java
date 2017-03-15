@@ -28,7 +28,6 @@ class MapRenderer {
             this.width = map.getMapWidth();
 
         } catch (IOException e) {
-//            System.out.println("Invalid MapID.");
             e.printStackTrace();
             System.exit(0);
         }

@@ -18,12 +18,12 @@ import java.util.ArrayList;
  *    sound files, so that the play is not paused while loading the file for the first time.
  * 4. You can use the static variable SoundEffect.volume to mute the sound.
  */
-public enum GameEffects {
+public enum Audio {
 
 
-    MUSIC(GameEffects.class.getResource("../moz.wav")),        // music
-    SHOOT(GameEffects.class.getResource("../lasershoot.wav")),
-    INTERFACEBACKGROUND(GameEffects.class.getResource("../backmusic.wav"));
+    MUSIC(Audio.class.getResource("../moz.wav")),        // music
+    SHOOT(Audio.class.getResource("../lasershoot.wav")),
+    INTERFACEBACKGROUND(Audio.class.getResource("../backmusic.wav"));
 
 
     // Nested class for specifying volume
@@ -38,7 +38,7 @@ public enum GameEffects {
     private ArrayList<Clip> allClips = new ArrayList<>();
 
     // Constructor to construct each element of the enum with its own sound file.
-    GameEffects(URL soundFileName) {
+    Audio(URL soundFileName) {
         try {
             // Use URL (instead of File) to read from disk and JAR.
             //URL url = this.getClass().getClassLoader().getResource(soundFileName);
