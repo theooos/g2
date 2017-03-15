@@ -24,7 +24,6 @@ import static org.lwjgl.opengl.GL11.glDepthMask;
  */
 public class GameRenderer {
 
-    private static boolean gameRunning = true;
     private int width = 800;
     private int height = 600;
 
@@ -103,89 +102,104 @@ public class GameRenderer {
         rotation %= 360;
 
         Player me = gameData.getPlayer(playerID);
-        Vector2 pos = me.getPos();
-        float xPos = pos.getX();
-        float yPos = pos.getY();
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_A)) xPos -= 0.35f * delta;
-        if (Keyboard.isKeyDown(Keyboard.KEY_D)) xPos += 0.35f * delta;
+        if (me.isAlive()) {
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
-        if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
+            Vector2 pos = me.getPos();
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-            fDown = true;
-        } else if (fDown) {
-            fDown = false;
-            int newPhase = 0;
-            if (me.getPhase() == 0) {
-                newPhase = 1;
+            float xPos = pos.getX();
+            float yPos = pos.getY();
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_A)) xPos -= 0.35f * delta;
+            if (Keyboard.isKeyDown(Keyboard.KEY_D)) xPos += 0.35f * delta;
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
+            if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+                fDown = true;
+            } else if (fDown) {
+                fDown = false;
+                int newPhase = 0;
+                if (me.getPhase() == 0) {
+                    newPhase = 1;
+                }
+                Player p = new Player(me);
+                p.setPhase(newPhase);
+                if (collisions.validPosition(p)) {
+                    conn.send(new PhaseObject(me.getID()));
+                    pulse = new Pulse(me.getPos(), me.getRadius(), newPhase, 0, 1 - newPhase, height, width, 20, 20, newPhase, true);
+                } else {
+                    //invalid phase
+                    pulse = new Pulse(me.getPos(), me.getRadius(), 0.3f, 0.3f, 0.3f, height, width, 20, 20, me.getPhase(), 250, false);
+                }
+
             }
-            Player p = new Player(me);
-            p.setPhase(newPhase);
-            if (collisions.validPosition(p)) {
-                conn.send(new PhaseObject(me.getID()));
-                pulse = new Pulse(me.getPos(), me.getRadius(), newPhase, 0, 1 - newPhase, height, width, 20, 20, newPhase, true);
-            } else {
-                //invalid phase
-                pulse = new Pulse(me.getPos(), me.getRadius(), 0.3f, 0.3f, 0.3f, height, width, 20, 20, me.getPhase(), 250, false);
+            if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
+                eDown = true;
+            } else if (eDown) {
+                eDown = false;
+                if (me.isWeaponOneOut()) {
+                    conn.send(new SwitchObject(me.getID(), false));
+                } else {
+                    conn.send(new SwitchObject(me.getID(), true));
+                }
             }
 
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
-            eDown = true;
-        } else if (eDown) {
-            eDown = false;
-            if (me.isWeaponOneOut()) {
-                conn.send(new SwitchObject(me.getID(), false));
-            } else {
+            if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
+                oneDown = true;
+            } else if (oneDown) {
+                oneDown = false;
                 conn.send(new SwitchObject(me.getID(), true));
+            }
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
+                twoDown = true;
+            } else if (twoDown) {
+                twoDown = false;
+                conn.send(new SwitchObject(me.getID(), false));
+                displayCollisions = !displayCollisions;
+            }
+
+            if (Mouse.isButtonDown(0)) {
+                if (!clickDown) {
+                    conn.send(new FireObject(me.getID(), true));
+                    clickDown = true;
+                }
+            } else if (clickDown) {
+                conn.send(new FireObject(me.getID(), false));
+                clickDown = false;
+            }
+
+
+            // keep quad on the screen
+            if (xPos < 0) xPos = 0;
+            if (xPos > 800) xPos = 800;
+            if (yPos < 0) yPos = 0;
+            if (yPos > 600) yPos = 600;
+
+            if (pos.getX() != xPos || pos.getY() != yPos) {
+                me.setPos(new Vector2(xPos, yPos));
+                if (collisions.validPosition(me)) {
+                    gameData.updatePlayer(me);
+                } else {
+                    me.setPos(pos);
+                }
+            }
+
+            Vector2 tempPos = new Vector2(pos.getX(), height - pos.getY());
+            Vector2 dir = getDirFromMouse(tempPos);
+            if (!me.getDir().equals(dir)) {
+                me.setDir(dir);
+                conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
+                gameData.updatePlayer(me);
+            }
+            else if (me.getPos().equals(pos)) {
+                conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
             }
         }
 
         tabPressed = Keyboard.isKeyDown(Keyboard.KEY_TAB);
-
-        if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
-            oneDown = true;
-        } else if (oneDown) {
-            oneDown = false;
-            conn.send(new SwitchObject(me.getID(), true));
-        }
-
-        if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
-            twoDown = true;
-        } else if (twoDown) {
-            twoDown = false;
-            conn.send(new SwitchObject(me.getID(), false));
-            displayCollisions = !displayCollisions;
-        }
-
-        if (Mouse.isButtonDown(0)) {
-            if (!clickDown) {
-                conn.send(new FireObject(me.getID(), true));
-                clickDown = true;
-            }
-        } else if (clickDown) {
-            conn.send(new FireObject(me.getID(), false));
-            clickDown = false;
-        }
-
-
-        // keep quad on the screen
-        if (xPos < 0) xPos = 0;
-        if (xPos > 800) xPos = 800;
-        if (yPos < 0) yPos = 0;
-        if (yPos > 600) yPos = 600;
-
-        if (pos.getX() != xPos || pos.getY() != yPos) {
-            me.setPos(new Vector2(xPos, yPos));
-            if (collisions.validPosition(me)) {
-                gameData.updatePlayer(me);
-                conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
-            } else {
-                me.setPos(pos);
-            }
-        }
 
         updateFPS(); // update FPS Counter
     }
@@ -293,29 +307,28 @@ public class GameRenderer {
         float blue;
         for (Player p : players.values()) {
             if (p.getPhase() == phase) {
-                if (p.getTeam() == 0) {
-                    red = 1;
-                    green = 0.33f;
-                    blue = 0.26f;
-                } else {
-                    red = 0.2f;
-                    green = 0.9f;
-                    blue = 0.5f;
+                if (p.isAlive()) {
+                    if (p.getTeam() == 0) {
+                        red = 1;
+                        green = 0.33f;
+                        blue = 0.26f;
+                    } else {
+                        red = 0.2f;
+                        green = 0.9f;
+                        blue = 0.5f;
+                    }
+                }
+                else {
+                    red = 0.6f;
+                    green = 0.6f;
+                    blue = 0.7f;
                 }
                 draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
                 GL11.glColor3f(red, green, blue);
 
                 draw.drawCircle(p.getPos().getX(), height - p.getPos().getY(), radius, 100);
 
-                if (p.getID() != playerID) {
-                    positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()), p.getDir());
-                } else {
-                    Vector2 pos = new Vector2(p.getPos().getX(), height - p.getPos().getY());
-                    Vector2 dir = getDirFromMouse(pos);
-                    positionBullet(pos, dir);
-                    p.setDir(dir);
-                    conn.send(new MoveObject(p.getPos(), p.getDir(), playerID, p.getMoveCount()));
-                }
+                positionBullet(new Vector2(p.getPos().getX(), height - p.getPos().getY()), p.getDir());
             }
         }
     }

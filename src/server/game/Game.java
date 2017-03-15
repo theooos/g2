@@ -167,10 +167,12 @@ public class Game implements Runnable {
 
             for (Player p : players.values()) {
                 if (!p.isAlive()) {
-                    respawn(p);
-                    if (!(p instanceof AIPlayer)) {
-                        p.incMove();
-                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
+                    if (p.canRespawn()) {
+                        respawn(p);
+                        if (!(p instanceof AIPlayer)) {
+                            p.incMove();
+                            playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
+                        }
                     }
                 }
                 if (p.isFiring()) fire(p);
@@ -284,6 +286,7 @@ public class Game implements Runnable {
      * @param e the entity to be respawned
      */
     private void respawn(MovableEntity e) {
+        e.resetTimeTillRespawn();
         e.setPos(respawnCoords());
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
@@ -300,7 +303,7 @@ public class Game implements Runnable {
         //get map bounds
         int boundX = map.getMapWidth()-200;
         int boundY = map.getMapLength()-200;
-        int minDist = 20;
+        int minDist = 60;
 
         boolean valid = false;
         Vector2 v = new Vector2(0,0);

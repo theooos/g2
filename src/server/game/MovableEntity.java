@@ -9,6 +9,8 @@ public abstract class MovableEntity extends Entity {
     protected Vector2 dir;
     float radius;
     int team;
+    int respawnTime;
+    private int timeTillRespawn;
 
     protected void move() {
         this.pos = pos.add(dir.mult(speed));
@@ -44,5 +46,17 @@ public abstract class MovableEntity extends Entity {
 
     public int getTeam() {
         return team;
+    }
+
+    void live() {
+        if (!isAlive()) timeTillRespawn--;
+    }
+
+    boolean canRespawn() {
+        return (timeTillRespawn <= 0);
+    }
+
+    void resetTimeTillRespawn() {
+        timeTillRespawn = respawnTime;
     }
 }

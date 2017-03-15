@@ -2,6 +2,7 @@ package server.game;
 
 /**
  * Created by peran on 01/02/17.
+ * THe players which rhys' AI will control
  */
 public class AIPlayer extends Player {
 
@@ -10,6 +11,7 @@ public class AIPlayer extends Player {
     }
 
     public void live() {
+        super.live();
         move();
         //any other methods the ai may do once a tick
     }
