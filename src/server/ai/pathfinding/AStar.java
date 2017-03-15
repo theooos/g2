@@ -30,7 +30,7 @@ public class AStar {
 
     public Node getNode(int x,int y)
     {
-        return nodeses[y][x];
+        return nodeses[x][y];
     }
 
     public void makeGraph(Node goal,int phase)
@@ -83,7 +83,8 @@ public class AStar {
 
     }
 
-    public Vector2 getClosestCoordinates(Node target,int radius) {
+
+    public Vector2 getClosestNode(Node target,int radius) {
         Vector2 actualCoordiates = target.coordinates();
         int x = (int) actualCoordiates.getX();
         int y = (int) actualCoordiates.getY();
