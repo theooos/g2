@@ -32,8 +32,6 @@ public class Fire extends PlayerTask {
         int fireFreq = intel.ent().getActiveWeapon().getRefireTime() + 10;
         if (timer == fireFreq) {
             intel.ent().setFiring(true);
-            System.out.println(intel.ent());
-            System.out.println("Firing in AI player");
         }
 
         // After every 30th tick.

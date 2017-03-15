@@ -14,22 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PlayerIntel extends Intel {
 
-    private boolean phaseShiftAttempted;
-    private int originPhase;
+    private boolean phaseShiftFailed;
 
     public PlayerIntel(ConcurrentHashMap<Integer, Player> players, Map map){
         super(players, map);
-        phaseShiftAttempted = false;
-        originPhase = 0;
+        this.phaseShiftFailed = false;
     }
 
     public AIPlayer ent(){
         return (AIPlayer) ent;
-    }
-
-    @Override
-    protected void constructVisualiser() {
-        this.sight = new Visualiser(map, players, allOrbs, ent.getID());
     }
 
     public boolean validPosition(){
@@ -40,19 +33,14 @@ public class PlayerIntel extends Intel {
         return sight;
     }
 
-    public void attemptedPhaseShift(int fromPhase){
-        this.phaseShiftAttempted = true;
-        this.originPhase = fromPhase;
+    public void failedPhaseShift(){
+        this.phaseShiftFailed = true;
     }
 
-    public boolean phaseShiftAttempted() {
-        return phaseShiftAttempted;
-    }
-
-    public boolean phaseShiftSuccessful(){
-        boolean r = phaseShiftAttempted;
-        phaseShiftAttempted = false;
-        return r && (ent.getPhase() != originPhase);
+    public boolean phaseShiftFailed(){
+        boolean r = phaseShiftFailed;
+        phaseShiftFailed = false;
+        return r;
     }
 
     public ConcurrentHashMap<Integer, Orb> getOrbsInSight(){

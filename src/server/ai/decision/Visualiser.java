@@ -24,21 +24,7 @@ public class Visualiser {
     private final int SIGHT_RANGE = 500;
 
     /**
-     * Creates a Visualiser object for use by an Orb - Orbs do not care about other orbs
-     * so don't require the 'orbs' member.
-     * @param map - The map the current game is being played on.
-     * @param players - The players involved in the current game.
-     * @param id - The ID of the Orb this Visualisation object will belong to.
-     */
-    public Visualiser(Map map, ConcurrentHashMap<Integer, Player> players, int id) {
-        this.map = map;
-        this.players = players;
-        this.orbs = null;
-        this.myID = id;
-    }
-
-    /**
-     * Creates a Visualiser object for use by a Player.
+     * Creates a Visualiser object for use by a Player or Orb.
      * @param map - The map the current game is being played on.
      * @param players - The players involved in the current game.
      * @param orbs - The orbs involved in the current game.
@@ -78,12 +64,14 @@ public class Visualiser {
      * and the POV is not intersected by any walls within the game map.
      * @param pov - The position from which vision is being checked.
      * @param phase - The phase within which vision is being checked.
+     * @param orbVision - Whether or not visibility is being tested from the
+     *                  perspective of an Orb.
      * @return the collection of opponent players in sight.
      */
-    public ConcurrentHashMap<Integer, Player> getPlayersInSight(Point2D pov, int phase){
+    public ConcurrentHashMap<Integer, Player> getPlayersInSight(Point2D pov, int phase, boolean orbVision){
         ConcurrentHashMap<Integer, Player> visPlayers = new ConcurrentHashMap<>();
         ArrayList<Line2D> iLines = getIntersectionLines(phase);
-        HashMap<Integer, Line2D> pLines = getPlayerTestingLines(pov, phase);
+        HashMap<Integer, Line2D> pLines = getPlayerTestingLines(pov, phase, orbVision);
 
         for (java.util.Map.Entry<Integer, Line2D> p : pLines.entrySet()) {
             boolean intersection = false;
@@ -155,10 +143,11 @@ public class Visualiser {
      * the POV towards an opponent player within the given phase.
      * @param pov - The position from which the rays are being cast.
      * @param phase - The phase within which the rays are being cast.
+     * @param orbVision - Whether or not visibility is being tested from the
+     *                  perspective of an Orb.
      * @return a list of rays between the pov and relevant players.
      */
-    public HashMap<Integer, Line2D> getPlayerTestingLines(Point2D pov, int phase){
-        boolean orbVision = (orbs == null);
+    public HashMap<Integer, Line2D> getPlayerTestingLines(Point2D pov, int phase, boolean orbVision){
         HashMap<Integer, Line2D> pLines = new HashMap<>();
         for (java.util.Map.Entry<Integer, Player> e : players.entrySet()) {
             if (orbVision || e.getValue().getTeam() != players.get(myID).getTeam()){

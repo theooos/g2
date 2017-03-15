@@ -23,11 +23,17 @@ public class ShiftPhase extends PlayerTask {
     public void doAction() {
         if (intel.ent().getPhase() == 0){
             intel.ent().setPhase(1);
-            intel.attemptedPhaseShift(0);
+            if (!intel.validPosition()){
+                intel.ent().setPhase(0);
+                intel.failedPhaseShift();
+            }
         }
         else if (intel.ent().getPhase() == 1){
             intel.ent().setPhase(0);
-            intel.attemptedPhaseShift(1);
+            if (!intel.validPosition()){
+                intel.ent().setPhase(0);
+                intel.failedPhaseShift();
+            }
         }
         end();
     }

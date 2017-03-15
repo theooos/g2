@@ -31,9 +31,4 @@ public class OrbIntel extends Intel {
         return collisionManager.orbValidPosition((Orb)ent);
     }
 
-    @Override
-    protected void constructVisualiser() {
-        this.sight = new Visualiser(map, players, ent.getID());
-    }
-
 }

@@ -1,10 +1,7 @@
 package server.ai.decision;
 
 import server.ai.Intel;
-import server.game.MovableEntity;
-import server.game.Orb;
-import server.game.Player;
-import server.game.Vector2;
+import server.game.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +23,8 @@ public class Check {
         CLOSEST_ENEMY}
 
     private final int LOW_HEALTH_THRESHOLD = 30;
-    private Intel intel;        // The intelligence this object uses to perform its checks.
+    private Intel intel;
+    private final boolean orbCheck;
 
     /**
      * Constructs a check object that utilises a given Intel object.
@@ -34,6 +32,7 @@ public class Check {
      */
     public Check(Intel intel){
         this.intel = intel;
+        this.orbCheck = intel instanceof OrbIntel;
     }
 
     /**
@@ -77,7 +76,7 @@ public class Check {
     }
 
     private boolean proximityCheck(){
-        ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight();
+        ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight(orbCheck);
         if (playersInSight.size() > 0){
             targetNearestPlayer(playersInSight);
             return true;
@@ -114,7 +113,7 @@ public class Check {
         MovableEntity closestEnt = null;
         float closestDist = -1;
 
-        ConcurrentHashMap<Integer, Player> risks1 = intel.getEnemyPlayersInSight();
+        ConcurrentHashMap<Integer, Player> risks1 = intel.getEnemyPlayersInSight(orbCheck);
         for (java.util.Map.Entry<Integer, Player> e : risks1.entrySet()){
             float distance = intel.ent().getPos().getDistanceTo(e.getValue().getPos());
             if (closestDist < 0 || distance < closestDist){
