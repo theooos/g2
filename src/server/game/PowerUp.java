@@ -6,13 +6,9 @@ import objects.Sendable;
  * Created by peran on 3/9/17.
  * A class for game changing
  */
-public class PowerUp implements Sendable {
-    private Vector2 pos;
-    private int radius;
+public class PowerUp extends MovableEntity implements Sendable {
     public Type type;
-    private int ID;
     private boolean changed;
-    private int phase;
 
     PowerUp(Vector2 pos, Type t, int id, int phase) {
         this.pos = pos;
@@ -21,6 +17,8 @@ public class PowerUp implements Sendable {
         this.ID = id;
         changed = false;
         this.phase = phase;
+        respawnTime = 300;
+        maxHealth= 1;
     }
 
     boolean isChanged() {
@@ -31,35 +29,11 @@ public class PowerUp implements Sendable {
         this.changed = changed;
     }
 
-    public int getPhase() {
-        return phase;
-    }
-
-    public void setPhase(int phase) {
-        this.phase = phase;
-    }
-
     public Type getType() {
         return type;
     }
 
     public enum Type {
         health, heat
-    }
-
-    void setPos(Vector2 pos) {
-        this.pos = pos;
-    }
-
-    public Vector2 getPos() {
-        return pos;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public int getID() {
-        return ID;
     }
 }

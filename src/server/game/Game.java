@@ -180,8 +180,7 @@ public class Game implements Runnable {
                 PowerUp pu = (collisions.collidesWithPowerUp(p));
                 if (pu != null) {
                     pu.setChanged(true);
-                    pu.setPos(respawnCoords());
-                    pu.setPhase(rand.nextInt(2));
+                    pu.setHealth(0);
                     if (pu.getType() == PowerUp.Type.health) {
                         p.setHealth(p.getMaxHealth());
                     }
@@ -191,8 +190,18 @@ public class Game implements Runnable {
                     }
                 }
             }
+
+            for (PowerUp p: powerUps.values()) {
+                if (!p.isAlive()) {
+                    p.live();
+                    if (p.canRespawn()) {
+                        out("Respawning power up");
+                        respawn(p);
+                    }
+                }
+            }
             for (Orb o : orbs.values()) {
-                if (!o.isAlive()) respawn(o);
+                if (!o.isAlive() && o.canRespawn()) respawn(o);
                 o.live();
             }
 
@@ -293,6 +302,9 @@ public class Game implements Runnable {
         e.setPhase(rand.nextInt(2));
         if (e instanceof Player) {
             ((Player) e).setFiring(false);
+        }
+        else if (e instanceof PowerUp) {
+            ((PowerUp) e).setChanged(true);
         }
     }
 

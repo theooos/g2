@@ -336,17 +336,30 @@ public class GameRenderer {
     private void drawOrbs(int phase) {
         HashMap<Integer, Orb> orbs = gameData.getOrbs();
         Player me = gameData.getPlayer(playerID);
+        float red;
+        float green;
+        float blue;
         for (Orb o : orbs.values()) {
+            if (o.isAlive()) {
+                red = 0.2f;
+                green = 0.2f;
+                blue = 1f;
+            }
+            else {
+                red = 0.5f;
+                green = 0.5f;
+                blue = 0.7f;
+            }
             if (phase == o.getPhase()) {
-                draw.drawAura(o.getPos(), o.getRadius() + 5, 5, 0, 0, 0.8f);
-                glColor4f(0.2f, 0.2f, 1f, 1);
+                draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red-0.1f, green-0.1f, blue-0.1f);
+                glColor4f(red, green, blue, 1);
                 draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
             } else {
                 float dist = me.getPos().getDistanceTo(o.getPos());
                 if (dist < 150) {
                     float fade = 0.7f - (dist / 150f);
-                    draw.drawAura(o.getPos(), o.getRadius() + 5, 5, 0, 0, 0.9f, fade);
-                    glColor4f(0.2f, 0.2f, 1f, fade);
+                    draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red-0.1f, green-0.1f, blue-0.1f, fade);
+                    glColor4f(red, green, blue, fade);
                     draw.drawCircle(o.getPos().getX(), height - o.getPos().getY(), o.getRadius(), 100);
                 }
             }
@@ -383,7 +396,7 @@ public class GameRenderer {
         float green;
         float blue;
         for (PowerUp p : powerUps.values()) {
-            if (phase == p.getPhase()) {
+            if (phase == p.getPhase() && p.isAlive()) {
                 if (p.getType() == PowerUp.Type.health) {
                     red = 0.7f;
                     green = 0.1f;

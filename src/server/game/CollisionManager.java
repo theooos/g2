@@ -40,7 +40,7 @@ public class CollisionManager {
 
     PowerUp collidesWithPowerUp(Player p) {
         for (PowerUp pu: powerUps.values()) {
-            if (p.getPhase() == pu.getPhase() && pointsCollided(p.getRadius(), p.getPos(), pu.getRadius(), pu.getPos())) {
+            if (p.getPhase() == pu.getPhase() && pointsCollided(p.getRadius(), p.getPos(), pu.getRadius(), pu.getPos()) && p.isAlive()) {
                 return pu;
             }
         }
