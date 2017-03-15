@@ -87,7 +87,7 @@ public class Game implements Runnable {
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             Connection con = playerConnections.get(i);
             con.send(new objects.String("ID"+IDCounter));
-            con.addFunctionEvent("String", this::decodeString);
+            con.addFunctionEvent("String", this::out);
             con.addFunctionEvent("MoveObject", this::receivedMove);
             con.addFunctionEvent("FireObject", this::toggleFire);
             con.addFunctionEvent("PhaseObject", this::switchPhase);
@@ -377,15 +377,6 @@ public class Game implements Runnable {
      */
     private void sendScoreboard(Connection c) {
         c.send(sb.clone());
-    }
-
-    /**
-     * decodes a string from a sendable string
-     * @param s0 to sendable string to decode
-     */
-    private void decodeString(Sendable s0) {
-        String s = s0.toString();
-        out(s);
     }
 
     /**
