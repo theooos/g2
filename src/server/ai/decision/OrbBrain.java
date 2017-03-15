@@ -73,7 +73,7 @@ public class OrbBrain extends AIBrain {
                 }
                 // Or, if the target is in range, zap them.
                 else {
-                    behaviours.getBehaviour("Zap").run();
+                    behaviours.getBehaviour("Zap").doAction();
                 }
             }
         }
@@ -91,6 +91,7 @@ public class OrbBrain extends AIBrain {
         } else if (curEmotion == EmotionalState.AGGRESSIVE) {
             intel.ent().setSpeed(1F);
             ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
+            behaviours.getBehaviour("Zap").start();
 
         }
     }
