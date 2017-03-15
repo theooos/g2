@@ -3,6 +3,9 @@ import server.ai.Intel;
 import server.game.Vector2;
 
 import java.util.*;
+
+import static java.lang.Math.abs;
+
 /**
  * Created by Ciprian on 03/05/17.
  */
@@ -79,6 +82,28 @@ public class AStar {
         this.nodeses=nodes;
 
     }
+
+    public Vector2 getClosestCoordinates(Node target,int radius) {
+        Vector2 actualCoordiates = target.coordinates();
+        int x = (int) actualCoordiates.getX();
+        int y = (int) actualCoordiates.getY();
+        int min = 1000;
+        int newX = 0,newY=0;
+        for (int row = radius; row < (intel.getMap().getMapLength() - radius); row += radius)
+            for (int col = radius; col < (intel.getMap().getMapWidth() - radius); col += radius) {
+               if(abs (nodeses[col][row].getX()-x)+abs(nodeses[col][row].getY()-y)<min)
+               {
+                   min=abs (nodeses[col][row].getX()-x)+abs(nodeses[col][row].getY()-y);
+                   newX=row;
+                   newY=col;
+               }
+
+
+
+    }
+        return new Vector2(newX,newY);
+    }
+
 
 
 

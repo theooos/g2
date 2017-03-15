@@ -51,10 +51,10 @@ public class FindPath extends Task {
             intel.pathfinder().makeGraph(target,intel.ent().getPhase());
 
             System.out.println("Searching...");
-            intel.pathfinder().AstarSearch(intel.pathfinder.getNode(start.getY(),start.getX()),intel.pathfinder.getNode(target.getY(),target.getX()));
+            intel.pathfinder().AstarSearch(intel.pathfinder.getNode(start.getY(),start.getX()),intel.pathfinder.getNode(500,500));
             System.out.println("Returning path...");
 
-            List<Node> printPath=intel.pathfinder().printPath(intel.pathfinder.getNode(target.getY(),target.getX()));
+            List<Node> printPath=intel.pathfinder().printPath(intel.pathfinder.getNode(200,500));
 
             System.out.println("Finishing path-find.");
             for (Node node:printPath ) {
