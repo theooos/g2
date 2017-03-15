@@ -16,7 +16,7 @@ public class ClientSettings {
 
     // ***** NETWORK SETTINGS *****
 
-    public static final boolean LOCAL = true;
+    public static final boolean LOCAL = false;
     public static final boolean MAP_LOCAL = true;
     public static final String SERVER_IP = "46.101.84.55";
     public static final int PORT = 3000;

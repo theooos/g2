@@ -136,6 +136,7 @@ public class Client {
                 String idS = information.substring(2);
                 int id = Integer.parseInt(idS);
                 playerID = id;
+                clientReceiver.setID(playerID);
                 break;
         }
     }
