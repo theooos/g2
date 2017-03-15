@@ -53,9 +53,9 @@ public class AStar {
             nodes[i][0]=new Node(new Vector2(i,0),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
         }
 
-        for ( int row = 1; row < (height - 1); row+=1 )
+        for ( int row = radius; row < (height - radius); row+=radius )
         {
-            for ( int col = 1; col < (width - 1); col+=1 )
+            for ( int col = radius; col < (width - radius); col+=radius )
             {
 
                 //System.out.println("Col: " + col);
@@ -63,18 +63,18 @@ public class AStar {
 
                 ArrayList<Edge> adj = new ArrayList<Edge>();
 
-                adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
-                adj.add(new Edge(nodes[col-1][row-1],nodes[col-1][row-1].h_scores));
-                adj.add( new Edge(nodes[col][row-1],nodes[col][row-1].h_scores));
-                adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
+                adj.add(new Edge(nodes[col-radius][row],nodes[col-radius][row].h_scores));
+                adj.add(new Edge(nodes[col-radius][row-radius],nodes[col-radius][row-radius].h_scores));
+                adj.add( new Edge(nodes[col][row-radius],nodes[col][row-radius].h_scores));
+                adj.add(new Edge(nodes[col-radius][row],nodes[col-radius][row].h_scores));
                 //adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
                 //System.out.println(nodes[col][row]==null);
                 nodes[col][row].addAdjancencies(adj);
 
-                nodes[col-1][row].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col-1][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col-1][row-1].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-radius][row].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-radius][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-radius][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
             }
 
         }
