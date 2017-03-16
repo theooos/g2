@@ -16,7 +16,8 @@ public abstract class AIBrain {
         VENGEFUL,
         AGGRESSIVE,
         DETERMINED,
-        BORED}
+        BORED,
+        AT_REST}
 
     protected EmotionalState curEmotion;
     protected Intel intel;
@@ -25,7 +26,7 @@ public abstract class AIBrain {
     protected BehaviourSet behaviours;
 
     public AIBrain(Intel intel) {
-        this.curEmotion = EmotionalState.BORED;
+        this.curEmotion = EmotionalState.AT_REST;
         this.intel = intel;
         this.check = new Check(intel);
         this.feel = new Feel(this, check);

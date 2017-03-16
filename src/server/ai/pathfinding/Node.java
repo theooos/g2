@@ -51,7 +51,7 @@ public class Node{
 
     public boolean checkCollision()
     {
-        return collisions.validPosition(coordinates(),getRadius(),getPhase());
+        return collisions.validPosition(coordinates(),getRadius()*3,getPhase());
     }
     public int manhattanDistance(Vector2 enemy)
     {

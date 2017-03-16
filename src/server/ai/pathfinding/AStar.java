@@ -1,6 +1,6 @@
 package server.ai.pathfinding;
 import server.ai.Intel;
-import server.game.Vector2;
+import server.game.*;
 
 import java.util.*;
 
@@ -14,7 +14,7 @@ public class AStar {
     public Node[][] nodeses;
     public AStar (Intel intel)
     {
-        this.intel=intel;
+        this.intel=intel;intel.getMap();
     }
 
     public  List<Node> printPath(Node target){
@@ -52,29 +52,31 @@ public class AStar {
         {
             nodes[i][0]=new Node(new Vector2(i,0),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
         }
+        ArrayList<Wall> maps=intel.getMap().getWalls();
 
-        for ( int row = radius; row < (height - radius); row+=radius )
+        for ( int row = (radius); row < (height - (radius)); row+=radius )
         {
-            for ( int col = radius; col < (width - radius); col+=radius )
+            for ( int col = (radius); col < (width - (radius)); col+=radius )
             {
+
+                intel.getMap();
 
                 //System.out.println("Col: " + col);
                 nodes[col][row]=new Node(new Vector2(col,row),this.intel.ent().getRadius(),phase,intel,goal.coordinates());
 
                 ArrayList<Edge> adj = new ArrayList<Edge>();
 
-                adj.add(new Edge(nodes[col-radius][row],nodes[col-radius][row].h_scores));
-                adj.add(new Edge(nodes[col-radius][row-radius],nodes[col-radius][row-radius].h_scores));
-                adj.add( new Edge(nodes[col][row-radius],nodes[col][row-radius].h_scores));
-                adj.add(new Edge(nodes[col-radius][row],nodes[col-radius][row].h_scores));
-                //adj.add(new Edge(nodes[col-1][row],nodes[col-1][row].h_scores));
+                adj.add(new Edge(nodes[col-(radius)][row],nodes[col-(radius)][row].h_scores));
+               // adj.add(new Edge(nodes[col-(radius)][row-(radius)],nodes[col-(radius)][row-(radius)].h_scores));
+                adj.add( new Edge(nodes[col][row-(radius)],nodes[col][row-(radius)].h_scores));adj.add(new Edge(nodes[col-(radius)][row],nodes[col-(radius)][row].h_scores));
+                //adj.add(new Edge(nodes[col+radius][row-radius],nodes[col+radius][row-radius].h_scores));
                 //System.out.println(nodes[col][row]==null);
                 nodes[col][row].addAdjancencies(adj);
 
-                nodes[col-radius][row].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col-radius][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                nodes[col-radius][row-radius].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col-(radius)][row].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+               // nodes[col-(radius)][row-(radius)].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+                nodes[col][row-(radius)].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
+               nodes[col-(radius)][row-(radius)].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
             }
 
         }
@@ -90,8 +92,8 @@ public class AStar {
         int y = (int) actualCoordiates.getY();
         int min = 1000;
         int newX = 0,newY=0;
-        for (int row = radius; row < (intel.getMap().getMapLength() - radius); row += radius)
-            for (int col = radius; col < (intel.getMap().getMapWidth() - radius); col += radius) {
+        for (int row = (radius); row < (intel.getMap().getMapLength() - (radius)); row += (radius))
+            for (int col = (radius); col < (intel.getMap().getMapWidth() - radius); col += (radius)) {
                if(abs (nodeses[col][row].getX()-x)+abs(nodeses[col][row].getY()-y)<min)
                {
                    min=abs (nodeses[col][row].getX()-x)+abs(nodeses[col][row].getY()-y);

@@ -347,6 +347,10 @@ public class Map {
             System.exit(0);
         }
     }
+    public ArrayList<Wall> getWalls()
+    {
+        return this.walls;
+    }
 
     /**
      * Deduces whether or not a position is within the bounds of this map.

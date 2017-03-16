@@ -2,14 +2,14 @@ package server.game;
 
 import networking.Connection;
 import objects.*;
-import server.ai.Intel;
 import server.ai.decision.OrbIntel;
 import server.ai.decision.PlayerIntel;
-import server.ai.pathfinding.AStar;
 
 import java.io.IOException;
 import java.lang.String;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -44,7 +44,7 @@ public class Game implements Runnable {
 
         //try to load the map
         try {
-            this.map = new Map(mapID);
+            this.map = new Map(/*mapID*/0);
         }
         catch(IOException e) {
             msgToAllConnected("Failed to load map");
