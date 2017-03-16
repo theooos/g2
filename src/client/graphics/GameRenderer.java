@@ -48,6 +48,7 @@ public class GameRenderer {
     private boolean healthbar;
     private boolean gameMusic;
 
+
     private Draw draw;
     private Pulse pulse;
 
@@ -69,6 +70,7 @@ public class GameRenderer {
         tabPressed = false;
         healthbar = true;
         gameMusic = false;
+       
 
         draw = new Draw(width, height);
         collisions = new CollisionManager(gd);
@@ -108,14 +110,14 @@ public class GameRenderer {
 //        rotation %= rotation%Math.PI;
 
         Player me = gameData.getPlayer(playerID);
-        if(me.getHealth()<50 && healthbar)
+        if(me.getHealth()<25 && healthbar)
         {
             healthbar=false;
             gameMusic = true;
             GameEffects.GAMEMUSIC.stopClip();
             GameEffects.WARNING.playallTime();
         }
-        else if(me.getHealth()>50 && gameMusic)
+        else if(me.getHealth()>25 && gameMusic)
         {
             gameMusic = false;
             healthbar = true;
@@ -186,7 +188,11 @@ public class GameRenderer {
                 clickDown = true;
             }
         } else if (clickDown) {
-            GameEffects.SHOOT.play();
+            if(me.activeWeapon()==1)
+            GameEffects.SHOOT2.play();
+            else {
+                GameEffects.SHOOT.play();
+            }
             conn.send(new FireObject(me.getID(), false));
             clickDown = false;
         }

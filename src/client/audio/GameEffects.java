@@ -26,6 +26,7 @@ public enum GameEffects {
 
     GAMEMUSIC(GameEffects.class.getResource("../../moz.wav")),        // music
     SHOOT(GameEffects.class.getResource("../../lasershoot.wav")),
+    SHOOT2(GameEffects.class.getResource("../../shoot2.wav")),
     INTERFACEBACKGROUND(GameEffects.class.getResource("../../backmusic.wav")),
     PHASE(GameEffects.class.getResource("../../phase.wav")),
     COUNTDOWN(GameEffects.class.getResource("../../countdown.wav")),
