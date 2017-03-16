@@ -47,6 +47,7 @@ public class GameRenderer {
     private boolean tabPressed;
     private boolean healthbar;
     private boolean gameMusic;
+    private boolean muted;
 
 
     private Draw draw;
@@ -70,7 +71,8 @@ public class GameRenderer {
         tabPressed = false;
         healthbar = true;
         gameMusic = false;
-       
+        muted = false;
+
 
         draw = new Draw(width, height);
         collisions = new CollisionManager(gd);
@@ -110,18 +112,22 @@ public class GameRenderer {
 //        rotation %= rotation%Math.PI;
 
         Player me = gameData.getPlayer(playerID);
-        if(me.getHealth()<25 && healthbar)
+        if(me.getHealth()<25 && healthbar && !muted)
         {
             healthbar=false;
             gameMusic = true;
             GameEffects.GAMEMUSIC.stopClip();
             GameEffects.WARNING.playallTime();
         }
-        else if(me.getHealth()>25 && gameMusic)
+        else if(me.getHealth()>25 && gameMusic && !muted)
         {
             gameMusic = false;
             healthbar = true;
             GameEffects.WARNING.stopClip();
+            GameEffects.GAMEMUSIC.playallTime();
+        }
+        else if(!muted)
+        {
             GameEffects.GAMEMUSIC.playallTime();
         }
         Vector2 pos = me.getPos();
@@ -133,9 +139,18 @@ public class GameRenderer {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
+        if (Keyboard.isKeyDown(Keyboard.KEY_M))
+        {
+            if(!muted) {
+                muted = true;
+                muteEverything();
+            }
+            else muted = false;
+        }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
             fDown = true;
+            if(!muted)
             GameEffects.PHASE.play();
         } else if (fDown) {
             fDown = false;
@@ -188,9 +203,9 @@ public class GameRenderer {
                 clickDown = true;
             }
         } else if (clickDown) {
-            if(me.activeWeapon()==1)
+            if(me.activeWeapon()==1 && !muted)
             GameEffects.SHOOT2.play();
-            else {
+            else if(!muted) {
                 GameEffects.SHOOT.play();
             }
             conn.send(new FireObject(me.getID(), false));
@@ -420,5 +435,13 @@ public class GameRenderer {
         int delta = (int) (time - lastFrame);
         lastFrame = time;
         return delta;
+    }
+
+    private void muteEverything()
+    {
+        GameEffects.SHOOT.stopClip();
+        GameEffects.SHOOT.stopClip();
+        GameEffects.GAMEMUSIC.stopClip();
+        GameEffects.WARNING.stopClip();
     }
 }
