@@ -160,8 +160,8 @@ public class Client {
         gameRenderer = new GameRenderer(gameData, connection, 0);
         currentMode = Mode.GAME;
         GameEffects.INTERFACEBACKGROUND.stopClip();
-        GameEffects.MUSIC.play();
-        GameEffects.MUSIC.playallTime();
+        GameEffects.GAMEMUSIC.play();
+        GameEffects.GAMEMUSIC.playallTime();
     }
 
     private void establishConnection() {

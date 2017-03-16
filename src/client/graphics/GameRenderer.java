@@ -1,5 +1,6 @@
 package client.graphics;
 
+import client.audio.GameEffects;
 import client.logic.GameData;
 import networking.Connection;
 import objects.FireObject;
@@ -115,6 +116,9 @@ public class GameRenderer {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
             fDown = true;
+
+            GameEffects.GAMEMUSIC.pause(1);
+            GameEffects.PHASE.play();
         } else if (fDown) {
             fDown = false;
             int newPhase = 0;

@@ -8,6 +8,8 @@ import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * This enum encapsulates all the sound effects of a game, so as to separate the sound playing
@@ -18,13 +20,14 @@ import java.util.ArrayList;
  *    sound files, so that the play is not paused while loading the file for the first time.
  * 4. You can use the static variable SoundEffect.volume to mute the sound.
  */
+
 public enum GameEffects {
 
 
-    MUSIC(GameEffects.class.getResource("../../moz.wav")),        // music
+    GAMEMUSIC(GameEffects.class.getResource("../../moz.wav")),        // music
     SHOOT(GameEffects.class.getResource("../../lasershoot.wav")),
-    INTERFACEBACKGROUND(GameEffects.class.getResource("../../backmusic.wav"));
-
+    INTERFACEBACKGROUND(GameEffects.class.getResource("../../backmusic.wav")),
+    PHASE(GameEffects.class.getResource("../../phase.wav"));
 
     // Nested class for specifying volume
     public static enum Volume {
@@ -34,20 +37,14 @@ public enum GameEffects {
     public static Volume volume = Volume.LOW;
 
     // Each sound effect has its own clip, loaded with its own sound file.
-    private Clip clip;
+    private  Clip clip;
     private ArrayList<Clip> allClips = new ArrayList<>();
+    private Timer timer;
 
     // Constructor to construct each element of the enum with its own sound file.
     GameEffects(URL soundFileName) {
         try {
-            // Use URL (instead of File) to read from disk and JAR.
-            //URL url = this.getClass().getClassLoader().getResource(soundFileName);
-
-
-            //File soundFile = new File(url);
-
-            // Set up an audio input stream piped from the sound file.
-
+            timer = new Timer();
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFileName);
             // Get a clip resource.
             clip = AudioSystem.getClip();
@@ -73,21 +70,30 @@ public enum GameEffects {
             // Start playing
         }
     }
-
-    public void playallTime(){clip.loop(100);}
+    //play the music continously
+    public void playallTime(){clip.loop(Clip.LOOP_CONTINUOUSLY);}
+    //stop a certain music
     public void stopClip()
     {
         clip.stop();
     }
 
-    public void muteEverything()
-    {
-        for (Clip c : allClips)
-        {
-            c.stop();
-        }
+    //pause for the given seconds the clip
+    public void pause(long seconds){
+        clip.stop();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                playallTime();
+            }
+        }, seconds*1000);
+
     }
 
+    public void SetLowVolume()
+    {
+        GameEffects.volume = GameEffects.Volume.LOW;
+    }
 
     // Optional static method to pre-load all the sound files.
     public static void init() {
