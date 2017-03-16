@@ -157,6 +157,7 @@ public class Check {
                 closestPlayer = p.getValue();
             }
         }
+        System.out.println("Targeted Player " + closestPlayer.getID());
         intel.setRelevantEntity(closestPlayer);
     }
 }

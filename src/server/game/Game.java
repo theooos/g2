@@ -30,7 +30,7 @@ public class Game implements Runnable {
     private Scoreboard sb;
     private int IDCounter;
 
-    private final boolean ORBS = true;
+    private final boolean ORBS = false;
 
     private final boolean DEBUG = true;
 
@@ -99,7 +99,7 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create AI players
-        for (int i = playerConnections.size(); i < maxPlayers; i++) {
+        for (int i = /*playerConnections.size()*/0; i < /*maxPlayers*/1; i++) {
             //randomly select weapons for players
             Weapon w1;
             Weapon w2;
@@ -122,7 +122,7 @@ public class Game implements Runnable {
                     out("Error selecting weapon");
                     break;
             }
-            Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
+            Player p = new AIPlayer(respawnCoords(), randomDir(), /*i % 2*/1, rand.nextInt(2), w1, w2, IDCounter);
             players.put(IDCounter, p);
             IDCounter++;
         }

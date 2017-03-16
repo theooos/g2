@@ -49,32 +49,43 @@ public class Attack extends PlayerTask {
 
         // Recompute travel path if necessary.
         if (brain.performCheck(Check.CheckMode.TARGET_MOVED)) {
+            System.out.println("Target moved: Recomputing path.");
             brain.getBehaviour("FindPath").run();
         }
 
         // Check if the target is in firing range.
         float distance = me.getPos().getDistanceTo(target.getPos());
         if (distance < maxRange) {
-
+            System.out.println("Target in range.");
             // If they are and the time is right, fire.
             if ((tickCount == fireFreq) || me.getActiveWeapon().isFullyAuto()){
+                System.out.println("Fire!!");
                 brain.getBehaviour("Fire").run();
             }
             // In the next tick, if not firing an SMG, stop firing.
             else if (tickCount > fireFreq && !me.getActiveWeapon().isFullyAuto()){
+                System.out.println("Hold fire.");
                 me.setFiring(false);
                 tickCount = 0;
             }
+            else {
+                System.out.println("Can't fire yet.");
+            }
 
             if (distance > minRange) {
+                System.out.println("Could be closer.");
                 brain.getBehaviour("Travel").doAction();
             }
         }
         else {
+            System.out.println("Getting into range.");
+            me.setFiring(false);
             brain.getBehaviour("Travel").doAction();
         }
 
         if (!target.isAlive()){
+            me.setFiring(false);
+            System.out.println("Mission accomplished.");
             end();
         }
     }

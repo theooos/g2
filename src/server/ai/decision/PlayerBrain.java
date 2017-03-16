@@ -96,17 +96,28 @@ public class PlayerBrain extends AIBrain {
      * Determines how the AI Player behaves when it experiences a change in emotion.
      */
     protected void handleEmotion() {
+
+        // If the player isn't aggressive, stop firing the SMG!
+        if (curEmotion != EmotionalState.AGGRESSIVE){
+            intel.ent().setFiring(false);
+        }
         if (curEmotion == EmotionalState.INTIMIDATED) {
             System.out.println("Player "+ intel.ent().getID() + " is now intimidated.");
             this.stress = 80;
             flee.start();
         }
+        else if (curEmotion == EmotionalState.IRRITATED) {
+            System.out.println("Player "+ intel.ent().getID() + " is now irritated.");
+            this.stress = 60;
+        }
         else if (curEmotion == EmotionalState.AGGRESSIVE) {
+            System.out.println("Player "+ intel.ent().getID() + " is now aggressive.");
             this.stress = 50;
             ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
             behaviours.getBehaviour("Strategise").run();
         }
         else if (curEmotion == EmotionalState.BORED) {
+            System.out.println("Player "+ intel.ent().getID() + " is now bored.");
             this.stress = 0;
             ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
             hunt.start();

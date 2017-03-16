@@ -108,7 +108,6 @@ public abstract class Intel {
             System.out.println("No checkpoint.");
             return null;
         } else {
-            System.out.println("Checkpoint: " + path.get(0).toString() + ".");
             return path.get(0);
         }
     }
