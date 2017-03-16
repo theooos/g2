@@ -116,7 +116,6 @@ public class GameRenderer {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
             fDown = true;
-
             GameEffects.GAMEMUSIC.pause(1);
             GameEffects.PHASE.play();
         } else if (fDown) {
@@ -170,6 +169,7 @@ public class GameRenderer {
                 clickDown = true;
             }
         } else if (clickDown) {
+            GameEffects.SHOOT.play();
             conn.send(new FireObject(me.getID(), false));
             clickDown = false;
         }
