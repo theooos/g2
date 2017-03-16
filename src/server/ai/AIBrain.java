@@ -20,6 +20,7 @@ public abstract class AIBrain {
         AT_REST}
 
     protected EmotionalState curEmotion;
+    protected EmotionalState newEmotion;
     protected Intel intel;
     protected Check check;
     protected Feel feel;
@@ -51,8 +52,7 @@ public abstract class AIBrain {
 
     public void setEmotion(EmotionalState newEmotion) {
         if (newEmotion != curEmotion) {
-            behaviours.resetAll();
-            curEmotion = newEmotion;
+            this.newEmotion = newEmotion;
             handleEmotion();
         }
     }

@@ -18,18 +18,24 @@ public class PlayerBrain extends AIBrain {
     private Sequence rage;
     private Sequence chase;
     private Sequence hunt;
+    private Task currentStrategy;
 
     private PlayerIntel intel;
     private Random gen;
+
     private int tickCount;
-    private Task currentStrategy;
+    private final int maxPSDelay=120;
+    private int phaseShiftDelay;
     private int stress;
+    private int reactionDelay;
 
     public PlayerBrain(PlayerIntel intel) {
         super(intel);
         this.intel = intel;
         this.gen = new Random();
         tickCount = 0;
+        phaseShiftDelay = 0;
+        reactionDelay = 0;
     }
 
     protected void constructBehaviours(){
@@ -62,34 +68,54 @@ public class PlayerBrain extends AIBrain {
         // Decide emotion.
         feel.doFinal();
 
-        // Decide how to behave...
-        if (curEmotion == EmotionalState.INTIMIDATED){
-            flee.doAction();
-        }
+        // React, if necessary.
+        if (curEmotion != newEmotion && reactionDelay++ == 0) respondToEmotion();
 
-        else if (curEmotion == EmotionalState.AGGRESSIVE) {
+        switch (curEmotion) {
 
-            // Give the AI a 50% chance of rethinking strategy after at least 2 seconds.
-            if ((tickCount/60) >= 2) {
-                if (gen.nextDouble() >= 0.5) {
-                    behaviours.getBehaviour("Strategise").run();
-                    tickCount = 0;
+            case INTIMIDATED:
+                flee.doAction();
+                break;
+
+            case IRRITATED:
+                break;
+
+            case VENGEFUL:
+                break;
+
+            case AGGRESSIVE:
+                // Give the AI a 50% chance of rethinking strategy after at least 2 seconds.
+                if ((tickCount/60) >= 2) {
+                    if (gen.nextDouble() >= 0.5) {
+                        behaviours.getBehaviour("Strategise").run();
+                        tickCount = 0;
+                    }
                 }
-            }
-            // Compute/relevantEnt-compute travel path if the target has moved since the last tick.
-            if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
-                intel.setTargetLocation(intel.getRelevantEntity().getPos());
-            }
+                // Compute/relevantEnt-compute travel path if the target has moved since the last tick.
+                if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
+                    intel.setTargetLocation(intel.getRelevantEntity().getPos());
+                }
 
-            // Execute strategy.
-            tickCount++;
-            currentStrategy.doAction();
+                // Execute strategy.
+                tickCount++;
+                currentStrategy.doAction();
+                break;
+
+            case DETERMINED:
+                break;
+
+            default:
+                // Gives player option to change phase - but no more than once per 2 seconds.
+                if (gen.nextDouble() > 0.99) {
+                    behaviours.getBehaviour("ShiftPhase").run();
+                    hunt.reset();
+                    hunt.start();
+                }
+                hunt.doAction();
+                break;
         }
 
-        else if (curEmotion == EmotionalState.BORED) {
-            hunt.doAction();
-        }
-
+        if (phaseShiftDelay++ < 0);
     }
 
     /**
@@ -97,30 +123,66 @@ public class PlayerBrain extends AIBrain {
      */
     protected void handleEmotion() {
 
+        switch (newEmotion) {
+            case INTIMIDATED:
+                this.reactionDelay = -8;
+                break;
+
+            case IRRITATED:
+                this.reactionDelay = -9;
+                break;
+
+            default:
+                this.reactionDelay = -10;
+        }
+    }
+
+
+    /**
+     * Determines how the AI Player behaves when it experiences a change in emotion.
+     */
+    protected void respondToEmotion() {
+
+        behaviours.resetAll();
+        curEmotion = newEmotion;
+
         // If the player isn't aggressive, stop firing the SMG!
         if (curEmotion != EmotionalState.AGGRESSIVE){
             intel.ent().setFiring(false);
         }
-        if (curEmotion == EmotionalState.INTIMIDATED) {
-            System.out.println("Player "+ intel.ent().getID() + " is now intimidated.");
-            this.stress = 80;
-            flee.start();
-        }
-        else if (curEmotion == EmotionalState.IRRITATED) {
-            System.out.println("Player "+ intel.ent().getID() + " is now irritated.");
-            this.stress = 60;
-        }
-        else if (curEmotion == EmotionalState.AGGRESSIVE) {
-            System.out.println("Player "+ intel.ent().getID() + " is now aggressive.");
-            this.stress = 50;
-            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
-            behaviours.getBehaviour("Strategise").run();
-        }
-        else if (curEmotion == EmotionalState.BORED) {
-            System.out.println("Player "+ intel.ent().getID() + " is now bored.");
-            this.stress = 0;
-            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
-            hunt.start();
+
+        switch (curEmotion) {
+
+            case INTIMIDATED:
+                System.out.println("Player "+ intel.ent().getID() + " is now intimidated.");
+                this.stress = 80;
+                flee.start();
+                break;
+
+            case IRRITATED:
+                System.out.println("Player "+ intel.ent().getID() + " is now irritated.");
+                this.stress = 60;
+                break;
+
+            case VENGEFUL:
+                break;
+
+            case AGGRESSIVE:
+                System.out.println("Player "+ intel.ent().getID() + " is now aggressive.");
+                this.stress = 50;
+                ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
+                behaviours.getBehaviour("Strategise").run();
+                break;
+
+            case DETERMINED:
+                break;
+
+            default:
+                System.out.println("Player "+ intel.ent().getID() + " is now bored.");
+                this.stress = 0;
+                ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
+                hunt.start();
+                break;
         }
     }
 
@@ -138,5 +200,13 @@ public class PlayerBrain extends AIBrain {
 
     public void executeStrategy(){
         currentStrategy.start();
+    }
+
+    public void shiftedPhase(){
+        this.phaseShiftDelay = -maxPSDelay;
+    }
+
+    public boolean phaseShiftAuth(){
+        return phaseShiftDelay == 0;
     }
 }

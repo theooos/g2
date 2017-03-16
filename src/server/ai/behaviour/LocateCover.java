@@ -39,7 +39,7 @@ public class LocateCover extends Task {
             newPos = new Vector2(ranX, ranY);
 
             // Check if space is valid.
-            success = intel.isValidSpace(newPos) && !intel.inSight(newPos);
+            success = intel.isValidSpace(newPos) &&  /*!intel.inSight(newPos)*/true;;
             ctr++;
         }
         System.out.println("Cover location took " + ctr + " attempts.");

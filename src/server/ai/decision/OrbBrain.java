@@ -84,6 +84,8 @@ public class OrbBrain extends AIBrain {
      */
     protected void handleEmotion() {
 
+        behaviours.resetAll();
+        curEmotion = newEmotion;
         if (curEmotion == EmotionalState.BORED) {
             intel.ent().setSpeed(0.5F);
             ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
