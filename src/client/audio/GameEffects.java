@@ -27,7 +27,8 @@ public enum GameEffects {
     GAMEMUSIC(GameEffects.class.getResource("../../moz.wav")),        // music
     SHOOT(GameEffects.class.getResource("../../lasershoot.wav")),
     INTERFACEBACKGROUND(GameEffects.class.getResource("../../backmusic.wav")),
-    PHASE(GameEffects.class.getResource("../../phase.wav"));
+    PHASE(GameEffects.class.getResource("../../phase.wav")),
+    COUNTDOWN(GameEffects.class.getResource("../../countdown.wav"));
 
     // Nested class for specifying volume
     public static enum Volume {
@@ -77,7 +78,14 @@ public enum GameEffects {
     {
         clip.stop();
     }
-
+    //verify if the clip is running or not
+    public boolean checkStop()
+    {
+        if(clip.isActive())
+            return true;
+        else
+            return false;
+    }
     //pause for the given seconds the clip
     public void pause(long seconds){
         clip.stop();
