@@ -134,7 +134,6 @@ public class GameRenderer {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
             fDown = true;
-            GameEffects.GAMEMUSIC.pause(1);
             GameEffects.PHASE.play();
         } else if (fDown) {
             fDown = false;
