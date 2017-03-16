@@ -70,8 +70,8 @@ public class MapRenderer {
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart+EXTENT));
         GL11.glVertex2f(checkX(xStart + EXTENT), checkY(height - yStart+EXTENT));
-        GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd + EXTENT));
-        GL11.glVertex2f(checkX(xEnd - EXTENT), checkY(height - yEnd + EXTENT));
+        GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd - EXTENT));
+        GL11.glVertex2f(checkX(xEnd - EXTENT), checkY(height - yEnd - EXTENT));
         GL11.glEnd();
     }
 
