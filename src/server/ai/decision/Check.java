@@ -6,8 +6,6 @@ import server.game.Orb;
 import server.game.Player;
 import server.game.Vector2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -59,6 +57,7 @@ public class Check {
             return retaliationViableCheck();
         }
         else if (mode == CheckMode.TARGET_MOVED) {
+            System.out.println("Target Moved: " + targetMovedCheck());
             return targetMovedCheck();
         }
         else if (mode == CheckMode.CLOSEST_ENEMY) {
