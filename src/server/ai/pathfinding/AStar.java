@@ -10,15 +10,18 @@ import static java.lang.Math.abs;
  * Created by Ciprian on 03/05/17.
  */
 public class AStar {
-    Intel intel;
-    public Node[][] nodeses;
-    public AStar (Intel intel)
+
+    private Intel intel;
+    private Node[][] nodes;
+
+    public AStar(Intel intel)
     {
         this.intel=intel;intel.getMap();
     }
 
-    public  List<Node> printPath(Node target){
-        List<Node> path = new ArrayList<Node>();
+    public List<Node> printPath(Node target){
+
+        List<Node> path = new ArrayList<>();
 
         for(Node node = target; node!=null; node = node.parent){
             path.add(node);
@@ -30,7 +33,7 @@ public class AStar {
 
     public Node getNode(int x,int y)
     {
-        return nodeses[x][y];
+        return nodes[x][y];
     }
 
     public void makeGraph(Node goal,int phase)
@@ -81,7 +84,7 @@ public class AStar {
 
         }
 
-        this.nodeses=nodes;
+        this.nodes =nodes;
 
     }
 
@@ -92,11 +95,13 @@ public class AStar {
         int y = (int) actualCoordiates.getY();
         int min = 1000;
         int newX = 0,newY=0;
-        for (int row = (radius); row < (intel.getMap().getMapLength() - (radius)); row += (radius))
-            for (int col = (radius); col < (intel.getMap().getMapWidth() - radius); col += (radius)) {
-               if(abs (nodeses[col][row].getX()-x)+abs(nodeses[col][row].getY()-y)<min)
+
+        for (int row = radius; row < (intel.getMap().getMapLength() - radius); row += radius)
+            for (int col = radius; col < (intel.getMap().getMapWidth() - radius); col += radius) {
+               if(abs (nodes[col][row].getX()-x)+abs(nodes[col][row].getY()-y)<min)
+
                {
-                   min=abs (nodeses[col][row].getX()-x)+abs(nodeses[col][row].getY()-y);
+                   min=abs (nodes[col][row].getX()-x)+abs(nodes[col][row].getY()-y);
                    newX=row;
                    newY=col;
                }
