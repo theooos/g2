@@ -45,6 +45,8 @@ public class GameRenderer {
     private boolean oneDown;
     private boolean twoDown;
     private boolean tabPressed;
+    private boolean healthbar;
+    private boolean gameMusic;
 
     private Draw draw;
     private Pulse pulse;
@@ -65,6 +67,8 @@ public class GameRenderer {
         oneDown = false;
         twoDown = false;
         tabPressed = false;
+        healthbar = true;
+        gameMusic = false;
 
         draw = new Draw(width, height);
         collisions = new CollisionManager(gd);
@@ -104,6 +108,20 @@ public class GameRenderer {
 //        rotation %= rotation%Math.PI;
 
         Player me = gameData.getPlayer(playerID);
+        if(me.getHealth()<50 && healthbar)
+        {
+            healthbar=false;
+            gameMusic = true;
+            GameEffects.GAMEMUSIC.stopClip();
+            GameEffects.WARNING.playallTime();
+        }
+        else if(me.getHealth()>50 && gameMusic)
+        {
+            gameMusic = false;
+            healthbar = true;
+            GameEffects.WARNING.stopClip();
+            GameEffects.GAMEMUSIC.playallTime();
+        }
         Vector2 pos = me.getPos();
         float xPos = pos.getX();
         float yPos = pos.getY();

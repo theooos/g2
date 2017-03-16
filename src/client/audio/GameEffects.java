@@ -28,7 +28,8 @@ public enum GameEffects {
     SHOOT(GameEffects.class.getResource("../../lasershoot.wav")),
     INTERFACEBACKGROUND(GameEffects.class.getResource("../../backmusic.wav")),
     PHASE(GameEffects.class.getResource("../../phase.wav")),
-    COUNTDOWN(GameEffects.class.getResource("../../countdown.wav"));
+    COUNTDOWN(GameEffects.class.getResource("../../countdown.wav")),
+    WARNING(GameEffects.class.getResource("../../warning.wav"));
 
     // Nested class for specifying volume
     public static enum Volume {
@@ -102,7 +103,6 @@ public enum GameEffects {
     {
         GameEffects.volume = GameEffects.Volume.LOW;
     }
-
     // Optional static method to pre-load all the sound files.
     public static void init() {
         values(); // calls the constructor for all the elements
