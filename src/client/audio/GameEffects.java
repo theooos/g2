@@ -21,9 +21,9 @@ import java.util.ArrayList;
 public enum GameEffects {
 
 
-    MUSIC(GameEffects.class.getResource("../moz.wav")),        // music
-    SHOOT(GameEffects.class.getResource("../lasershoot.wav")),
-    INTERFACEBACKGROUND(GameEffects.class.getResource("../backmusic.wav"));
+    MUSIC(GameEffects.class.getResource("../../moz.wav")),        // music
+    SHOOT(GameEffects.class.getResource("../../lasershoot.wav")),
+    INTERFACEBACKGROUND(GameEffects.class.getResource("../../backmusic.wav"));
 
 
     // Nested class for specifying volume
@@ -74,11 +74,8 @@ public enum GameEffects {
         }
     }
 
-    public void playallTime(Clip clip)
-    {
-        clip.loop(5);
-    }
-    public void stopCurrentClip()
+    public void playallTime(){clip.loop(100);}
+    public void stopClip()
     {
         clip.stop();
     }

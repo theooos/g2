@@ -1,5 +1,6 @@
 package client;
 
+import client.audio.GameEffects;
 import client.logic.ClientReceiver;
 import client.logic.GameData;
 import client.graphics.GameRenderer;
@@ -121,12 +122,12 @@ public class Client {
             textureLoader.initialise();
 
             textRenderer = new TextRenderer();
-            textRenderer.drawText("AAAACCC",50,30, java.awt.Color.RED);
+            //textRenderer.drawText("AAAACCC",50,30, java.awt.Color.RED);
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
-//            GameEffects.init();
-//            GameEffects.volume = GameEffects.Volume.LOW;
-//            GameEffects.MUSIC.play();
+            GameEffects.init();
+            GameEffects.volume = GameEffects.Volume.LOW;
+           GameEffects.INTERFACEBACKGROUND.play();
 
         } catch (LWJGLException le) {
             System.out.println("Game exiting - exception in initialization:");
@@ -158,6 +159,9 @@ public class Client {
     private void beginGame(GameData gameData) {
         gameRenderer = new GameRenderer(gameData, connection, 0);
         currentMode = Mode.GAME;
+        GameEffects.INTERFACEBACKGROUND.stopClip();
+        GameEffects.MUSIC.play();
+        GameEffects.MUSIC.playallTime();
     }
 
     private void establishConnection() {

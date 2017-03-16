@@ -156,7 +156,7 @@ public class TextRenderer {
 
         //Draw the characters on our image
         Graphics2D imageGraphics = (Graphics2D) bufferedImage.getGraphics();
-        imageGraphics.setFont(font);
+        //imageGraphics.setFont(font);
         imageGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         imageGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
