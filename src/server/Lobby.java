@@ -27,7 +27,7 @@ class Lobby {
         countdownRunning = false;
         players = new ArrayList<>();
         this.maxSize = maxSize;
-        minSize = maxSize/2;
+        minSize = /*maxSize/2*/1;
         t = new Timer();
         Random rand = new Random();
         map = rand.nextInt(mapMax);
