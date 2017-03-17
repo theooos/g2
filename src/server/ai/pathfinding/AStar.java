@@ -61,13 +61,13 @@ public class AStar {
 
             if(isOnTheSameLine)
          {{
-             Rectangle w = new Rectangle(startX-3*radius,startY-3*radius,endX-startX+6*radius,6*radius+10);
+             Rectangle w = new Rectangle(startX-3*radius,startY-3*radius,endX-startX+7*radius,6*radius+10);
              if (w.contains(nodePos)) isCloseToWall=true;
          }}
             else
 
             {
-                Rectangle w = new Rectangle(startX - 3*radius , startY - radius , 6 * radius + 10, endY - startY + 6 * radius);
+                Rectangle w = new Rectangle(startX - 3*radius , startY - radius , 7      * radius + 10, endY - startY + 6 * radius);
                 if (w.contains(nodePos)) isCloseToWall = true;
             }
         }
