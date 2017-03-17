@@ -102,10 +102,6 @@ public class PlayerBrain extends AIBrain {
                         tickCount = 0;
                     }
                 }
-                // Compute/relevantEnt-compute travel path if the target has moved since the last tick.
-                if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
-                    intel.setTargetLocation(intel.getRelevantEntity().getPos());
-                }
 
                 // Execute strategy.
                 tickCount++;
@@ -134,6 +130,7 @@ public class PlayerBrain extends AIBrain {
      */
     protected void handleEmotion() {
 
+        System.out.println("Emotion changed.");
         switch (newEmotion) {
             case INTIMIDATED:
                 this.reactionDelay = -8;
@@ -153,6 +150,8 @@ public class PlayerBrain extends AIBrain {
      * Determines how the AI Player behaves when it experiences a change in emotion.
      */
     protected void respondToEmotion() {
+
+        System.out.println("Emotion acknowledged.");
 
         behaviours.resetAll();
         curEmotion = newEmotion;

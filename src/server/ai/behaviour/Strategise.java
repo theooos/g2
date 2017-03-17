@@ -95,9 +95,9 @@ public class Strategise extends PlayerTask {
         }
 
         // But will the player make the correct decision?
-        if (gen.nextDouble() > 0.7) {
+        /*if (gen.nextDouble() > 0.7) {
             chosenStrategy = strategyList.get(gen.nextInt(strategyList.size()));
-        }
+        }*/
 
 
         // Act upon selected strategy.

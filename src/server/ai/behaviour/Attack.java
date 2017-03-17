@@ -38,8 +38,10 @@ public class Attack extends PlayerTask {
 
     public void start(){
         super.start();
+
         this.me = intel.ent();
         this.target = (Player) intel.getRelevantEntity();
+        intel.setTargetLocation(target.getPos());
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(true);
         brain.getBehaviour("FindPath").run();
         tickCount = 0;
@@ -55,6 +57,7 @@ public class Attack extends PlayerTask {
 
         // Check if the target is in firing range.
         float distance = me.getPos().getDistanceTo(target.getPos());
+        //System.out.println("Max Range: " + maxRange + " . Distance: " + distance + ".");
         if (distance < maxRange) {
             System.out.println("Target in range.");
             // If they are and the time is right, fire.

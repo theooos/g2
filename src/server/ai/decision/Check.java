@@ -58,7 +58,9 @@ public class Check {
             return retaliationViableCheck();
         }
         else if (mode == CheckMode.TARGET_MOVED) {
-            return targetMovedCheck();
+            boolean r = targetMovedCheck();
+            System.out.println("Performing Target moved check: " + r);
+            return r;
         }
         else if (mode == CheckMode.CLOSEST_ENEMY) {
             return closestEnemyCheck();
@@ -76,7 +78,7 @@ public class Check {
         // Check for orbs in the current phase first.
         ConcurrentHashMap<Integer, Orb> threats =
                 ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(), me.getPhase(), 75);
-        if (threats != null){
+        if (threats.size() > 0){
             targetNearestThreat(threats);
             ((PlayerIntel)intel).setPhaseShiftReq(false);
             return true;
@@ -84,7 +86,7 @@ public class Check {
 
         // Then check for orbs in the other phase.
         threats = ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(), 1 - me.getPhase(), 50);
-        if (threats != null){
+        if (threats.size() > 0){
             targetNearestThreat(threats);
             ((PlayerIntel)intel).setPhaseShiftReq(true);
             return true;
@@ -175,7 +177,6 @@ public class Check {
                 closestThreat = p.getValue();
             }
         }
-        System.out.println("Targeted Threat " + closestThreat.getID());
         intel.setRelevantEntity(closestThreat);
     }
 }

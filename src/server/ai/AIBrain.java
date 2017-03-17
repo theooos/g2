@@ -51,7 +51,7 @@ public abstract class AIBrain {
 
 
     public void setEmotion(EmotionalState newEmotion) {
-        if (newEmotion != curEmotion) {
+        if (newEmotion != this.newEmotion) {
             this.newEmotion = newEmotion;
             handleEmotion();
         }

@@ -31,7 +31,6 @@ public class Wander extends Task {
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(false);
         Vector2 newPos = null;
         boolean success = false;
-        int ctr = 0;
 
         while (!success) {
             float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
@@ -40,10 +39,8 @@ public class Wander extends Task {
 
             // Check if space is valid.
             success = intel.isValidSpace(newPos) && /*!intel.inSight(newPos)*/true;
-            ctr++;
         }
         intel.setTargetLocation(newPos);
-        System.out.println("Wander took " + ctr + " attempts.");
         end();
     }
 }
