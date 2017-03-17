@@ -191,7 +191,11 @@ public class AStar {
     }
 
 
-
+    /**
+     * Executes the Astar Algorithm from the source node to the goal node using a priority queue
+     * @param source
+     * @param goal
+     */
 
      public void AstarSearch(Node source, Node goal){
 
