@@ -12,16 +12,13 @@ import server.game.Player;
  */
 public class Attack extends PlayerTask {
 
-    private int tickCount;
     private Player me;
     private Player target;
     private float maxRange;
     private float minRange;
-    private int fireFreq;
 
     public Attack(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
-        tickCount = 0;
     }
 
     public boolean checkConditions(){
@@ -33,7 +30,7 @@ public class Attack extends PlayerTask {
     public void setParameters(float maxRange, float minRange, int fireFreq){
         this.maxRange = maxRange;
         this.minRange = minRange;
-        this.fireFreq = fireFreq;
+        ((Fire)brain.getBehaviour("Fire")).setParameters(fireFreq);
     }
 
     public void start(){
@@ -41,10 +38,12 @@ public class Attack extends PlayerTask {
 
         this.me = intel.ent();
         this.target = (Player) intel.getRelevantEntity();
+
         intel.setTargetLocation(target.getPos());
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(true);
         brain.getBehaviour("FindPath").run();
-        tickCount = 0;
+
+        brain.getBehaviour("Fire").start();
     }
 
     public void doAction(){
@@ -57,23 +56,9 @@ public class Attack extends PlayerTask {
 
         // Check if the target is in firing range.
         float distance = me.getPos().getDistanceTo(target.getPos());
-        //System.out.println("Max Range: " + maxRange + " . Distance: " + distance + ".");
         if (distance < maxRange) {
             System.out.println("Target in range.");
-            // If they are and the time is right, fire.
-            if ((tickCount == fireFreq) || me.getActiveWeapon().isFullyAuto()){
-                System.out.println("Fire!!");
-                brain.getBehaviour("Fire").run();
-            }
-            // In the next tick, if not firing an SMG, stop firing.
-            else if (tickCount > fireFreq && !me.getActiveWeapon().isFullyAuto()){
-                System.out.println("Hold fire.");
-                me.setFiring(false);
-                tickCount = 0;
-            }
-            else {
-                System.out.println("Can't fire yet.");
-            }
+            brain.getBehaviour("Fire").doAction();
 
             if (distance > minRange) {
                 System.out.println("Could be closer.");

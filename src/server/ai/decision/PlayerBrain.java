@@ -6,6 +6,9 @@ import server.ai.behaviour.*;
 
 import java.util.Random;
 
+import static server.ai.AIBrain.EmotionalState.*;
+import static server.ai.decision.AIConstants.*;
+
 /**
  * Represents the brain of an AI-controlled player, making decisions on the
  * player's behalf while taking the player's situation and surroundings into
@@ -24,18 +27,17 @@ public class PlayerBrain extends AIBrain {
     private Random gen;
     private LoadoutHandler loadout;
 
-    private int tickCount;
-    private final int maxPSDelay=120;
+    private int strategiseDelay;
     private int phaseShiftDelay;
-    private int stress;
     private int reactionDelay;
+    private double stress;
 
     public PlayerBrain(PlayerIntel intel) {
         super(intel);
         this.intel = intel;
         this.gen = new Random();
         this.loadout = new LoadoutHandler(intel.ent());
-        tickCount = 0;
+        strategiseDelay = 0;
         phaseShiftDelay = 0;
         reactionDelay = 0;
     }
@@ -69,9 +71,11 @@ public class PlayerBrain extends AIBrain {
     @Override
     public void doSomething() {
 
+        tick();
+
         // Do nothing if dead.
         if (!intel.ent().isAlive()) {
-            newEmotion = EmotionalState.BORED;
+            newEmotion = BORED;
             return;
         }
 
@@ -79,7 +83,7 @@ public class PlayerBrain extends AIBrain {
         feel.doFinal();
 
         // React, if necessary.
-        if (curEmotion != newEmotion && reactionDelay++ == 0) respondToEmotion();
+        if (curEmotion != newEmotion && reactionDelay == 0) respondToEmotion();
 
         switch (curEmotion) {
 
@@ -96,15 +100,14 @@ public class PlayerBrain extends AIBrain {
 
             case AGGRESSIVE:
                 // Give the AI a 50% chance of rethinking strategy after at least 2 seconds.
-                if ((tickCount/60) >= 2) {
-                    if (gen.nextDouble() >= 0.5) {
+                if (strategiseDelay == 0) {
+                    if (gen.nextDouble() < CHANCE_STRATEGIC_RETHINK) {
                         behaviours.getBehaviour("Strategise").run();
-                        tickCount = 0;
+                        strategiseDelay = STRATEGY_RETHINK_DELAY;
                     }
                 }
 
                 // Execute strategy.
-                tickCount++;
                 currentStrategy.doAction();
                 break;
 
@@ -113,16 +116,16 @@ public class PlayerBrain extends AIBrain {
 
             default:
                 // Gives player option to change phase - but no more than once per 2 seconds.
-                if (gen.nextDouble() > 0.99) {
+                if (gen.nextDouble() < CHANCE_PHASE_SHIFT) {
                     behaviours.getBehaviour("ShiftPhase").run();
                     hunt.reset();
                     hunt.start();
                 }
+
                 hunt.doAction();
                 break;
         }
 
-        if (phaseShiftDelay++ < 0);
     }
 
     /**
@@ -133,15 +136,15 @@ public class PlayerBrain extends AIBrain {
         System.out.println("Emotion changed.");
         switch (newEmotion) {
             case INTIMIDATED:
-                this.reactionDelay = -8;
+                this.reactionDelay = -REACTION_TIME_LOW;
                 break;
 
             case IRRITATED:
-                this.reactionDelay = -9;
+                this.reactionDelay = -REACTION_TIME_AVG;
                 break;
 
             default:
-                this.reactionDelay = -10;
+                this.reactionDelay = -REACTION_TIME_HIGH;
         }
     }
 
@@ -154,50 +157,63 @@ public class PlayerBrain extends AIBrain {
         System.out.println("Emotion acknowledged.");
 
         behaviours.resetAll();
-        curEmotion = newEmotion;
 
         // If the player isn't aggressive, stop firing the SMG!
-        if (curEmotion != EmotionalState.AGGRESSIVE){
+        if (newEmotion != EmotionalState.AGGRESSIVE){
             intel.ent().setFiring(false);
         }
 
-        switch (curEmotion) {
+        switch (newEmotion) {
 
             case INTIMIDATED:
                 System.out.println("Player "+ intel.ent().getID() + " is now intimidated.");
-                this.stress = 80;
+                this.stress = STRESS_INTIMIDATED;
                 flee.start();
                 break;
 
             case IRRITATED:
                 System.out.println("Player "+ intel.ent().getID() + " is now irritated.");
-                this.stress = 60;
+                this.stress = STRESS_IRRITATED;
                 behaviours.getBehaviour("Swat").start();
                 break;
 
             case VENGEFUL:
+                this.stress = STRESS_VENGEFUL;
                 break;
 
             case AGGRESSIVE:
                 System.out.println("Player "+ intel.ent().getID() + " is now aggressive.");
-                this.stress = 50;
+                if (curEmotion == BORED) {
+                    this.stress = STRESS_AGGRESSIVE_FROM_BORED;
+                }
+                else {
+                    this.stress = STRESS_AGGRESSIVE;
+                }
                 ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
                 behaviours.getBehaviour("Strategise").run();
                 break;
 
             case DETERMINED:
+                if (curEmotion == BORED) {
+                    this.stress = STRESS_DETERMINED_FROM_BORED;
+                } else {
+                    this.stress = STRESS_DETERMINED;
+                }
                 break;
 
             default:
                 System.out.println("Player "+ intel.ent().getID() + " is now bored.");
-                this.stress = 0;
+                this.stress = STRESS_BORED;
                 ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
                 hunt.start();
                 break;
         }
+
+        curEmotion = newEmotion;
+
     }
 
-    public int getStressLevel(){
+    public double getStressLevel(){
         return stress;
     }
 
@@ -214,10 +230,16 @@ public class PlayerBrain extends AIBrain {
     }
 
     public void shiftedPhase(){
-        this.phaseShiftDelay = -maxPSDelay;
+        this.phaseShiftDelay = -(AIConstants.PHASE_SHIFT_DELAY);
     }
 
     public boolean phaseShiftAuth(){
         return phaseShiftDelay == 0;
+    }
+
+    private void tick(){
+        if (phaseShiftDelay != 0) phaseShiftDelay++;
+        if (reactionDelay != 0) reactionDelay++;
+        if (strategiseDelay != 0) strategiseDelay++;
     }
 }

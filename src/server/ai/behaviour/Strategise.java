@@ -3,6 +3,7 @@ package server.ai.behaviour;
 import objects.PhaseObject;
 import server.ai.AIBrain;
 import server.ai.PlayerTask;
+import server.ai.decision.AIConstants;
 import server.ai.decision.LoadoutHandler;
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
@@ -95,10 +96,9 @@ public class Strategise extends PlayerTask {
         }
 
         // But will the player make the correct decision?
-        /*if (gen.nextDouble() > 0.7) {
+        if (gen.nextDouble() < AIConstants.CHANCE_STRATEGIC_ERR) {
             chosenStrategy = strategyList.get(gen.nextInt(strategyList.size()));
-        }*/
-
+        }
 
         // Act upon selected strategy.
         switch (chosenStrategy){

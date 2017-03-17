@@ -1,6 +1,7 @@
 package server.ai.behaviour;
 
 import server.ai.PlayerTask;
+import server.ai.decision.AIConstants;
 import server.ai.decision.LoadoutHandler;
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
@@ -62,7 +63,8 @@ public class Swat extends PlayerTask {
 
         // Take aim.
         me.setDir(me.getPos().vectorTowards(target.getPos()));
-        Vector2.deviate(me.getDir(), brain.getStressLevel());
+        int inaccuracy = (int) Math.ceil(brain.getStressLevel()* AIConstants.MAX_AIM_INACCURACY);
+        Vector2.deviate(me.getDir(), inaccuracy);
 
         // If the time is right, fire.
         if ((fireDelay++ == 0) || me.getActiveWeapon().isFullyAuto()){

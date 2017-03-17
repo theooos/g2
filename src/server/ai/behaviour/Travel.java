@@ -2,36 +2,19 @@ package server.ai.behaviour;
 
 import server.ai.OrbTask;
 import server.ai.PlayerTask;
-import server.ai.decision.OrbBrain;
-import server.ai.decision.OrbIntel;
-import server.ai.decision.PlayerBrain;
-import server.ai.decision.PlayerIntel;
+import server.ai.decision.*;
 import server.game.MovableEntity;
 import server.game.Player;
 import server.game.Vector2;
 
 /**
  * Allows the entity to follow a path.
- * Created by rhys on 2/16/17.
+ * Created by Rhys on 2/16/17.
  */
 public class Travel extends PlayerTask {
 
-    private int stress;
-    public static final int DEFAULT_STRESS = 1;
-
     public Travel(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
-        stress = DEFAULT_STRESS;
-    }
-
-    public void setParameters(int stress){
-        this.stress = stress;
-    }
-
-    @Override
-    public void reset(){
-        super.reset();
-        stress = DEFAULT_STRESS;
     }
 
     @Override
@@ -47,7 +30,8 @@ public class Travel extends PlayerTask {
         Player me = intel.ent();
         // Sets the entity to face in direction of the target location.
         Vector2 target = me.getPos().vectorTowards(intel.checkpoint());
-        me.setDir(Vector2.deviate(target, stress));
+        int inaccuracy = (int) Math.ceil(brain.getStressLevel()* AIConstants.MAX_TRAVEL_INACCURACY);
+        me.setDir(Vector2.deviate(target, inaccuracy));
 
         // Checks for collisions,
         Vector2 oldPos = me.getPos();
@@ -72,7 +56,7 @@ public class Travel extends PlayerTask {
 
     @Override
     public void run(){
-        System.err.println("Float is not a single-tick task.");
+        System.err.println("Travel is not a single-tick task.");
         System.exit(1);
     }
 }
