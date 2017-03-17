@@ -11,17 +11,28 @@ import static java.lang.Math.abs;
 
 /**
  * Created by Ciprian on 03/05/17.
+ * Class used for Pathfinding .Receives Intel and create a matrix of nodes in order to calculate the shortest route using the A* Algorithm.
  */
+
 public class AStar {
 
     private Intel intel;
     private Node[][] nodes;
 
+    /**
+     * Constructs an AStar object which will calculate the shortest path
+     * @param intel
+     */
     public AStar(Intel intel)
     {
-        this.intel=intel;intel.getMap();
+        this.intel=intel;
     }
 
+    /**
+     * Returns the shortest path to the given target
+     * @param target
+     * @return path
+     */
     public List<Node> printPath(Node target){
 
         List<Node> path = new ArrayList<>();
@@ -34,10 +45,25 @@ public class AStar {
         return path;
     }
 
+    /**
+     * get a node at the position x,y
+     * @param x
+     * @param y
+     * @return selected node
+     */
     public Node getNode(int x,int y)
     {
         return nodes[x][y];
     }
+
+    /**
+     * Checks if the node is close to walls based on the distance between the coordinates of the selected node and each
+     * wall taking in consideration the radius of the entity
+     * @param node
+     * @param walls
+     * @param radius
+     * @return
+     */
     private boolean closeToWall(Node node,ArrayList<Wall> walls,int radius)
     {
         int x=node.getX();
@@ -75,6 +101,11 @@ public class AStar {
     return isCloseToWall;
     }
 
+    /**
+     * makes a graph and connects the graph representing the coordinates system with regards to the radius
+     * @param goal used to calculate the heuristic for each node(cost function)
+     * @param phase used for collision checking
+     */
     public void makeGraph(Node goal,int phase)
     {
         server.game.Map map=this.intel.getMap();
@@ -130,7 +161,12 @@ public class AStar {
 
     }
 
-
+    /**
+     * gets the closest valid node to the actual node .
+     * @param target used for this node
+     * @param radius radius of the entity
+     * @return the closest valid position for the selected node
+     */
     public Vector2 getClosestNode(Node target,int radius) {
         Vector2 actualCoordiates = target.coordinates();
         int x = (int) actualCoordiates.getX();
