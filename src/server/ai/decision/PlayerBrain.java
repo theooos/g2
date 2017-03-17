@@ -22,6 +22,7 @@ public class PlayerBrain extends AIBrain {
 
     private PlayerIntel intel;
     private Random gen;
+    private LoadoutHandler loadout;
 
     private int tickCount;
     private final int maxPSDelay=120;
@@ -33,6 +34,7 @@ public class PlayerBrain extends AIBrain {
         super(intel);
         this.intel = intel;
         this.gen = new Random();
+        this.loadout = new LoadoutHandler(intel.ent());
         tickCount = 0;
         phaseShiftDelay = 0;
         reactionDelay = 0;
@@ -41,13 +43,14 @@ public class PlayerBrain extends AIBrain {
     protected void constructBehaviours(){
         super.constructBehaviours();
         behaviours.addBehaviour(new Travel(intel, this), "Travel");
-        behaviours.addBehaviour(new Strategise(intel, this), "Strategise");
+        behaviours.addBehaviour(new Strategise(intel, this, loadout), "Strategise");
         behaviours.addBehaviour(new Fire(intel, this), "Fire");
         behaviours.addBehaviour(new ShiftPhase(intel, this), "ShiftPhase");
         behaviours.addBehaviour(new QuickMove(intel,this), "QuickMove");
         behaviours.addBehaviour(new ForceShiftPhase(intel, this), "ForceShiftPhase");
         behaviours.addBehaviour(new Attack(intel, this), "Attack");
         behaviours.addBehaviour(new Retreat(intel, this), "Retreat");
+        behaviours.addBehaviour(new Swat(intel, this, loadout), "Swat");
     }
     @Override
     protected void configureBehaviours() {
@@ -65,6 +68,13 @@ public class PlayerBrain extends AIBrain {
 
     @Override
     public void doSomething() {
+
+        // Do nothing if dead.
+        if (!intel.ent().isAlive()) {
+            newEmotion = EmotionalState.BORED;
+            return;
+        }
+
         // Decide emotion.
         feel.doFinal();
 
@@ -78,6 +88,7 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             case IRRITATED:
+                behaviours.getBehaviour("Swat").doAction();
                 break;
 
             case VENGEFUL:
@@ -162,6 +173,7 @@ public class PlayerBrain extends AIBrain {
             case IRRITATED:
                 System.out.println("Player "+ intel.ent().getID() + " is now irritated.");
                 this.stress = 60;
+                behaviours.getBehaviour("Swat").start();
                 break;
 
             case VENGEFUL:

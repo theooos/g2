@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerIntel extends Intel {
 
     private boolean phaseShiftFailed;
+    private boolean orbInOtherPhase;
 
     public PlayerIntel(ConcurrentHashMap<Integer, Player> players, Map map){
         super(players, map);
@@ -45,5 +46,13 @@ public class PlayerIntel extends Intel {
 
     public ConcurrentHashMap<Integer, Orb> getOrbsInSight(){
         return sight.getOrbsInSight(ent.getPos().toPoint(), ent.getPhase(), 0);
+    }
+
+    public boolean orbInOtherPhase(){
+        return orbInOtherPhase;
+    }
+
+    public void setPhaseShiftReq(boolean req){
+        this.orbInOtherPhase = req;
     }
 }

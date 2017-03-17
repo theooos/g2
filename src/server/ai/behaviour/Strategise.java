@@ -3,6 +3,7 @@ package server.ai.behaviour;
 import objects.PhaseObject;
 import server.ai.AIBrain;
 import server.ai.PlayerTask;
+import server.ai.decision.LoadoutHandler;
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
 import server.game.*;
@@ -24,6 +25,7 @@ public class Strategise extends PlayerTask {
     private final float SHOTGUN_CEIL = 200;
     private final float SHOTGUN_OPT = 75;
     private Random gen;
+    private LoadoutHandler loadout;
     private ArrayList<Strategy> strategyList;
     private Strategy chosenStrategy;
     private enum Strategy{
@@ -35,8 +37,9 @@ public class Strategise extends PlayerTask {
         RETREAT_WITH_SMG
     }
 
-    public Strategise(PlayerIntel intel, PlayerBrain brain){
+    public Strategise(PlayerIntel intel, PlayerBrain brain, LoadoutHandler ldh){
         super(intel, brain);
+        this.loadout = ldh;
         this.gen = new Random();
         strategyList = new ArrayList<>();
         for (Strategy s : Strategy.values()){
@@ -60,7 +63,7 @@ public class Strategise extends PlayerTask {
             chosenStrategy = Strategy.GIVE_UP;
         }
         else if (distance > SMG_CEIL) {
-            if (haveSniper()){
+            if (loadout.haveSniper()){
                 chosenStrategy = Strategy.SNIPE;
             }
             else {
@@ -68,7 +71,7 @@ public class Strategise extends PlayerTask {
             }
         }
         else if (distance > SHOTGUN_CEIL) {
-            if (haveSMG()) {
+            if (loadout.haveSMG()) {
                 chosenStrategy = Strategy.BUM_RUSH;
             }
             else {
@@ -76,14 +79,14 @@ public class Strategise extends PlayerTask {
             }
         }
         else if (distance > SHOTGUN_OPT) {
-            if (haveShotgun()) {
+            if (loadout.haveShotgun()) {
                 chosenStrategy = Strategy.SPRAY_N_PRAY;
             } else {
                 chosenStrategy = Strategy.BUM_RUSH;
             }
         }
         else {
-            if (haveShotgun()){
+            if (loadout.haveShotgun()){
                 chosenStrategy = Strategy.RETREAT_WITH_SHOTGUN;
             }
             else {
@@ -106,7 +109,7 @@ public class Strategise extends PlayerTask {
 
             case SNIPE:
                 System.out.println("Chosen strategy: Snipe.");
-                equipSniper();
+                loadout.equipSniper();
                 int freq = intel.ent().getActiveWeapon().getRefireTime();
                 freq *= 1.5;
                 ((Attack)brain.getBehaviour("Attack")).setParameters(SNIPER_CEIL, SMG_CEIL, freq);
@@ -115,7 +118,7 @@ public class Strategise extends PlayerTask {
 
             case BUM_RUSH:
                 System.out.println("Chosen strategy: Bum Rush.");
-                equipSMG();
+                loadout.equipSMG();
                 freq = 1; // Dummy value for freq. SMGs are semi-automatic.
                 ((Attack)brain.getBehaviour("Attack")).setParameters(SMG_CEIL, SHOTGUN_OPT, freq);
                 brain.setStrategy("Attack");
@@ -123,7 +126,7 @@ public class Strategise extends PlayerTask {
 
             case SPRAY_N_PRAY:
                 System.out.println("Chosen strategy: SprayNPray.");
-                equipShotgun();
+                loadout.equipShotgun();
                 freq = intel.ent().getActiveWeapon().getRefireTime();
                 freq *= 1.2;
                 ((Attack)brain.getBehaviour("Attack")).setParameters(SHOTGUN_CEIL, SHOTGUN_OPT, freq);
@@ -132,7 +135,7 @@ public class Strategise extends PlayerTask {
 
             case RETREAT_WITH_SHOTGUN:
                 System.out.println("Chosen strategy: Retreat.");
-                equipShotgun();
+                loadout.equipShotgun();
                 freq = intel.ent().getActiveWeapon().getRefireTime();
                 freq *= 1.2;
                 ((Retreat)brain.getBehaviour("Retreat")).setParameters(SHOTGUN_CEIL, SHOTGUN_OPT, freq);
@@ -141,7 +144,7 @@ public class Strategise extends PlayerTask {
 
             default:
                 System.out.println("Chosen strategy: Retreat.");
-                equipSMG();
+                loadout.equipSMG();
                 freq = 1;
                 ((Retreat)brain.getBehaviour("Retreat")).setParameters(SHOTGUN_CEIL, SHOTGUN_OPT, freq);
                 brain.setStrategy("Retreat");
@@ -150,62 +153,5 @@ public class Strategise extends PlayerTask {
 
         brain.executeStrategy();
         end();
-    }
-
-    /**
-     * Checks whether or not the player possesses a sniper.
-     * @return true if the player has a sniper.
-     */
-    private boolean haveSniper(){
-        return (intel.ent().getWeapon1() instanceof WeaponSniper) ||
-                (intel.ent().getWeapon2() instanceof WeaponSniper);
-    }
-
-    /**
-     * Sets the player's current weapon to the sniper.
-     * Assumes prior confirmation that the player does indeed possess a sniper.
-     */
-    private void equipSniper(){
-        if (!(intel.ent().getActiveWeapon() instanceof WeaponSniper)) {
-            intel.ent().toggleWeapon();
-        }
-    }
-
-    /**
-     * Checks whether or not the player possesses an SMG.
-     * @return true if the player has a SMG.
-     */
-    private boolean haveSMG(){
-        return (intel.ent().getWeapon1() instanceof WeaponSMG) ||
-                (intel.ent().getWeapon2() instanceof WeaponSMG);
-    }
-
-    /**
-     * Sets the player's current weapon to the SMG.
-     * Assumes prior confirmation that the player does indeed possess an SMP.
-     */
-    private void equipSMG(){
-        if (!(intel.ent().getActiveWeapon() instanceof WeaponSMG)) {
-            intel.ent().toggleWeapon();
-        }
-    }
-
-    /**
-     * Checks whether or not the player possesses a shotgun.
-     * @return true if the player has a shotgun.
-     */
-    private boolean haveShotgun(){
-        return (intel.ent().getWeapon1() instanceof WeaponShotgun) ||
-                (intel.ent().getWeapon2() instanceof WeaponShotgun);
-    }
-
-    /**
-     * Sets the player's current weapon to the shotgun.
-     * Assumes prior confirmation that the player does indeed possess a shotgun.
-     */
-    private void equipShotgun() {
-        if (!(intel.ent().getActiveWeapon() instanceof WeaponShotgun)) {
-            intel.ent().toggleWeapon();
-        }
     }
 }

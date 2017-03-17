@@ -29,22 +29,16 @@ public class ShiftPhase extends PlayerTask {
     @Override
     public void doAction() {
         if (brain.phaseShiftAuth() || overrideAuth) {
-            if (intel.ent().getPhase() == 0) {
-                intel.ent().setPhase(1);
-                if (!intel.validPosition()) {
-                    intel.ent().setPhase(0);
-                    intel.failedPhaseShift();
-                }
-            } else if (intel.ent().getPhase() == 1) {
-                intel.ent().setPhase(0);
-                if (!intel.validPosition()) {
-                    intel.ent().setPhase(0);
-                    intel.failedPhaseShift();
-                }
+
+            intel.ent().setPhase(1 - intel.ent().getPhase());
+            if (!intel.validPosition()) {
+                intel.ent().setPhase(1 - intel.ent().getPhase());
+                intel.failedPhaseShift();
+            } else {
+                overrideAuth = false;
+                brain.shiftedPhase();
             }
-            overrideAuth = false;
-            brain.shiftedPhase();
+            end();
         }
-        end();
     }
 }

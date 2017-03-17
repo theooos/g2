@@ -74,10 +74,12 @@ public class Retreat extends PlayerTask {
 
             if (distance < minRange) {
                 brain.getBehaviour("Travel").doAction();
+                me.setDir(me.getPos().vectorTowards(target.getPos()));
             }
         }
         else {
             brain.getBehaviour("Travel").doAction();
+            me.setDir(me.getPos().vectorTowards(target.getPos()));
         }
 
         if (!target.isAlive() || distance >= minRange){

@@ -30,6 +30,7 @@ public class ForceShiftPhase extends PlayerTask {
             brain.getBehaviour("QuickMove").doAction();
         }
         else {
+            ((ShiftPhase)brain.getBehaviour("ShiftPhase")).forceAction();
             brain.getBehaviour("ShiftPhase").run();
             if (intel.phaseShiftFailed()) {
                 if (brain.getBehaviour("QuickMove").hasFinished()) {
