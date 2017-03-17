@@ -57,17 +57,19 @@ public class AStar {
             int endX=(int) wall.getEndPos().getX();
             int endY=(int) wall.getEndPos().getY();
             Point nodePos= new Point(node.getX(),node.getY());
+
+
             if(isOnTheSameLine)
-         {
-             Rectangle w = new Rectangle(startX-radius*3,startY-radius*3,endX-startX+radius,2*radius+10);
+         {{
+             Rectangle w = new Rectangle(startX-3*radius,startY-3*radius,endX-startX+6*radius,6*radius+10);
              if (w.contains(nodePos)) isCloseToWall=true;
-         }
+         }}
+            else
 
-
-
-            Rectangle w=new Rectangle(startX-radius*3,startY-radius*3,2*radius+10  ,endY-endX+radius);
-            if( w.contains(nodePos)) isCloseToWall=true;
-
+            {
+                Rectangle w = new Rectangle(startX - 3*radius , startY - radius , 6 * radius + 10, endY - startY + 6 * radius);
+                if (w.contains(nodePos)) isCloseToWall = true;
+            }
         }
 
     return isCloseToWall;
@@ -94,13 +96,13 @@ public class AStar {
         }
 
 
-        ArrayList<Wall> maps=intel.getMap().getWalls();
+        ArrayList<Wall> walls=intel.getMap().getWalls();
 
         for ( int row = (radius); row < (height - (radius)); row+=radius )
         {
             for ( int col = (radius); col < (width - (radius)); col+=radius ) {
 
-                ArrayList<Wall> walls = intel.getMap().getWalls();
+
                 nodes[col][row] = new Node(new Vector2(col, row), this.intel.ent().getRadius(), phase, intel, goal.coordinates());
 
                 if (!closeToWall(nodes[col][row],walls,radius)) {
@@ -133,7 +135,7 @@ public class AStar {
         Vector2 actualCoordiates = target.coordinates();
         int x = (int) actualCoordiates.getX();
         int y = (int) actualCoordiates.getY();
-        int min = 1000;
+        int min = 100000;
         int newX = 0,newY=0;
 
         for (int row = radius; row < (intel.getMap().getMapLength() - radius); row += radius)
