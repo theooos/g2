@@ -75,7 +75,7 @@ public class Check {
 
         // Check for orbs in the current phase first.
         ConcurrentHashMap<Integer, Orb> threats =
-                ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(), me.getPhase(), 75);
+                ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(), me.getPhase(), 150);
         if (threats.size() > 0){
             targetNearestThreat(threats);
             ((PlayerIntel)intel).setPhaseShiftReq(false);

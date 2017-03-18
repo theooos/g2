@@ -8,7 +8,7 @@ package server.ai.decision;
 public final class AIConstants {
 
     public static final double MAX_TRAVEL_INACCURACY = 45;
-    public static final double MAX_AIM_INACCURACY = 45;
+    public static final double MAX_AIM_INACCURACY = 20;
 
     public static final double CHANCE_PHASE_SHIFT = 0.01;
     public static final double CHANCE_STRATEGIC_ERR = 0.4;

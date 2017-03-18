@@ -125,16 +125,11 @@ public class PlayerBrain extends AIBrain {
                 // Execute strategy.
                 currentStrategy.doAction();
 
-                if (currentStrategy.hasFinished()){
+                if (currentStrategy.hasFinished()) {
                     behaviours.resetAll();
                     behaviours.getBehaviour("Strategise").run();
-                } else {
-                    System.out.println("\nFinal Direction." +
-                            " My Pos: " + intel.ent().getPos() +
-                            " Target Pos: " + intel.getRelevantEntity().getPos() +
-                            " AppVector: " + intel.ent().getPos().vectorTowards(intel.getRelevantEntity().getPos()));
-                    intel.ent().setDir(intel.ent().getPos().vectorTowards(intel.getRelevantEntity().getPos()));
                 }
+
                 break;
 
             case DETERMINED:

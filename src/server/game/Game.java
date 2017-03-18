@@ -30,7 +30,7 @@ public class Game implements Runnable {
     private Scoreboard sb;
     private int IDCounter;
 
-    private final boolean ORBS = false;
+    private final boolean ORBS = true;
 
     private final boolean DEBUG = true;
 
@@ -99,7 +99,7 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create AI players
-        for (int i = playerConnections.size(); i < /*maxPlayers*/2; i++) {
+        for (int i = playerConnections.size(); i < maxPlayers; i++) {
             //randomly select weapons for players
             Weapon w1;
             Weapon w2;
@@ -176,6 +176,7 @@ public class Game implements Runnable {
                 }
                 if (p.isFiring()) fire(p);
                 p.live();
+
             }
             for (Orb o : orbs.values()) {
                 if (!o.isAlive()) respawn(o);

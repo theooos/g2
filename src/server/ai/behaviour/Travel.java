@@ -28,7 +28,7 @@ public class Travel extends PlayerTask {
     public void doAction() {
 
         Player me = intel.ent();
-        
+
         // Sets the entity to face in direction of the target location.
         Vector2 target = me.getPos().vectorTowards(intel.checkpoint());
         int inaccuracy = (int) Math.ceil(brain.getStressLevel()* AIConstants.MAX_TRAVEL_INACCURACY);
@@ -36,6 +36,7 @@ public class Travel extends PlayerTask {
 
         // Checks for collisions,
         Vector2 oldPos = me.getPos();
+        me.setDir(travelDir);
         me.setPos(oldPos.add(travelDir.mult(me.getSpeed())));
         if (!intel.validPosition()) {
             me.setPos(oldPos);
