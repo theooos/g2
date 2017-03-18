@@ -105,14 +105,16 @@ public class StartScreenRenderer {
     // ****** THESE PREPARE EACH LAYER ******
 
     private void readyInterfaceLayer() {
-        about = new InterfaceTexture(ISprite.ABOUT);
-        instructions = new InterfaceTexture(ISprite.CONTROLS);
+        InterfaceTexture title = new InterfaceTexture(ISprite.TITLE);
         join_game = new InterfaceTexture(ISprite.LOBBY);
+        instructions = new InterfaceTexture(ISprite.CONTROLS);
+        about = new InterfaceTexture(ISprite.ABOUT);
 
         background.spawn(0,new Vector2f(400f,300f),PHASE,interfaceLayer);
-        join_game.spawn(1, new Vector2f(400f, 330f), PHASE, interfaceLayer);
-        instructions.spawn(2, new Vector2f(400f, 240f), PHASE, interfaceLayer);
-        about.spawn(3, new Vector2f(400f, 150f), PHASE, interfaceLayer);
+        title.spawn(1,new Vector2f(400f,465f),PHASE,interfaceLayer);
+        join_game.spawn(2, new Vector2f(400f, 330f), PHASE, interfaceLayer);
+        instructions.spawn(3, new Vector2f(400f, 240f), PHASE, interfaceLayer);
+        about.spawn(4, new Vector2f(400f, 150f), PHASE, interfaceLayer);
     }
 
     private void readyAboutLayer() {

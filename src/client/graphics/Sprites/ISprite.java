@@ -20,7 +20,7 @@ public interface ISprite {
     int WALL_P1 = 8;
     int WALL_P2 = 9;
 
-    int START = 10;
+    int TITLE = 10;
     int CONTROLS = 11;
     int ABOUT = 12;
 
