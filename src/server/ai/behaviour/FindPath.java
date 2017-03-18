@@ -50,14 +50,16 @@ public class FindPath extends Task {
         }
         else {
 
-           // System.out.println("Using A*." + intel.ent().getRadius());
+            System.out.println("Using A*." + intel.ent().getRadius());
 
             Node target=new Node(intel.getTargetLocation(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
             Node start=new Node(intel.ent().getPos(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
 
             intel.pathfinder().makeGraph(target,intel.ent().getPhase());
-            Vector2 newTarget=intel.pathfinder.getClosestNode(target,intel.ent().getRadius()*2);
-            Vector2 newStart=intel.pathfinder.getClosestNode(start,intel.ent().getRadius()*2);
+
+
+            Vector2 newTarget=intel.pathfinder.getClosestNode(target,intel.ent().getRadius());
+            Vector2 newStart=intel.pathfinder.getClosestNode(start,intel.ent().getRadius());
             intel.pathfinder().AstarSearch(intel.pathfinder.getNode((int) newStart.getY(),(int) newStart.getX()),intel.pathfinder.getNode((int) newTarget.getY(),(int) newTarget.getX()));
 
             List<Node> printPath=intel.pathfinder().printPath(intel.pathfinder.getNode((int) newTarget.getY(),(int) newTarget.getX()));

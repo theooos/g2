@@ -47,6 +47,9 @@ public class AStar {
         return path;
     }
 
+
+
+
     /**
      * get a node at the position x,y
      * @param x
@@ -73,34 +76,31 @@ public class AStar {
         int y=node.getY();
         boolean isCloseToWall = false;
         boolean isOnTheSameLine;
-        for(Wall wall:walls)
-        {
-            if(wall.getStartPos().getX()==wall.getEndPos().getX())
-                isOnTheSameLine=true;
+        for(Wall wall:walls) {
+            if (wall.getStartPos().getX() == wall.getEndPos().getX())
+                isOnTheSameLine = true;
             else
-                isOnTheSameLine=false;
+                isOnTheSameLine = false;
 
 
-            int startX=(int)wall.getStartPos().getX()-radius;
-            int startY=(int) wall.getStartPos().getY()-radius;
-            int endX=(int) wall.getEndPos().getX();
-            int endY=(int) wall.getEndPos().getY();
-            Point nodePos= new Point(node.getX(),node.getY());
+            int startX = (int) wall.getStartPos().getX() - radius;
+            int startY = (int) wall.getStartPos().getY() - radius;
+            int endX = (int) wall.getEndPos().getX();
+            int endY = (int) wall.getEndPos().getY();
+            Point nodePos = new Point(node.getX(), node.getY());
 
 
-            if(isOnTheSameLine)
-         {{
-             Rectangle w = new Rectangle(startX-radius,startY-6*radius,endX-startX+12*radius,6*radius+10);
-             if (w.contains(nodePos)) isCloseToWall=true;
-         }}
-            else
+            if (isOnTheSameLine) {
+                Rectangle w = new Rectangle(startX - radius, startY -  radius, endX - startX + radius,   radius + 10);
+                if (w.contains(nodePos)) isCloseToWall = true;
+            } else
 
             {
-                Rectangle w = new Rectangle(startX - 6*radius , startY - 6*radius , 12* radius + 10, endY - startY + 6 * radius);
+                Rectangle w = new Rectangle(startX -  radius, startY -  radius,  radius + 10, endY - startY +  radius);
                 if (w.contains(nodePos)) isCloseToWall = true;
             }
-        }
 
+        }
     return isCloseToWall;
     }
 
@@ -135,29 +135,29 @@ public class AStar {
         for ( int row = (radius); row < (height - (radius)); row+=radius )
         {
 
-           // System.out.println();
+           System.out.println();
             for ( int col = (radius); col < (width - (radius)); col+=radius ) {
 
 
                 nodes[col][row] = new Node(new Vector2(col, row), this.intel.ent().getRadius(), phase, intel, goal.coordinates());
-               // System.out.print(nodes[col][row].h_scores+" ");
+               System.out.print(nodes[col][row].h_scores+" ");
                 if (!closeToWall(nodes[col][row],walls,radius)&& nodes[col][row].h_scores<100000) {
                     //System.out.println("Col: " + col);
 
                     ArrayList<Edge> adj = new ArrayList<Edge>();
 
-                    adj.add(new Edge(nodes[col - (radius)][row], nodes[col - (radius)][row].h_scores));
+                    adj.add(new Edge(nodes[col - (radius)][row],1));
                     // adj.add(new Edge(nodes[col-(radius)][row-(radius)],nodes[col-(radius)][row-(radius)].h_scores));
-                    adj.add(new Edge(nodes[col][row - (radius)], nodes[col][row - (radius)].h_scores));
-                    adj.add(new Edge(nodes[col - (radius)][row], nodes[col - (radius)][row].h_scores));
+                    adj.add(new Edge(nodes[col][row - (radius)], 1));
+                    adj.add(new Edge(nodes[col - (radius)][row], 1));
                     //adj.add(new Edge(nodes[col+radius][row-radius],nodes[col+radius][row-radius].h_scores));
                     //System.out.println(nodes[col][row]==null);
                     nodes[col][row].addAdjancencies(adj);
 
-                    nodes[col - (radius)][row].addAdjancency(new Edge(nodes[col][row], nodes[col][row].h_scores));
+                    nodes[col - (radius)][row].addAdjancency(new Edge(nodes[col][row], 1));
                     // nodes[col-(radius)][row-(radius)].addAdjancency(new Edge(nodes[col][row],nodes[col][row].h_scores));
-                    nodes[col][row - (radius)].addAdjancency(new Edge(nodes[col][row], nodes[col][row].h_scores));
-                    nodes[col - (radius)][row - (radius)].addAdjancency(new Edge(nodes[col][row], nodes[col][row].h_scores));
+                    nodes[col][row - (radius)].addAdjancency(new Edge(nodes[col][row], 1));
+                    nodes[col - (radius)][row - (radius)].addAdjancency(new Edge(nodes[col][row], 1));
                 }
             }
         }
