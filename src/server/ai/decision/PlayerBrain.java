@@ -6,8 +6,8 @@ import server.ai.behaviour.*;
 
 import java.util.Random;
 
-import static server.ai.AIBrain.EmotionalState.*;
 import static server.ai.decision.AIConstants.*;
+import static server.ai.decision.PlayerBrain.EmotionalState.*;
 
 /**
  * Represents the brain of an AI-controlled player, making decisions on the
@@ -16,6 +16,18 @@ import static server.ai.decision.AIConstants.*;
  * Created by rhys on 3/8/17.
  */
 public class PlayerBrain extends AIBrain {
+
+    public enum EmotionalState{
+        INTIMIDATED,
+        IRRITATED,
+        VENGEFUL,
+        AGGRESSIVE,
+        DETERMINED,
+        BORED,
+        AT_REST}
+
+    private EmotionalState curEmotion;
+    private EmotionalState newEmotion;
 
     private Sequence flee;
     private Sequence rage;
@@ -35,12 +47,14 @@ public class PlayerBrain extends AIBrain {
     public PlayerBrain(PlayerIntel intel) {
         super(intel);
         this.intel = intel;
+        this.feel = new Feel(this, check, intel);
         this.gen = new Random();
         this.loadout = new LoadoutHandler(intel.ent());
         this.strategiseDelay = 0;
         this.phaseShiftDelay = 0;
         this.reactionDelay = 0;
         this.stress = STRESS_BORED;
+        this.curEmotion = AT_REST;
     }
 
     protected void constructBehaviours(){
@@ -76,7 +90,7 @@ public class PlayerBrain extends AIBrain {
 
         // Do nothing if dead.
         if (!intel.ent().isAlive()) {
-            newEmotion = BORED;
+            newEmotion = AT_REST;
             return;
         }
 
@@ -90,6 +104,7 @@ public class PlayerBrain extends AIBrain {
 
             case INTIMIDATED:
                 flee.doAction();
+                if (flee.hasFinished()) intel.setEscaped(true);
                 break;
 
             case IRRITATED:
@@ -135,11 +150,29 @@ public class PlayerBrain extends AIBrain {
     }
 
     /**
-     * Determines how the AI Player behaves when it experiences a change in emotion.
+     * @return the current emotional state of the AI Unit this Brain belongs to.
      */
-    protected void handleEmotion() {
+    public EmotionalState getEmotion() {
+        return curEmotion;
+    }
 
-        System.out.println("Emotion changed.");
+    /**
+     * Checks for a change in emotional state, starting the response process in the
+     * case that there has been a change.
+     * @param newEmotion - The upcoming emotional state.
+     */
+    public void setEmotion(EmotionalState newEmotion) {
+        if (newEmotion != this.newEmotion) {
+            this.newEmotion = newEmotion;
+            handleEmotion();
+        }
+    }
+
+    /**
+     * Sets this brains reaction time appropriately for the new emotion.
+     */
+    private void handleEmotion() {
+
         switch (newEmotion) {
             case INTIMIDATED:
                 this.reactionDelay = -REACTION_TIME_LOW;
@@ -159,8 +192,6 @@ public class PlayerBrain extends AIBrain {
      * Determines how the AI Player behaves when it experiences a change in emotion.
      */
     protected void respondToEmotion() {
-
-        System.out.println("Emotion acknowledged.");
 
         behaviours.resetAll();
 

@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PlayerIntel extends Intel {
 
+    private boolean escaped;
     private boolean phaseShiftFailed;
     private boolean orbInOtherPhase;
 
@@ -54,5 +55,13 @@ public class PlayerIntel extends Intel {
 
     public void setPhaseShiftReq(boolean req){
         this.orbInOtherPhase = req;
+    }
+
+    public void setEscaped(boolean escaped){
+        this.escaped = escaped;
+    }
+
+    public boolean haveEscaped(){
+        return escaped;
     }
 }

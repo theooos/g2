@@ -40,7 +40,6 @@ public class Zap extends Task {
     public void doAction() {
         if (target.isAlive()){
             if (ctr == FREQUENCY) {
-                System.out.println("Zapping player " + target.getID());
                 target.damage(24);
                 ctr = 0;
             } else {

@@ -1,18 +1,15 @@
 package server.ai.behaviour;
 
-import objects.PhaseObject;
-import server.ai.AIBrain;
 import server.ai.PlayerTask;
 import server.ai.decision.AIConstants;
 import server.ai.decision.LoadoutHandler;
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
-import server.game.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
+
+import static server.ai.decision.AIConstants.*;
 
 /**
  * Allows the player to decide which attack strategy they will use, based on
@@ -21,10 +18,6 @@ import java.util.Random;
  */
 public class Strategise extends PlayerTask {
 
-    private final float SNIPER_CEIL = 600;
-    private final float SMG_CEIL = 400;
-    private final float SHOTGUN_CEIL = 200;
-    private final float SHOTGUN_OPT = 75;
     private Random gen;
     private LoadoutHandler loadout;
     private ArrayList<Strategy> strategyList;
@@ -50,7 +43,7 @@ public class Strategise extends PlayerTask {
 
     @Override
     public boolean checkConditions() {
-        return (brain.getEmotion() != AIBrain.EmotionalState.BORED);
+        return (brain.getEmotion() != PlayerBrain.EmotionalState.BORED);
     }
 
     @Override
@@ -103,12 +96,10 @@ public class Strategise extends PlayerTask {
         // Act upon selected strategy.
         switch (chosenStrategy){
             case GIVE_UP:
-                System.out.println("Chosen strategy: Not worth the hassle.");
                 brain.setStrategy("ShiftPhase");
                 break;
 
             case SNIPE:
-                System.out.println("Chosen strategy: Snipe.");
                 loadout.equipSniper();
                 int freq = intel.ent().getActiveWeapon().getRefireTime();
                 freq *= 1.5;
@@ -117,15 +108,12 @@ public class Strategise extends PlayerTask {
                 break;
 
             case BUM_RUSH:
-                System.out.println("Chosen strategy: Bum Rush.");
                 loadout.equipSMG();
-                freq = 1; // Dummy value for freq. SMGs are semi-automatic.
-                ((Attack)brain.getBehaviour("Attack")).setParameters(SMG_CEIL, SHOTGUN_OPT, freq);
+                ((Attack)brain.getBehaviour("Attack")).setParameters(SMG_CEIL, SHOTGUN_OPT, 1);
                 brain.setStrategy("Attack");
                 break;
 
             case SPRAY_N_PRAY:
-                System.out.println("Chosen strategy: SprayNPray.");
                 loadout.equipShotgun();
                 freq = intel.ent().getActiveWeapon().getRefireTime();
                 freq *= 1.2;
@@ -134,7 +122,6 @@ public class Strategise extends PlayerTask {
                 break;
 
             case RETREAT_WITH_SHOTGUN:
-                System.out.println("Chosen strategy: Retreat.");
                 loadout.equipShotgun();
                 freq = intel.ent().getActiveWeapon().getRefireTime();
                 freq *= 1.2;
@@ -143,10 +130,8 @@ public class Strategise extends PlayerTask {
                 break;
 
             default:
-                System.out.println("Chosen strategy: Retreat.");
                 loadout.equipSMG();
-                freq = 1;
-                ((Retreat)brain.getBehaviour("Retreat")).setParameters(SHOTGUN_CEIL, SHOTGUN_OPT, freq);
+                ((Retreat)brain.getBehaviour("Retreat")).setParameters(SHOTGUN_CEIL, SHOTGUN_OPT, 1);
                 brain.setStrategy("Retreat");
                 break;
         }

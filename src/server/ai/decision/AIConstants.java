@@ -29,4 +29,9 @@ public final class AIConstants {
 
     public static final int PHASE_SHIFT_DELAY = 120;
     public static final int STRATEGY_RETHINK_DELAY = 120;
+
+    public static final float SNIPER_CEIL = 600;
+    public static final float SMG_CEIL = 400;
+    public static final float SHOTGUN_CEIL = 200;
+    public static final float SHOTGUN_OPT = 75;
 }

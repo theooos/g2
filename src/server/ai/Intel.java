@@ -151,7 +151,6 @@ public abstract class Intel {
      * @param relEnt - the next target player.
      */
     public void setRelevantEntity(MovableEntity relEnt) {
-        if (relEnt instanceof Player) System.out.println("Received Player " + relEnt.getID());
         this.relevantEnt = relEnt;
     }
 
