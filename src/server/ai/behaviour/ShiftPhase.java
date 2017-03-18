@@ -10,8 +10,15 @@ import server.ai.decision.PlayerIntel;
  */
 public class ShiftPhase extends PlayerTask {
 
+    private boolean overrideAuth;
+
     public ShiftPhase(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
+        overrideAuth = false;
+    }
+
+    public void forceAction(){
+        overrideAuth = true;
     }
 
     @Override
@@ -21,14 +28,17 @@ public class ShiftPhase extends PlayerTask {
 
     @Override
     public void doAction() {
-        if (intel.ent().getPhase() == 0){
-            intel.ent().setPhase(1);
-            intel.attemptedPhaseShift(0);
+        if (brain.phaseShiftAuth() || overrideAuth) {
+
+            intel.ent().setPhase(1 - intel.ent().getPhase());
+            if (!intel.validPosition()) {
+                intel.ent().setPhase(1 - intel.ent().getPhase());
+                intel.failedPhaseShift();
+            } else {
+                overrideAuth = false;
+                brain.shiftedPhase();
+            }
+            end();
         }
-        else if (intel.ent().getPhase() == 1){
-            intel.ent().setPhase(0);
-            intel.attemptedPhaseShift(1);
-        }
-        end();
     }
 }

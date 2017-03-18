@@ -11,7 +11,8 @@ import static java.lang.Math.abs;
 
 /**
  * Created by Ciprian on 03/05/17.
- * Class used for Pathfinding .Receives Intel and create a matrix of nodes in order to calculate the shortest route using the A* Algorithm.
+ * Class used for path-finding. Receives Intel and create a matrix of nodes
+ * in order to calculate the shortest route using the A* Algorithm.
  */
 
 public class AStar {

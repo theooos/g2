@@ -20,9 +20,9 @@ public abstract class Intel {
     protected Map map;                    // The map the current game is being played on.
     protected Vector2 targetLocation;     // Where the entity is currently aiming to reach.
     protected MovableEntity relevantEnt;  // The entity this entity is currently interested in.
-    protected Visualiser sight;
     protected ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
+    protected Visualiser sight;
     protected CollisionManager collisionManager;
     public AStar pathfinder;
 
@@ -108,6 +108,7 @@ public abstract class Intel {
      */
     public Vector2 checkpoint(){
         if (path == null) {
+            System.out.println("No checkpoint.");
             return null;
         } else {
             return path.get(0);
@@ -160,18 +161,16 @@ public abstract class Intel {
     public void initForGame(MovableEntity ent, HashMap<Integer, Orb> orbs) {
         this.ent = ent;
         this.allOrbs = orbs;
-        constructVisualiser();
-        collisionManager = new CollisionManager(players, orbs, map);
+        this.collisionManager = new CollisionManager(players, orbs, map);
+        this.sight = new Visualiser(map, players, allOrbs, ent.getID());
     }
 
     public boolean isValidSpace(Vector2 pos){
         return collisionManager.validPosition(pos, ent.getRadius(), ent.getPhase());
     }
 
-    protected abstract void constructVisualiser();
-
-    public ConcurrentHashMap<Integer, Player> getEnemyPlayersInSight(){
-        return sight.getPlayersInSight(ent.getPos().toPoint(), ent.getPhase());
+    public ConcurrentHashMap<Integer, Player> getEnemyPlayersInSight(boolean orbVision){
+        return sight.getPlayersInSight(ent.getPos().toPoint(), ent.getPhase(), orbVision);
     }
 
     public boolean inSight(Vector2 pos){

@@ -21,30 +21,28 @@ public class ForceShiftPhase extends PlayerTask {
     }
 
     @Override
+    public void start(){
+        intel.setEscaped(false);
+    }
+
+    @Override
     public void doAction() {
 
         // If re-attempt is currently ongoing:
         if (brain.getBehaviour("QuickMove").isRunning()){
             brain.getBehaviour("QuickMove").doAction();
         }
-        // If a phase-shift hasn't been attempted yet, try it.
-        else if (!intel.phaseShiftAttempted()) {
-            brain.getBehaviour("ShiftPhase").run();
-        }
-        // If it has, check for failure.
         else {
-            // If phase-shift failed:
-            if (!intel.phaseShiftSuccessful()){
-                // If re-attempt has also failed, give up.
-                if (brain.getBehaviour("QuickMove").hasFinished()){
+            ((ShiftPhase)brain.getBehaviour("ShiftPhase")).forceAction();
+            brain.getBehaviour("ShiftPhase").run();
+            if (intel.phaseShiftFailed()) {
+                if (brain.getBehaviour("QuickMove").hasFinished()) {
                     end();
                 }
-                // if trying for the first time:
                 else {
                     brain.getBehaviour("QuickMove").start();
                 }
             }
-            // If succeeded:
             else {
                 end();
             }

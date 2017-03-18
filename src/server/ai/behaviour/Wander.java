@@ -33,14 +33,12 @@ public class Wander extends Task {
         boolean success = false;
 /*
         while (!success) {
-            System.out.println("Trying...");
-
             float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
             float ranY = (float) gen.nextInt(intel.getMap().getMapLength());
             newPos = new Vector2(ranX, ranY);
 
             // Check if space is valid.
-            success = intel.isValidSpace(newPos) && !intel.inSight(newPos);
+            success = intel.isValidSpace(newPos) && /*!intel.inSight(newPos)*/true;
         }
         */
         intel.setTargetLocation(/*newPos*/intel.getPlayer(0).getPos());

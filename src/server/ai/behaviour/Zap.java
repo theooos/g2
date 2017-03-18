@@ -16,6 +16,7 @@ public class Zap extends Task {
 
     private final double FREQUENCY = 7;
     private double ctr;
+    private MovableEntity target;
 
     public Zap(Intel intel, AIBrain brain) {
         super(intel, brain);
@@ -30,20 +31,23 @@ public class Zap extends Task {
         return (absDistBetween <= 40);
     }
 
-    @Override
-    public void doAction() {
-        if (ctr == FREQUENCY) {
-            MovableEntity target = intel.getRelevantEntity();
-            target.damage(24);
-            ctr = 0;
-        } else {
-            ctr++;
-        }
+    public void start(){
+        super.start();
+        this.target = intel.getRelevantEntity();
     }
 
     @Override
-    public void reset() {
-        super.reset();
+    public void doAction() {
+        if (target.isAlive()){
+            if (ctr == FREQUENCY) {
+                target.damage(24);
+                ctr = 0;
+            } else {
+                ctr++;
+            }
+        } else {
+            end();
+        }
 
     }
 }

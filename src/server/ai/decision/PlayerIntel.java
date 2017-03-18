@@ -14,22 +14,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PlayerIntel extends Intel {
 
-    private boolean phaseShiftAttempted;
-    private int originPhase;
+    private boolean escaped;
+    private boolean phaseShiftFailed;
+    private boolean orbInOtherPhase;
 
     public PlayerIntel(ConcurrentHashMap<Integer, Player> players, Map map){
         super(players, map);
-        phaseShiftAttempted = false;
-        originPhase = 0;
+        this.phaseShiftFailed = false;
     }
 
     public AIPlayer ent(){
         return (AIPlayer) ent;
-    }
-
-    @Override
-    protected void constructVisualiser() {
-        this.sight = new Visualiser(map, players, allOrbs, ent.getID());
     }
 
     public boolean validPosition(){
@@ -40,22 +35,33 @@ public class PlayerIntel extends Intel {
         return sight;
     }
 
-    public void attemptedPhaseShift(int fromPhase){
-        this.phaseShiftAttempted = true;
-        this.originPhase = fromPhase;
+    public void failedPhaseShift(){
+        this.phaseShiftFailed = true;
     }
 
-    public boolean phaseShiftAttempted() {
-        return phaseShiftAttempted;
-    }
-
-    public boolean phaseShiftSuccessful(){
-        boolean r = phaseShiftAttempted;
-        phaseShiftAttempted = false;
-        return r && (ent.getPhase() != originPhase);
+    public boolean phaseShiftFailed(){
+        boolean r = phaseShiftFailed;
+        phaseShiftFailed = false;
+        return r;
     }
 
     public ConcurrentHashMap<Integer, Orb> getOrbsInSight(){
         return sight.getOrbsInSight(ent.getPos().toPoint(), ent.getPhase(), 0);
+    }
+
+    public boolean orbInOtherPhase(){
+        return orbInOtherPhase;
+    }
+
+    public void setPhaseShiftReq(boolean req){
+        this.orbInOtherPhase = req;
+    }
+
+    public void setEscaped(boolean escaped){
+        this.escaped = escaped;
+    }
+
+    public boolean haveEscaped(){
+        return escaped;
     }
 }

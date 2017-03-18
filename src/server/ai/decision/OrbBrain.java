@@ -13,6 +13,7 @@ public class OrbBrain extends AIBrain {
 
     private OrbIntel intel;
     private Sequence drift;     // Allows the Orb to drift aimlessly around the map when it is BORED.
+    private boolean playerNear;
 
     /**
      * Constructs an Orb's Brain - the decision maker of an Orb.
@@ -21,12 +22,14 @@ public class OrbBrain extends AIBrain {
     public OrbBrain(OrbIntel intel) {
         super(intel);
         this.intel = intel;
+        this.playerNear = false;
     }
 
     protected void constructBehaviours(){
         super.constructBehaviours();
         behaviours.addBehaviour(new Float(intel, this), "Float");
     }
+
     /**
      * Arranges the available behaviours into sequences that the Orb
      * will carry out under specific circumstances.
@@ -48,18 +51,11 @@ public class OrbBrain extends AIBrain {
         // Perform checks.
         boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY);
 
-        // Decide emotion.
-        if (playerNear) {
-            setEmotion(EmotionalState.AGGRESSIVE);
-        } else {
-            setEmotion(EmotionalState.BORED);
-        }
-
         // Decide what to do.
-        if (curEmotion == EmotionalState.BORED) {
+        if (!playerNear) {
             drift.doAction();
         }
-        else if (curEmotion == EmotionalState.AGGRESSIVE) {
+        else {
             // Compute/relevantEnt-compute travel path if the target has moved since the last tick.
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
                 intel.setTargetLocation(intel.getRelevantEntity().getPos());
@@ -80,18 +76,25 @@ public class OrbBrain extends AIBrain {
     }
 
     /**
-     * Determines how the Orb behaves when it experiences a change in emotion.
+     * Determines how the Orb behaves when it experiences a change in circumstances.
      */
-    protected void handleEmotion() {
+    private void reactToChange() {
 
-        if (curEmotion == EmotionalState.BORED) {
-            intel.ent().setSpeed(0.5F);
-            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
-            drift.start();
-        } else if (curEmotion == EmotionalState.AGGRESSIVE) {
-            intel.ent().setSpeed(1F);
-            ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
+        boolean tempPN = check.doCheck(Check.CheckMode.PROXIMITY);
 
+        if (tempPN != playerNear){
+            playerNear = tempPN;
+            behaviours.resetAll();
+
+            if (!playerNear) {
+                intel.ent().setSpeed(0.5F);
+                ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
+                drift.start();
+            } else {
+                intel.ent().setSpeed(1F);
+                ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(true);
+                behaviours.getBehaviour("Zap").start();
+            }
         }
     }
 

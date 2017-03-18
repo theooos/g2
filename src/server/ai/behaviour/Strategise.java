@@ -1,10 +1,15 @@
 package server.ai.behaviour;
 
-import server.ai.AIBrain;
 import server.ai.PlayerTask;
+import server.ai.decision.AIConstants;
+import server.ai.decision.LoadoutHandler;
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
-import server.game.*;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import static server.ai.decision.AIConstants.*;
 
 /**
  * Allows the player to decide which attack strategy they will use, based on
@@ -13,84 +18,109 @@ import server.game.*;
  */
 public class Strategise extends PlayerTask {
 
-    public Strategise(PlayerIntel intel, PlayerBrain brain){
+    private Random gen;
+    private LoadoutHandler loadout;
+    private ArrayList<Strategy> strategyList;
+    private Strategy chosenStrategy;
+    private enum Strategy{
+        GIVE_UP,
+        SNIPE,
+        BUM_RUSH,
+        SPRAY_N_PRAY
+    }
+
+    public Strategise(PlayerIntel intel, PlayerBrain brain, LoadoutHandler ldh){
         super(intel, brain);
+        this.loadout = ldh;
+        this.gen = new Random();
+        strategyList = new ArrayList<>();
+        for (Strategy s : Strategy.values()){
+            strategyList.add(s);
+        }
     }
 
     @Override
     public boolean checkConditions() {
-        return (brain.getEmotion() != AIBrain.EmotionalState.BORED);
+        return (brain.getEmotion() != PlayerBrain.EmotionalState.BORED);
     }
 
     @Override
     public void doAction() {
-        brain.resetBehaviours();
 
+        brain.resetBehaviours();
         float distance = intel.ent().getPos().getDistanceTo(intel.getRelevantEntity().getPos());
 
-        // Waiting on ability to calculate range of weapons.
-        // Very basic strategising in the meantime.
-        /*if (haveSniper()) {
-            System.out.println("Sniping!");
-            brain.setStrategy("Fire");
-            equipSniper();
-            brain.getBehaviour("Fire").start();
+        // Determine the "best" strategy to follow.
+        if (distance > SNIPER_CEIL){
+            chosenStrategy = Strategy.GIVE_UP;
+        }
+        else if (distance > SMG_CEIL) {
+            if (loadout.haveSniper()){
+                chosenStrategy = Strategy.SNIPE;
+            }
+            else {
+                chosenStrategy = Strategy.BUM_RUSH;
+            }
+        }
+        else if (distance > SHOTGUN_CEIL) {
+            if (loadout.haveSMG()) {
+                chosenStrategy = Strategy.BUM_RUSH;
+            }
+            else {
+                chosenStrategy = Strategy.SPRAY_N_PRAY;
+            }
+        }
+        else if (distance > SHOTGUN_OPT) {
+            if (loadout.haveShotgun()) {
+                chosenStrategy = Strategy.SPRAY_N_PRAY;
+            } else {
+                chosenStrategy = Strategy.BUM_RUSH;
+            }
         } else {
-            System.out.println("Sprayin'!");*/
-            brain.setStrategy("SprayNPray");
-            equipShotgun();
-            brain.getBehaviour("SprayNPray").start();
+            chosenStrategy = Strategy.GIVE_UP;
+        }
 
-        /*}*/
+        // But will the player make the correct decision?
+        if (gen.nextDouble() < AIConstants.CHANCE_STRATEGIC_ERR) {
+            chosenStrategy = strategyList.get(gen.nextInt(strategyList.size()));
+        }
 
+        // Act upon selected strategy.
+        float maxRange = 0;
+        float targetRange = 0;
+        double freq = 1;
+
+        switch (chosenStrategy){
+            case GIVE_UP:
+                brain.setStrategy("ShiftPhase");
+                break;
+
+            case SNIPE:
+                loadout.equipSniper();
+                freq = 1.5 * intel.ent().getActiveWeapon().getRefireTime();
+                maxRange = SNIPER_CEIL;
+                targetRange = SMG_CEIL;
+                brain.setStrategy("Attack");
+                break;
+
+            case BUM_RUSH:
+                loadout.equipSMG();
+                maxRange = SMG_CEIL;
+                targetRange = SHOTGUN_OPT;
+                brain.setStrategy("Attack");
+                break;
+
+            case SPRAY_N_PRAY:
+                loadout.equipShotgun();
+                freq = intel.ent().getActiveWeapon().getRefireTime();
+                freq *= 1.2;
+                maxRange = SHOTGUN_CEIL;
+                targetRange = SHOTGUN_OPT;
+                brain.setStrategy("Attack");
+                break;
+        }
+        ((Attack)brain.getBehaviour("Attack")).setParameters(maxRange, targetRange, (int) Math.floor(freq));
+        brain.executeStrategy();
         end();
     }
-
-    /**
-     * Checks whether or not the player possesses a sniper.
-     * @return true if the player has a sniper.
-     */
-    private boolean haveSniper(){
-        return (intel.ent().getWeapon1() instanceof WeaponSniper) ||
-                (intel.ent().getWeapon2() instanceof WeaponSniper);
-    }
-
-    /**
-     * Sets the player's current weapon to the sniper.
-     * Assumes prior confirmation that the player does indeed possess a sniper.
-     */
-    private void equipSniper(){
-        if (!(intel.ent().getActiveWeapon() instanceof WeaponSniper)) {
-            intel.ent().toggleWeapon();
-        }
-    }
-
-    /**
-     * Checks whether or not the player possesses an SMG.
-     * @return true if the player has a SMG.
-     */
-    private boolean haveSMG(){
-        return (intel.ent().getWeapon1() instanceof WeaponSMG) ||
-                (intel.ent().getWeapon2() instanceof WeaponSMG);
-    }
-
-    /**
-     * Checks whether or not the player possesses a shotgun.
-     * @return true if the player has a shotgun.
-     */
-    private boolean haveShotgun(){
-        return (intel.ent().getWeapon1() instanceof WeaponShotgun) ||
-                (intel.ent().getWeapon2() instanceof WeaponShotgun);
-    }
-
-    /**
-     * Sets the player's current weapon to the shotgun.
-     * Assumes prior confirmation that the player does indeed possess a shotgun.
-     */
-    private void equipShotgun() {
-        if (!(intel.ent().getActiveWeapon() instanceof WeaponShotgun)) {
-            intel.ent().toggleWeapon();
-        }
-    }
-
 }

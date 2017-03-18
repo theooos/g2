@@ -1,10 +1,7 @@
 package server.ai.decision;
 
 import server.ai.Intel;
-import server.game.MovableEntity;
-import server.game.Orb;
-import server.game.Player;
-import server.game.Vector2;
+import server.game.*;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,7 +21,8 @@ public class Check {
         CLOSEST_ENEMY}
 
     private final int LOW_HEALTH_THRESHOLD = 30;
-    private Intel intel;        // The intelligence this object uses to perform its checks.
+    private Intel intel;
+    private final boolean orbCheck;
 
     /**
      * Constructs a check object that utilises a given Intel object.
@@ -32,6 +30,7 @@ public class Check {
      */
     public Check(Intel intel){
         this.intel = intel;
+        this.orbCheck = intel instanceof OrbIntel;
     }
 
     /**
@@ -71,14 +70,32 @@ public class Check {
     }
 
     private boolean orbNearbyCheck(){
+        Player me = (Player) intel.ent();
+
+        // Check for orbs in the current phase first.
+        ConcurrentHashMap<Integer, Orb> threats =
+                ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(), me.getPhase(), 150);
+        if (threats.size() > 0){
+            targetNearestThreat(threats);
+            ((PlayerIntel)intel).setPhaseShiftReq(false);
+            return true;
+        }
+
+        // Then check for orbs in the other phase.
+        threats = ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(), 1 - me.getPhase(), 50);
+        if (threats.size() > 0){
+            targetNearestThreat(threats);
+            ((PlayerIntel)intel).setPhaseShiftReq(true);
+            return true;
+        }
+        ((PlayerIntel)intel).setPhaseShiftReq(false);
         return false;
-        //if (((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(intel.ent().getPos(), intel.ge) )
     }
 
     private boolean proximityCheck(){
-        ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight();
+        ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight(orbCheck);
         if (playersInSight.size() > 0){
-            targetNearestPlayer(playersInSight);
+            targetNearestThreat(playersInSight);
             return true;
         }
         else {
@@ -106,14 +123,18 @@ public class Check {
         Vector2 playerAt = intel.getRelevantEntity().getPos();
         float distance = targetPos.getDistanceTo(playerAt);
         float accErr = intel.ent().getRadius();
-        return (distance > accErr);
+        if (distance > accErr) {
+            intel.setTargetLocation(playerAt);
+            return true;
+        }
+        return false;
     }
 
     private boolean closestEnemyCheck(){
         MovableEntity closestEnt = null;
         float closestDist = -1;
 
-        ConcurrentHashMap<Integer, Player> risks1 = intel.getEnemyPlayersInSight();
+        ConcurrentHashMap<Integer, Player> risks1 = intel.getEnemyPlayersInSight(orbCheck);
         for (java.util.Map.Entry<Integer, Player> e : risks1.entrySet()){
             float distance = intel.ent().getPos().getDistanceTo(e.getValue().getPos());
             if (closestDist < 0 || distance < closestDist){
@@ -139,20 +160,21 @@ public class Check {
     }
 
     /**
-     * For efficiency purposes, targets the nearest enemy player upon detection and
-     * stores the player in the intel object.
-     * @param playersInSight - the enemy players within visible range.
+     * For efficiency purposes, targets the nearest threat from a given collection
+     * and stores the entity in the intel object.
+     * @param threats - the collection of threats to be range-checked.
      */
-    private void targetNearestPlayer(ConcurrentHashMap<Integer, Player> playersInSight){
+    private <E extends MovableEntity> void targetNearestThreat(ConcurrentHashMap<Integer, E> threats){
         float closestDistance = -1;
-        Player closestPlayer = null;
-        for (java.util.Map.Entry<Integer, Player> p : playersInSight.entrySet()){
+        MovableEntity closestThreat = null;
+        for (java.util.Map.Entry<Integer, E> p : threats.entrySet()){
             float thisDistance = intel.ent().getPos().getDistanceTo(p.getValue().getPos());
             if (closestDistance < 0 || thisDistance < closestDistance){
                 closestDistance = thisDistance;
-                closestPlayer = p.getValue();
+                closestThreat = p.getValue();
             }
         }
-        intel.setRelevantEntity(closestPlayer);
+        intel.setRelevantEntity(closestThreat);
+
     }
 }

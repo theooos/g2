@@ -1,6 +1,7 @@
 package server.ai.behaviour;
 
 import server.ai.PlayerTask;
+import server.ai.decision.AIConstants;
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
 import server.game.Vector2;
@@ -10,36 +11,46 @@ import server.game.Vector2;
  */
 public class Fire extends PlayerTask {
 
-    private int timer;
+    private int fireFreq;
+    private int fireDelay;
 
     public Fire(PlayerIntel intel, PlayerBrain brain) {
         super(intel, brain);
-        this.timer = 0;
     }
 
     public boolean checkConditions(){
         return (intel.getRelevantEntity()!= null);
     }
 
+    public void setParameters(int fireFreq){
+        this.fireFreq = fireFreq;
+    }
+
+    @Override
+    public void start(){
+        super.start();
+        fireDelay = 0;
+    }
+
     public void doAction(){
-        timer++;
 
+        // Set the player to face the player.
         Vector2 dir = intel.ent().getPos().vectorTowards(intel.getRelevantEntity().getPos());
-        dir = Vector2.deviate(dir, 2);
-        intel.ent().setDir(dir);
 
-        // Fire as often as possible (give or take):
-        int fireFreq = intel.ent().getActiveWeapon().getRefireTime() + 10;
-        if (timer == fireFreq) {
+        //int inaccuracy = (int) Math.ceil(brain.getStressLevel() * AIConstants.MAX_AIM_INACCURACY);
+        //dir = Vector2.deviate(dir, inaccuracy);
+
+        // Fire - if the weapon will allow.
+        if (fireDelay == 0 || intel.ent().getActiveWeapon().isFullyAuto()) {
+            intel.ent().setDir(dir.normalise());
             intel.ent().setFiring(true);
-            System.out.println(intel.ent());
-            System.out.println("Firing in AI player");
         }
 
-        // After every 30th tick.
-        if (timer > fireFreq) {
+        else if ((fireDelay == 1) && !intel.ent().getActiveWeapon().isFullyAuto()) {
             intel.ent().setFiring(false);
-            timer = 0;
+            fireDelay = -fireFreq;
         }
+
+        fireDelay++;
     }
 }

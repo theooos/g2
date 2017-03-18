@@ -177,6 +177,7 @@ public class Game implements Runnable {
                 }
                 if (p.isFiring()) fire(p);
                 p.live();
+
             }
             for (Orb o : orbs.values()) {
                 if (!o.isAlive()) respawn(o);
@@ -408,7 +409,7 @@ public class Game implements Runnable {
         Weapon w = player.getActiveWeapon();
         //out("ID"+player.getID()+": Tries to fire");
         if (w.canFire()) {
-            out("ID"+player.getID()+": Just Fired");
+            //out("ID"+player.getID()+": Just Fired");
             ArrayList<Projectile> ps = w.getShots(player);
             for (Projectile p: ps) {
                 p.setID(IDCounter);
@@ -423,5 +424,4 @@ public class Game implements Runnable {
             System.out.println(o);
         }
     }
-
 }
