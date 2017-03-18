@@ -69,7 +69,7 @@ public class GameManager {
                 break;
             case GAMEOVER:
                 TextRenderer textRenderer = new TextRenderer();
-                textRenderer.drawText("Game over. To be changed.", 0, 0);
+                textRenderer.drawText("Game over. To be changed.", 0, 50);
         }
     }
 
@@ -85,8 +85,8 @@ public class GameManager {
     }
 
     private void rotatePowerUps() {
-        gameRenderer.rotation += 1.5f;
-        gameRenderer.rotation %= 360;
+        gameRenderer.powerUpRotation += 1.5f;
+        gameRenderer.powerUpRotation %= 360;
     }
 
     private void pollMouse(Player me) {
@@ -190,6 +190,10 @@ public class GameManager {
                             muted = false;
                             muteEverything();
                         }
+                        break;
+
+                    case Keyboard.KEY_C:
+                        gameRenderer.flipDisplayCollisions();
                         break;
                 }
             }

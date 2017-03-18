@@ -8,29 +8,30 @@ import server.game.*;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GameRenderer {
-    private Draw draw = new Draw();
-    private Pulse pulse;
+class GameRenderer {
     private GameData gameData;
     private int playerID;
+
     private MapRenderer map;
     private CollisionManager collisionManager;
-    public float rotation;
-    private boolean displayCollisions;
+    private boolean displayCollisions = false;
 
-    public GameRenderer(GameData gameData, int playerID, CollisionManager collisionManager) {
+    private Draw draw = new Draw();
+    private Pulse pulse;
 
+    float powerUpRotation;
+
+    GameRenderer(GameData gameData, int playerID, CollisionManager collisionManager) {
         this.gameData = gameData;
         this.playerID = playerID;
         map = new MapRenderer(gameData.getMapID());
         this.collisionManager = collisionManager;
-        rotation = 0;
         Player me = gameData.getPlayer(playerID);
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
-        displayCollisions = false;
+        powerUpRotation = 0;
     }
 
-    public void render() {
+    void render() {
         Player p = gameData.getPlayer(playerID);
         int phase = p.getPhase();
         draw.colourBackground(phase);
@@ -57,7 +58,7 @@ public class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
-    void positionBullet(Vector2 pos, Vector2 dir) {
+    private void positionBullet(Vector2 pos, Vector2 dir) {
         Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
         float lastX = cursor.getX();
         float lastY = cursor.getY();
@@ -66,7 +67,7 @@ public class GameRenderer {
             draw.drawCircle(lastX, lastY, 10, 50);
     }
 
-    void drawCollisions() {
+    private void drawCollisions() {
         Player p = new Player(gameData.getPlayer(playerID));
         GL11.glColor4f(1, 0, 0, 0.5f);
         for (int i = 0; i < ClientSettings.SCREEN_WIDTH; i += 10) {
@@ -79,9 +80,8 @@ public class GameRenderer {
         }
     }
 
-    void drawStencil() {
-        int newPhase = pulse
-                .getNewPhase();
+    private void drawStencil() {
+        int newPhase = pulse.getNewPhase();
         int oldPhase = 1;
         if (newPhase == 1) oldPhase = 0;
 
@@ -132,7 +132,7 @@ public class GameRenderer {
 
     }
 
-    void drawPlayers(int phase) {
+    private void drawPlayers(int phase) {
         ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
         int radius = players.get(0).getRadius();
         float red;
@@ -165,7 +165,7 @@ public class GameRenderer {
         }
     }
 
-    void drawOrbs(int phase) {
+    private void drawOrbs(int phase) {
         HashMap<Integer, Orb> orbs = gameData.getOrbs();
         Player me = gameData.getPlayer(playerID);
         float red;
@@ -197,7 +197,7 @@ public class GameRenderer {
         }
     }
 
-    void drawProjectiles(int phase) {
+    private void drawProjectiles(int phase) {
         ConcurrentHashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
         float red;
         float green;
@@ -221,7 +221,7 @@ public class GameRenderer {
         }
     }
 
-    void drawPowerUps(int phase) {
+    private void drawPowerUps(int phase) {
         HashMap<Integer, PowerUp> powerUps = gameData.getPowerUps();
         float red;
         float green;
@@ -238,16 +238,16 @@ public class GameRenderer {
                     blue = 0.1f;
                 }
                 float radius = p.getRadius();
-                draw.drawQuad(p.getPos(), rotation, radius, red, green, blue);
+                draw.drawQuad(p.getPos(), powerUpRotation, radius, red, green, blue);
             }
         }
     }
 
-    public void setPulse(Pulse pulse){
+    void setPulse(Pulse pulse) {
         this.pulse = pulse;
     }
 
-    public void flipDisplayCollisions(){
+    void flipDisplayCollisions() {
         displayCollisions = !displayCollisions;
     }
 }
