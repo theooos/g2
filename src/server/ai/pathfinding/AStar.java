@@ -39,6 +39,7 @@ public class AStar {
         List<Node> path = new ArrayList<>();
 
         for(Node node = target; node!=null; node = node.parent){
+            System.out.println(node.h_scores);
             path.add(node);
         }
         Collections.reverse(path);
@@ -67,6 +68,7 @@ public class AStar {
      */
     private boolean closeToWall(Node node,ArrayList<Wall> walls,int radius)
     {
+
         int x=node.getX();
         int y=node.getY();
         boolean isCloseToWall = false;
@@ -88,13 +90,13 @@ public class AStar {
 
             if(isOnTheSameLine)
          {{
-             Rectangle w = new Rectangle(startX-3*radius,startY-3*radius,endX-startX+7*radius,6*radius+10);
+             Rectangle w = new Rectangle(startX-radius,startY-6*radius,endX-startX+12*radius,6*radius+10);
              if (w.contains(nodePos)) isCloseToWall=true;
          }}
             else
 
             {
-                Rectangle w = new Rectangle(startX - 3*radius , startY - radius , 7      * radius + 10, endY - startY + 6 * radius);
+                Rectangle w = new Rectangle(startX - 6*radius , startY - 6*radius , 12* radius + 10, endY - startY + 6 * radius);
                 if (w.contains(nodePos)) isCloseToWall = true;
             }
         }
@@ -132,12 +134,14 @@ public class AStar {
 
         for ( int row = (radius); row < (height - (radius)); row+=radius )
         {
+
+           // System.out.println();
             for ( int col = (radius); col < (width - (radius)); col+=radius ) {
 
 
                 nodes[col][row] = new Node(new Vector2(col, row), this.intel.ent().getRadius(), phase, intel, goal.coordinates());
-
-                if (!closeToWall(nodes[col][row],walls,radius)) {
+               // System.out.print(nodes[col][row].h_scores+" ");
+                if (!closeToWall(nodes[col][row],walls,radius)&& nodes[col][row].h_scores<100000) {
                     //System.out.println("Col: " + col);
 
                     ArrayList<Edge> adj = new ArrayList<Edge>();
@@ -177,7 +181,8 @@ public class AStar {
 
         for (int row = radius; row < (intel.getMap().getMapLength() - radius); row += radius)
             for (int col = radius; col < (intel.getMap().getMapWidth() - radius); col += radius) {
-               if(abs (nodes[col][row].getX()-x)+abs(nodes[col][row].getY()-y)<min)
+               if(nodes[col][row].h_scores<100000)
+                if(abs (nodes[col][row].getX()-x)+abs(nodes[col][row].getY()-y)<min)
 
                {
                    min=abs (nodes[col][row].getX()-x)+abs(nodes[col][row].getY()-y);
@@ -202,11 +207,11 @@ public class AStar {
 
         Set<Node> explored = new HashSet<Node>();
         //    System.out.println("Checking if it s receiving what it should-->"+source.adjacencies.toString());
-        PriorityQueue<Node> queue = new PriorityQueue<Node>(200,
+        PriorityQueue<Node> queue = new PriorityQueue<Node>(20000,
                 new Comparator<Node>(){
                     //override compare method
                     public int compare(Node i, Node j){
-                        if(i.f_scores > j.f_scores){
+                        if(i.f_scores < j.f_scores){
                             return 1;
                         }
 
@@ -245,6 +250,7 @@ public class AStar {
 
             //check every child of current node
             for(Edge e : current.adjacencies){
+
                 Node child = e.target;
                 double cost = e.cost;
               //  System.out.print(cost+" ");
@@ -256,15 +262,15 @@ public class AStar {
                                 the newer f_score is higher, skip*/
 
                 if((explored.contains(child)) &&
-                        (temp_f_scores >= child.f_scores)){
+                        (temp_f_scores >= child.f_scores )){
                     continue;
                 }
 
                                 /*else if child node is not in queue or
                                 newer f_score is lower*/
 
-                else if((!queue.contains(child)) ||
-                        (temp_f_scores < child.f_scores)){
+                else if(((!queue.contains(child)) ||
+                        (temp_f_scores < child.f_scores))){
 
                     child.parent = current;
                     child.g_scores = temp_g_scores;
@@ -275,6 +281,7 @@ public class AStar {
                     }
 
                     queue.add(child);
+
 
                 }
 

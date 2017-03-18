@@ -72,7 +72,7 @@ public class Node{
      */
     public boolean checkCollision()
     {
-        return collisions.validPosition(coordinates(),getRadius()*3,getPhase());
+        return collisions.validPosition(coordinates(),getRadius(),getPhase());
     }
 
     /**
@@ -84,8 +84,8 @@ public class Node{
     {
 
         if(checkCollision())
-            return abs((int)enemy.getX()-this.getX())+abs((int) enemy.getY()-this.getY());//calculates the absolute value of the manhattan distance
-    return abs((int)enemy.getX()-this.getX())+abs((int) enemy.getY()-this.getY())+10000;//if the coordinates are walls then we will minimise the cost as much as possible
+            return abs((int)enemy.getX()-this.getX())+abs((int) enemy.getY()-this.getY()/10);//calculates the absolute value of the manhattan distance
+    return abs((int)enemy.getX()-this.getX())+abs((int) enemy.getY()-this.getY())+999999999;//if the coordinates are walls then we will minimise the cost as much as possible
     }
 
     /**

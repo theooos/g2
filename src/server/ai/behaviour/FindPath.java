@@ -40,7 +40,7 @@ public class FindPath extends Task {
     @Override
     public void doAction() {
 
-        System.out.println("Working out how to get there.");
+       // System.out.println("Working out how to get there.");
 
         ArrayList<Vector2> path = new ArrayList<>();
 
@@ -50,14 +50,14 @@ public class FindPath extends Task {
         }
         else {
 
-            System.out.println("Using A*.");
+           // System.out.println("Using A*." + intel.ent().getRadius());
 
             Node target=new Node(intel.getTargetLocation(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
             Node start=new Node(intel.ent().getPos(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
 
             intel.pathfinder().makeGraph(target,intel.ent().getPhase());
-            Vector2 newTarget=intel.pathfinder.getClosestNode(target,intel.ent().getRadius());
-            Vector2 newStart=intel.pathfinder.getClosestNode(start,intel.ent().getRadius());
+            Vector2 newTarget=intel.pathfinder.getClosestNode(target,intel.ent().getRadius()*2);
+            Vector2 newStart=intel.pathfinder.getClosestNode(start,intel.ent().getRadius()*2);
             intel.pathfinder().AstarSearch(intel.pathfinder.getNode((int) newStart.getY(),(int) newStart.getX()),intel.pathfinder.getNode((int) newTarget.getY(),(int) newTarget.getX()));
 
             List<Node> printPath=intel.pathfinder().printPath(intel.pathfinder.getNode((int) newTarget.getY(),(int) newTarget.getX()));
@@ -66,9 +66,10 @@ public class FindPath extends Task {
                 path.add(new Vector2(node.getX(), node.getY()));
             }
 
+
             intel.resetPath(path);
         }
-        System.out.println("Succeeding.");
+      //  System.out.println("Succeeding.");
 
         end();
     }
