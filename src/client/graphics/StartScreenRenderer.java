@@ -106,12 +106,12 @@ public class StartScreenRenderer {
 
     private void readyInterfaceLayer() {
         about = new InterfaceTexture(ISprite.ABOUT);
-        instructions = new InterfaceTexture(ISprite.HELP);
+        instructions = new InterfaceTexture(ISprite.CONTROLS);
         join_game = new InterfaceTexture(ISprite.LOBBY);
 
         background.spawn(0,new Vector2f(400f,300f),PHASE,interfaceLayer);
-        join_game.spawn(1, new Vector2f(400f, 450f), PHASE, interfaceLayer);
-        instructions.spawn(2, new Vector2f(400f, 250f), PHASE, interfaceLayer);
+        join_game.spawn(1, new Vector2f(400f, 330f), PHASE, interfaceLayer);
+        instructions.spawn(2, new Vector2f(400f, 240f), PHASE, interfaceLayer);
         about.spawn(3, new Vector2f(400f, 150f), PHASE, interfaceLayer);
     }
 
@@ -138,8 +138,6 @@ public class StartScreenRenderer {
 
     private void renderInterface() {
         interfaceLayer.render(PHASE);
-        TextRenderer textRenderer = new TextRenderer();
-        textRenderer.drawText("Test", 0, 0);
     }
 
     private void renderAbout() {

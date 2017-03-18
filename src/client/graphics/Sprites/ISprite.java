@@ -21,7 +21,7 @@ public interface ISprite {
     int WALL_P2 = 9;
 
     int START = 10;
-    int HELP = 11;
+    int CONTROLS = 11;
     int ABOUT = 12;
 
     int OPTIONS = 13;
