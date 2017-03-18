@@ -50,6 +50,8 @@ public class TextureLoader {
         textures[ISprite.ENDGAME] = loadTexture("endgame.png",0,0,29,7);
 
         textures[ISprite.COLLISION] = loadTexture("collision.png", 0,0, 50,50);
+        textures[ISprite.BACKGROUND] = loadTexture("background.png",0,0,800,600);
+        textures[ISprite.SCOREBOARD] = loadTexture("scoreboard.png",0,0,800,600);
     }
 
 

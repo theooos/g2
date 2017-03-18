@@ -1,5 +1,7 @@
 package client.graphics;
 
+import client.graphics.Sprites.ISprite;
+import client.graphics.Sprites.InterfaceTexture;
 import objects.GameData;
 
 /**
@@ -13,6 +15,22 @@ class InGameMenuRenderer {
     InGameMenuRenderer(GameData gameData, int playerID) {
         this.gameData = gameData;
         this.playerID = playerID;
+    }
+
+    void readyMenuLayer(){
+        InterfaceTexture background = new InterfaceTexture(ISprite.BACKGROUND);
+    }
+
+    void handleClickedMenu(){
+
+    }
+
+    void handleClickedScoreboard(){
+
+    }
+
+    void handleClickedEndScreen(){
+
     }
 
     void renderMenu(){

@@ -19,6 +19,7 @@ public class StartScreenRenderer {
 
     private Screen currentScreen = Screen.MAIN;
 
+    private InterfaceTexture background = new InterfaceTexture(ISprite.BACKGROUND);
     private InterfaceTexture about;
     private InterfaceTexture instructions;
     private InterfaceTexture about_text;
@@ -108,9 +109,10 @@ public class StartScreenRenderer {
         instructions = new InterfaceTexture(ISprite.HELP);
         join_game = new InterfaceTexture(ISprite.LOBBY);
 
-        about.spawn(1, new Vector2f((float) 300.0, (float) 100.0), PHASE, interfaceLayer);
-        instructions.spawn(2, new Vector2f((float) 300.0, (float) 250.0), PHASE, interfaceLayer);
-        join_game.spawn(0, new Vector2f((float) 300.0, (float) 400.0), PHASE, interfaceLayer);
+        background.spawn(0,new Vector2f(400f,300f),PHASE,interfaceLayer);
+        join_game.spawn(1, new Vector2f(400f, 450f), PHASE, interfaceLayer);
+        instructions.spawn(2, new Vector2f(400f, 250f), PHASE, interfaceLayer);
+        about.spawn(3, new Vector2f(400f, 150f), PHASE, interfaceLayer);
     }
 
     private void readyAboutLayer() {
