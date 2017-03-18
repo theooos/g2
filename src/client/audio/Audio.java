@@ -21,16 +21,16 @@ import java.util.TimerTask;
  * 4. You can use the static variable SoundEffect.volume to mute the sound.
  */
 
-public enum GameEffects {
+public enum Audio {
 
 
-    GAMEMUSIC(GameEffects.class.getResource("../../moz.wav")),        // music
-    SHOOT(GameEffects.class.getResource("../../lasershoot.wav")),
-    SHOOT2(GameEffects.class.getResource("../../shoot2.wav")),
-    INTERFACEBACKGROUND(GameEffects.class.getResource("../../backmusic.wav")),
-    PHASE(GameEffects.class.getResource("../../phase.wav")),
-    COUNTDOWN(GameEffects.class.getResource("../../countdown.wav")),
-    WARNING(GameEffects.class.getResource("../../warning.wav"));
+    GAMEMUSIC(Audio.class.getResource("../../moz.wav")),        // music
+    SHOOT(Audio.class.getResource("../../lasershoot.wav")),
+    SHOOT2(Audio.class.getResource("../../shoot2.wav")),
+    INTERFACEBACKGROUND(Audio.class.getResource("../../backmusic.wav")),
+    PHASE(Audio.class.getResource("../../phase.wav")),
+    COUNTDOWN(Audio.class.getResource("../../countdown.wav")),
+    WARNING(Audio.class.getResource("../../warning.wav"));
 
     // Nested class for specifying volume
     public static enum Volume {
@@ -45,7 +45,7 @@ public enum GameEffects {
     private Timer timer;
 
     // Constructor to construct each element of the enum with its own sound file.
-    GameEffects(URL soundFileName) {
+    Audio(URL soundFileName) {
         try {
             timer = new Timer();
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFileName);
@@ -97,12 +97,11 @@ public enum GameEffects {
                 playallTime();
             }
         }, seconds*1000);
-
     }
 
     public void SetLowVolume()
     {
-        GameEffects.volume = GameEffects.Volume.LOW;
+        Audio.volume = Audio.Volume.LOW;
     }
     // Optional static method to pre-load all the sound files.
     public static void init() {

@@ -1,6 +1,6 @@
 package client.graphics;
 
-import client.audio.GameEffects;
+import client.audio.Audio;
 import client.logic.GameData;
 import networking.Connection;
 import objects.FireObject;
@@ -116,19 +116,19 @@ public class GameRenderer {
         {
             healthbar=false;
             gameMusic = true;
-            GameEffects.GAMEMUSIC.stopClip();
-            GameEffects.WARNING.playallTime();
+            Audio.GAMEMUSIC.stopClip();
+            Audio.WARNING.playallTime();
         }
         else if(me.getHealth()>25 && gameMusic && muted)
         {
             gameMusic = false;
             healthbar = true;
-            GameEffects.WARNING.stopClip();
-            GameEffects.GAMEMUSIC.playallTime();
+            Audio.WARNING.stopClip();
+            Audio.GAMEMUSIC.playallTime();
         }
         else if(muted)
         {
-            GameEffects.GAMEMUSIC.playallTime();
+            Audio.GAMEMUSIC.playallTime();
         }
         Vector2 pos = me.getPos();
         float xPos = pos.getX();
@@ -153,7 +153,7 @@ public class GameRenderer {
         if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
             fDown = true;
             if(muted)
-            GameEffects.PHASE.play();
+            Audio.PHASE.play();
         } else if (fDown) {
             fDown = false;
             int newPhase = 0;
@@ -206,9 +206,9 @@ public class GameRenderer {
             }
         } else if (clickDown) {
             if(me.activeWeapon()==1 && muted)
-            GameEffects.SHOOT2.play();
+            Audio.SHOOT2.play();
             else if(muted) {
-                GameEffects.SHOOT.play();
+                Audio.SHOOT.play();
             }
             conn.send(new FireObject(me.getID(), false));
             clickDown = false;
@@ -441,9 +441,9 @@ public class GameRenderer {
 
     private void muteEverything()
     {
-        GameEffects.SHOOT.stopClip();
-        GameEffects.SHOOT.stopClip();
-        GameEffects.GAMEMUSIC.stopClip();
-        GameEffects.WARNING.stopClip();
+        Audio.SHOOT.stopClip();
+        Audio.SHOOT.stopClip();
+        Audio.GAMEMUSIC.stopClip();
+        Audio.WARNING.stopClip();
     }
 }
