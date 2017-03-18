@@ -116,7 +116,7 @@ public class Visualiser {
                 }
             }
 
-            if (!interested) {
+            if (interested) {
                 int pID = p.getKey();
                 visOrbs.put(pID, orbs.get(pID));
             }

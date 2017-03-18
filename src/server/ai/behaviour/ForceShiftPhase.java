@@ -23,8 +23,6 @@ public class ForceShiftPhase extends PlayerTask {
     @Override
     public void doAction() {
 
-        System.out.println("Forcing phase shift.");
-
         // If re-attempt is currently ongoing:
         if (brain.getBehaviour("QuickMove").isRunning()){
             brain.getBehaviour("QuickMove").doAction();

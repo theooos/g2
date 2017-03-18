@@ -50,30 +50,30 @@ public class Attack extends PlayerTask {
 
         // Recompute travel path if necessary.
         if (brain.performCheck(Check.CheckMode.TARGET_MOVED)) {
-            System.out.println("Target moved: Recomputing path.");
+            //System.out.println("Target moved: Recomputing path.");
             brain.getBehaviour("FindPath").run();
         }
 
         // Check if the target is in firing range.
         float distance = me.getPos().getDistanceTo(target.getPos());
         if (distance < maxRange) {
-            System.out.println("Target in range.");
+            //System.out.println("Target in range.");
             brain.getBehaviour("Fire").doAction();
 
             if (distance > minRange) {
-                System.out.println("Could be closer.");
+                //System.out.println("Could be closer.");
                 brain.getBehaviour("Travel").doAction();
             }
         }
         else {
-            System.out.println("Getting into range.");
+            //System.out.println("Getting into range.");
             me.setFiring(false);
             brain.getBehaviour("Travel").doAction();
         }
 
         if (!target.isAlive()){
             me.setFiring(false);
-            System.out.println("Mission accomplished.");
+            //System.out.println("Mission accomplished.");
             end();
         }
     }

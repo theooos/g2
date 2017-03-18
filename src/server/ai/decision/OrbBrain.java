@@ -73,7 +73,7 @@ public class OrbBrain extends AIBrain {
                 }
                 // Or, if the target is in range, zap them.
                 else {
-                    behaviours.getBehaviour("Zap").doAction();
+                    behaviours.getBehaviour("Zap").run();
                 }
             }
         }

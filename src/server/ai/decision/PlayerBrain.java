@@ -37,9 +37,10 @@ public class PlayerBrain extends AIBrain {
         this.intel = intel;
         this.gen = new Random();
         this.loadout = new LoadoutHandler(intel.ent());
-        strategiseDelay = 0;
-        phaseShiftDelay = 0;
-        reactionDelay = 0;
+        this.strategiseDelay = 0;
+        this.phaseShiftDelay = 0;
+        this.reactionDelay = 0;
+        this.stress = STRESS_BORED;
     }
 
     protected void constructBehaviours(){
@@ -109,6 +110,11 @@ public class PlayerBrain extends AIBrain {
 
                 // Execute strategy.
                 currentStrategy.doAction();
+
+                if (currentStrategy.hasFinished()){
+                    behaviours.resetAll();
+                    behaviours.getBehaviour("Strategise").run();
+                }
                 break;
 
             case DETERMINED:

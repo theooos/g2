@@ -59,7 +59,6 @@ public class Check {
         }
         else if (mode == CheckMode.TARGET_MOVED) {
             boolean r = targetMovedCheck();
-            System.out.println("Performing Target moved check: " + r);
             return r;
         }
         else if (mode == CheckMode.CLOSEST_ENEMY) {
@@ -98,6 +97,7 @@ public class Check {
     private boolean proximityCheck(){
         ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight(orbCheck);
         if (playersInSight.size() > 0){
+            System.out.println("Players in sight: " + playersInSight.size());
             targetNearestThreat(playersInSight);
             return true;
         }
@@ -171,6 +171,7 @@ public class Check {
         float closestDistance = -1;
         MovableEntity closestThreat = null;
         for (java.util.Map.Entry<Integer, E> p : threats.entrySet()){
+            System.out.println("Checking distance for #" + p.getValue().getID());
             float thisDistance = intel.ent().getPos().getDistanceTo(p.getValue().getPos());
             if (closestDistance < 0 || thisDistance < closestDistance){
                 closestDistance = thisDistance;
@@ -178,5 +179,7 @@ public class Check {
             }
         }
         intel.setRelevantEntity(closestThreat);
+        System.out.println("Closest is #" + closestThreat.getID());
+
     }
 }

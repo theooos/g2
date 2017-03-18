@@ -41,10 +41,11 @@ public class Fire extends PlayerTask {
         intel.ent().setDir(dir);
 
         // Fire - if the weapon will allow.
-        if (fireDelay++ == 0 || intel.ent().getActiveWeapon().isFullyAuto()) intel.ent().setFiring(true);
-        else if ((fireDelay > 1) && !intel.ent().getActiveWeapon().isFullyAuto()) {
+        if (fireDelay == 0 || intel.ent().getActiveWeapon().isFullyAuto()) intel.ent().setFiring(true);
+        else if ((fireDelay == 1) && !intel.ent().getActiveWeapon().isFullyAuto()) {
             intel.ent().setFiring(false);
-            fireDelay = fireFreq;
+            fireDelay = -fireFreq;
         }
+        fireDelay++;
     }
 }

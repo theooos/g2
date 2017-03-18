@@ -52,6 +52,7 @@ public class Travel extends PlayerTask {
                 intel.nextCheckpoint();
             }
         }
+        me.setDir(target.normalise());
     }
 
     @Override
