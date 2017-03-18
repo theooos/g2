@@ -2,12 +2,8 @@ package client.graphics;
 
 import client.ClientSettings;
 import client.audio.Audio;
-import objects.GameData;
+import objects.*;
 import networking.Connection;
-import objects.FireObject;
-import objects.MoveObject;
-import objects.PhaseObject;
-import objects.SwitchObject;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -25,6 +21,9 @@ import static org.lwjgl.opengl.GL11.glDepthMask;
  * Provides the visuals for the game itself.
  */
 public class GameRenderer {
+
+    private enum Mode {GAME,MENU,SCOREBOARD,GAMEOVER}
+    private Mode mode = Mode.GAME;
 
     private static boolean gameRunning = true;
 
@@ -47,7 +46,6 @@ public class GameRenderer {
     private boolean healthbar;
     private boolean gameMusic;
     private boolean muted;
-
 
     private Draw draw;
     private Pulse pulse;
@@ -81,35 +79,36 @@ public class GameRenderer {
         map = new MapRenderer(gd.getMapID());
         Player me = gameData.getPlayer(playerID);
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
+
+        conn.addFunctionEvent("GameOver", this::gameOver);
     }
 
-    private Vector2 getDirFromMouse(Vector2 pos) {
-        Vector2 mousePos = new Vector2(Mouse.getX(), Mouse.getY());
-        Vector2 dir = pos.vectorTowards(mousePos);
-        dir = dir.normalise();
-        return new Vector2(dir.getX(), 0 - dir.getY());
+    private void gameOver(Sendable sendable) {
+        gameData.updateScoreboard(((GameOver) sendable).getScoreboard());
+        mode = Mode.GAMEOVER;
     }
 
-
-    private void positionBullet(Vector2 pos, Vector2 dir) {
-        Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
-        float lastX = cursor.getX();
-        float lastY = cursor.getY();
-        //Mouse.setGrabbed(true);
-
-        if (lastX > 0 && lastY > 0)
-            draw.drawCircle(lastX, lastY, 10, 50);
+    public void run(){
+        switch (mode){
+            case GAME:
+                update();
+                render();
+                break;
+            case MENU:
+                //TODO Render in-game menu
+                break;
+            case SCOREBOARD:
+                //TODO Show the scoreboard
+                break;
+            case GAMEOVER:
+                TextRenderer textRenderer = new TextRenderer();
+                textRenderer.drawText("Game over. To be changed.",0,0);
+        }
     }
 
-    private long getTime() {
-        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
-    }
-
-    private void update(int delta) {
-
+    private void update() {
         rotation += 1.5f;
         rotation %= 360;
-        // TODO Look at this
         Player me = gameData.getPlayer(playerID);
         checkMusic(me);
 
@@ -119,6 +118,8 @@ public class GameRenderer {
 
             float xPos = pos.getX();
             float yPos = pos.getY();
+
+            int delta = getDelta();
 
             if (Keyboard.isKeyDown(Keyboard.KEY_A)) xPos -= 0.35f * delta;
             if (Keyboard.isKeyDown(Keyboard.KEY_D)) xPos += 0.35f * delta;
@@ -227,35 +228,7 @@ public class GameRenderer {
         updateFPS(); // update FPS Counter
     }
 
-
-    private void checkMusic(Player me) {
-        if (me.getHealth() < 25 && healthbar && muted) {
-            healthbar = false;
-            gameMusic = true;
-            Audio.GAMEMUSIC.stopClip();
-            Audio.WARNING.playallTime();
-        } else if (me.getHealth() > 25 && gameMusic && muted) {
-            gameMusic = false;
-            healthbar = true;
-            Audio.WARNING.stopClip();
-            Audio.GAMEMUSIC.playallTime();
-        } else if (muted) {
-            Audio.GAMEMUSIC.playallTime();
-        }
-    }
-
-    private void updateFPS() {
-        if (getTime() - lastFPS > 1000) {
-            Display.setTitle("FPS: " + fps);
-            fps = 0;
-            lastFPS += 1000;
-        }
-        fps++;
-    }
-
     public void render() {
-        update(getDelta());
-
         Player p = gameData.getPlayer(playerID);
         int phase = p.getPhase();
         draw.colourBackground(phase);
@@ -280,6 +253,22 @@ public class GameRenderer {
         }
 
         if (displayCollisions) drawCollisions();
+    }
+
+    private Vector2 getDirFromMouse(Vector2 pos) {
+        Vector2 mousePos = new Vector2(Mouse.getX(), Mouse.getY());
+        Vector2 dir = pos.vectorTowards(mousePos);
+        dir = dir.normalise();
+        return new Vector2(dir.getX(), 0 - dir.getY());
+    }
+
+    private void positionBullet(Vector2 pos, Vector2 dir) {
+        Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
+        float lastX = cursor.getX();
+        float lastY = cursor.getY();
+
+        if (lastX > 0 && lastY > 0)
+            draw.drawCircle(lastX, lastY, 10, 50);
     }
 
     private void drawCollisions() {
@@ -451,11 +440,40 @@ public class GameRenderer {
         }
     }
 
+    private long getTime() {
+        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    }
+
     private int getDelta() {
         long time = getTime();
         int delta = (int) (time - lastFrame);
         lastFrame = time;
         return delta;
+    }
+
+    private void updateFPS() {
+        if (getTime() - lastFPS > 1000) {
+            Display.setTitle("FPS: " + fps);
+            fps = 0;
+            lastFPS += 1000;
+        }
+        fps++;
+    }
+
+    private void checkMusic(Player me) {
+        if (me.getHealth() < 25 && healthbar && muted) {
+            healthbar = false;
+            gameMusic = true;
+            Audio.GAMEMUSIC.stopClip();
+            Audio.WARNING.playallTime();
+        } else if (me.getHealth() > 25 && gameMusic && muted) {
+            gameMusic = false;
+            healthbar = true;
+            Audio.WARNING.stopClip();
+            Audio.GAMEMUSIC.playallTime();
+        } else if (muted) {
+            Audio.GAMEMUSIC.playallTime();
+        }
     }
 
     private void muteEverything() {

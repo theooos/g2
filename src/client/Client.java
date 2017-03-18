@@ -47,11 +47,12 @@ public class Client {
             // let subsystem paint
             switch (currentMode) {
                 case SPLASH:
-                    startScreen.render();
+                    startScreen.run();
                     break;
                 case GAME:
+                    // TODO Make sure this doesn't happen every loop.
                     changeDisplaySettings();
-                    gameRenderer.render();
+                    gameRenderer.run();
                     break;
                 default:
                     System.err.println("Not in a mode.");

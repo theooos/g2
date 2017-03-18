@@ -26,7 +26,7 @@ public class Game implements Runnable {
 
     private Random rand;
 
-    private Scoreboard sb;
+    private Scoreboard scoreboard;
     private int IDCounter;
 
     private final boolean DEBUG = true;
@@ -49,7 +49,7 @@ public class Game implements Runnable {
         out("Total players: "+playerConnections.size());
 
         rand = new Random();
-        sb = new Scoreboard(250, maxPlayers);
+        scoreboard = new Scoreboard(250, maxPlayers);
 
         players = new ConcurrentHashMap<>();
         orbs = new HashMap<>();
@@ -151,7 +151,7 @@ public class Game implements Runnable {
 
         countdown = 4*60*tick; //four minutes
 
-        InitGame g = new InitGame(orbs, players, mapID, sb, powerUps);
+        InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps);
         sendGameStart(g);
     }
 
@@ -216,9 +216,9 @@ public class Game implements Runnable {
                         //if the player has been killed
                         if (!e.isAlive()) {
                             if (e instanceof Orb) {
-                                sb.killedOrb(p.getPlayer());
+                                scoreboard.killedOrb(p.getPlayer());
                             } else {
-                                sb.killedPlayer(p.getPlayer());
+                                scoreboard.killedPlayer(p.getPlayer());
                             }
                             scoreboardChanged = true;
                         }
@@ -237,11 +237,11 @@ public class Game implements Runnable {
             countdown--;
 
             if (scoreboardChanged) {
-                sendToAllConnected(sb);
+                sendToAllConnected(scoreboard);
             }
 
             //stops the countdown when the timer has run out
-            if (countdown <= 0 || sb.scoreReached()) {
+            if (countdown <= 0 || scoreboard.scoreReached()) {
                 endGame();
                 isRunning = false;
             } else {
@@ -262,7 +262,7 @@ public class Game implements Runnable {
      * Ends the game and msgs all clients
      */
     private void endGame() {
-        msgToAllConnected("Game Ended");
+        sendToAllConnected(new GameOver(scoreboard));
         for (Connection c: playerConnections) {
             sendScoreboard(c);
         }
@@ -376,7 +376,7 @@ public class Game implements Runnable {
      * @param c the connected player
      */
     private void sendScoreboard(Connection c) {
-        c.send(sb.clone());
+        c.send(scoreboard.clone());
     }
 
     /**

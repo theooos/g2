@@ -44,7 +44,7 @@ public class StartScreenRenderer {
         readyLoadingLayer();
     }
 
-    public void render() {
+    public void run() {
         switch (currentScreen) {
             case MAIN:
                 renderInterface();
