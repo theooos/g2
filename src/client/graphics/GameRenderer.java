@@ -1,6 +1,7 @@
 package client.graphics;
 
 import client.ClientSettings;
+import client.audio.Audio;
 import objects.GameData;
 import networking.Connection;
 import objects.FireObject;
@@ -43,6 +44,10 @@ public class GameRenderer {
     private boolean oneDown;
     private boolean twoDown;
     private boolean tabPressed;
+    private boolean healthbar;
+    private boolean gameMusic;
+    private boolean muted;
+
 
     private Draw draw;
     private Pulse pulse;
@@ -63,6 +68,10 @@ public class GameRenderer {
         oneDown = false;
         twoDown = false;
         tabPressed = false;
+        healthbar = true;
+        gameMusic = false;
+        muted = true;
+
 
         draw = new Draw();
         collisions = new CollisionManager(gd);
@@ -100,8 +109,9 @@ public class GameRenderer {
 
         rotation += 1.5f;
         rotation %= 360;
-
+        // TODO Look at this
         Player me = gameData.getPlayer(playerID);
+        checkMusic(me);
 
         if (me.isAlive()) {
 
@@ -112,12 +122,21 @@ public class GameRenderer {
 
             if (Keyboard.isKeyDown(Keyboard.KEY_A)) xPos -= 0.35f * delta;
             if (Keyboard.isKeyDown(Keyboard.KEY_D)) xPos += 0.35f * delta;
-
             if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
             if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
 
+            if (Keyboard.isKeyDown(Keyboard.KEY_M)) {
+                if (!muted) {
+                    muted = true;
+                } else {
+                    muted = false;
+                    muteEverything();
+                }
+            }
+
             if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
                 fDown = true;
+                if (muted) Audio.PHASE.play();
             } else if (fDown) {
                 fDown = false;
                 int newPhase = 0;
@@ -167,6 +186,11 @@ public class GameRenderer {
                     clickDown = true;
                 }
             } else if (clickDown) {
+                if (me.activeWeapon() == 1 && muted)
+                    Audio.SHOOT2.play();
+                else if (muted) {
+                    Audio.SHOOT.play();
+                }
                 conn.send(new FireObject(me.getID(), false));
                 clickDown = false;
             }
@@ -193,8 +217,7 @@ public class GameRenderer {
                 me.setDir(dir);
                 conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
                 gameData.updatePlayer(me);
-            }
-            else if (me.getPos().equals(pos)) {
+            } else if (me.getPos().equals(pos)) {
                 conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
             }
         }
@@ -202,6 +225,23 @@ public class GameRenderer {
         tabPressed = Keyboard.isKeyDown(Keyboard.KEY_TAB);
 
         updateFPS(); // update FPS Counter
+    }
+
+
+    private void checkMusic(Player me) {
+        if (me.getHealth() < 25 && healthbar && muted) {
+            healthbar = false;
+            gameMusic = true;
+            Audio.GAMEMUSIC.stopClip();
+            Audio.WARNING.playallTime();
+        } else if (me.getHealth() > 25 && gameMusic && muted) {
+            gameMusic = false;
+            healthbar = true;
+            Audio.WARNING.stopClip();
+            Audio.GAMEMUSIC.playallTime();
+        } else if (muted) {
+            Audio.GAMEMUSIC.playallTime();
+        }
     }
 
     private void updateFPS() {
@@ -318,8 +358,7 @@ public class GameRenderer {
                         green = 0.9f;
                         blue = 0.5f;
                     }
-                }
-                else {
+                } else {
                     red = 0.6f;
                     green = 0.6f;
                     blue = 0.7f;
@@ -345,21 +384,20 @@ public class GameRenderer {
                 red = 0.2f;
                 green = 0.2f;
                 blue = 1f;
-            }
-            else {
+            } else {
                 red = 0.5f;
                 green = 0.5f;
                 blue = 0.7f;
             }
             if (phase == o.getPhase()) {
-                draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red-0.1f, green-0.1f, blue-0.1f);
+                draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f);
                 glColor4f(red, green, blue, 1);
                 draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
             } else {
                 float dist = me.getPos().getDistanceTo(o.getPos());
                 if (dist < 150) {
                     float fade = 0.7f - (dist / 150f);
-                    draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red-0.1f, green-0.1f, blue-0.1f, fade);
+                    draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f, fade);
                     glColor4f(red, green, blue, fade);
                     draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
                 }
@@ -418,5 +456,12 @@ public class GameRenderer {
         int delta = (int) (time - lastFrame);
         lastFrame = time;
         return delta;
+    }
+
+    private void muteEverything() {
+        Audio.SHOOT.stopClip();
+        Audio.SHOOT.stopClip();
+        Audio.GAMEMUSIC.stopClip();
+        Audio.WARNING.stopClip();
     }
 }

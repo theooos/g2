@@ -36,12 +36,12 @@ public class TextureLoader {
         textures[ISprite.WALL_P1] = loadTexture("Wall_P1.png", 0,0,10,10);
         textures[ISprite.WALL_P2] = loadTexture("Wall_P2.png", 0,0,10,10);
 
-        textures[ISprite.START] = loadTexture("play.png",0,0,350,125);
-        textures[ISprite.ABOUT] = loadTexture("about.png",0,0,275,275);
+        //textures[ISprite.START] = loadTexture("play.png",0,0,350,125);
+        textures[ISprite.ABOUT] = loadTexture("about.png",0,0,500,100);
         textures[ISprite.HELP] = loadTexture("help1.png",0,0,256,256);
         textures[ISprite.ABOUTTEXT] = loadTexture("testAbout.png",0,0,300,171);
         textures[ISprite.GOBACK] = loadTexture("back.png",0,0,300,300);
-        textures[ISprite.LOBBY] = loadTexture("lobbyfinal.png",0,0,264,367);
+        textures[ISprite.LOBBY] = loadTexture("lobbyfinal.png",0,0,500,100);
 
 
         textures[ISprite.OPTIONS] = loadTexture("options.png",0,0,638, 348);

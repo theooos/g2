@@ -1,5 +1,6 @@
 package client;
 
+import client.audio.Audio;
 import client.graphics.GameRenderer;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
@@ -100,9 +101,9 @@ public class Client {
 
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
-//            Audio.init();
-//            Audio.volume = Audio.Volume.LOW;
-//            Audio.MUSIC.play();
+            Audio.init();
+            Audio.volume = Audio.Volume.LOW;
+           Audio.INTERFACEBACKGROUND.play();
 
         } catch (LWJGLException le) {
             System.err.println("Game exiting - exception in initialization:");
@@ -114,6 +115,9 @@ public class Client {
     private void beginGame(GameData gameData) {
         gameRenderer = new GameRenderer(gameData, connection, playerID);
         currentMode = Mode.GAME;
+        Audio.INTERFACEBACKGROUND.stopClip();
+        Audio.COUNTDOWN.play();
+        Audio.GAMEMUSIC.pause(4);
     }
 
     private void establishConnection() {
