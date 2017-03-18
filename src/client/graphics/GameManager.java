@@ -16,6 +16,7 @@ import server.game.*;
 public class GameManager {
 
     private GameRenderer gameRenderer;
+    private InGameMenuRenderer inGameMenuRenderer;
 
     private enum Mode {GAME, MENU, SCOREBOARD, GAMEOVER}
 
@@ -46,13 +47,9 @@ public class GameManager {
 
         collisions = new CollisionManager(gd);
         gameRenderer = new GameRenderer(gameData, playerID, collisions);
+        inGameMenuRenderer = new InGameMenuRenderer(gameData,playerID);
 
         conn.addFunctionEvent("GameOver", this::gameOver);
-    }
-
-    private void gameOver(Sendable sendable) {
-        gameData.updateScoreboard(((GameOver) sendable).getScoreboard());
-        mode = Mode.GAMEOVER;
     }
 
     public void run() {
@@ -63,15 +60,14 @@ public class GameManager {
                 break;
             case MENU:
                 pollKeyboard();
-                //TODO Render in-game menu
+                inGameMenuRenderer.renderMenu();
                 break;
             case SCOREBOARD:
                 pollKeyboard();
-                //TODO Show the scoreboard
+                inGameMenuRenderer.renderScoreboard();
                 break;
             case GAMEOVER:
-                TextRenderer textRenderer = new TextRenderer();
-                textRenderer.drawText("Game over. To be changed.", 0, 50);
+                inGameMenuRenderer.renderEndScreen();
         }
     }
 
@@ -280,5 +276,10 @@ public class GameManager {
         Audio.SHOOT.stopClip();
         Audio.GAMEMUSIC.stopClip();
         Audio.WARNING.stopClip();
+    }
+
+    private void gameOver(Sendable sendable) {
+        gameData.updateScoreboard(((GameOver) sendable).getScoreboard());
+        mode = Mode.GAMEOVER;
     }
 }
