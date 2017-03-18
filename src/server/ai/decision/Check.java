@@ -16,7 +16,6 @@ public class Check {
         ORB_NEARBY,
         PROXIMITY,
         RANGE,
-        RETALIATION_VIABLE,
         TARGET_MOVED,
         CLOSEST_ENEMY}
 
@@ -52,11 +51,7 @@ public class Check {
         else if (mode == CheckMode.RANGE) {
             return rangeCheck();
         }
-        else if (mode == CheckMode.RETALIATION_VIABLE){
-            return retaliationViableCheck();
-        }
         else if (mode == CheckMode.TARGET_MOVED) {
-            System.out.println("Target Moved: " + targetMovedCheck());
             return targetMovedCheck();
         }
         else if (mode == CheckMode.CLOSEST_ENEMY) {
@@ -111,10 +106,6 @@ public class Check {
         return (distance <= range);
     }
 
-    private boolean retaliationViableCheck(){
-        return false;
-    }
-
     private boolean targetMovedCheck(){
         if (intel.getTargetLocation() == null) {
             return true;
@@ -155,6 +146,7 @@ public class Check {
         if (closestDist == -1 || closestEnt == null){
             return false;
         }
+        System.out.println("Targeting " + closestEnt);
         intel.setRelevantEntity(closestEnt);
         return true;
     }

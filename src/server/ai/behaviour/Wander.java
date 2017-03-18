@@ -28,20 +28,21 @@ public class Wander extends Task {
     @Override
     public void doAction() {
 
+        System.out.println("Finding location to wander to.");
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(false);
         Vector2 newPos = null;
         boolean success = false;
-/*
+
         while (!success) {
             float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
             float ranY = (float) gen.nextInt(intel.getMap().getMapLength());
             newPos = new Vector2(ranX, ranY);
 
             // Check if space is valid.
-            success = intel.isValidSpace(newPos) && /*!intel.inSight(newPos)*/true;
+            success = intel.isValidSpace(newPos) && !intel.inSight(newPos);
         }
-        */
-        intel.setTargetLocation(/*newPos*/intel.getPlayer(0).getPos());
+
+        intel.setTargetLocation(newPos);
         end();
     }
 }

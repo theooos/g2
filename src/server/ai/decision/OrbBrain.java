@@ -48,14 +48,14 @@ public class OrbBrain extends AIBrain {
      */
     public void doSomething(){
 
-        // Perform checks.
-        boolean playerNear = check.doCheck(Check.CheckMode.PROXIMITY);
+        check();
 
         // Decide what to do.
         if (!playerNear) {
             drift.doAction();
         }
         else {
+
             // Compute/relevantEnt-compute travel path if the target has moved since the last tick.
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
                 intel.setTargetLocation(intel.getRelevantEntity().getPos());
@@ -78,7 +78,7 @@ public class OrbBrain extends AIBrain {
     /**
      * Determines how the Orb behaves when it experiences a change in circumstances.
      */
-    private void reactToChange() {
+    private void check() {
 
         boolean tempPN = check.doCheck(Check.CheckMode.PROXIMITY);
 

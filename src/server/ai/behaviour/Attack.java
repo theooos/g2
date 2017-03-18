@@ -51,14 +51,12 @@ public class Attack extends PlayerTask {
 
         if (!target.isAlive()){
             me.setFiring(false);
-            //System.out.println("Mission accomplished.");
             end();
             return;
         }
 
         // Recompute travel path if necessary.
         if (brain.performCheck(Check.CheckMode.TARGET_MOVED)) {
-            //System.out.println("Target moved: Recomputing path.");
             track();
             brain.getBehaviour("FindPath").run();
         }
@@ -74,11 +72,9 @@ public class Attack extends PlayerTask {
 
         // Check if the target is in firing range.
         if (distance < maxRange) {
-            //System.out.println("Target in range.");
             brain.getBehaviour("Fire").doAction();
         }
         else {
-            //System.out.println("Getting into range.");
             me.setFiring(false);
         }
     }

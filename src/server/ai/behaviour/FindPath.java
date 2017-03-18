@@ -39,12 +39,19 @@ public class FindPath extends Task {
 
     @Override
     public void doAction() {
-        System.out.println("Pathfinding initiated");
+
+        System.out.println("Working out how to get there.");
+
         ArrayList<Vector2> path = new ArrayList<>();
+
         if (lineOfSight) {
             path.add(intel.getTargetLocation());
             intel.resetPath(path);
-        } else {
+        }
+        else {
+
+            System.out.println("Using A*.");
+
             Node target=new Node(intel.getTargetLocation(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
             Node start=new Node(intel.ent().getPos(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
 
@@ -56,14 +63,13 @@ public class FindPath extends Task {
             List<Node> printPath=intel.pathfinder().printPath(intel.pathfinder.getNode((int) newTarget.getY(),(int) newTarget.getX()));
 
             for (Node node:printPath ) {
-                path.add(new Vector2(node.getX(),node.getY()));
-
+                path.add(new Vector2(node.getX(), node.getY()));
             }
 
-
             intel.resetPath(path);
-
         }
+        System.out.println("Succeeding.");
+
         end();
     }
 }
