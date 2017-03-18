@@ -39,7 +39,7 @@ public class StartScreenRenderer {
 
     public StartScreenRenderer(Consumer<Void> connectFunction) {
         this.connectFunction = connectFunction;
-        background.setDimension(800, 600);
+        background.setRatio(0.5f);
         readyInterfaceLayer();
         readyAboutLayer();
         readyLoadingLayer();
