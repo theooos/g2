@@ -5,7 +5,6 @@ import client.graphics.Sprites.InterfaceTexture;
 import objects.LobbyData;
 import objects.Sendable;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.util.Display;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.function.Consumer;
@@ -40,6 +39,7 @@ public class StartScreenRenderer {
 
     public StartScreenRenderer(Consumer<Void> connectFunction) {
         this.connectFunction = connectFunction;
+        background.setDimension(800, 600);
         readyInterfaceLayer();
         readyAboutLayer();
         readyLoadingLayer();
