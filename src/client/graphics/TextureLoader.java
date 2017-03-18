@@ -17,81 +17,84 @@ import java.util.Hashtable;
  */
 public class TextureLoader {
 
-    private static Texture[] textures = new Texture[1024];
+    private static Texture[] textures = new Texture[32];
 
-    public void initialise(){
+    public void initialise() {
 
-        textures[ISprite.PLAYER_P1] = loadTexture("Player1.png", 0,0,54,55);
-        textures[ISprite.PLAYER_P2] = loadTexture("Player2.png", 0,0,55,55);
+        textures[ISprite.PLAYER_P1] = loadTexture("Player1.png");
+        textures[ISprite.PLAYER_P2] = loadTexture("Player2.png");
 
-        textures[ISprite.ORB_P1] = loadTexture("orb_P1.png",0,0,100,100);
-        textures[ISprite.ORB_P2] = loadTexture("orb_P2.png", 0,0,100,101);
+        textures[ISprite.ORB_P1] = loadTexture("orb_P1.png");
+        textures[ISprite.ORB_P2] = loadTexture("orb_P2.png");
 
-        textures[ISprite.SHOOT_P1] = loadTexture("Bullet2_P1.png", 0,0,18,28);
-        textures[ISprite.SHOOT_P2] = loadTexture("Bullet2_P2.png", 0,0,18,28);
+        textures[ISprite.SHOOT_P1] = loadTexture("Bullet2_P1.png");
+        textures[ISprite.SHOOT_P2] = loadTexture("Bullet2_P2.png");
 
-        textures[ISprite.BULLET_P1] = loadTexture("Bullet1_P1.png", 0,0,18,32);
-        textures[ISprite.BULLET_P2] = loadTexture("Bullet1_P2.png", 0,0,18,31);
+        textures[ISprite.BULLET_P1] = loadTexture("Bullet1_P1.png");
+        textures[ISprite.BULLET_P2] = loadTexture("Bullet1_P2.png");
 
-        textures[ISprite.WALL_P1] = loadTexture("Wall_P1.png", 0,0,10,10);
-        textures[ISprite.WALL_P2] = loadTexture("Wall_P2.png", 0,0,10,10);
+        textures[ISprite.WALL_P1] = loadTexture("Wall_P1.png");
+        textures[ISprite.WALL_P2] = loadTexture("Wall_P2.png");
 
-        //textures[ISprite.START] = loadTexture("play.png",0,0,350,125);
-        textures[ISprite.ABOUT] = loadTexture("about.png",0,0,500,100);
-        textures[ISprite.HELP] = loadTexture("help1.png",0,0,256,256);
-        textures[ISprite.ABOUTTEXT] = loadTexture("testAbout.png",0,0,300,171);
-        textures[ISprite.GOBACK] = loadTexture("back.png",0,0,300,300);
-        textures[ISprite.LOBBY] = loadTexture("lobbyfinal.png",0,0,500,100);
+        //textures[ISprite.START] = loadTexture("play.png",350,125);
+        textures[ISprite.ABOUT] = loadTexture("about.png");
+        textures[ISprite.HELP] = loadTexture("help1.png");
+        textures[ISprite.ABOUTTEXT] = loadTexture("testAbout.png");
+        textures[ISprite.GOBACK] = loadTexture("back.png");
+        textures[ISprite.LOBBY] = loadTexture("lobbyfinal.png");
 
 
-        textures[ISprite.OPTIONS] = loadTexture("options.png",0,0,638, 348);
-        textures[ISprite.CONTINUE] = loadTexture("continue.png",0,0,29,7);
-        textures[ISprite.MUTE] = loadTexture("mute.png",0,0,18,7);
-        textures[ISprite.ENDGAME] = loadTexture("endgame.png",0,0,29,7);
+        textures[ISprite.OPTIONS] = loadTexture("options.png");
+        textures[ISprite.CONTINUE] = loadTexture("continue.png");
+        textures[ISprite.MUTE] = loadTexture("mute.png");
+        textures[ISprite.ENDGAME] = loadTexture("endgame.png");
 
-        textures[ISprite.COLLISION] = loadTexture("collision.png", 0,0, 50,50);
-        textures[ISprite.BACKGROUND] = loadTexture("background.png",0,0,800,600);
-        textures[ISprite.SCOREBOARD] = loadTexture("scoreboard.png",0,0,800,600);
+        textures[ISprite.COLLISION] = loadTexture("collision.png");
+        textures[ISprite.BACKGROUND] = loadTexture("background.png");
+        textures[ISprite.SCOREBOARD] = loadTexture("scoreboard.png");
     }
 
 
     private Hashtable imageCache = new Hashtable();
 
-    private  Texture loadTexture(String path,int xOffSet, int yOffSet, int textWidth, int textHeight) {
+    private Texture loadTexture(String path) {
 
         BufferedImage buffImage = null;
-        try
-        {
+        try {
             if (imageCache.get(path) != null)
-                buffImage = (BufferedImage)imageCache.get(path);
-            else
-            {
+                buffImage = (BufferedImage) imageCache.get(path);
+            else {
                 buffImage = ImageIO.read(this.getClass().getResource("../../" + path));
-
                 byte[] data = ((DataBufferByte) buffImage.getRaster().getDataBuffer()).getData();
-                switch (buffImage.getType())
-                {
-                    case BufferedImage.TYPE_4BYTE_ABGR:  convertFromARGBToBGRA(data);break;
-                    case BufferedImage.TYPE_3BYTE_BGR:  convertFromBGRToRGB(data);   break;
-                    default: System.err.println("Unknown type of image:"+buffImage.getType()); break;
+
+                switch (buffImage.getType()) {
+                    case BufferedImage.TYPE_4BYTE_ABGR:
+                        convertFromARGBToBGRA(data);
+                        break;
+                    case BufferedImage.TYPE_3BYTE_BGR:
+                        convertFromBGRToRGB(data);
+                        break;
+                    default:
+                        System.err.println("Unknown type of image:" + buffImage.getType());
+                        break;
                 }
                 imageCache.put(path, buffImage);
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         int bytesPerPixel = buffImage.getColorModel().getPixelSize() / 8;
 
-        ByteBuffer scratch = ByteBuffer.allocateDirect(textWidth*textHeight*bytesPerPixel).order(ByteOrder.nativeOrder());
+        int width = buffImage.getWidth();
+        int height = buffImage.getHeight();
 
+        ByteBuffer scratch = ByteBuffer.allocateDirect(width * height * bytesPerPixel).order(ByteOrder.nativeOrder());
 
         DataBufferByte dataBufferByte = ((DataBufferByte) buffImage.getRaster().getDataBuffer());
 
-        for (int i = 0 ; i < textHeight ; i++)
-            scratch.put(dataBufferByte.getData(),(xOffSet+(yOffSet+i)*buffImage.getWidth())*bytesPerPixel, textWidth * bytesPerPixel);
+        for (int i = 0; i < height; i++)
+            scratch.put(dataBufferByte.getData(), (i * width) * bytesPerPixel, width * bytesPerPixel);
 
         scratch.rewind();
 
@@ -104,21 +107,20 @@ public class TextureLoader {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, buf.get(0));
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0,GL11.GL_RGBA,textWidth,textHeight, 0,GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, scratch);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, scratch);
 
         Texture newTexture = new Texture();
         newTexture.texId = buf.get(0);     // Return Image Addresses In Memory
-        newTexture.texHeight = textHeight;
-        newTexture.texWidth = textWidth;
+        newTexture.texHeight = height;
+        newTexture.texWidth = width;
 
         return newTexture;
     }
 
     private static void convertFromARGBToBGRA(final byte[] data) {
-        for (int i = 0; i <  data.length; i += 4)
-        {
+        for (int i = 0; i < data.length; i += 4) {
             data[i] ^= data[i + 3];
-            data[i+3] ^= data[i];
+            data[i + 3] ^= data[i];
             data[i] ^= data[i + 3];
 
             data[i + 1] ^= data[i + 2];
@@ -127,12 +129,10 @@ public class TextureLoader {
         }
     }
 
-    private static void convertFromBGRToRGB(final byte[] data)
-    {
-        for (int i = 0; i < data.length; i += 3)
-        {
+    private static void convertFromBGRToRGB(final byte[] data) {
+        for (int i = 0; i < data.length; i += 3) {
             data[i] ^= data[i + 2];
-            data[i + 2 ] ^= data[i ];
+            data[i + 2] ^= data[i];
             data[i] ^= data[i + 2];
         }
     }
