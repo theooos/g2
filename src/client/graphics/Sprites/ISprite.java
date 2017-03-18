@@ -34,4 +34,7 @@ public interface ISprite {
     int LOBBY = 19;
 
     int COLLISION = 20;
+
+    int BACKGROUND = 21;
+    int SCOREBOARD = 22;
 }
