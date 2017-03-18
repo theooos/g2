@@ -24,7 +24,7 @@ public class GameManager {
     private long lastFrame;
     private int fps;
     private long lastFPS;
-    private int playerID;
+    private int myPlayerID;
 
     private GameData gameData;
     private Connection conn;
@@ -38,7 +38,7 @@ public class GameManager {
         super();
         this.conn = conn;
         this.gameData = gd;
-        this.playerID = playerID;
+        this.myPlayerID = playerID;
 
         healthbar = true;
         gameMusic = false;
@@ -62,9 +62,11 @@ public class GameManager {
                 gameRenderer.render();
                 break;
             case MENU:
+                pollKeyboard();
                 //TODO Render in-game menu
                 break;
             case SCOREBOARD:
+                pollKeyboard();
                 //TODO Show the scoreboard
                 break;
             case GAMEOVER:
@@ -74,11 +76,10 @@ public class GameManager {
     }
 
     private void update() {
-        Player me = gameData.getPlayer(playerID);
-        checkMusic(me);
-        if (me.isAlive()) makeMovement(me);
-        pollKeyboard(me);
-        pollMouse(me);
+        if (gameData.getPlayer(myPlayerID).isAlive()) makeMovement();
+        pollKeyboard();
+        pollMouse();
+        checkMusic();
 
         rotatePowerUps();
         updateFPS(); // update FPS Counter
@@ -89,7 +90,8 @@ public class GameManager {
         gameRenderer.powerUpRotation %= 360;
     }
 
-    private void pollMouse(Player me) {
+    private void pollMouse() {
+        Player me = gameData.getPlayer(myPlayerID);
         if (me.isAlive()) {
             if (Mouse.isButtonDown(0)) {
                 conn.send(new FireObject(me.getID(), true));
@@ -104,7 +106,8 @@ public class GameManager {
         }
     }
 
-    private void makeMovement(Player me) {
+    private void makeMovement() {
+        Player me = gameData.getPlayer(myPlayerID);
         Vector2 pos = me.getPos();
 
         float xPos = pos.getX();
@@ -136,67 +139,95 @@ public class GameManager {
         Vector2 dir = getDirFromMouse(tempPos);
         if (!me.getDir().equals(dir)) {
             me.setDir(dir);
-            conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
+            conn.send(new MoveObject(me.getPos(), me.getDir(), myPlayerID, me.getMoveCount()));
             gameData.updatePlayer(me);
         } else if (me.getPos().equals(pos)) {
-            conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
+            conn.send(new MoveObject(me.getPos(), me.getDir(), myPlayerID, me.getMoveCount()));
         }
     }
 
-    private void pollKeyboard(Player me) {
+    private void pollKeyboard() {
         while (Keyboard.next()) {
             // Runs if next key has been PRESSED.
             if (Keyboard.getEventKeyState()) {
-
-                switch (Keyboard.getEventKey()) {
-
-                    // *** Those that depend on being alive ***
-                    case Keyboard.KEY_E:
-                        if(me.isAlive()) conn.send(new SwitchObject(me.getID(),!me.isWeaponOneOut()));
+                switch (mode){
+                    case GAME:
+                        gameKeyboard();
                         break;
-
-                    case Keyboard.KEY_F:
-                        if(me.isAlive()) {
-                            if (muted) Audio.PHASE.play();
-                            int newPhase = 0;
-                            if (me.getPhase() == 0) {
-                                newPhase = 1;
-                            }
-                            Player p = new Player(me);
-                            p.setPhase(newPhase);
-                            if (collisions.validPosition(p)) {
-                                conn.send(new PhaseObject(me.getID()));
-                                gameRenderer.setPulse(new Pulse(me.getPos(), me.getRadius(), newPhase, 0, 1 - newPhase, 20, 20, newPhase, true));
-                            } else {
-                                //invalid phase
-                                gameRenderer.setPulse(new Pulse(me.getPos(), me.getRadius(), 0.3f, 0.3f, 0.3f, 20, 20, me.getPhase(), 250, false));
-                            }
-                        }
-                        break;
-
-                    case Keyboard.KEY_1:
-                        if (me.isAlive()) conn.send(new SwitchObject(me.getID(), true));
-                        break;
-
-                    case Keyboard.KEY_2:
-                        if (me.isAlive()) conn.send(new SwitchObject(me.getID(), false));
-                        break;
-
-                    // *** Those that don't depend on being alive ***
-                    case Keyboard.KEY_M:
-                        if (!muted) {
-                            muted = true;
-                        } else {
-                            muted = false;
-                            muteEverything();
-                        }
-                        break;
-
-                    case Keyboard.KEY_C:
-                        gameRenderer.flipDisplayCollisions();
-                        break;
+                    default:
+                        menuKeyboard();
                 }
+
             }
+        }
+    }
+
+    private void gameKeyboard() {
+        Player me = gameData.getPlayer(myPlayerID);
+        switch (Keyboard.getEventKey()) {
+
+            // *** Those that depend on being alive ***
+            case Keyboard.KEY_E:
+                if(me.isAlive()) conn.send(new SwitchObject(me.getID(),!me.isWeaponOneOut()));
+                break;
+
+            case Keyboard.KEY_F:
+                if(me.isAlive()) {
+                    if (muted) Audio.PHASE.play();
+                    int newPhase = 0;
+                    if (me.getPhase() == 0) {
+                        newPhase = 1;
+                    }
+                    Player p = new Player(me);
+                    p.setPhase(newPhase);
+                    if (collisions.validPosition(p)) {
+                        conn.send(new PhaseObject(me.getID()));
+                        gameRenderer.setPulse(new Pulse(me.getPos(), me.getRadius(), newPhase, 0, 1 - newPhase, 20, 20, newPhase, true));
+                    } else {
+                        //invalid phase
+                        gameRenderer.setPulse(new Pulse(me.getPos(), me.getRadius(), 0.3f, 0.3f, 0.3f, 20, 20, me.getPhase(), 250, false));
+                    }
+                }
+                break;
+
+            case Keyboard.KEY_1:
+                if (me.isAlive()) conn.send(new SwitchObject(me.getID(), true));
+                break;
+
+            case Keyboard.KEY_2:
+                if (me.isAlive()) conn.send(new SwitchObject(me.getID(), false));
+                break;
+
+            // *** Those that don't depend on being alive ***
+
+            case Keyboard.KEY_M:
+                if (!muted) {
+                    muted = true;
+                } else {
+                    muted = false;
+                    muteEverything();
+                }
+                break;
+
+            case Keyboard.KEY_C:
+                gameRenderer.flipDisplayCollisions();
+                break;
+
+            case Keyboard.KEY_ESCAPE:
+                mode = Mode.MENU;
+                break;
+
+            case Keyboard.KEY_TAB:
+                mode = Mode.SCOREBOARD;
+                break;
+        }
+    }
+
+    private void menuKeyboard(){
+        switch (Keyboard.getEventKey()){
+            case Keyboard.KEY_ESCAPE:
+                mode = Mode.GAME;
+                break;
         }
     }
 
@@ -227,7 +258,8 @@ public class GameManager {
         fps++;
     }
 
-    private void checkMusic(Player me) {
+    private void checkMusic() {
+        Player me = gameData.getPlayer(myPlayerID);
         if (me.getHealth() < 25 && healthbar && muted) {
             healthbar = false;
             gameMusic = true;
