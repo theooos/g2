@@ -20,6 +20,7 @@ public class AIPlayer extends Player {
 
     AIPlayer(Vector2 pos, Vector2 dir, int team, int phase, Weapon w1, Weapon w2, int id) {
         super(pos, dir, team, phase, w1, w2, id);
+        maxHealth = 100;
     }
 
     public void live() {

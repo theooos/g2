@@ -5,6 +5,7 @@ import server.ai.decision.Check;
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
 import server.game.Player;
+import server.game.Vector2;
 
 /**
  * Allows the player to attack an opponent player within line of sight.
@@ -15,7 +16,7 @@ public class Attack extends PlayerTask {
     private Player me;
     private Player target;
     private float maxRange;
-    private float minRange;
+    private float targetRange;
 
     public Attack(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
@@ -29,7 +30,7 @@ public class Attack extends PlayerTask {
 
     public void setParameters(float maxRange, float minRange, int fireFreq){
         this.maxRange = maxRange;
-        this.minRange = minRange;
+        this.targetRange = minRange;
         ((Fire)brain.getBehaviour("Fire")).setParameters(fireFreq);
     }
 
@@ -39,7 +40,7 @@ public class Attack extends PlayerTask {
         this.me = intel.ent();
         this.target = (Player) intel.getRelevantEntity();
 
-        intel.setTargetLocation(target.getPos());
+        track();
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(true);
         brain.getBehaviour("FindPath").run();
 
@@ -51,6 +52,7 @@ public class Attack extends PlayerTask {
         // Recompute travel path if necessary.
         if (brain.performCheck(Check.CheckMode.TARGET_MOVED)) {
             //System.out.println("Target moved: Recomputing path.");
+            track();
             brain.getBehaviour("FindPath").run();
         }
 
@@ -59,15 +61,13 @@ public class Attack extends PlayerTask {
         if (distance < maxRange) {
             //System.out.println("Target in range.");
             brain.getBehaviour("Fire").doAction();
-
-            if (distance > minRange) {
-                //System.out.println("Could be closer.");
-                brain.getBehaviour("Travel").doAction();
-            }
         }
         else {
             //System.out.println("Getting into range.");
             me.setFiring(false);
+        }
+
+        if (distance != targetRange) {
             brain.getBehaviour("Travel").doAction();
         }
 
@@ -76,5 +76,11 @@ public class Attack extends PlayerTask {
             //System.out.println("Mission accomplished.");
             end();
         }
+    }
+
+    private void track(){
+        Vector2 fullVector = me.getPos().vectorTowards(target.getPos());
+        float distanceToTravel = me.getPos().getDistanceTo(target.getPos()) - targetRange;
+        intel.setTargetLocation(fullVector.clampedTo(distanceToTravel).add(me.getPos()));
     }
 }

@@ -26,9 +26,7 @@ public class Strategise extends PlayerTask {
         GIVE_UP,
         SNIPE,
         BUM_RUSH,
-        SPRAY_N_PRAY,
-        RETREAT_WITH_SHOTGUN,
-        RETREAT_WITH_SMG
+        SPRAY_N_PRAY
     }
 
     public Strategise(PlayerIntel intel, PlayerBrain brain, LoadoutHandler ldh){
@@ -78,14 +76,8 @@ public class Strategise extends PlayerTask {
             } else {
                 chosenStrategy = Strategy.BUM_RUSH;
             }
-        }
-        else {
-            if (loadout.haveShotgun()){
-                chosenStrategy = Strategy.RETREAT_WITH_SHOTGUN;
-            }
-            else {
-                chosenStrategy = Strategy.RETREAT_WITH_SMG;
-            }
+        } else {
+            chosenStrategy = Strategy.GIVE_UP;
         }
 
         // But will the player make the correct decision?
@@ -94,6 +86,10 @@ public class Strategise extends PlayerTask {
         }
 
         // Act upon selected strategy.
+        float maxRange = 0;
+        float targetRange = 0;
+        double freq = 1;
+
         switch (chosenStrategy){
             case GIVE_UP:
                 brain.setStrategy("ShiftPhase");
@@ -101,15 +97,16 @@ public class Strategise extends PlayerTask {
 
             case SNIPE:
                 loadout.equipSniper();
-                int freq = intel.ent().getActiveWeapon().getRefireTime();
-                freq *= 1.5;
-                ((Attack)brain.getBehaviour("Attack")).setParameters(SNIPER_CEIL, SMG_CEIL, freq);
+                freq = 1.5 * intel.ent().getActiveWeapon().getRefireTime();
+                maxRange = SNIPER_CEIL;
+                targetRange = SMG_CEIL;
                 brain.setStrategy("Attack");
                 break;
 
             case BUM_RUSH:
                 loadout.equipSMG();
-                ((Attack)brain.getBehaviour("Attack")).setParameters(SMG_CEIL, SHOTGUN_OPT, 1);
+                maxRange = SMG_CEIL;
+                targetRange = SHOTGUN_OPT;
                 brain.setStrategy("Attack");
                 break;
 
@@ -117,25 +114,12 @@ public class Strategise extends PlayerTask {
                 loadout.equipShotgun();
                 freq = intel.ent().getActiveWeapon().getRefireTime();
                 freq *= 1.2;
-                ((Attack)brain.getBehaviour("Attack")).setParameters(SHOTGUN_CEIL, SHOTGUN_OPT, freq);
+                maxRange = SHOTGUN_CEIL;
+                targetRange = SHOTGUN_OPT;
                 brain.setStrategy("Attack");
                 break;
-
-            case RETREAT_WITH_SHOTGUN:
-                loadout.equipShotgun();
-                freq = intel.ent().getActiveWeapon().getRefireTime();
-                freq *= 1.2;
-                ((Retreat)brain.getBehaviour("Retreat")).setParameters(SHOTGUN_CEIL, SHOTGUN_OPT, freq);
-                brain.setStrategy("Retreat");
-                break;
-
-            default:
-                loadout.equipSMG();
-                ((Retreat)brain.getBehaviour("Retreat")).setParameters(SHOTGUN_CEIL, SHOTGUN_OPT, 1);
-                brain.setStrategy("Retreat");
-                break;
         }
-
+        ((Attack)brain.getBehaviour("Attack")).setParameters(maxRange, targetRange, (int) Math.floor(freq));
         brain.executeStrategy();
         end();
     }

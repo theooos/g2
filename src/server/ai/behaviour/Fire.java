@@ -34,18 +34,31 @@ public class Fire extends PlayerTask {
 
     public void doAction(){
 
+        // Stash the current direction of the player.
+        Vector2 oldDir = intel.ent().getDir();
+
         // Set the player to (roughly) face the player.
         Vector2 dir = intel.ent().getPos().vectorTowards(intel.getRelevantEntity().getPos());
-        int inaccuracy = (int) Math.ceil(brain.getStressLevel()* AIConstants.MAX_AIM_INACCURACY);
+        System.out.println("\n\nFiring." +
+                " My Pos: " + intel.ent().getPos() +
+                " Target Pos: " + intel.getRelevantEntity().getPos() +
+                " AppVector: " + dir);
+        int inaccuracy = (int) Math.ceil(brain.getStressLevel() * AIConstants.MAX_AIM_INACCURACY);
         dir = Vector2.deviate(dir, inaccuracy);
         intel.ent().setDir(dir);
 
         // Fire - if the weapon will allow.
-        if (fireDelay == 0 || intel.ent().getActiveWeapon().isFullyAuto()) intel.ent().setFiring(true);
+        if (fireDelay == 0 || intel.ent().getActiveWeapon().isFullyAuto()) {
+            intel.ent().setDir(dir);
+            intel.ent().setFiring(true);
+        }
+
         else if ((fireDelay == 1) && !intel.ent().getActiveWeapon().isFullyAuto()) {
             intel.ent().setFiring(false);
             fireDelay = -fireFreq;
         }
+
+        intel.ent().setDir(oldDir);
         fireDelay++;
     }
 }

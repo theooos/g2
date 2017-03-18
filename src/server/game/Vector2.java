@@ -140,7 +140,7 @@ public class Vector2 implements Sendable{
         return new Vector2((float)line.getX1(), (float)line.getY1());
     }
 
-    public Vector2 clampedTo(int size) {
+    public Vector2 clampedTo(float size) {
         return (normalise()).mult(size);
     }
 

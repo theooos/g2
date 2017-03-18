@@ -66,7 +66,6 @@ public class PlayerBrain extends AIBrain {
         behaviours.addBehaviour(new QuickMove(intel,this), "QuickMove");
         behaviours.addBehaviour(new ForceShiftPhase(intel, this), "ForceShiftPhase");
         behaviours.addBehaviour(new Attack(intel, this), "Attack");
-        behaviours.addBehaviour(new Retreat(intel, this), "Retreat");
         behaviours.addBehaviour(new Swat(intel, this, loadout), "Swat");
     }
     @Override
@@ -129,6 +128,12 @@ public class PlayerBrain extends AIBrain {
                 if (currentStrategy.hasFinished()){
                     behaviours.resetAll();
                     behaviours.getBehaviour("Strategise").run();
+                } else {
+                    System.out.println("\nFinal Direction." +
+                            " My Pos: " + intel.ent().getPos() +
+                            " Target Pos: " + intel.getRelevantEntity().getPos() +
+                            " AppVector: " + intel.ent().getPos().vectorTowards(intel.getRelevantEntity().getPos()));
+                    intel.ent().setDir(intel.ent().getPos().vectorTowards(intel.getRelevantEntity().getPos()));
                 }
                 break;
 

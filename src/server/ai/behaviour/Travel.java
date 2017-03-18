@@ -28,14 +28,15 @@ public class Travel extends PlayerTask {
     public void doAction() {
 
         Player me = intel.ent();
+        
         // Sets the entity to face in direction of the target location.
         Vector2 target = me.getPos().vectorTowards(intel.checkpoint());
         int inaccuracy = (int) Math.ceil(brain.getStressLevel()* AIConstants.MAX_TRAVEL_INACCURACY);
-        me.setDir(Vector2.deviate(target, inaccuracy));
+        Vector2 travelDir = Vector2.deviate(target, inaccuracy);
 
         // Checks for collisions,
         Vector2 oldPos = me.getPos();
-        me.setPos(oldPos.add(me.getDir().mult(me.getSpeed())));
+        me.setPos(oldPos.add(travelDir.mult(me.getSpeed())));
         if (!intel.validPosition()) {
             me.setPos(oldPos);
             end();
@@ -52,7 +53,6 @@ public class Travel extends PlayerTask {
                 intel.nextCheckpoint();
             }
         }
-        me.setDir(target.normalise());
     }
 
     @Override
