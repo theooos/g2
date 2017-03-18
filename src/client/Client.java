@@ -1,7 +1,7 @@
 package client;
 
 import client.audio.Audio;
-import client.graphics.GameRenderer;
+import client.graphics.GameManager;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
@@ -28,7 +28,7 @@ public class Client {
     public static TextureLoader textureLoader;
     private TextRenderer textRenderer;
     private StartScreenRenderer startScreen;
-    private GameRenderer gameRenderer;
+    private GameManager gameRenderer;
 
     private boolean running = true;
 
@@ -114,7 +114,7 @@ public class Client {
     }
 
     private void beginGame(GameData gameData) {
-        gameRenderer = new GameRenderer(gameData, connection, playerID);
+        gameRenderer = new GameManager(gameData, connection, playerID);
         currentMode = Mode.GAME;
         Audio.INTERFACEBACKGROUND.stopClip();
         Audio.COUNTDOWN.play();

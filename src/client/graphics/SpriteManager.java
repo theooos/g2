@@ -41,9 +41,9 @@ public class SpriteManager {
                     weapon = new PlayerTexture(ISprite.PLAYER_P2);
                 }
                 texture.setDimension(radius, radius);
-//                texture.spawn(p.getID(), GameRenderer.correctCoordinates(new Vector2f(p.getPos().getX(), p.getPos().getY())), p.getPhase(),GameRenderer.players);
+//                texture.spawn(p.getID(), GameManager.correctCoordinates(new Vector2f(p.getPos().getX(), p.getPos().getY())), p.getPhase(),GameManager.players);
                 weapon.setDimension(radius/2,radius/2);
-//                weapon.spawn(p.getID(), GameRenderer.correctCoordinates(new Vector2f(p.getPos().getX(), p.getPos().getY())), p.getPhase(), GameRenderer.crosshead);
+//                weapon.spawn(p.getID(), GameManager.correctCoordinates(new Vector2f(p.getPos().getX(), p.getPos().getY())), p.getPhase(), GameManager.crosshead);
         }
         // Orbs
         for (Orb o : gameData.getOrbs().values()) {
@@ -53,7 +53,7 @@ public class SpriteManager {
                 } else {
                     texture = new OrbTexture(ISprite.ORB_P2);
                 }
-//                texture.spawn(o.getID(), GameRenderer.correctCoordinates(new Vector2f(o.getPos().getX(), o.getPos().getY())), o.getPhase(), GameRenderer.orbs);
+//                texture.spawn(o.getID(), GameManager.correctCoordinates(new Vector2f(o.getPos().getX(), o.getPos().getY())), o.getPhase(), GameManager.orbs);
         }
     }
 
@@ -74,7 +74,7 @@ public class SpriteManager {
 
     public void updateSprites(int playerID, GameData gameData, Connection conn){
         for (Player p : gameData.getPlayers().values()) {
-//            GameRenderer.players.update(p.getID(), GameRenderer.correctCoordinates(new Vector2f(p.getPos().getX(), p.getPos().getY())), p.getPhase());
+//            GameManager.players.update(p.getID(), GameManager.correctCoordinates(new Vector2f(p.getPos().getX(), p.getPos().getY())), p.getPhase());
 
             Vector2 crossPos;
             if(p.getID() != playerID) {
@@ -87,15 +87,15 @@ public class SpriteManager {
                 p.setDir(dir);
                 conn.send(new MoveObject(p.getPos(), p.getDir(), playerID, p.getMoveCount()));
             }
-//            GameRenderer.crosshead.update(p.getID(), new Vector2f(crossPos.getX(), crossPos.getY()), p.getPhase());
+//            GameManager.crosshead.update(p.getID(), new Vector2f(crossPos.getX(), crossPos.getY()), p.getPhase());
         }
         for (Orb o : gameData.getOrbs().values()) {
-//            GameRenderer.orbs.update(o.getID(), GameRenderer.correctCoordinates(new Vector2f(o.getPos().getX(), o.getPos().getY())), o.getPhase());
+//            GameManager.orbs.update(o.getID(), GameManager.correctCoordinates(new Vector2f(o.getPos().getX(), o.getPos().getY())), o.getPhase());
         }
     }
 
     public void drawProjectiles(int phase, GameData gameData){
-//        GameRenderer.projectiles.destroy();
+//        GameManager.projectiles.destroy();
 
         ConcurrentHashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
         for (Projectile p : projectiles.values()) {
@@ -107,7 +107,7 @@ public class SpriteManager {
                     texture = new PlayerTexture(ISprite.PLAYER_P2);
                 }
                 texture.setDimension(p.getRadius(), p.getRadius());
-//                texture.spawn(p.getID(), GameRenderer.correctCoordinates(new Vector2f(p.getPos().getX(), p.getPos().getY())), p.getPhase(),GameRenderer.projectiles);
+//                texture.spawn(p.getID(), GameManager.correctCoordinates(new Vector2f(p.getPos().getX(), p.getPos().getY())), p.getPhase(),GameManager.projectiles);
                 //draw.drawAura(p.getPos(),radius+radius/2,radius/2, red, green, blue);
             }
         }
@@ -116,7 +116,7 @@ public class SpriteManager {
     public void drawCollision(int id, Vector2f vector2f, int radius, int phase){
         PlayerTexture circle = new PlayerTexture(ISprite.COLLISION);
         circle.setDimension(radius,radius);
-//        circle.spawn(id, vector2f, phase, GameRenderer.collision);
+//        circle.spawn(id, vector2f, phase, GameManager.collision);
     }
 
     public Vector2 correctVector(Vector2 oldCoordinates) {

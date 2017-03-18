@@ -149,7 +149,7 @@ public class Game implements Runnable {
             powerUps.put(i, p);
         }
 
-        countdown = 4*60*tick; //four minutes
+        countdown = 10*tick; //four minutes
 
         InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps);
         sendGameStart(g);

@@ -1,231 +1,33 @@
 package client.graphics;
 
 import client.ClientSettings;
-import client.audio.Audio;
-import objects.*;
-import networking.Connection;
-import org.lwjgl.Sys;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
+import objects.GameData;
 import org.lwjgl.opengl.GL11;
 import server.game.*;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glDepthMask;
-
-/**
- * Provides the visuals for the game itself.
- */
 public class GameRenderer {
-
-    private enum Mode {GAME,MENU,SCOREBOARD,GAMEOVER}
-    private Mode mode = Mode.GAME;
-
-    private static boolean gameRunning = true;
-
-    private long lastFrame;
-    private int fps;
-    private long lastFPS;
-    private int playerID;
-
-    private GameData gameData;
-    private MapRenderer map;
-    private Connection conn;
-    private CollisionManager collisions;
-
-    private boolean fDown;
-    private boolean clickDown;
-    private boolean eDown;
-    private boolean oneDown;
-    private boolean twoDown;
-    private boolean tabPressed;
-    private boolean healthbar;
-    private boolean gameMusic;
-    private boolean muted;
-
-    private Draw draw;
+    private Draw draw = new Draw();
     private Pulse pulse;
-
+    private GameData gameData;
+    private int playerID;
+    private MapRenderer map;
+    private CollisionManager collisionManager;
+    public float rotation;
     private boolean displayCollisions;
-    private float rotation;
 
-    public GameRenderer(GameData gd, Connection conn, int playerID) {
-        super();
-        this.conn = conn;
-        this.gameData = gd;
+    public GameRenderer(GameData gameData, int playerID, CollisionManager collisionManager) {
+
+        this.gameData = gameData;
         this.playerID = playerID;
-
+        map = new MapRenderer(gameData.getMapID());
+        this.collisionManager = collisionManager;
         rotation = 0;
-        fDown = false;
-        clickDown = false;
-        eDown = false;
-        oneDown = false;
-        twoDown = false;
-        tabPressed = false;
-        healthbar = true;
-        gameMusic = false;
-        muted = true;
-
-
-        draw = new Draw();
-        collisions = new CollisionManager(gd);
-        displayCollisions = false;
-
-
-        map = new MapRenderer(gd.getMapID());
         Player me = gameData.getPlayer(playerID);
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
-
-        conn.addFunctionEvent("GameOver", this::gameOver);
-    }
-
-    private void gameOver(Sendable sendable) {
-        gameData.updateScoreboard(((GameOver) sendable).getScoreboard());
-        mode = Mode.GAMEOVER;
-    }
-
-    public void run(){
-        switch (mode){
-            case GAME:
-                update();
-                render();
-                break;
-            case MENU:
-                //TODO Render in-game menu
-                break;
-            case SCOREBOARD:
-                //TODO Show the scoreboard
-                break;
-            case GAMEOVER:
-                TextRenderer textRenderer = new TextRenderer();
-                textRenderer.drawText("Game over. To be changed.",0,0);
-        }
-    }
-
-    private void update() {
-        rotation += 1.5f;
-        rotation %= 360;
-        Player me = gameData.getPlayer(playerID);
-        checkMusic(me);
-
-        if (me.isAlive()) {
-
-            Vector2 pos = me.getPos();
-
-            float xPos = pos.getX();
-            float yPos = pos.getY();
-
-            int delta = getDelta();
-
-            if (Keyboard.isKeyDown(Keyboard.KEY_A)) xPos -= 0.35f * delta;
-            if (Keyboard.isKeyDown(Keyboard.KEY_D)) xPos += 0.35f * delta;
-            if (Keyboard.isKeyDown(Keyboard.KEY_W)) yPos -= 0.35f * delta;
-            if (Keyboard.isKeyDown(Keyboard.KEY_S)) yPos += 0.35f * delta;
-
-            if (Keyboard.isKeyDown(Keyboard.KEY_M)) {
-                if (!muted) {
-                    muted = true;
-                } else {
-                    muted = false;
-                    muteEverything();
-                }
-            }
-
-            if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-                fDown = true;
-                if (muted) Audio.PHASE.play();
-            } else if (fDown) {
-                fDown = false;
-                int newPhase = 0;
-                if (me.getPhase() == 0) {
-                    newPhase = 1;
-                }
-                Player p = new Player(me);
-                p.setPhase(newPhase);
-                if (collisions.validPosition(p)) {
-                    conn.send(new PhaseObject(me.getID()));
-                    pulse = new Pulse(me.getPos(), me.getRadius(), newPhase, 0, 1 - newPhase, 20, 20, newPhase, true);
-                } else {
-                    //invalid phase
-                    pulse = new Pulse(me.getPos(), me.getRadius(), 0.3f, 0.3f, 0.3f, 20, 20, me.getPhase(), 250, false);
-                }
-
-            }
-            if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
-                eDown = true;
-            } else if (eDown) {
-                eDown = false;
-                if (me.isWeaponOneOut()) {
-                    conn.send(new SwitchObject(me.getID(), false));
-                } else {
-                    conn.send(new SwitchObject(me.getID(), true));
-                }
-            }
-
-            if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
-                oneDown = true;
-            } else if (oneDown) {
-                oneDown = false;
-                conn.send(new SwitchObject(me.getID(), true));
-            }
-
-            if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
-                twoDown = true;
-            } else if (twoDown) {
-                twoDown = false;
-                conn.send(new SwitchObject(me.getID(), false));
-                displayCollisions = !displayCollisions;
-            }
-
-            if (Mouse.isButtonDown(0)) {
-                if (!clickDown) {
-                    conn.send(new FireObject(me.getID(), true));
-                    clickDown = true;
-                }
-            } else if (clickDown) {
-                if (me.activeWeapon() == 1 && muted)
-                    Audio.SHOOT2.play();
-                else if (muted) {
-                    Audio.SHOOT.play();
-                }
-                conn.send(new FireObject(me.getID(), false));
-                clickDown = false;
-            }
-
-
-            // keep quad on the screen
-            if (xPos < 0) xPos = 0;
-            if (xPos > 800) xPos = 800;
-            if (yPos < 0) yPos = 0;
-            if (yPos > 600) yPos = 600;
-
-            if (pos.getX() != xPos || pos.getY() != yPos) {
-                me.setPos(new Vector2(xPos, yPos));
-                if (collisions.validPosition(me)) {
-                    gameData.updatePlayer(me);
-                } else {
-                    me.setPos(pos);
-                }
-            }
-
-            Vector2 tempPos = new Vector2(pos.getX(), ClientSettings.SCREEN_HEIGHT - pos.getY());
-            Vector2 dir = getDirFromMouse(tempPos);
-            if (!me.getDir().equals(dir)) {
-                me.setDir(dir);
-                conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
-                gameData.updatePlayer(me);
-            } else if (me.getPos().equals(pos)) {
-                conn.send(new MoveObject(me.getPos(), me.getDir(), playerID, me.getMoveCount()));
-            }
-        }
-
-        tabPressed = Keyboard.isKeyDown(Keyboard.KEY_TAB);
-
-        updateFPS(); // update FPS Counter
+        displayCollisions = false;
     }
 
     public void render() {
@@ -233,7 +35,9 @@ public class GameRenderer {
         int phase = p.getPhase();
         draw.colourBackground(phase);
 
-        if (pulse.isAlive() && pulse.isShowOtherPhase()) {
+        if (pulse
+                .isAlive() && pulse
+                .isShowOtherPhase()) {
             drawStencil();
         } else {
             drawProjectiles(phase);
@@ -241,28 +45,19 @@ public class GameRenderer {
             drawOrbs(phase);
             drawPlayers(phase);
             drawPowerUps(phase);
-            if (pulse.isAlive()) {
-                pulse.draw();
+            if (pulse
+                    .isAlive()) {
+                pulse
+                        .draw();
             }
         }
         draw.drawHealthBar(p.getHealth(), p.getMaxHealth());
         draw.drawHeatBar(p.getWeaponOutHeat(), p.getActiveWeapon().getMaxHeat());
 
-        if (tabPressed) {
-            draw.shadeScreen();
-        }
-
         if (displayCollisions) drawCollisions();
     }
 
-    private Vector2 getDirFromMouse(Vector2 pos) {
-        Vector2 mousePos = new Vector2(Mouse.getX(), Mouse.getY());
-        Vector2 dir = pos.vectorTowards(mousePos);
-        dir = dir.normalise();
-        return new Vector2(dir.getX(), 0 - dir.getY());
-    }
-
-    private void positionBullet(Vector2 pos, Vector2 dir) {
+    void positionBullet(Vector2 pos, Vector2 dir) {
         Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
         float lastX = cursor.getX();
         float lastY = cursor.getY();
@@ -271,21 +66,22 @@ public class GameRenderer {
             draw.drawCircle(lastX, lastY, 10, 50);
     }
 
-    private void drawCollisions() {
+    void drawCollisions() {
         Player p = new Player(gameData.getPlayer(playerID));
-        glColor4f(1, 0, 0, 0.5f);
+        GL11.glColor4f(1, 0, 0, 0.5f);
         for (int i = 0; i < ClientSettings.SCREEN_WIDTH; i += 10) {
             for (int j = 0; j < ClientSettings.SCREEN_HEIGHT; j += 10) {
                 p.setPos(new Vector2(i, j));
-                if (!collisions.validPosition(p)) {
+                if (!collisionManager.validPosition(p)) {
                     draw.drawCircle(i, ClientSettings.SCREEN_HEIGHT - j, 5, 5);
                 }
             }
         }
     }
 
-    private void drawStencil() {
-        int newPhase = pulse.getNewPhase();
+    void drawStencil() {
+        int newPhase = pulse
+                .getNewPhase();
         int oldPhase = 1;
         if (newPhase == 1) oldPhase = 0;
 
@@ -298,24 +94,30 @@ public class GameRenderer {
 
         GL11.glEnable(GL11.GL_STENCIL_TEST);
 
-        glColorMask(false, false, false, false);
-        glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-        glStencilMask(0xFF); // Write to stencil buffer
-        glDepthMask(false); // Don't write to depth buffer
-        glClear(GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
+        GL11.glColorMask(false, false, false, false);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+        GL11.glStencilMask(0xFF); // Write to stencil buffer
+        GL11.glDepthMask(false); // Don't write to depth buffer
+        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
 
-        draw.drawCircle(pulse.getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse.getStart().getY(), pulse.getRadius(), 500);
+        draw.drawCircle(pulse
+                .getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse
+                .getStart().getY(), pulse
+                .getRadius(), 500);
 
-        glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
-        glStencilMask(0x00); // Don't write anything to stencil buffer
-        glDepthMask(true); // Write to depth buffer
-        glColorMask(true, true, true, true);
+        GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+        GL11.glStencilMask(0x00); // Don't write anything to stencil buffer
+        GL11.glDepthMask(true); // Write to depth buffer
+        GL11.glColorMask(true, true, true, true);
 
         //GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         GL11.glColor3f(0, 0, 0);
-        draw.drawCircle(pulse.getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse.getStart().getY(), pulse.getRadius(), 500);
+        draw.drawCircle(pulse
+                .getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse
+                .getStart().getY(), pulse
+                .getRadius(), 500);
         draw.colourBackground(newPhase);
         drawProjectiles(newPhase);
         map.renderMap(newPhase);
@@ -325,11 +127,12 @@ public class GameRenderer {
 
         GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-        pulse.draw();
+        pulse
+                .draw();
 
     }
 
-    private void drawPlayers(int phase) {
+    void drawPlayers(int phase) {
         ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
         int radius = players.get(0).getRadius();
         float red;
@@ -362,7 +165,7 @@ public class GameRenderer {
         }
     }
 
-    private void drawOrbs(int phase) {
+    void drawOrbs(int phase) {
         HashMap<Integer, Orb> orbs = gameData.getOrbs();
         Player me = gameData.getPlayer(playerID);
         float red;
@@ -380,21 +183,21 @@ public class GameRenderer {
             }
             if (phase == o.getPhase()) {
                 draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f);
-                glColor4f(red, green, blue, 1);
+                GL11.glColor4f(red, green, blue, 1);
                 draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
             } else {
                 float dist = me.getPos().getDistanceTo(o.getPos());
                 if (dist < 150) {
                     float fade = 0.7f - (dist / 150f);
                     draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f, fade);
-                    glColor4f(red, green, blue, fade);
+                    GL11.glColor4f(red, green, blue, fade);
                     draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
                 }
             }
         }
     }
 
-    private void drawProjectiles(int phase) {
+    void drawProjectiles(int phase) {
         ConcurrentHashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
         float red;
         float green;
@@ -410,7 +213,7 @@ public class GameRenderer {
                     green = 1f;
                     blue = 0.1f;
                 }
-                glColor3f(red, green, blue);
+                GL11.glColor3f(red, green, blue);
                 float radius = p.getRadius();
                 draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
                 draw.drawAura(p.getPos(), radius + radius / 2, radius / 2, red, green, blue);
@@ -418,7 +221,7 @@ public class GameRenderer {
         }
     }
 
-    private void drawPowerUps(int phase) {
+    void drawPowerUps(int phase) {
         HashMap<Integer, PowerUp> powerUps = gameData.getPowerUps();
         float red;
         float green;
@@ -440,46 +243,11 @@ public class GameRenderer {
         }
     }
 
-    private long getTime() {
-        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    public void setPulse(Pulse pulse){
+        this.pulse = pulse;
     }
 
-    private int getDelta() {
-        long time = getTime();
-        int delta = (int) (time - lastFrame);
-        lastFrame = time;
-        return delta;
-    }
-
-    private void updateFPS() {
-        if (getTime() - lastFPS > 1000) {
-            Display.setTitle("FPS: " + fps);
-            fps = 0;
-            lastFPS += 1000;
-        }
-        fps++;
-    }
-
-    private void checkMusic(Player me) {
-        if (me.getHealth() < 25 && healthbar && muted) {
-            healthbar = false;
-            gameMusic = true;
-            Audio.GAMEMUSIC.stopClip();
-            Audio.WARNING.playallTime();
-        } else if (me.getHealth() > 25 && gameMusic && muted) {
-            gameMusic = false;
-            healthbar = true;
-            Audio.WARNING.stopClip();
-            Audio.GAMEMUSIC.playallTime();
-        } else if (muted) {
-            Audio.GAMEMUSIC.playallTime();
-        }
-    }
-
-    private void muteEverything() {
-        Audio.SHOOT.stopClip();
-        Audio.SHOOT.stopClip();
-        Audio.GAMEMUSIC.stopClip();
-        Audio.WARNING.stopClip();
+    public void flipDisplayCollisions(){
+        displayCollisions = !displayCollisions;
     }
 }
