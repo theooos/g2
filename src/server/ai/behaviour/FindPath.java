@@ -50,8 +50,6 @@ public class FindPath extends Task {
         }
         else {
 
-            System.out.println("Using A*." + intel.ent().getRadius());
-
             Node target=new Node(intel.getTargetLocation(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
             Node start=new Node(intel.ent().getPos(),intel.ent().getRadius(),intel.ent().getPhase(),intel,intel.getTargetLocation());
 
@@ -71,7 +69,6 @@ public class FindPath extends Task {
 
             intel.resetPath(path);
         }
-      //  System.out.println("Succeeding.");
 
         end();
     }

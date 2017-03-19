@@ -39,7 +39,7 @@ public class AStar {
         List<Node> path = new ArrayList<>();
 
         for(Node node = target; node!=null; node = node.parent){
-            System.out.println(node.h_scores);
+            //System.out.println(node.h_scores);
             path.add(node);
         }
         Collections.reverse(path);
@@ -135,12 +135,12 @@ public class AStar {
         for ( int row = (radius); row < (height - (radius)); row+=radius )
         {
 
-           System.out.println();
+           //System.out.println();
             for ( int col = (radius); col < (width - (radius)); col+=radius ) {
 
 
                 nodes[col][row] = new Node(new Vector2(col, row), this.intel.ent().getRadius(), phase, intel, goal.coordinates());
-               System.out.print(nodes[col][row].h_scores+" ");
+               //System.out.print(nodes[col][row].h_scores+" ");
                 if (!closeToWall(nodes[col][row],walls,radius)&& nodes[col][row].h_scores<100000) {
                     //System.out.println("Col: " + col);
 

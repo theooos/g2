@@ -90,7 +90,6 @@ public class PlayerBrain extends AIBrain {
         // Do nothing if dead.
         if (!intel.ent().isAlive()) {
             newEmotion = AT_REST;
-            System.out.println("I is ded");
             return;
         }
 
@@ -204,13 +203,11 @@ public class PlayerBrain extends AIBrain {
         switch (newEmotion) {
 
             case INTIMIDATED:
-                System.out.println("Player "+ intel.ent().getID() + " is now intimidated.");
                 this.stress = STRESS_INTIMIDATED;
                 flee.start();
                 break;
 
             case IRRITATED:
-                System.out.println("Player "+ intel.ent().getID() + " is now irritated.");
                 this.stress = STRESS_IRRITATED;
                 behaviours.getBehaviour("Swat").start();
                 break;
@@ -220,7 +217,6 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             case AGGRESSIVE:
-                System.out.println("Player "+ intel.ent().getID() + " is now aggressive.");
                 if (curEmotion == BORED) {
                     this.stress = STRESS_AGGRESSIVE_FROM_BORED;
                 }
@@ -240,7 +236,6 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             default:
-                System.out.println("Player "+ intel.ent().getID() + " is now bored.");
                 this.stress = STRESS_BORED;
                 ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
                 hunt.start();
