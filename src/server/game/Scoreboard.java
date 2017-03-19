@@ -8,13 +8,13 @@ import objects.Sendable;
  */
 public class Scoreboard implements Sendable {
     private int team1Score;
-    private int team2Score;
+    private int team0Score;
     private int maxScore;
     private int[] playerScore;
 
-    public Scoreboard(int maxScore, int playerNum) {
+    Scoreboard(int maxScore, int playerNum) {
         this.maxScore = maxScore;
-        team2Score = 0;
+        team0Score = 0;
         team1Score = 0;
         playerScore = new int[playerNum];
         for (int i = 0; i < playerNum; i++) {
@@ -23,22 +23,62 @@ public class Scoreboard implements Sendable {
     }
 
     boolean scoreReached() {
-        return (team1Score >= maxScore || team2Score >= maxScore);
+        return (team1Score >= maxScore || team0Score >= maxScore);
     }
 
-    private void addScore(int playerID, int score) {
-        playerScore[playerID] += score;
+    private void addScore(Player p, int score) {
+        playerScore[p.getID()] += score;
+        System.out.println(playerScore[p.getID()]);
+        if (p.getTeam() == 0) {
+            team0Score += score;
+        }
+        else {
+            team1Score += score;
+        }
     }
 
-    void killedPlayer(int playerID) {
-        addScore(playerID, 10);
+    void killedPlayer(Player p) {
+        addScore(p, 10);
     }
 
-    void killedOrb(int playerID) {
-        addScore(playerID, 5);
+    void killedOrb(Player p) {
+        addScore(p, 5);
     }
 
     public int getPlayerScore(int playerID) {
         return playerScore[playerID];
+    }
+
+    public String toString() {
+        String s = ("Team 1: "+team0Score+ " Team 2: "+team1Score+"\n");
+        int[] temp = playerScore.clone();
+        int removed = 0;
+        while (removed < temp.length) {
+            int max = Integer.MIN_VALUE;
+            int index = -1;
+            for (int i = 0; i < temp.length; i++) {
+                if (temp[i] > max) {
+                    index = i;
+                    max = temp[i];
+                }
+            }
+            if (index != -1) {
+                s += "Player " + index + " Score: "+max+"\n";
+                temp[index] = Integer.MIN_VALUE;
+            }
+            else {
+                break;
+            }
+            removed++;
+        }
+        return s;
+    }
+
+    protected Scoreboard clone() {
+        Scoreboard sb = new Scoreboard(maxScore, playerScore.length);
+        sb.team1Score = team1Score;
+        sb.team0Score = team0Score;
+        sb.playerScore = playerScore.clone();
+        return  sb;
     }
 }

@@ -1,5 +1,6 @@
 package client.graphics;
 
+import client.ClientSettings;
 import org.lwjgl.opengl.GL11;
 import server.game.Vector2;
 
@@ -16,8 +17,6 @@ class Pulse {
     private float red;
     private float green;
     private float blue;
-    private float height;
-    private float width;
     private float speed;
     private float strokeWidth;
     private float buffer;
@@ -27,14 +26,12 @@ class Pulse {
     private boolean showOtherPhase;
 
 
-    Pulse(Vector2 start, float radius, float red, float green, float blue, float height, float width, float speed, float strokeWidth, int newPhase, boolean showOtherPhase) {
+    Pulse(Vector2 start, float radius, float red, float green, float blue, float speed, float strokeWidth, int newPhase, boolean showOtherPhase) {
         this.start = start;
         this.radius = radius;
         this.red = red;
         this.green = green;
         this.blue = blue;
-        this.height = height;
-        this.width = width;
         this.speed = speed;
         this.strokeWidth = strokeWidth;
         this.newPhase = newPhase;
@@ -46,14 +43,12 @@ class Pulse {
 
     }
 
-    Pulse(Vector2 start, float radius, float red, float green, float blue, float height, float width, float speed, float strokeWidth, int newPhase, int max, boolean showOtherPhase) {
+    Pulse(Vector2 start, float radius, float red, float green, float blue, float speed, float strokeWidth, int newPhase, int max, boolean showOtherPhase) {
         this.start = start;
         this.radius = radius;
         this.red = red;
         this.green = green;
         this.blue = blue;
-        this.height = height;
-        this.width = width;
         this.speed = speed;
         this.strokeWidth = strokeWidth;
         this.newPhase = newPhase;
@@ -68,28 +63,28 @@ class Pulse {
         GL11.glColor4f(red, green, blue, 0);
         GL11.glBegin(GL_QUAD_STRIP);
         float cx = start.getX();
-        float cy = height-start.getY();
-        GL11.glVertex2f(cx, cy+(radius-strokeWidth));
+        float cy = ClientSettings.SCREEN_HEIGHT - start.getY();
+        GL11.glVertex2f(cx, cy + (radius - strokeWidth));
         GL11.glColor4f(red, green, blue, 1);
-        GL11.glVertex2f(cx, cy+radius);
-        for (int i = 1; i < 360; i+=3) {
+        GL11.glVertex2f(cx, cy + radius);
+        for (int i = 1; i < 360; i += 3) {
             //y = hcosTheta
             //x = hsinTheta
             GL11.glColor4f(red, green, blue, 0);
-            GL11.glVertex2d(cx+((radius-strokeWidth)*Math.sin(Math.toRadians(i))), cy+((radius-strokeWidth)*Math.cos(Math.toRadians(i))));
+            GL11.glVertex2d(cx + ((radius - strokeWidth) * Math.sin(Math.toRadians(i))), cy + ((radius - strokeWidth) * Math.cos(Math.toRadians(i))));
             GL11.glColor4f(red, green, blue, 1);
-            GL11.glVertex2d(cx+((radius)*Math.sin(Math.toRadians(i))), cy+((radius)*Math.cos(Math.toRadians(i))));
+            GL11.glVertex2d(cx + ((radius) * Math.sin(Math.toRadians(i))), cy + ((radius) * Math.cos(Math.toRadians(i))));
         }
         GL11.glColor4f(red, green, blue, 0);
-        GL11.glVertex2f(cx, cy+(radius-strokeWidth));
+        GL11.glVertex2f(cx, cy + (radius - strokeWidth));
         GL11.glColor4f(red, green, blue, 1);
-        GL11.glVertex2f(cx, cy+radius);
+        GL11.glVertex2f(cx, cy + radius);
         GL11.glEnd();
         radius += speed;
         if (maxRadius && max < radius) {
             alive = false;
         }
-        if (start.getX()+radius-buffer > width && start.getX()-radius+buffer < 0 && start.getY() + radius-buffer > height && start.getY() - radius+buffer < 0) {
+        if (start.getX() + radius - buffer > ClientSettings.SCREEN_WIDTH && start.getX() - radius + buffer < 0 && start.getY() + radius - buffer > ClientSettings.SCREEN_HEIGHT && start.getY() - radius + buffer < 0) {
             alive = false;
         }
     }
@@ -110,7 +105,7 @@ class Pulse {
         return newPhase;
     }
 
-    public boolean isShowOtherPhase() {
+    boolean isShowOtherPhase() {
         return showOtherPhase;
     }
 }

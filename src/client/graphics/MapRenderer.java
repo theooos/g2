@@ -7,30 +7,27 @@ import server.game.Wall;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static org.lwjgl.opengl.GL11.*;
+
 /**
  * Created by bianca on 14/02/2017.
+ * Used to display maps when in game
  */
-public class MapRenderer {
+class MapRenderer {
 
     private Map map;
-    private int mapID;
     private int width;
     private int height;
-    private ArrayList<Wall> walls;
 
     private final int EXTENT = 10;
 
-    public MapRenderer(int mapID) {
+    MapRenderer(int mapID) {
         try {
             map = new Map(mapID);
-            this.mapID = mapID;
             this.height = map.getMapLength();
             this.width = map.getMapWidth();
-            //System.out.println("height is: " + height);
-            //System.out.println("width is: " + width);
 
         } catch (IOException e) {
-//            System.out.println("Invalid MapID.");
             e.printStackTrace();
             System.exit(0);
         }
@@ -39,9 +36,9 @@ public class MapRenderer {
     /**
      * Create all components of the map
      */
-    public void renderMap(int phase) {
+    void renderMap(int phase) {
 
-        walls = map.wallsInPhase(phase, true, false);
+        ArrayList<Wall> walls = map.wallsInPhase(phase, true, false);
 
         for (Wall w : walls) {
             float xStart = w.getStartPos().getX();
@@ -66,13 +63,42 @@ public class MapRenderer {
      * @param yEnd   Y coordinate of the end position
      */
     private void verticalDraw(float xStart, float yStart, float xEnd, float yEnd) {
-        GL11.glColor3f(0.84f, 0.86f, 0.88f);
+        float red = 0.84f;
+        float green = 0.86f;
+        float blue = 0.88f;
+        GL11.glColor3f(red, green, blue);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart+EXTENT));
         GL11.glVertex2f(checkX(xStart + EXTENT), checkY(height - yStart+EXTENT));
         GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd - EXTENT));
         GL11.glVertex2f(checkX(xEnd - EXTENT), checkY(height - yEnd - EXTENT));
         GL11.glEnd();
+
+        glBegin(GL_QUAD_STRIP);
+
+        float intensity = 0.6f;
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart-EXTENT*2,height-(yEnd+EXTENT*2));  //outer bottom left
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart-EXTENT, height-(yEnd+EXTENT)); //inner bottom left
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xEnd+EXTENT*2,height-(yEnd+EXTENT*2)); //outer bottom right
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xEnd+EXTENT, height-(yEnd+EXTENT)); //inner bottom right
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xEnd+EXTENT*2, height-(yStart-EXTENT*2)); //outer top right
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xEnd+EXTENT, height-(yStart-EXTENT)); //inner top right
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart-EXTENT*2,height-(yStart-EXTENT*2)); //outer top left
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart-EXTENT, height-(yStart-EXTENT)); //inner top left
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart-EXTENT*2,height-(yEnd+EXTENT*2));  //outer bottom left
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart-EXTENT, height-(yEnd+EXTENT)); //inner bottom left
+
+        glEnd();
     }
 
     /**
@@ -84,13 +110,42 @@ public class MapRenderer {
      * @param yEnd   Y coordinate of the end position
      */
     private void horizontalDraw(float xStart, float yStart, float xEnd, float yEnd) {
-        GL11.glColor3f(0.84f, 0.86f, 0.88f);
+        float red = 0.84f;
+        float green = 0.86f;
+        float blue = 0.88f;
+        GL11.glColor3f(red, green, blue);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart - EXTENT));
         GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd - EXTENT));
         GL11.glVertex2f(checkX(xEnd + EXTENT), checkY(height - yEnd + EXTENT));
         GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart + EXTENT));
         GL11.glEnd();
+
+        glBegin(GL_QUAD_STRIP);
+
+        float intensity = 0.6f;
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart-EXTENT*2,height-(yEnd-EXTENT*2));  //outer bottom left
+        glColor4f(red, green, blue, height-intensity);
+        glVertex2f(xStart-EXTENT, height-(yEnd-EXTENT)); //inner bottom left
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xEnd+EXTENT*2,height-(yEnd-EXTENT*2)); //outer bottom right
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xEnd+EXTENT, height-(yEnd-EXTENT)); //inner bottom right
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xEnd+EXTENT*2, height-(yStart+EXTENT*2)); //outer top right
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xEnd+EXTENT, height-(yStart+EXTENT)); //inner top right
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart-EXTENT*2,height-(yStart+EXTENT*2)); //outer top left
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart-EXTENT, height-(yStart+EXTENT)); //inner top left
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart-EXTENT*2,height-(yEnd-EXTENT*2));  //outer bottom left
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart-EXTENT, height-(yEnd-EXTENT)); //inner bottom left
+
+        glEnd();
     }
 
     /**

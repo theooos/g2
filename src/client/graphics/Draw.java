@@ -1,6 +1,8 @@
 package client.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
+
+import client.ClientSettings;
 import server.game.Vector2;
 
 
@@ -16,40 +18,90 @@ class Draw {
     private double oldHeat;
     private double displayHeat;
 
-    Draw(int width, int height) {
-        this.width = width;
-        this.height = height;
+    Draw() {
+        this.width = ClientSettings.SCREEN_WIDTH;
+        this.height = ClientSettings.SCREEN_HEIGHT;
         oldHealth = 0;
         displayHealth = 100;
         oldHeat = 0;
         displayHeat = 0;
     }
 
-    private void flashDamage(float intensity) {
+    void drawQuad(Vector2 centre, float rotation, float radius, float red, float green, float blue) {
+        glColor4f(red, green, blue, 1);
+        glPushMatrix();
+        float cx = centre.getX();
+        float cy = height-centre.getY();
+        glTranslatef(cx, cy, 0);
+        glRotatef(rotation, 0f, 0f, 1f);
+        glTranslatef(-cx, -cy, 0);
+        glBegin(GL_QUADS);
+        glVertex2f(cx-radius, height-(centre.getY()-radius));
+        glVertex2f(cx+radius, height-(centre.getY()-radius));
+        glVertex2f(cx+radius, height-(centre.getY()+radius));
+        glVertex2f(cx-radius, height-(centre.getY()+radius));
+        glEnd();
+
+        glBegin(GL_QUAD_STRIP);
+
+        float intensity = 0.8f;
+        glColor4f(red, green, blue, 0);
+        glVertex2f(cx-radius*2,cy-radius*2);  //outer bottom left
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(cx-radius, cy-radius); //inner bottom left
+        glColor4f(red, green, blue, 0);
+        glVertex2f(cx+radius*2,cy-radius*2); //outer bottom right
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(cx+radius, cy-radius); //inner bottom right
+        glColor4f(red, green, blue, 0);
+        glVertex2f(cx+radius*2, cy+radius*2); //outer top right
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(cx+radius, cy+radius); //inner top right
+        glColor4f(red, green, blue, 0);
+        glVertex2f(cx-radius*2,cy+radius*2); //outer top left
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(cx-radius, cy+radius); //inner top left
+        glColor4f(red, green, blue, 0);
+        glVertex2f(cx-radius*2,cy-radius*2);  //outer bottom left
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(cx-radius, cy-radius); //inner bottom left
+
+        glEnd();
+
+        glPopMatrix();
+    }
+
+    private void flashDamage(float intensity, boolean hurt) {
         intensity = Math.min(1, intensity);
         glBegin(GL_QUAD_STRIP);
         float buffer = 60;
+        float red = 0;
+        float green = 1;
+        if (hurt) {
+            red = 1;
+            green = 0;
+        }
 
-        glColor4f(1, 0, 0, intensity/2);
-        glVertex2d(0,0);
-        glColor4f(1, 0, 0, 0);
-        glVertex2d(buffer, buffer);
-        glColor4f(1, 0, 0, intensity);
-        glVertex2d(width,0);
-        glColor4f(1, 0, 0, 0);
-        glVertex2d(width-buffer, buffer);
-        glColor4f(1, 0, 0, intensity);
-        glVertex2d(width, height);
-        glColor4f(1, 0, 0, 0);
-        glVertex2d(width-buffer, height-buffer);
-        glColor4f(1, 0, 0, intensity);
-        glVertex2d(0,height);
-        glColor4f(1, 0, 0, 0);
-        glVertex2d(buffer, height-buffer);
-        glColor4f(1, 0, 0, intensity/2);
-        glVertex2d(0,0);
-        glColor4f(1, 0, 0, 0);
-        glVertex2d(buffer, buffer);
+        glColor4f(red, green, 0, intensity/2);
+        glVertex2f(0,0);
+        glColor4f(red, green, 0, 0);
+        glVertex2f(buffer, buffer);
+        glColor4f(red, green, 0, intensity);
+        glVertex2f(width,0);
+        glColor4f(red, green, 0, 0);
+        glVertex2f(width-buffer, buffer);
+        glColor4f(red, green, 0, intensity);
+        glVertex2f(width, height);
+        glColor4f(red, green, 0, 0);
+        glVertex2f(width-buffer, height-buffer);
+        glColor4f(red, green, 0, intensity);
+        glVertex2f(0,height);
+        glColor4f(red, green, 0, 0);
+        glVertex2f(buffer, height-buffer);
+        glColor4f(red, green, 0, intensity/2);
+        glVertex2f(0,0);
+        glColor4f(red, green, 0, 0);
+        glVertex2f(buffer, buffer);
 
         glEnd();
     }
@@ -81,6 +133,11 @@ class Draw {
 
     void shadeScreen() {
         glColor4f(1,1,1,0.6f);
+        verticalDraw(0,0,width,height);
+    }
+
+    void colourBackground(int phase) {
+        glColor4f(phase*0.1f,0,(1-phase)*0.1f,1f);
         verticalDraw(0,0,width,height);
     }
 
@@ -139,7 +196,7 @@ class Draw {
         }
 
         if (displayHealth != oldHealth) {
-            flashDamage((float) Math.min(1, Math.abs(healthTick)));
+            flashDamage((float) Math.min(1, Math.abs(healthTick)), (healthTick < 0));
         }
 
         int healthWidth = 10;

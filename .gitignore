@@ -16,4 +16,7 @@ hs_err_pid*
 *.project
 *.classpath
 
+*.log
+
 out/
+*/META-INF/

@@ -7,9 +7,7 @@ import server.ai.decision.PlayerIntel;
 
 import java.io.IOException;
 import java.lang.String;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -25,13 +23,12 @@ public class Game implements Runnable {
     private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
     private HashMap<Integer, Projectile> projectiles;
+    private HashMap<Integer, PowerUp> powerUps;
 
     private Random rand;
 
-    private Scoreboard sb;
+    private Scoreboard scoreboard;
     private int IDCounter;
-
-    private final boolean ORBS = false;
 
     private final boolean DEBUG = true;
 
@@ -44,7 +41,7 @@ public class Game implements Runnable {
 
         //try to load the map
         try {
-            this.map = new Map(/*mapID*/0);
+            this.map = new Map(mapID);
         }
         catch(IOException e) {
             msgToAllConnected("Failed to load map");
@@ -53,13 +50,14 @@ public class Game implements Runnable {
         out("Total players: "+playerConnections.size());
 
         rand = new Random();
-        sb = new Scoreboard(100, maxPlayers);
+        scoreboard = new Scoreboard(250, maxPlayers);
 
         players = new ConcurrentHashMap<>();
         orbs = new HashMap<>();
         projectiles = new HashMap<>();
+        powerUps = new HashMap<>();
 
-        collisions = new CollisionManager(players, orbs, map);
+        collisions = new CollisionManager(players, orbs, map, powerUps);
 
         //create players
         for (int i = 0; i < playerConnections.size(); i++) {
@@ -90,7 +88,7 @@ public class Game implements Runnable {
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             Connection con = playerConnections.get(i);
             con.send(new objects.String("ID"+IDCounter));
-            con.addFunctionEvent("String", this::decodeString);
+            con.addFunctionEvent("String", this::out);
             con.addFunctionEvent("MoveObject", this::receivedMove);
             con.addFunctionEvent("FireObject", this::toggleFire);
             con.addFunctionEvent("PhaseObject", this::switchPhase);
@@ -100,7 +98,7 @@ public class Game implements Runnable {
             IDCounter++;
         }
         //create AI players
-        for (int i = playerConnections.size(); i < /*maxPlayers*/2; i++) {
+        for (int i = playerConnections.size(); i < maxPlayers; i++) {
             //randomly select weapons for players
             Weapon w1;
             Weapon w2;
@@ -127,33 +125,43 @@ public class Game implements Runnable {
             players.put(IDCounter, p);
             IDCounter++;
         }
+        //create team orbs
+        for (int i = 0; i < maxPlayers; i++) {
+            Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
+            respawn(o);
+            orbs.put(IDCounter, o);
+            IDCounter++;
 
-        if (ORBS){
-            // Create Orbs.
-            for (int i = 0; i < /*maxPlayers*/1; i++) {
-                Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
-                respawn(o);
-                orbs.put(IDCounter, o);
-                IDCounter++;
-
-                // Ready Orbs for game.
-                OrbIntel intel = new OrbIntel(players, map);
-                o.prepareOrbForGame(intel, orbs);
-            }
+            // Ready Orbs for game.
+            OrbIntel intel = new OrbIntel(players, map, powerUps);
+            o.prepareOrbForGame(intel, orbs);
         }
 
         // Ready AI Players for game.
         for (int i = 0; i < players.size(); i++){
             Player p = players.get(i);
             if (p instanceof AIPlayer){
-                PlayerIntel intel = new PlayerIntel(players, map);
+                PlayerIntel intel = new PlayerIntel(players, map, powerUps);
                 ((AIPlayer) p).preparePlayerForGame(intel, orbs);
             }
         }
 
-        countdown = 10*60*tick; //ten minutes
+        for (int i = 0; i < maxPlayers/2; i++) {
+            PowerUp p;
+            int phase = rand.nextInt(2);
+            if (i%2 == 0) {
+                p = new PowerUp(respawnCoords(), PowerUp.Type.health, i, phase);
+            }
+            else {
+                p = new PowerUp(respawnCoords(), PowerUp.Type.heat, i, phase);
+            }
 
-        InitGame g = new InitGame(orbs, players, mapID, sb);
+            powerUps.put(i, p);
+        }
+
+        countdown = 4*60*tick; //four minutes
+
+        InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps);
         sendGameStart(g);
     }
 
@@ -169,18 +177,40 @@ public class Game implements Runnable {
 
             for (Player p : players.values()) {
                 if (!p.isAlive()) {
-                    respawn(p);
-                    if (!(p instanceof AIPlayer)) {
-                        p.incMove();
-                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
+                    if (p.canRespawn()) {
+                        respawn(p);
+                        if (!(p instanceof AIPlayer)) {
+                            p.incMove();
+                            playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
+                        }
                     }
                 }
                 if (p.isFiring()) fire(p);
                 p.live();
+                PowerUp pu = (collisions.collidesWithPowerUp(p));
+                if (pu != null) {
+                    pu.setChanged(true);
+                    pu.setHealth(0);
+                    if (pu.getType() == PowerUp.Type.health) {
+                        p.setHealth(p.getMaxHealth());
+                    }
+                    else if (pu.getType() == PowerUp.Type.heat) {
+                        p.setWeaponOutHeat(0);
+                        p.getActiveWeapon().setCurrentHeat(0);
+                    }
+                }
+            }
 
+            for (PowerUp p: powerUps.values()) {
+                if (!p.isAlive()) {
+                    p.live();
+                    if (p.canRespawn()) {
+                        respawn(p);
+                    }
+                }
             }
             for (Orb o : orbs.values()) {
-                if (!o.isAlive()) respawn(o);
+                if (!o.isAlive() && o.canRespawn()) respawn(o);
                 o.live();
             }
 
@@ -189,16 +219,16 @@ public class Game implements Runnable {
             for (Projectile p : projectiles.values()) {
                 MovableEntity e = collisions.collidesWithPlayerOrBot(p);
                 if (e != null) {
-                   // out(p.getPlayerID()+" just hit "+e.getID());
+                    out(p.getPlayerID()+" just hit "+e.getID());
                     //can't damage your team
-                    if (e.getTeam() != p.getTeam()) {
+                    if (e.getTeam() != p.getTeam() && p.isAlive()) {
                         e.damage(p.getDamage());
                         //if the player has been killed
                         if (!e.isAlive()) {
                             if (e instanceof Orb) {
-                                sb.killedOrb(p.getPlayerID());
+                                scoreboard.killedOrb(p.getPlayer());
                             } else {
-                                sb.killedPlayer(p.getPlayerID());
+                                scoreboard.killedPlayer(p.getPlayer());
                             }
                             scoreboardChanged = true;
                         }
@@ -217,11 +247,11 @@ public class Game implements Runnable {
             countdown--;
 
             if (scoreboardChanged) {
-                sendToAllConnected(sb);
+                sendToAllConnected(scoreboard);
             }
 
             //stops the countdown when the timer has run out
-            if (countdown <= 0 || sb.scoreReached()) {
+            if (countdown <= 0 || scoreboard.scoreReached()) {
                 endGame();
                 isRunning = false;
             } else {
@@ -242,7 +272,7 @@ public class Game implements Runnable {
      * Ends the game and msgs all clients
      */
     private void endGame() {
-        msgToAllConnected("Game Ended");
+        sendToAllConnected(new GameOver(scoreboard));
         for (Connection c: playerConnections) {
             sendScoreboard(c);
         }
@@ -261,6 +291,12 @@ public class Game implements Runnable {
         for (Projectile p: projectiles.values()) {
             sendToAllConnected(p);
         }
+        for (PowerUp p: powerUps.values()) {
+            if (p.isChanged()) {
+                p.setChanged(false);
+                sendToAllConnected(p);
+            }
+        }
     }
 
     /**
@@ -268,12 +304,16 @@ public class Game implements Runnable {
      * @param e the entity to be respawned
      */
     private void respawn(MovableEntity e) {
+        e.resetTimeTillRespawn();
         e.setPos(respawnCoords());
         e.setDir(randomDir());
         e.setHealth(e.getMaxHealth());
         e.setPhase(rand.nextInt(2));
         if (e instanceof Player) {
             ((Player) e).setFiring(false);
+        }
+        else if (e instanceof PowerUp) {
+            ((PowerUp) e).setChanged(true);
         }
     }
 
@@ -284,7 +324,7 @@ public class Game implements Runnable {
         //get map bounds
         int boundX = map.getMapWidth()-200;
         int boundY = map.getMapLength()-200;
-        int minDist = 20;
+        int minDist = 60;
 
         boolean valid = false;
         Vector2 v = new Vector2(0,0);
@@ -325,7 +365,12 @@ public class Game implements Runnable {
      */
     private void sendToAllConnected(Sendable s) {
         for (Connection c: playerConnections) {
-            c.send(s);
+            if (s instanceof Scoreboard) {
+                sendScoreboard(c);
+            }
+            else {
+                c.send(s);
+            }
         }
     }
 
@@ -341,16 +386,7 @@ public class Game implements Runnable {
      * @param c the connected player
      */
     private void sendScoreboard(Connection c) {
-        c.send(sb);
-    }
-
-    /**
-     * decodes a string from a sendable string
-     * @param s0 to sendable string to decode
-     */
-    private void decodeString(Sendable s0) {
-        String s = s0.toString();
-        out(s);
+        c.send(scoreboard.clone());
     }
 
     /**
@@ -381,7 +417,7 @@ public class Game implements Runnable {
     }
 
     private void toggleFire(Sendable s) {
-        //out("Toggling fire");
+        out("Toggling fire");
         FireObject f = (FireObject) s;
         Player p = players.get(f.getPlayerID());
         p.setFiring(f.isStartFire());
@@ -391,14 +427,14 @@ public class Game implements Runnable {
         PhaseObject phase = (PhaseObject) s;
         Player p = players.get(phase.getID());
         p.togglePhase();
-        //out("ID"+p.getID()+": Switching phase");
+        out("ID"+p.getID()+": Switching phase");
     }
 
     private void switchWeapon(Sendable s) {
         SwitchObject sw = (SwitchObject) s;
         Player p = players.get(sw.getID());
         p.setWeaponOut(sw.takeWeaponOneOut());
-        //out("ID"+p.getID()+": Switching weapon");
+        out("ID"+p.getID()+": Switching weapon");
     }
 
     /**
@@ -407,9 +443,8 @@ public class Game implements Runnable {
      */
     private void fire(Player player) {
         Weapon w = player.getActiveWeapon();
-        //out("ID"+player.getID()+": Tries to fire");
         if (w.canFire()) {
-            //out("ID"+player.getID()+": Just Fired");
+            out("ID"+player.getID()+": Just Fired");
             ArrayList<Projectile> ps = w.getShots(player);
             for (Projectile p: ps) {
                 p.setID(IDCounter);

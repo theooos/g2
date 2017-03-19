@@ -33,6 +33,7 @@ public class Orb extends MovableEntity {
         this.dir = dir;
         this.radius = 10;
         this.team = 10;
+        respawnTime = 180;
 
         // Initialise "Entity" members.
         this.damageable = true;
@@ -48,7 +49,10 @@ public class Orb extends MovableEntity {
      * Calls upon this Orb's brain to make this Orb perform an appropriate action.
      */
     public void live() {
-        myBrain.doSomething();
+        super.live();
+        if (isAlive()) {
+            myBrain.doSomething();
+        }
     }
 
 

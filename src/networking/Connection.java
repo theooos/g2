@@ -1,5 +1,6 @@
 package networking;
 
+import client.ClientSettings;
 import objects.Sendable;
 
 import java.io.IOException;
@@ -7,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.function.Consumer;
 
 /**
@@ -15,74 +15,68 @@ import java.util.function.Consumer;
  */
 public class Connection {
 
-    private static int PORT = 3000;
-    private static final boolean LOCAL = true;
-
     private Socket socket;
     private NetworkSender toConnection;
     private NetworkListener fromConnection;
     private NetworkEventHandler handler = new NetworkEventHandler();
 
-    private static boolean debug = true;
     /**
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
      */
-    public Connection(){
-        String HOSTNAME;
-        if (LOCAL) {
-            HOSTNAME="localhost";
-        }
-        else {
-            HOSTNAME="46.101.84.55";
-        }
-        try {
-            socket = new Socket(HOSTNAME,PORT);
-        } catch (IOException e) {
-            try {
-                if (!LOCAL) {
-                    HOSTNAME="localhost";
-                }
-                else {
-                    HOSTNAME="46.101.84.55";
-                }
-                socket = new Socket(HOSTNAME,PORT);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-        establishConnection();
+    public Connection() throws IOException {
+        if (establishSocket()) establishConnection();
     }
 
     /**
      * FOR USE ONLY BY SERVER. Initialises the connection to a client.
+     *
      * @param socket The server socket.
      */
-    public Connection(Socket socket) {
+    public Connection(Socket socket) throws IOException {
         this.socket = socket;
         out("Connection made to client.");
         establishConnection();
     }
 
     /**
+     * Generates the socket.
+     */
+    private boolean establishSocket() throws IOException {
+        int attempts = 3;
+
+        String HOSTNAME = ClientSettings.LOCAL ? "localhost" : ClientSettings.SERVER_IP;
+
+        for (int i = 1; i <= attempts; i++) {
+            socket = new Socket(HOSTNAME, ClientSettings.PORT);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Creates the input and output streams.
      */
-    private void establishConnection(){
-        try {
+    private boolean establishConnection() throws IOException {
+        int attempts = 3;
+
+        retries:
+        for (int i = 1; i <= attempts; i++) {
             toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
             fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler);
-        } catch (IOException e) {
-            out("Failed to establish connection.");
+            break retries;
         }
+
         out("Connection made to server.");
+        new Thread(handler).start();
         new Thread(toConnection).start();
         new Thread(fromConnection).start();
-        new Thread(handler).start();
+        return true;
     }
 
     /**
      * Closes all streams.
      */
-    private void closeConnection(){
+    private void closeConnection() {
         try {
             toConnection.close();
             fromConnection.close();
@@ -94,11 +88,12 @@ public class Connection {
 
     /**
      * Creates a ServerSocket for use by the server.
+     *
      * @return The socket.
      */
-    public static ServerSocket getServerSocket(){
+    public static ServerSocket getServerSocket() {
         try {
-            return new ServerSocket(PORT);
+            return new ServerSocket(ClientSettings.PORT);
         } catch (IOException e) {
             out("Failed to connect through server socket.");
         }
@@ -107,29 +102,35 @@ public class Connection {
 
     /**
      * Sends a Sendable object the partner.
+     *
      * @param obj Sendable item.
      */
-    public void send(Sendable obj){
+    public void send(Sendable obj) {
         toConnection.queueForSending(obj);
     }
 
     /**
      * This re-initialises the connection in case of an error.
      */
-    public void resetConnection(){
+    public void resetConnection() {
         closeConnection();
-        establishConnection();
+        try {
+            establishConnection();
+        } catch (Exception e) {
+            System.err.println("Failed to reset connection.");
+        }
     }
 
-    public void addFunctionEvent(String className, Consumer<Sendable> consumer){
+    public void addFunctionEvent(String className, Consumer<Sendable> consumer) {
         handler.addFunction(className, consumer);
     }
 
     /**
      * For debugging use only. Remove all references for production.
+     *
      * @param o Object to print.
      */
-    static void out(Object o){
-        if(debug) System.out.println("[NETWORK] "+o);
+    static void out(Object o) {
+        if (ClientSettings.DEBUG) System.out.println("[NETWORK] " + o);
     }
 }

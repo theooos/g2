@@ -4,22 +4,16 @@ package server.game;
  * Created by peran on 27/01/17.
  * All major entities inherit from this such as players, orbs, and projectiles
  */
-public class MovableEntity extends Entity {
+public abstract class MovableEntity extends Entity {
     protected float speed;
     protected Vector2 dir;
     protected float radius;
     int team;
-
-    /**
-     * A class intended for inheritence, should not be created
-     */
-    public MovableEntity() {
-        super();
-    }
+    int respawnTime;
+    private int timeTillRespawn;
 
     protected void move() {
         this.pos = pos.add(dir.mult(speed));
-
     }
 
     public Vector2 hypoMove() {
@@ -52,5 +46,17 @@ public class MovableEntity extends Entity {
 
     public int getTeam() {
         return team;
+    }
+
+    void live() {
+        if (!isAlive()) timeTillRespawn--;
+    }
+
+    boolean canRespawn() {
+        return (timeTillRespawn <= 0);
+    }
+
+    void resetTimeTillRespawn() {
+        timeTillRespawn = respawnTime;
     }
 }

@@ -3,6 +3,7 @@ package server.ai.decision;
 import server.ai.Intel;
 import server.game.*;
 
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,8 +17,8 @@ public class OrbIntel extends Intel {
      * @param players - The list of players.
      * @param map - The map currently in play.
      */
-    public OrbIntel(ConcurrentHashMap<Integer, Player> players, Map map) {
-        super(players, map);
+    public OrbIntel(ConcurrentHashMap<Integer, Player> players, Map map, HashMap<Integer, PowerUp> pUps) {
+        super(players, map, pUps);
     }
 
     /**

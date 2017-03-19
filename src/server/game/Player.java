@@ -39,6 +39,7 @@ public class Player extends MovableEntity {
         firing = false;
         weaponOutHeat = 0;
         moveCounter = 0;
+        respawnTime = 300;
     }
 
     public Player(Player player) {
@@ -59,9 +60,11 @@ public class Player extends MovableEntity {
         this.firing = player.isFiring();
         this.weaponOutHeat = player.getWeaponOutHeat();
         this.moveCounter = player.getMoveCount();
+        respawnTime = 240;
     }
 
     public void live() {
+        super.live();
         //any methods the player may do once a tick
         getActiveWeapon().live();
         weaponOutHeat = getActiveWeapon().getHeat();
@@ -75,7 +78,15 @@ public class Player extends MovableEntity {
         if (w1Out) return w1;
         else return w2;
     }
-
+    //returns the active weapon ->
+    // 1 for w1 and 2 for w2.
+    public int activeWeapon()
+    {
+        if(getActiveWeapon()==w1)
+            return 1;
+        else
+            return 2;
+    }
     public boolean isWeaponOneOut() {
         return w1Out;
     }

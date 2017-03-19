@@ -2,36 +2,18 @@ package server.game;
 
 /**
  * Created by peran on 27/01/17.
+ * A father class for all entities in the game
  */
-public class Entity implements objects.Sendable {
-    protected boolean damageable;
+public abstract class Entity implements objects.Sendable {
+    boolean damageable;
     protected Vector2 pos;
-    protected int maxHealth;
+    int maxHealth;
     protected int health;
     protected int phase;
-    protected boolean visible;
+    boolean visible;
     protected int ID;
 
-
-    /**
-     * A class intended for inheritance, should not be created
-     */
-    public Entity() {
-    }
-
-    public void updatePos(float x, float y) {
-        updatePos(new Vector2(x, y));
-    }
-
-    public void updatePos(Vector2 pos) {
-        this.pos = pos;
-    }
-
-    public void setDamageable(boolean d) {
-        damageable = d;
-    }
-
-    public boolean getDamageable() {
+    boolean getDamageable() {
         return damageable;
     }
 
@@ -44,11 +26,7 @@ public class Entity implements objects.Sendable {
     }
 
     public boolean isAlive() {
-        if (health < 1) {
-            return false;
-        }
-
-        return true;
+        return health >= 1;
     }
 
     public int getPhase() {
@@ -59,11 +37,7 @@ public class Entity implements objects.Sendable {
         this.phase = phase;
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public boolean getVisible() {
+    boolean getVisible() {
         return visible;
     }
 
@@ -98,5 +72,9 @@ public class Entity implements objects.Sendable {
 
     public void setID(int i) {
         this.ID = i;
+    }
+
+    public String toString(){
+        return "ID: "+getID()+" POS: "+getPos()+" PHASE: "+getPhase();
     }
 }

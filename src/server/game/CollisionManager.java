@@ -1,6 +1,6 @@
 package server.game;
 
-import client.ClientLogic.GameData;
+import objects.GameData;
 
 import java.awt.geom.Line2D;
 import java.io.IOException;
@@ -17,10 +17,12 @@ public class CollisionManager {
     private Map map;
     private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
+    private HashMap<Integer, PowerUp> powerUps;
 
     public CollisionManager(GameData gd) {
         players = gd.getPlayers();
         orbs = gd.getOrbs();
+        powerUps = gd.getPowerUps();
 
         try {
             map = new Map(gd.getMapID());
@@ -29,10 +31,20 @@ public class CollisionManager {
         }
     }
 
-    public CollisionManager(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, Map map) {
+    public CollisionManager(ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, Map map, HashMap<Integer, PowerUp> powerUps) {
         this.players = players;
+        this.powerUps = powerUps;
         this.orbs = orbs;
         this.map = map;
+    }
+
+    PowerUp collidesWithPowerUp(Player p) {
+        for (PowerUp pu: powerUps.values()) {
+            if (p.getPhase() == pu.getPhase() && pointsCollided(p.getRadius(), p.getPos(), pu.getRadius(), pu.getPos()) && p.isAlive()) {
+                return pu;
+            }
+        }
+        return null;
     }
 
     public boolean validPosition(MovableEntity entity) {

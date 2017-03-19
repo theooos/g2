@@ -17,6 +17,7 @@ public abstract class Intel {
     protected MovableEntity ent;
     protected ConcurrentHashMap<Integer, Player> players;  // A list of all the players in the game.
     protected HashMap<Integer, Orb> allOrbs;
+    protected HashMap<Integer, PowerUp> powerUps;
     protected Map map;                    // The map the current game is being played on.
     protected Vector2 targetLocation;     // Where the entity is currently aiming to reach.
     protected MovableEntity relevantEnt;  // The entity this entity is currently interested in.
@@ -31,8 +32,9 @@ public abstract class Intel {
      * @param players - The list of players.
      * @param map - The map currently in play.
      */
-    public Intel(ConcurrentHashMap<Integer, Player> players, Map map) {
+    public Intel(ConcurrentHashMap<Integer, Player> players, Map map, HashMap<Integer, PowerUp> pUps) {
         this.players = players;
+        this.powerUps = pUps;
         this.map = map;
         this.targetLocation = null;
         this.relevantEnt = null;
@@ -108,7 +110,6 @@ public abstract class Intel {
      */
     public Vector2 checkpoint(){
         if (path == null) {
-            System.out.println("No checkpoint.");
             return null;
         } else {
             return path.get(0);
@@ -161,7 +162,7 @@ public abstract class Intel {
     public void initForGame(MovableEntity ent, HashMap<Integer, Orb> orbs) {
         this.ent = ent;
         this.allOrbs = orbs;
-        this.collisionManager = new CollisionManager(players, orbs, map);
+        this.collisionManager = new CollisionManager(players, orbs, map, powerUps);
         this.sight = new Visualiser(map, players, allOrbs, ent.getID());
     }
 
@@ -179,5 +180,9 @@ public abstract class Intel {
 
     public AStar pathfinder(){
         return pathfinder;
+    }
+
+    public CollisionManager getNewCollisionManager(){
+        return new CollisionManager(players, allOrbs, map, powerUps);
     }
 }

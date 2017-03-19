@@ -1,5 +1,8 @@
 package server.game;
 
+import client.ClientSettings;
+
+import java.awt.geom.Line2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -25,7 +28,6 @@ public class Map {
     private int width;
     private int length;
     private String FULL_PATH;
-    private static final boolean LOCAL = true;
 
     // Short-term members:
     private ArrayList<Vector2> validSpace;
@@ -33,19 +35,13 @@ public class Map {
 
     /**
      * Generates the requested map from the appropriate text file.
+     *
      * @param mapID
      */
     public Map(int mapID) throws IOException {
 
         String LOCAL_PATH = new File("").getAbsolutePath();
-//        System.out.println(LOCAL_PATH);
-        String PROJ_PATH;
-        if (LOCAL) {
-            PROJ_PATH = "/src/server/game/maps/";
-        }
-        else {
-            PROJ_PATH = "/maps/";
-        }
+        String PROJ_PATH = ClientSettings.MAP_LOCAL ? "/src/server/game/maps/" : "/maps/";
 
         FULL_PATH = LOCAL_PATH + PROJ_PATH + "map";
 
@@ -110,24 +106,25 @@ public class Map {
     /**
      * Calculates and returns an ArrayList of spaces that movable entities can move and exist within.
      * Assumes boundary walls are included in the map specification file.
+     *
      * @return an ArrayList of valid spaces within the map.
      */
-    private ArrayList<Vector2> allValidSpace(){
+    private ArrayList<Vector2> allValidSpace() {
 
         HashSet<Vector2> validSpaceSet = new HashSet<>();
 
         // Add all possible map positions.
-        for (int x = 0; x < width; x++){
-            for (int y = 0; y < length; y++){
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < length; y++) {
                 validSpaceSet.add(new Vector2(x, y));
             }
         }
 
         // Check all (intact) walls and remove each position obstructed by a wall.
         for (Wall w : walls) {
-            if (w.isAlive()){
+            if (w.isAlive()) {
                 HashSet<Vector2> wallSpace = w.getWholeWall();
-                for (Vector2 space : wallSpace){
+                for (Vector2 space : wallSpace) {
                     validSpaceSet.remove(space);
                 }
             }
@@ -135,7 +132,7 @@ public class Map {
 
         // Convert the set into an ArrayList and return it.
         ArrayList<Vector2> validSpace = new ArrayList<>();
-        for (Vector2 space : validSpaceSet){
+        for (Vector2 space : validSpaceSet) {
             validSpace.add(space);
         }
         return validSpace;
@@ -144,14 +141,15 @@ public class Map {
 
     /**
      * Reads this map's specified source file and returns it as an ArrayList of strings.
+     *
      * @return an ArrayList of strings representing the source file.
      */
-    public ArrayList<String> readMapFromSource(){
+    public ArrayList<String> readMapFromSource() {
 
         ArrayList<String> mapStrings = new ArrayList<>();
 
         try {
-            FileReader file = new FileReader(FULL_PATH + 0 + ".txt");
+            FileReader file = new FileReader(FULL_PATH + mapID + ".txt");
             BufferedReader input = new BufferedReader(file);
             String nextString;
             while ((nextString = input.readLine()) != null) {
@@ -169,6 +167,7 @@ public class Map {
     /**
      * Parses the strings of the source file, constructing the map and checking for
      * invalid walls and spawn zones.
+     *
      * @param sourceLines - An ArrayList of the lines of map source text.
      */
     private void constructMapFromSource(ArrayList<String> sourceLines) {
@@ -263,7 +262,7 @@ public class Map {
                     Vector2 endPos = new Vector2(x2, y2);
 
                     if (isBoundary(startPos, endPos)) {
-                        for (int phase = 0; phase < 2; phase++){
+                        for (int phase = 0; phase < 2; phase++) {
                             this.walls.add(new Wall(startPos, endPos, phase, false, true));
                         }
                     }
@@ -325,7 +324,7 @@ public class Map {
                     }
 
                     int t = Integer.parseInt(items.get(2));
-                    if (!(t == 0 || t == 1)){
+                    if (!(t == 0 || t == 1)) {
                         System.out.println(err + "Spawn location belongs to invalid team.");
                         //System.exit(0);
                     }
@@ -342,7 +341,7 @@ public class Map {
         }
 
         // Check there are enough spawn points to support the maximum number of players.
-        if (spawnPositions.size() < mapCapacity){
+        if (spawnPositions.size() < mapCapacity) {
             System.out.println(err + "Not enough spawn positions to support the specified map capacity.");
             System.exit(0);
         }
@@ -354,6 +353,7 @@ public class Map {
 
     /**
      * Deduces whether or not a position is within the bounds of this map.
+     *
      * @param pos - The position to be tested.
      * @return true if the position is within the bounds of this map.
      */
@@ -362,7 +362,7 @@ public class Map {
         return (pos.getX() >= 0 && pos.getX() <= width && pos.getY() >= 0 && pos.getY() <= length);
     }
 
-    private boolean isBoundary(Vector2 startPos, Vector2 endPos){
+    private boolean isBoundary(Vector2 startPos, Vector2 endPos) {
         float x1 = startPos.getX();
         float y1 = startPos.getY();
         float x2 = endPos.getX();

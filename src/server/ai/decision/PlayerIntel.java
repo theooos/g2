@@ -1,10 +1,7 @@
 package server.ai.decision;
 
 import server.ai.Intel;
-import server.game.AIPlayer;
-import server.game.Map;
-import server.game.Orb;
-import server.game.Player;
+import server.game.*;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,8 +15,8 @@ public class PlayerIntel extends Intel {
     private boolean phaseShiftFailed;
     private boolean orbInOtherPhase;
 
-    public PlayerIntel(ConcurrentHashMap<Integer, Player> players, Map map){
-        super(players, map);
+    public PlayerIntel(ConcurrentHashMap<Integer, Player> players, Map map, HashMap<Integer, PowerUp> pUps){
+        super(players, map, pUps);
         this.phaseShiftFailed = false;
     }
 
