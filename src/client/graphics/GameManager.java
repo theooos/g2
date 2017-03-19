@@ -89,15 +89,17 @@ public class GameManager {
     private void pollMouse() {
         Player me = gameData.getPlayer(myPlayerID);
         if (me.isAlive()) {
-            if (Mouse.isButtonDown(0)) {
-                conn.send(new FireObject(me.getID(), true));
-
-                if (me.activeWeapon() == 1 && muted)
-                    Audio.SHOOT2.play();
-                else if (muted) {
-                    Audio.SHOOT.play();
+            while (Mouse.next()){
+                switch (Mouse.getEventButton()){
+                    case 0:
+                        if(Mouse.getEventButtonState()){
+                            conn.send(new FireObject(me.getID(), true));
+                            Audio.SHOOT.play();
+                        }
+                        else {
+                            conn.send(new FireObject(me.getID(), false));
+                        }
                 }
-                conn.send(new FireObject(me.getID(), false));
             }
         }
     }

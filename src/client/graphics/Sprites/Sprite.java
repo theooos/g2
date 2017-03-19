@@ -65,6 +65,10 @@ public abstract class Sprite implements ISprite {
         this.height = this.original_height * ratio;
     }
 
+    public void spawn(int id, float x, float y , Layer layer){
+        spawn(id,new Vector2f(x,y),0,layer);
+    }
+
     public void spawn(int id, Vector2f position, int phase, Layer layer) {
         this.id = id;
         this.phase = phase;
