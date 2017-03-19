@@ -55,194 +55,193 @@ class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
-    void drawScoreboard() {
-        draw.drawScoreboard();
-    }
+        void drawScoreboard() {
+            draw.drawScoreboard();
+        }
 
-    private void positionBullet(Vector2 pos, Vector2 dir) {
-        Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
-        float lastX = cursor.getX();
-        float lastY = cursor.getY();
+        private void positionBullet(Vector2 pos, Vector2 dir) {
+            Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
+            float lastX = cursor.getX();
+            float lastY = cursor.getY();
 
-        if (lastX > 0 && lastY > 0)
-            draw.drawCircle(lastX, lastY, 10, 50);
-    }
+            if (lastX > 0 && lastY > 0)
+                draw.drawCircle(lastX, lastY, 10, 50);
+        }
 
-    private void drawCollisions() {
-        Player p = new Player(gameData.getPlayer(playerID));
-        GL11.glColor4f(1, 0, 0, 0.5f);
-        for (int i = 0; i < ClientSettings.SCREEN_WIDTH; i += 10) {
-            for (int j = 0; j < ClientSettings.SCREEN_HEIGHT; j += 10) {
-                p.setPos(new Vector2(i, j));
-                if (!collisionManager.validPosition(p)) {
-                    draw.drawCircle(i, ClientSettings.SCREEN_HEIGHT - j, 5, 5);
+        private void drawCollisions() {
+            Player p = new Player(gameData.getPlayer(playerID));
+            GL11.glColor4f(1, 0, 0, 0.5f);
+            for (int i = 0; i < ClientSettings.SCREEN_WIDTH; i += 10) {
+                for (int j = 0; j < ClientSettings.SCREEN_HEIGHT; j += 10) {
+                    p.setPos(new Vector2(i, j));
+                    if (!collisionManager.validPosition(p)) {
+                        draw.drawCircle(i, ClientSettings.SCREEN_HEIGHT - j, 5, 5);
+                    }
                 }
             }
         }
-    }
 
-    private void drawStencil() {
-        int newPhase = pulse.getNewPhase();
-        int oldPhase = 1;
-        if (newPhase == 1) oldPhase = 0;
+        private void drawStencil() {
+            int newPhase = pulse.getNewPhase();
+            int oldPhase = 1;
+            if (newPhase == 1) oldPhase = 0;
 
-        draw.colourBackground(oldPhase);
-        drawProjectiles(oldPhase);
-        map.renderMap(oldPhase);
-        drawOrbs(oldPhase);
-        drawPlayers(oldPhase);
-        drawPowerUps(oldPhase);
+            draw.colourBackground(oldPhase);
+            drawProjectiles(oldPhase);
+            map.renderMap(oldPhase);
+            drawOrbs(oldPhase);
+            drawPlayers(oldPhase);
+            drawPowerUps(oldPhase);
 
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
+            GL11.glEnable(GL11.GL_STENCIL_TEST);
 
-        GL11.glColorMask(false, false, false, false);
-        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-        GL11.glStencilMask(0xFF); // Write to stencil buffer
-        GL11.glDepthMask(false); // Don't write to depth buffer
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
+            GL11.glColorMask(false, false, false, false);
+            GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
+            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+            GL11.glStencilMask(0xFF); // Write to stencil buffer
+            GL11.glDepthMask(false); // Don't write to depth buffer
+            GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
 
-        draw.drawCircle(pulse
-                .getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse
-                .getStart().getY(), pulse
-                .getRadius(), 500);
+            draw.drawCircle(pulse
+                    .getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse
+                    .getStart().getY(), pulse
+                    .getRadius(), 500);
 
-        GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
-        GL11.glStencilMask(0x00); // Don't write anything to stencil buffer
-        GL11.glDepthMask(true); // Write to depth buffer
-        GL11.glColorMask(true, true, true, true);
+            GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+            GL11.glStencilMask(0x00); // Don't write anything to stencil buffer
+            GL11.glDepthMask(true); // Write to depth buffer
+            GL11.glColorMask(true, true, true, true);
 
-        //GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+            //GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        GL11.glColor3f(0, 0, 0);
-        draw.drawCircle(pulse
-                .getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse
-                .getStart().getY(), pulse
-                .getRadius(), 500);
-        draw.colourBackground(newPhase);
-        drawProjectiles(newPhase);
-        map.renderMap(newPhase);
-        drawOrbs(newPhase);
-        drawPlayers(newPhase);
-        drawPowerUps(newPhase);
+            GL11.glColor3f(0, 0, 0);
+            draw.drawCircle(pulse
+                    .getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse
+                    .getStart().getY(), pulse
+                    .getRadius(), 500);
+            draw.colourBackground(newPhase);
+            drawProjectiles(newPhase);
+            map.renderMap(newPhase);
+            drawOrbs(newPhase);
+            drawPlayers(newPhase);
+            drawPowerUps(newPhase);
 
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
+            GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-        pulse
-                .draw();
+            pulse.draw();
 
-    }
+        }
 
-    private void drawPlayers(int phase) {
-        ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
-        int radius = players.get(0).getRadius();
-        float red;
-        float green;
-        float blue;
-        for (Player p : players.values()) {
-            if (p.getPhase() == phase) {
-                if (p.isAlive()) {
-                    if (p.getTeam() == 0) {
-                        red = 0.71f;
-                        green = 0.12f;
-                        blue = 0.7f;
+        private void drawPlayers(int phase) {
+            ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
+            int radius = players.get(0).getRadius();
+            float red;
+            float green;
+            float blue;
+            for (Player p : players.values()) {
+                if (p.getPhase() == phase) {
+                    if (p.isAlive()) {
+                        if (p.getTeam() == 0) {
+                            red = 0.71f;
+                            green = 0.12f;
+                            blue = 0.7f;
+                        } else {
+                            red = 0f;
+                            green = 1f;
+                            blue = 0f;
+                        }
                     } else {
-                        red = 0f;
-                        green = 1f;
-                        blue = 0f;
+                        red = 0.6f;
+                        green = 0.6f;
+                        blue = 0.7f;
                     }
+                    draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
+                    GL11.glColor3f(red, green, blue);
+
+                    draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
+
+                    positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir());
+                }
+            }
+        }
+
+        private void drawOrbs(int phase) {
+            HashMap<Integer, Orb> orbs = gameData.getOrbs();
+            Player me = gameData.getPlayer(playerID);
+            float red;
+            float green;
+            float blue;
+            for (Orb o : orbs.values()) {
+                if (o.isAlive()) {
+                    red = 0.2f;
+                    green = 0.2f;
+                    blue = 1f;
                 } else {
-                    red = 0.6f;
-                    green = 0.6f;
+                    red = 0.5f;
+                    green = 0.5f;
                     blue = 0.7f;
                 }
-                draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
-                GL11.glColor3f(red, green, blue);
-
-                draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
-
-                positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir());
-            }
-        }
-    }
-
-    private void drawOrbs(int phase) {
-        HashMap<Integer, Orb> orbs = gameData.getOrbs();
-        Player me = gameData.getPlayer(playerID);
-        float red;
-        float green;
-        float blue;
-        for (Orb o : orbs.values()) {
-            if (o.isAlive()) {
-                red = 0.2f;
-                green = 0.2f;
-                blue = 1f;
-            } else {
-                red = 0.5f;
-                green = 0.5f;
-                blue = 0.7f;
-            }
-            if (phase == o.getPhase()) {
-                draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f);
-                GL11.glColor4f(red, green, blue, 1);
-                draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
-            } else {
-                float dist = me.getPos().getDistanceTo(o.getPos());
-                if (dist < 150) {
-                    float fade = 0.7f - (dist / 150f);
-                    draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f, fade);
-                    GL11.glColor4f(red, green, blue, fade);
+                if (phase == o.getPhase()) {
+                    draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f);
+                    GL11.glColor4f(red, green, blue, 1);
                     draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
-                }
-            }
-        }
-    }
-
-    private void drawProjectiles(int phase) {
-        ConcurrentHashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
-        float red;
-        float green;
-        float blue;
-        for (Projectile p : projectiles.values()) {
-            if (phase == p.getPhase()) {
-                if (p.getTeam() == 0) {
-                    red = 0.6f;
-                    green = 0f;
-                    blue = 0.6f;
                 } else {
-                    red = 0f;
-                    green = 0.8f;
-                    blue = 0f;
+                    float dist = me.getPos().getDistanceTo(o.getPos());
+                    if (dist < 150) {
+                        float fade = 0.7f - (dist / 150f);
+                        draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f, fade);
+                        GL11.glColor4f(red, green, blue, fade);
+                        draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
+                    }
                 }
-                GL11.glColor3f(red, green, blue);
-                float radius = p.getRadius();
-                draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
-                draw.drawAura(p.getPos(), radius + radius / 2, radius / 2, red, green, blue);
             }
         }
-    }
 
-    private void drawPowerUps(int phase) {
-        HashMap<Integer, PowerUp> powerUps = gameData.getPowerUps();
-        float red;
-        float green;
-        float blue;
-        for (PowerUp p : powerUps.values()) {
-            if (phase == p.getPhase() && p.isAlive()) {
-                if (p.getType() == PowerUp.Type.health) {
-                    red = 0.7f;
-                    green = 0.1f;
-                    blue = 0.1f;
-                } else {
-                    red = 0.1f;
-                    green = 1f;
-                    blue = 0.1f;
+        private void drawProjectiles(int phase) {
+            ConcurrentHashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
+            float red;
+            float green;
+            float blue;
+            for (Projectile p : projectiles.values()) {
+                if (phase == p.getPhase()) {
+                    if (p.getTeam() == 0) {
+                        red = 0.6f;
+                        green = 0f;
+                        blue = 0.6f;
+                    } else {
+                        red = 0f;
+                        green = 0.8f;
+                        blue = 0f;
+                    }
+                    GL11.glColor3f(red, green, blue);
+                    float radius = p.getRadius();
+                    draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
+                    draw.drawAura(p.getPos(), radius + radius / 2, radius / 2, red, green, blue);
                 }
-                float radius = p.getRadius();
-                draw.drawQuad(p.getPos(), powerUpRotation, radius, red, green, blue);
             }
         }
-    }
+
+        private void drawPowerUps(int phase) {
+            HashMap<Integer, PowerUp> powerUps = gameData.getPowerUps();
+            float red;
+            float green;
+            float blue;
+            for (PowerUp p : powerUps.values()) {
+                if (phase == p.getPhase() && p.isAlive()) {
+                    if (p.getType() == PowerUp.Type.health) {
+                        red = 0.7f;
+                        green = 0.1f;
+                        blue = 0.1f;
+                    } else {
+                        red = 0.1f;
+                        green = 1f;
+                        blue = 0.1f;
+                    }
+                    float radius = p.getRadius();
+                    draw.drawQuad(p.getPos(), powerUpRotation, radius, red, green, blue);
+                }
+            }
+        }
 
     void setPulse(Pulse pulse) {
         this.pulse = pulse;

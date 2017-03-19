@@ -61,8 +61,12 @@ public class TextRenderer {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    public TextRenderer()  {
-        this.font = new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 40);
+    public TextRenderer() {
+        this(40);
+    }
+
+    public TextRenderer(int size)  {
+        this.font = new java.awt.Font("Times New Roman", java.awt.Font.BOLD, size);
         //Font font = new Font("Verdana", Font.BOLD, 32);
         //UnicodeFont f = new UnicodeFont(font);
        // this.font = f;
@@ -87,11 +91,11 @@ public class TextRenderer {
     }
 
     //Functions
-    void drawText(String text, int x, int y) {
+    void drawText(String text, float x, float y) {
         glBindTexture(GL_TEXTURE_2D, this.fontTextureId);
         glBegin(GL_QUADS);
 
-        int xTmp = x;
+        float xTmp = x;
         for (char c : text.toCharArray()) {
             float width = getCharWidth(c);
             float height = getCharHeight();

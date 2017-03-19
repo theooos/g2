@@ -139,13 +139,13 @@ class Draw {
     void drawScoreboard() {
         shadeScreen();
         Scoreboard sb = gameData.getScoreboard();
-        TextRenderer textRenderer = new TextRenderer();
+        TextRenderer textRenderer = new TextRenderer(15);
 
         int[] scores = sb.getPlayerScores();
         float xStart = width/6;
         float yStart = height/4;
         float rectWidth = xStart*4;
-        float rectHeight = yStart*1.5f/scores.length;
+        float rectHeight = 70;
 
         int[] sortedScores = scores.clone();
         int removed = 0;
@@ -160,13 +160,15 @@ class Draw {
             }
             if (index != -1) {
                 if (gameData.getPlayer(index).getTeam() == 0) {
-                    glColor3f(1,0,0);
+                    glColor3f(1,0,1);
                 }
                 else {
                     glColor3f(0,1,0);
                 }
                 rectDraw(xStart, yStart, rectWidth, rectHeight);
                 yStart+=rectHeight;
+                textRenderer.drawText("Player " + index + " Score: "+max, xStart+10, yStart-10);
+
                 sortedScores[index] = Integer.MIN_VALUE;
             }
             else {
