@@ -53,17 +53,16 @@ public class GameManager {
     }
 
     public void run() {
+        update();
         switch (mode) {
             case GAME:
-                update();
                 gameRenderer.render();
                 break;
             case MENU:
-                pollKeyboard();
                 inGameMenuRenderer.renderMenu();
                 break;
             case SCOREBOARD:
-                pollKeyboard();
+                gameRenderer.render();
                 inGameMenuRenderer.renderScoreboard();
                 break;
             case GAMEOVER:
@@ -155,7 +154,13 @@ public class GameManager {
                     default:
                         menuKeyboard();
                 }
-
+            } else{
+                switch (mode){
+                    case SCOREBOARD:
+                        if(Keyboard.getEventKey() == Keyboard.KEY_TAB){
+                            mode = Mode.GAME;
+                        }
+                }
             }
         }
     }
