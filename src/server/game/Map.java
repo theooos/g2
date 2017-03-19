@@ -262,9 +262,8 @@ public class Map {
                     Vector2 endPos = new Vector2(x2, y2);
 
                     if (isBoundary(startPos, endPos)) {
-                        for (int phase = 0; phase < 2; phase++) {
-                            this.walls.add(new Wall(startPos, endPos, phase, false, true));
-                        }
+                        this.walls.add(new Wall(startPos, endPos, 0, false, true));
+                        this.walls.add(new Wall(startPos, endPos, 1, false, true));
                     }
                     else {
                         if (!inMap(startPos) || !inMap(endPos)) {        // Check the wall is within the map.
@@ -272,15 +271,19 @@ public class Map {
                             //System.exit(0);
                         }
 
-                        int phase = Integer.parseInt(items.get(4));
-                        if (phase > numPhases) {
-                            System.out.println(err + "Wall inside invalid phase.");
-                            //System.exit(0);
+                        if (items.size() < 5) {
+                            this.walls.add(new Wall(startPos, endPos, 0, false, true));
+                            this.walls.add(new Wall(startPos, endPos, 1, false, true));
+                        } else {
+                            int phase = Integer.parseInt(items.get(4));
+                            if (phase > numPhases) {
+                                System.out.println(err + "Wall inside invalid phase.");
+                                //System.exit(0);
+                            }
+                            boolean damageable = Boolean.parseBoolean(items.get(5));
+
+                            this.walls.add(new Wall(startPos, endPos, phase, damageable, false));
                         }
-
-                        boolean damageable = Boolean.parseBoolean(items.get(5));
-
-                        this.walls.add(new Wall(startPos, endPos, phase, damageable, false));
                     }
 
                     lineNum++;

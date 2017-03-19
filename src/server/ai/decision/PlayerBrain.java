@@ -114,6 +114,7 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             case AGGRESSIVE:
+
                 // Give the AI a 50% chance of rethinking strategy after at least 2 seconds.
                 if (strategiseDelay == 0) {
                     if (gen.nextDouble() < CHANCE_STRATEGIC_RETHINK) {
@@ -129,13 +130,14 @@ public class PlayerBrain extends AIBrain {
                     behaviours.resetAll();
                     behaviours.getBehaviour("Strategise").run();
                 }
-
                 break;
 
             case DETERMINED:
+
                 break;
 
             default:
+
                 // Gives player option to change phase - but no more than once per 2 seconds.
                 if (gen.nextDouble() < CHANCE_PHASE_SHIFT) {
                     behaviours.getBehaviour("ShiftPhase").run();

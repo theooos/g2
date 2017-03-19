@@ -4,8 +4,11 @@ import server.ai.PlayerTask;
 import server.ai.decision.Check;
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
+import server.game.Orb;
 import server.game.Player;
 import server.game.Vector2;
+
+import static sun.audio.AudioPlayer.player;
 
 /**
  * Allows the player to attack an opponent player within line of sight.
@@ -38,7 +41,14 @@ public class Attack extends PlayerTask {
         super.start();
 
         this.me = intel.ent();
-        this.target = (Player) intel.getRelevantEntity();
+        try {
+            this.target = (Player) intel.getRelevantEntity();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            System.out.println("\nAssailant: Player #" + me.getID() + ". Target: Orb #" + target.getID());
+            target.setHealth(0);
+            System.exit(1);
+        }
 
         track();
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(true);

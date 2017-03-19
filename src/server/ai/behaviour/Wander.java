@@ -28,7 +28,7 @@ public class Wander extends Task {
     @Override
     public void doAction() {
 
-      //  System.out.println("Finding location to wander to.");
+        //  System.out.println("Finding location to wander to.");
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(false);
         Vector2 newPos = null;
         boolean success = false;
@@ -41,7 +41,6 @@ public class Wander extends Task {
             // Check if space is valid.
             success = intel.isValidSpace(newPos) && !intel.inSight(newPos);
         }
-
         intel.setTargetLocation(newPos);
         end();
     }

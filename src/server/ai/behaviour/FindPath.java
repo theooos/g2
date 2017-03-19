@@ -69,7 +69,6 @@ public class FindPath extends Task {
 
             intel.resetPath(path);
         }
-
         end();
     }
 }

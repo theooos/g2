@@ -54,6 +54,7 @@ public class Travel extends PlayerTask {
                 intel.nextCheckpoint();
             }
         }
+
     }
 
     @Override

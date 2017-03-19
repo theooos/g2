@@ -47,10 +47,10 @@ public class Game implements Runnable {
             msgToAllConnected("Failed to load map");
         }
 
-        out("Total players: "+playerConnections.size());
+        //out("Total players: "+playerConnections.size());
 
         rand = new Random();
-        scoreboard = new Scoreboard(250, maxPlayers);
+        scoreboard = new Scoreboard(10000, maxPlayers);
 
         players = new ConcurrentHashMap<>();
         orbs = new HashMap<>();
@@ -219,7 +219,7 @@ public class Game implements Runnable {
             for (Projectile p : projectiles.values()) {
                 MovableEntity e = collisions.collidesWithPlayerOrBot(p);
                 if (e != null) {
-                    out(p.getPlayerID()+" just hit "+e.getID());
+                    //out(p.getPlayerID()+" just hit "+e.getID());
                     //can't damage your team
                     if (e.getTeam() != p.getTeam() && p.isAlive()) {
                         e.damage(p.getDamage());
@@ -375,7 +375,7 @@ public class Game implements Runnable {
     }
 
     private void sendGameStart(InitGame g) {
-        out("Sending init game");
+        //out("Sending init game");
         for (Connection c: playerConnections) {
             c.send(g);
         }
@@ -417,7 +417,7 @@ public class Game implements Runnable {
     }
 
     private void toggleFire(Sendable s) {
-        out("Toggling fire");
+        //out("Toggling fire");
         FireObject f = (FireObject) s;
         Player p = players.get(f.getPlayerID());
         p.setFiring(f.isStartFire());
@@ -427,14 +427,14 @@ public class Game implements Runnable {
         PhaseObject phase = (PhaseObject) s;
         Player p = players.get(phase.getID());
         p.togglePhase();
-        out("ID"+p.getID()+": Switching phase");
+        //out("ID"+p.getID()+": Switching phase");
     }
 
     private void switchWeapon(Sendable s) {
         SwitchObject sw = (SwitchObject) s;
         Player p = players.get(sw.getID());
         p.setWeaponOut(sw.takeWeaponOneOut());
-        out("ID"+p.getID()+": Switching weapon");
+        //out("ID"+p.getID()+": Switching weapon");
     }
 
     /**

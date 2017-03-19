@@ -29,7 +29,7 @@ class Lobby {
         minSize = /*maxSize/2*/1;
         t = new Timer();
         Random rand = new Random();
-        mapID = rand.nextInt(mapMax);
+        mapID = rand.nextInt(mapMax) + 1;
         //mapID = 2;
         System.out.println(mapID);
         gameRunning = false;

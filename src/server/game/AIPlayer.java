@@ -24,7 +24,7 @@ public class AIPlayer extends Player {
     }
 
     public void live() {
-        getActiveWeapon().live();
+        super.live();
         myBrain.doSomething();
     }
 
