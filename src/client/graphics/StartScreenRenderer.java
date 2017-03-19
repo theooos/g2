@@ -5,7 +5,6 @@ import client.graphics.Sprites.InterfaceTexture;
 import objects.LobbyData;
 import objects.Sendable;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.util.function.Consumer;
 
@@ -14,20 +13,19 @@ import java.util.function.Consumer;
  */
 public class StartScreenRenderer {
 
-    private enum Screen {MAIN, ABOUT, LOADING, LOBBY}
+    private enum Screen {MAIN, ABOUT, CONTROLS, LOADING, LOBBY}
 
     private Screen currentScreen = Screen.MAIN;
 
     private InterfaceTexture background = new InterfaceTexture(ISprite.BACKGROUND);
+    private InterfaceTexture controls;
     private InterfaceTexture about;
-    private InterfaceTexture instructions;
     private InterfaceTexture about_text;
     private InterfaceTexture go_back;
     private InterfaceTexture join_game;
 
-    private static int PHASE = 0;
-
     private static Layer interfaceLayer = new Layer();
+    private static Layer controlsLayer = new Layer();
     private static Layer aboutLayer = new Layer();
     private static Layer loadingLayer = new Layer();
 
@@ -41,6 +39,7 @@ public class StartScreenRenderer {
         this.connectFunction = connectFunction;
         background.setRatio(0.5f);
         readyInterfaceLayer();
+        readyControlsLayer();
         readyAboutLayer();
         readyLoadingLayer();
     }
@@ -50,6 +49,10 @@ public class StartScreenRenderer {
             case MAIN:
                 renderInterface();
                 handleClickedMain();
+                break;
+            case CONTROLS:
+                renderControls();
+                handleClickedControls();
                 break;
             case ABOUT:
                 renderAbout();
@@ -64,10 +67,93 @@ public class StartScreenRenderer {
         }
     }
 
+    // ****** THESE PREPARE EACH LAYER ******
+
+    private void readyInterfaceLayer() {
+        InterfaceTexture title = new InterfaceTexture(ISprite.TITLE);
+        title.setRatio(0.5f);
+        join_game = new InterfaceTexture(ISprite.LOBBY);
+        controls = new InterfaceTexture(ISprite.CONTROLS);
+        about = new InterfaceTexture(ISprite.ABOUT);
+
+        background.spawn(0, 400f, 300f, interfaceLayer);
+        title.spawn(1, 400f, 435f, interfaceLayer);
+        join_game.spawn(2, 400f, 270f, interfaceLayer);
+        controls.spawn(3, 400f, 180f, interfaceLayer);
+        about.spawn(4, 400f, 90f, interfaceLayer);
+    }
+
+    private void readyControlsLayer(){
+        InterfaceTexture controls_guide = new InterfaceTexture(ISprite.CONTROLS_GUIDE);
+        controls_guide.setRatio(0.5f);
+        go_back = new InterfaceTexture(ISprite.GOBACK);
+
+        controls_guide.spawn(0, 400f, 300f, controlsLayer);
+        go_back.spawn(1, 180f, 550f, controlsLayer);
+    }
+
+    private void readyAboutLayer() {
+        about_text = new InterfaceTexture(ISprite.ABOUTTEXT);
+        go_back = new InterfaceTexture(ISprite.GOBACK);
+
+        about_text.spawn(0, 300f, 100f, aboutLayer);
+        go_back.spawn(1, 300f, 450f, aboutLayer);
+    }
+
+    private void readyLoadingLayer() {
+        InterfaceTexture temporary_filler = new InterfaceTexture(ISprite.ORB_P1);
+        temporary_filler.spawn(0, 300f, 100f, loadingLayer);
+    }
+
+    public void setupLobby(Sendable sendable) {
+        lobbyData = (LobbyData) sendable;
+        currentScreen = Screen.LOBBY;
+    }
+
+
+    // ****** THESE RENDER EACH LAYER ******
+
+    private void renderInterface() {
+        interfaceLayer.render();
+    }
+
+    private void renderControls() {
+        controlsLayer.render();
+    }
+
+    private void renderAbout() {
+        aboutLayer.render();
+    }
+
+    private void renderLoading() {
+        loadingLayer.render();
+    }
+
+    private void renderLobby() {
+        int xAlign = 50;
+        TextRenderer textRenderer = new TextRenderer();
+        textRenderer.drawText("Map: " + lobbyData.getMapID(), xAlign, 540);
+
+        int yCoord = 500;
+        textRenderer.drawText("Players: ", xAlign, yCoord);
+        for (Integer player : lobbyData.getPlayers()) {
+            yCoord = yCoord - 30;
+            textRenderer.drawText(player.toString(), xAlign, yCoord);
+        }
+    }
+
+
+    // ****** BUTTON HANDLERS ******
+
     private void handleClickedMain() {
         if (hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
 
         if (!hasClicked) {
+            if(controls.isClicked()){
+                currentScreen = Screen.CONTROLS;
+                hasClicked = true;
+                return;
+            }
             if (about.isClicked()) {
                 currentScreen = Screen.ABOUT;
                 hasClicked = true;
@@ -81,6 +167,17 @@ public class StartScreenRenderer {
         }
     }
 
+    private void handleClickedControls() {
+        if (hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
+
+        if (!hasClicked) {
+            if (go_back.isClicked()) {
+                currentScreen = Screen.MAIN;
+                hasClicked = true;
+            }
+        }
+    }
+
     private void handleClickedAbout() {
         if (hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
 
@@ -88,79 +185,16 @@ public class StartScreenRenderer {
             if (go_back.isClicked()) {
                 currentScreen = Screen.MAIN;
                 hasClicked = true;
-                return;
             }
         }
     }
 
-
+    //TODO
     private void handleClickedLobby() {
         if (hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
 
         if (!hasClicked) {
             // do stuff
-        }
-    }
-
-    // ****** THESE PREPARE EACH LAYER ******
-
-    private void readyInterfaceLayer() {
-        InterfaceTexture title = new InterfaceTexture(ISprite.TITLE);
-        title.setRatio(0.5f);
-        join_game = new InterfaceTexture(ISprite.LOBBY);
-        instructions = new InterfaceTexture(ISprite.CONTROLS);
-        about = new InterfaceTexture(ISprite.ABOUT);
-
-        background.spawn(0,new Vector2f(400f,300f),PHASE,interfaceLayer);
-        title.spawn(1,new Vector2f(400f,435f),PHASE,interfaceLayer);
-        join_game.spawn(2, new Vector2f(400f, 270f), PHASE, interfaceLayer);
-        instructions.spawn(3, new Vector2f(400f, 180f), PHASE, interfaceLayer);
-        about.spawn(4, new Vector2f(400f, 90f), PHASE, interfaceLayer);
-    }
-
-    private void readyAboutLayer() {
-        about_text = new InterfaceTexture(ISprite.ABOUTTEXT);
-        go_back = new InterfaceTexture(ISprite.GOBACK);
-
-        about_text.spawn(0, new Vector2f((float) 300.0, (float) 100.0), PHASE, aboutLayer);
-        go_back.spawn(1, new Vector2f((float) 300.0, (float) 450.0), PHASE, aboutLayer);
-    }
-
-    private void readyLoadingLayer() {
-        InterfaceTexture temporary_filler = new InterfaceTexture(ISprite.ORB_P1);
-        temporary_filler.spawn(0, new Vector2f((float) 300.0, (float) 100.0), PHASE, loadingLayer);
-    }
-
-    public void setupLobby(Sendable sendable) {
-        lobbyData = (LobbyData) sendable;
-        currentScreen = Screen.LOBBY;
-    }
-
-
-    // ****** THESE RENDER EACH LAYER ******
-
-    private void renderInterface() {
-        interfaceLayer.render(PHASE);
-    }
-
-    private void renderAbout() {
-        aboutLayer.render(PHASE);
-    }
-
-    private void renderLoading() {
-        loadingLayer.render(PHASE);
-    }
-
-    private void renderLobby() {
-        int xAlign = 50;
-        TextRenderer textRenderer = new TextRenderer();
-        textRenderer.drawText("Map: " + lobbyData.getMapID(), xAlign, 540);
-
-        int yCoord = 500;
-        textRenderer.drawText("Players: ", xAlign, yCoord);
-        for (Integer player : lobbyData.getPlayers()) {
-            yCoord = yCoord - 30;
-            textRenderer.drawText(player.toString(), xAlign, yCoord);
         }
     }
 }

@@ -37,4 +37,6 @@ public interface ISprite {
 
     int BACKGROUND = 21;
     int SCOREBOARD = 22;
+
+    int CONTROLS_GUIDE = 23;
 }

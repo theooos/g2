@@ -52,6 +52,8 @@ public class TextureLoader {
         textures[ISprite.COLLISION] = loadTexture("collision.png");
         textures[ISprite.BACKGROUND] = loadTexture("background.png");
         textures[ISprite.SCOREBOARD] = loadTexture("scoreboard.png");
+
+        textures[ISprite.CONTROLS_GUIDE] = loadTexture("controls_guide.png");
     }
 
 
