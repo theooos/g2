@@ -44,10 +44,10 @@ public class TextureLoader {
         textures[ISprite.LOBBY] = loadTexture("lobbyfinal.png");
 
 
-        textures[ISprite.OPTIONS] = loadTexture("options.png");
-        textures[ISprite.CONTINUE] = loadTexture("continue.png");
+        textures[ISprite.OPTIONS] = loadTexture("InGameMenu.png");
+        textures[ISprite.CONTINUE] = loadTexture("resume.png");
         textures[ISprite.MUTE] = loadTexture("mute.png");
-        textures[ISprite.ENDGAME] = loadTexture("endgame.png");
+        textures[ISprite.ENDGAME] = loadTexture("exit.png");
 
         textures[ISprite.COLLISION] = loadTexture("collision.png");
         textures[ISprite.BACKGROUND] = loadTexture("background.png");

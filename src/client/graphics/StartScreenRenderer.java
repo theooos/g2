@@ -1,5 +1,6 @@
 package client.graphics;
 
+import client.graphics.Sprites.BackgroundTexture;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
 import objects.LobbyData;
@@ -18,7 +19,7 @@ public class StartScreenRenderer {
 
     private Screen currentScreen = Screen.MAIN;
 
-    private InterfaceTexture background = new InterfaceTexture(ISprite.BACKGROUND);
+    private BackgroundTexture background = new BackgroundTexture(ISprite.BACKGROUND);
     private InterfaceTexture about;
     private InterfaceTexture instructions;
     private InterfaceTexture about_text;
@@ -39,7 +40,6 @@ public class StartScreenRenderer {
 
     public StartScreenRenderer(Consumer<Void> connectFunction) {
         this.connectFunction = connectFunction;
-        background.setRatio(0.5f);
         readyInterfaceLayer();
         readyAboutLayer();
         readyLoadingLayer();
