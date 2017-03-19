@@ -64,15 +64,9 @@ public class Map {
 
         ArrayList<Wall> relWalls = new ArrayList<>();
 
-
         for (Wall thisWall : walls) {
-            if (thisWall.inPhase(phase)) {
-                if (!(intactOnly && !thisWall.intact())) {
-                    if (!(innerOnly && thisWall.isBoundary())) {
-                        relWalls.add(thisWall);
-                    }
-
-                }
+            if (thisWall.inPhase(phase) && !(intactOnly && !thisWall.intact()) && !(innerOnly && thisWall.isBoundary())) {
+                relWalls.add(thisWall);
             }
         }
 

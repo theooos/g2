@@ -3,6 +3,8 @@ package client.graphics;
 import static org.lwjgl.opengl.GL11.*;
 
 import client.ClientSettings;
+import objects.GameData;
+import server.game.Scoreboard;
 import server.game.Vector2;
 
 
@@ -17,14 +19,17 @@ class Draw {
     private double displayHealth;
     private double oldHeat;
     private double displayHeat;
+    private GameData gameData;
 
-    Draw() {
+    Draw(GameData gd) {
         this.width = ClientSettings.SCREEN_WIDTH;
         this.height = ClientSettings.SCREEN_HEIGHT;
         oldHealth = 0;
         displayHealth = 100;
         oldHeat = 0;
         displayHeat = 0;
+        gameData = gd;
+
     }
 
     void drawQuad(Vector2 centre, float rotation, float radius, float red, float green, float blue) {
@@ -131,14 +136,26 @@ class Draw {
         glEnd();
     }
 
-    void shadeScreen() {
+    void drawScoreboard(Scoreboard sb) {
+        shadeScreen();
+        int[] scores = sb.getPlayerScores();
+        float xStart = width/6;
+        float yStart = height/3;
+        float rectWidth = xStart*4;
+        float rectHeight = yStart*2/scores.length;
+        for (int i = 0; i < scores.length; i++) {
+            rectDraw(xStart, yStart, rectWidth, rectHeight);
+        }
+    }
+
+    private void shadeScreen() {
         glColor4f(1,1,1,0.6f);
-        verticalDraw(0,0,width,height);
+        rectDraw(0,0,width,height);
     }
 
     void colourBackground(int phase) {
         glColor4f(phase*0.1f,0,(1-phase)*0.1f,1f);
-        verticalDraw(0,0,width,height);
+        rectDraw(0,0,width,height);
     }
 
     void drawHeatBar(double heat, double maxHeat) {
@@ -168,7 +185,7 @@ class Draw {
         float green = (204f/255f)*(1-heatRatio);
 
         glColor3f(heatRatio, green, 0f);
-        verticalDraw(width - (buffer+heatWidth), buffer+(1-heatRatio)*maxHeight, heatWidth, maxHeight*heatRatio);
+        rectDraw(width - (buffer+heatWidth), buffer+(1-heatRatio)*maxHeight, heatWidth, maxHeight*heatRatio);
     }
 
     void drawHealthBar(double health, double maxHealth) {
@@ -205,7 +222,7 @@ class Draw {
         float healthRatio = (float) (displayHealth/maxHealth);
         float green = (204f/255f)*healthRatio;
         glColor3f(1-healthRatio, green, 0f);
-        verticalDraw(buffer, buffer+(1-healthRatio)*maxHeight, healthWidth, maxHeight*healthRatio);
+        rectDraw(buffer, buffer+(1-healthRatio)*maxHeight, healthWidth, maxHeight*healthRatio);
     }
 
     void drawCircle(float cx, float cy, float r, int num_segments) {
@@ -237,7 +254,7 @@ class Draw {
         glEnd();
     }
 
-    private void verticalDraw(float xStart, float yStart, float rectWidth, float rectHeight) {
+    private void rectDraw(float xStart, float yStart, float rectWidth, float rectHeight) {
         glBegin(GL_QUADS);
         glVertex2f(checkX(xStart), checkY(height - yStart));
         glVertex2f(checkX(xStart + rectWidth), checkY(height - yStart));

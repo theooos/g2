@@ -16,7 +16,7 @@ class GameRenderer {
     private CollisionManager collisionManager;
     private boolean displayCollisions = false;
 
-    private Draw draw = new Draw();
+    private Draw draw;
     private Pulse pulse;
 
     float powerUpRotation;
@@ -29,6 +29,7 @@ class GameRenderer {
         Player me = gameData.getPlayer(playerID);
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
         powerUpRotation = 0;
+        draw = new Draw(gameData);
     }
 
     void render() {

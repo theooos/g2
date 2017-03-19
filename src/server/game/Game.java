@@ -462,9 +462,9 @@ public class Game implements Runnable {
     }
 
     private void countTime() {
-        if (tickCount  > 59) {
+        if (tickCount  > 240) {
             tickCount = 0;
-            System.out.println("Time for 60 ticks: "+(System.currentTimeMillis()-lastTime));
+            out("Time for 240 ticks: "+(System.currentTimeMillis()-lastTime));
             lastTime = System.currentTimeMillis();
         }
         tickCount++;
