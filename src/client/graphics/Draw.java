@@ -143,8 +143,33 @@ class Draw {
         float yStart = height/3;
         float rectWidth = xStart*4;
         float rectHeight = yStart*2/scores.length;
-        for (int i = 0; i < scores.length; i++) {
-            rectDraw(xStart, yStart, rectWidth, rectHeight);
+
+        int[] sortedScores = scores.clone();
+        int removed = 0;
+        while (removed < sortedScores.length) {
+            int max = Integer.MIN_VALUE;
+            int index = -1;
+            for (int i = 0; i < sortedScores.length; i++) {
+                if (sortedScores[i] > max) {
+                    index = i;
+                    max = sortedScores[i];
+                }
+            }
+            if (index != -1) {
+                if (gameData.getPlayer(index).getTeam() == 0) {
+                    glColor3f(1,0,0);
+                }
+                else {
+                    glColor3f(0,1,1);
+                }
+                rectDraw(xStart, yStart, rectWidth, rectHeight);
+                yStart+=rectHeight;
+                sortedScores[index] = Integer.MIN_VALUE;
+            }
+            else {
+                break;
+            }
+            removed++;
         }
     }
 

@@ -37,9 +37,7 @@ class GameRenderer {
         int phase = p.getPhase();
         draw.colourBackground(phase);
 
-        if (pulse
-                .isAlive() && pulse
-                .isShowOtherPhase()) {
+        if (pulse.isAlive() && pulse.isShowOtherPhase()) {
             drawStencil();
         } else {
             drawProjectiles(phase);
@@ -47,10 +45,8 @@ class GameRenderer {
             drawOrbs(phase);
             drawPlayers(phase);
             drawPowerUps(phase);
-            if (pulse
-                    .isAlive()) {
-                pulse
-                        .draw();
+            if (pulse.isAlive()) {
+                pulse.draw();
             }
         }
         draw.drawHealthBar(p.getHealth(), p.getMaxHealth());
