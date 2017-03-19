@@ -43,7 +43,7 @@ public class GameManager {
 
         healthbar = true;
         gameMusic = false;
-        muted = true;
+        muted = false;
 
         collisions = new CollisionManager(gd);
         gameRenderer = new GameRenderer(gameData, playerID, collisions);
@@ -63,7 +63,7 @@ public class GameManager {
                 break;
             case SCOREBOARD:
                 gameRenderer.render();
-                inGameMenuRenderer.renderScoreboard();
+                gameRenderer.drawScoreboard();
                 break;
             case GAMEOVER:
                 inGameMenuRenderer.renderEndScreen();

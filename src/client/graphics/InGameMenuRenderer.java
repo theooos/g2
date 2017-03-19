@@ -38,11 +38,6 @@ class InGameMenuRenderer {
         textRenderer.drawText("The in-game menu will be here.", 0, 50);
     }
 
-    void renderScoreboard(){
-        TextRenderer textRenderer = new TextRenderer();
-        textRenderer.drawText("The scoreboard will be here.", 0, 50);
-    }
-
     void renderEndScreen(){
         TextRenderer textRenderer = new TextRenderer();
         textRenderer.drawText("The end game screen will be here.", 0, 50);

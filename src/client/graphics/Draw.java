@@ -136,13 +136,16 @@ class Draw {
         glEnd();
     }
 
-    void drawScoreboard(Scoreboard sb) {
+    void drawScoreboard() {
         shadeScreen();
+        Scoreboard sb = gameData.getScoreboard();
+        TextRenderer textRenderer = new TextRenderer();
+
         int[] scores = sb.getPlayerScores();
         float xStart = width/6;
-        float yStart = height/3;
+        float yStart = height/4;
         float rectWidth = xStart*4;
-        float rectHeight = yStart*2/scores.length;
+        float rectHeight = yStart*1.5f/scores.length;
 
         int[] sortedScores = scores.clone();
         int removed = 0;
@@ -160,7 +163,7 @@ class Draw {
                     glColor3f(1,0,0);
                 }
                 else {
-                    glColor3f(0,1,1);
+                    glColor3f(0,1,0);
                 }
                 rectDraw(xStart, yStart, rectWidth, rectHeight);
                 yStart+=rectHeight;
@@ -174,7 +177,7 @@ class Draw {
     }
 
     private void shadeScreen() {
-        glColor4f(1,1,1,0.6f);
+        glColor4f(1,1,1,0.3f);
         rectDraw(0,0,width,height);
     }
 

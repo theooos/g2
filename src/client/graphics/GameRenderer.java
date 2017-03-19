@@ -55,6 +55,10 @@ class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
+    void drawScoreboard() {
+        draw.drawScoreboard();
+    }
+
     private void positionBullet(Vector2 pos, Vector2 dir) {
         Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
         float lastX = cursor.getX();
@@ -139,13 +143,13 @@ class GameRenderer {
             if (p.getPhase() == phase) {
                 if (p.isAlive()) {
                     if (p.getTeam() == 0) {
-                        red = 1;
-                        green = 0.33f;
-                        blue = 0.26f;
+                        red = 0.71f;
+                        green = 0.12f;
+                        blue = 0.7f;
                     } else {
-                        red = 0.2f;
-                        green = 0.9f;
-                        blue = 0.5f;
+                        red = 0f;
+                        green = 1f;
+                        blue = 0f;
                     }
                 } else {
                     red = 0.6f;
@@ -202,13 +206,13 @@ class GameRenderer {
         for (Projectile p : projectiles.values()) {
             if (phase == p.getPhase()) {
                 if (p.getTeam() == 0) {
-                    red = 0.7f;
-                    green = 0.1f;
-                    blue = 0.1f;
+                    red = 0.6f;
+                    green = 0f;
+                    blue = 0.6f;
                 } else {
-                    red = 0.1f;
-                    green = 1f;
-                    blue = 0.1f;
+                    red = 0f;
+                    green = 0.8f;
+                    blue = 0f;
                 }
                 GL11.glColor3f(red, green, blue);
                 float radius = p.getRadius();
