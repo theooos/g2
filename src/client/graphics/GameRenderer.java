@@ -127,9 +127,7 @@ class GameRenderer {
 
         GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-        pulse
-                .draw();
-
+        pulse.draw();
     }
 
     private void drawPlayers(int phase) {

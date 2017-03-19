@@ -1,9 +1,11 @@
 package client.graphics;
 
+import client.ClientSettings;
 import client.graphics.Sprites.BackgroundTexture;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
 import objects.GameData;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 /**
@@ -35,7 +37,7 @@ class InGameMenuRenderer {
         exit = new InterfaceTexture(ISprite.ENDGAME);
         mute = new InterfaceTexture(ISprite.MUTE);
 
-        //background.spawn(0,new Vector2f(400f,300f),PHASE,options);
+        background.spawn(0,new Vector2f(400f,300f),PHASE,options);
         resume.spawn(2, new Vector2f(400f, 270f), PHASE, options);
         exit.spawn(3, new Vector2f(400f, 180f), PHASE, options);
         mute.spawn(4, new Vector2f(400f, 90f), PHASE, options);
@@ -54,9 +56,8 @@ class InGameMenuRenderer {
     }
 
     void renderMenu(){
-        //TextRenderer textRenderer = new TextRenderer();
-        //textRenderer.drawText("The in-game menu will be here.", 0, 50);
-        options.render(PHASE);
+       enableTextureScreen();
+       options.render(PHASE);
     }
 
     void renderScoreboard(){
@@ -67,5 +68,19 @@ class InGameMenuRenderer {
     void renderEndScreen(){
         TextRenderer textRenderer = new TextRenderer();
         textRenderer.drawText("The end game screen will be here.", 0, 50);
+    }
+
+    private void enableTextureScreen() {
+        GL11.glDisable(GL11.GL_COLOR);
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
+        GL11.glClearDepth(1.0f); // Depth Buffer Setup
+        GL11.glDisable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDepthMask(false);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0, ClientSettings.SCREEN_WIDTH, 0, ClientSettings.SCREEN_HEIGHT, 1, -1);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
 }
