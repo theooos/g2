@@ -75,7 +75,7 @@ class InGameMenuRenderer {
         GL11.glClearColor( 0.0f, 0.0f, 1.0f, 0.0f );
         GL11.glEnable(GL_BLEND);
         GL11.glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL_DEPTH_TEST);
         GL11.glEnable(GL_TEXTURE_2D);
+        GL11.glDisable(GL_DEPTH_TEST);
     }
 }
