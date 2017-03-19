@@ -10,7 +10,7 @@ public abstract class MovableEntity extends Entity {
     float radius;
     int team;
     int respawnTime;
-    private int timeTillRespawn;
+    int timeTillRespawn;
 
     protected void move() {
         this.pos = pos.add(dir.mult(speed));

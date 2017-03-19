@@ -87,7 +87,7 @@ public class TextRenderer {
     }
 
     //Functions
-    public void drawText(String text, int x, int y) {
+    void drawText(String text, int x, int y) {
         glBindTexture(GL_TEXTURE_2D, this.fontTextureId);
         glBegin(GL_QUADS);
 
@@ -118,24 +118,24 @@ public class TextRenderer {
         glEnd();
     }
     //Getters
-    public float getFontImageWidth() {
+    private float getFontImageWidth() {
         return (float) CHARS.values().stream().mapToDouble(e -> fontMetrics.getStringBounds(e, null).getWidth()).max().getAsDouble();
     }
-    public float getFontImageHeight() {
+    private float getFontImageHeight() {
         return (float) CHARS.keySet().size() * (this.getCharHeight());
     }
-    public float getCharX(char c) {
+    private float getCharX(char c) {
         String originStr = CHARS.values().stream().filter(e -> e.contains("" + c)).findFirst().orElse("" + c);
         return (float) fontMetrics.getStringBounds(originStr.substring(0, originStr.indexOf(c)), null).getWidth();
     }
-    public float getCharY(char c) {
+    private float getCharY(char c) {
         float lineId = (float) CHARS.keySet().stream().filter(i -> CHARS.get(i).contains("" + c)).findFirst().orElse(0);
         return this.getCharHeight() * lineId;
     }
-    public float getCharWidth(char c) {
+    private float getCharWidth(char c) {
         return fontMetrics.charWidth(c);
     }
-    public float getCharHeight() {
+    private float getCharHeight() {
         return (float) (fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
     }
     public Color getColour()
@@ -149,7 +149,7 @@ public class TextRenderer {
         this.colour = col;
     }
     //Conversions
-    public ByteBuffer asByteBuffer() {
+    private ByteBuffer asByteBuffer() {
 
         ByteBuffer byteBuffer;
 

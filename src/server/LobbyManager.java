@@ -11,8 +11,6 @@ class LobbyManager {
 
     private ArrayList<Lobby> lobbies;
 
-    private boolean gameOn;
-
     LobbyManager() {
         lobbies = new ArrayList<>();
         lobbies.add(createLobby());
@@ -44,6 +42,6 @@ class LobbyManager {
 //        Random r = new Random();
 //        int size = r.nextInt(4)+1;
 
-        return new Lobby(4);
+        return new Lobby(2);
     }
 }

@@ -110,7 +110,7 @@ public class CollisionManager {
         return collidesWithBot(e);
     }
 
-    MovableEntity collidesWithBot(MovableEntity e) {
+    private MovableEntity collidesWithBot(MovableEntity e) {
         HashMap<Integer, MovableEntity> entities = new HashMap<>();
         for(Orb o: orbs.values()) {
             if (!(o.equals(e) ||  o.getPhase() != e.getPhase())) {
