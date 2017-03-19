@@ -53,17 +53,16 @@ public class GameManager {
     }
 
     public void run() {
+        update();
         switch (mode) {
             case GAME:
-                update();
                 gameRenderer.render();
                 break;
             case MENU:
-                pollKeyboard();
                 inGameMenuRenderer.renderMenu();
                 break;
             case SCOREBOARD:
-                pollKeyboard();
+                gameRenderer.render();
                 inGameMenuRenderer.renderScoreboard();
                 break;
             case GAMEOVER:
@@ -89,15 +88,17 @@ public class GameManager {
     private void pollMouse() {
         Player me = gameData.getPlayer(myPlayerID);
         if (me.isAlive()) {
-            if (Mouse.isButtonDown(0)) {
-                conn.send(new FireObject(me.getID(), true));
-
-                if (me.activeWeapon() == 1 && muted)
-                    Audio.SHOOT2.play();
-                else if (muted) {
-                    Audio.SHOOT.play();
+            while (Mouse.next()){
+                switch (Mouse.getEventButton()){
+                    case 0:
+                        if(Mouse.getEventButtonState()){
+                            conn.send(new FireObject(me.getID(), true));
+                            Audio.SHOOT.play();
+                        }
+                        else {
+                            conn.send(new FireObject(me.getID(), false));
+                        }
                 }
-                conn.send(new FireObject(me.getID(), false));
             }
         }
     }
@@ -153,7 +154,13 @@ public class GameManager {
                     default:
                         menuKeyboard();
                 }
-
+            } else{
+                switch (mode){
+                    case SCOREBOARD:
+                        if(Keyboard.getEventKey() == Keyboard.KEY_TAB){
+                            mode = Mode.GAME;
+                        }
+                }
             }
         }
     }

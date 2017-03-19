@@ -122,7 +122,8 @@ class Lobby {
     private void startGame() {
         msgToAllConnected("Game loading....");
         gameRunning = true;
-        new Thread(new Game(players, maxSize, mapID)).start();
+        Game game = new Game(players, maxSize, mapID);
+        game.run();
     }
 
     boolean isGameRunning() {

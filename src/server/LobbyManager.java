@@ -4,14 +4,11 @@ import networking.Connection;
 import objects.String;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 
 class LobbyManager {
 
     private ArrayList<Lobby> lobbies;
-
-    private boolean gameOn;
 
     LobbyManager() {
         lobbies = new ArrayList<>();
@@ -44,6 +41,6 @@ class LobbyManager {
 //        Random r = new Random();
 //        int size = r.nextInt(4)+1;
 
-        return new Lobby(4);
+        return new Lobby(2);
     }
 }

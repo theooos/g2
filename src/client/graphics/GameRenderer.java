@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 import server.game.*;
 
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 class GameRenderer {
@@ -132,7 +133,6 @@ class GameRenderer {
 
     private void drawPlayers(int phase) {
         ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
-        int radius = players.get(0).getRadius();
         float red;
         float green;
         float blue;
@@ -148,17 +148,18 @@ class GameRenderer {
                         green = 0.9f;
                         blue = 0.5f;
                     }
+                    draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
+                    GL11.glColor3f(red, green, blue);
+                    draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), p.getRadius(), 100);
+                    positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir());
                 } else {
                     red = 0.6f;
                     green = 0.6f;
                     blue = 0.7f;
+                    draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
+                    GL11.glColor3f(red, green, blue);
+                    draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), p.getRadius(), 100);
                 }
-                draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
-                GL11.glColor3f(red, green, blue);
-
-                draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
-
-                positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir());
             }
         }
     }
@@ -238,6 +239,19 @@ class GameRenderer {
                 float radius = p.getRadius();
                 draw.drawQuad(p.getPos(), powerUpRotation, radius, red, green, blue);
             }
+        }
+    }
+
+    private void deadAnimation(Vector2 pos, float red, float green, float blue){
+        Random rand = new Random();
+        float x = pos.getX();
+        float y = pos.getY();
+        for(int i=0; i<1; i++) {
+            x += rand.nextInt(10);
+            y += rand.nextInt(10);
+            draw.drawAura(new Vector2(x, y), 10, 2, red - 0.1f, green - 0.1f, blue - 0.1f);
+            GL11.glColor4f(red, green, blue, 1);
+            draw.drawCircle(x, ClientSettings.SCREEN_HEIGHT - y, 10, 100);
         }
     }
 

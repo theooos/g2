@@ -30,10 +30,11 @@ public class Game implements Runnable {
     private int IDCounter;
 
     private final boolean DEBUG = true;
+    private final long tick = 60;
+    private boolean gameRunning;
 
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
-        int tick = 60;
         IDCounter = 0;
 
         this.playerConnections = playerConnections;
@@ -149,111 +150,135 @@ public class Game implements Runnable {
             powerUps.put(i, p);
         }
 
-        countdown = 4*60*tick; //four minutes
+        countdown = 4*60*(int)tick; //four minutes
+        gameRunning = true;
 
         InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps);
         sendGameStart(g);
     }
 
 
+    public void run() {
+        long timeDelay = 1000/tick;
+        gameRunning = true;
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (gameRunning) {
+                    gameTick();
+                }
+                else {
+                    cancel();
+                }
+            }
+        }, timeDelay, timeDelay);
+    }
+
     /**
      * The game tick runs.  This is the master function for a running game
      */
-    public void run() {
+    private void gameTick() {
 
-        boolean isRunning = true;
-        while(isRunning){
-            boolean scoreboardChanged = false;
+        boolean scoreboardChanged = false;
 
-            for (Player p : players.values()) {
-                if (!p.isAlive()) {
-                    if (p.canRespawn()) {
-                        respawn(p);
-                        if (!(p instanceof AIPlayer)) {
-                            p.incMove();
-                            playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
-                        }
+        for (Player p : players.values()) {
+            if (!p.isAlive()) {
+                if (p.canRespawn()) {
+                    p.setRadius(20);
+                    respawn(p);
+                    if (!(p instanceof AIPlayer)) {
+                        p.incMove();
+                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
                     }
                 }
-                if (p.isFiring()) fire(p);
+                else {
+                    float radius = p.getRadius();
+                    radius -= radius * 0.05f;
+                    p.setRadius(radius);
+                }
+            }
+            if (p.isFiring()) fire(p);
+            p.live();
+            PowerUp pu = (collisions.collidesWithPowerUp(p));
+            if (pu != null) {
+                pu.setChanged(true);
+                pu.setHealth(0);
+                if (pu.getType() == PowerUp.Type.health) {
+                    p.setHealth(p.getMaxHealth());
+                }
+                else if (pu.getType() == PowerUp.Type.heat) {
+                    p.setWeaponOutHeat(0);
+                    p.getActiveWeapon().setCurrentHeat(0);
+                }
+            }
+        }
+
+        for (PowerUp p: powerUps.values()) {
+            if (!p.isAlive()) {
                 p.live();
-                PowerUp pu = (collisions.collidesWithPowerUp(p));
-                if (pu != null) {
-                    pu.setChanged(true);
-                    pu.setHealth(0);
-                    if (pu.getType() == PowerUp.Type.health) {
-                        p.setHealth(p.getMaxHealth());
-                    }
-                    else if (pu.getType() == PowerUp.Type.heat) {
-                        p.setWeaponOutHeat(0);
-                        p.getActiveWeapon().setCurrentHeat(0);
-                    }
+                if (p.canRespawn()) {
+                    respawn(p);
                 }
             }
-
-            for (PowerUp p: powerUps.values()) {
-                if (!p.isAlive()) {
-                    p.live();
-                    if (p.canRespawn()) {
-                        respawn(p);
-                    }
+        }
+        for (Orb o : orbs.values()) {
+            if (!o.isAlive()) {
+                if (o.canRespawn()) {
+                    o.setRadius(10);
+                    respawn(o);
+                } else {
+                    float radius = o.getRadius();
+                    radius -= radius * 0.005f;
+                    o.setRadius(radius);
                 }
             }
-            for (Orb o : orbs.values()) {
-                if (!o.isAlive() && o.canRespawn()) respawn(o);
-                o.live();
-            }
+            o.live();
+        }
 
-            ArrayList<Integer> keys = new ArrayList<>();
+        ArrayList<Integer> keys = new ArrayList<>();
 
-            for (Projectile p : projectiles.values()) {
-                MovableEntity e = collisions.collidesWithPlayerOrBot(p);
-                if (e != null) {
-                    out(p.getPlayerID()+" just hit "+e.getID());
-                    //can't damage your team
-                    if (e.getTeam() != p.getTeam() && p.isAlive()) {
-                        e.damage(p.getDamage());
-                        //if the player has been killed
-                        if (!e.isAlive()) {
-                            if (e instanceof Orb) {
-                                scoreboard.killedOrb(p.getPlayer());
-                            } else {
-                                scoreboard.killedPlayer(p.getPlayer());
-                            }
-                            scoreboardChanged = true;
+        for (Projectile p : projectiles.values()) {
+            MovableEntity e = collisions.collidesWithPlayerOrBot(p);
+            if (e != null) {
+                out(p.getPlayerID()+" just hit "+e.getID());
+                //can't damage your team
+                if (e.getTeam() != p.getTeam() && p.isAlive()) {
+                    e.damage(p.getDamage());
+                    //if the player has been killed
+                    if (!e.isAlive()) {
+                        if (e instanceof Orb) {
+                            scoreboard.killedOrb(p.getPlayer());
+                        } else {
+                            scoreboard.killedPlayer(p.getPlayer());
                         }
+                        scoreboardChanged = true;
                     }
-                    p.kill();
                 }
-
-                if (collisions.projectileWallCollision(p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
-
-                p.live();
-                if (!p.isAlive()) {
-                    keys.add(p.getID());
-                }
+                p.kill();
             }
 
-            countdown--;
+            if (collisions.projectileWallCollision(p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
-            if (scoreboardChanged) {
-                sendToAllConnected(scoreboard);
+            p.live();
+            if (!p.isAlive()) {
+                keys.add(p.getID());
             }
+        }
 
-            //stops the countdown when the timer has run out
-            if (countdown <= 0 || scoreboard.scoreReached()) {
-                endGame();
-                isRunning = false;
-            } else {
-                sendAllObjects();
-                for (Integer i: keys) {
-                    projectiles.remove(i);
-                }
-            }
-            try {
-                Thread.sleep(1000/60);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        countdown--;
+
+        if (scoreboardChanged) {
+            sendToAllConnected(scoreboard);
+        }
+
+        //stops the countdown when the timer has run out
+        if (countdown <= 0 || scoreboard.scoreReached()) {
+            endGame();
+        } else {
+            sendAllObjects();
+            for (Integer i: keys) {
+                projectiles.remove(i);
             }
         }
     }
@@ -262,10 +287,8 @@ public class Game implements Runnable {
      * Ends the game and msgs all clients
      */
     private void endGame() {
+        gameRunning = false;
         sendToAllConnected(new GameOver(scoreboard));
-        for (Connection c: playerConnections) {
-            sendScoreboard(c);
-        }
     }
 
     /**

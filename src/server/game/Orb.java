@@ -33,6 +33,7 @@ public class Orb extends MovableEntity {
         this.radius = 10;
         this.team = 10;
         respawnTime = 180;
+        timeTillRespawn = respawnTime;
 
         // Initialise "Entity" members.
         this.damageable = true;

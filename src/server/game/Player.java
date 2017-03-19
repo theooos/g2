@@ -39,7 +39,8 @@ public class Player extends MovableEntity {
         firing = false;
         weaponOutHeat = 0;
         moveCounter = 0;
-        respawnTime = 300;
+        respawnTime = 240;
+        timeTillRespawn = respawnTime;
     }
 
     public Player(Player player) {
@@ -61,6 +62,7 @@ public class Player extends MovableEntity {
         this.weaponOutHeat = player.getWeaponOutHeat();
         this.moveCounter = player.getMoveCount();
         respawnTime = 240;
+        timeTillRespawn = respawnTime;
     }
 
     public void live() {
