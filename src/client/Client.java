@@ -7,6 +7,8 @@ import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
 import networking.Connection;
 import objects.GameData;
+import objects.InitGame;
+import objects.Sendable;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -113,7 +115,9 @@ public class Client {
         }
     }
 
-    private void beginGame(GameData gameData) {
+    private void beginGame(Sendable s) {
+        GameData gameData = new GameData((InitGame) s);
+        clientReceiver.setGameData(gameData);
         gameRenderer = new GameManager(gameData, connection, playerID);
         currentMode = Mode.GAME;
         Audio.INTERFACEBACKGROUND.stopClip();
@@ -124,7 +128,8 @@ public class Client {
     private void establishConnection() {
         try {
             connection = new Connection();
-            clientReceiver = new ClientReceiver(connection, this::beginGame);
+            clientReceiver = new ClientReceiver(connection);
+            connection.addFunctionEvent("InitGame", this::beginGame);
             connection.addFunctionEvent("String",this::getID);
             connection.addFunctionEvent("LobbyData",startScreen::setupLobby);
         } catch (IOException e) {
