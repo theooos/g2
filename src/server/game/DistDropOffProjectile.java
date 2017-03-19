@@ -24,7 +24,6 @@ public class DistDropOffProjectile extends Projectile {
         super(damage, lifespan, radius, pos, dir, speed, phase, player, ID);
         damageDec = damage/lifespan;
         radiusDec = radius/lifespan;
-        System.out.println(radiusDec);
     }
 
     private DistDropOffProjectile(DistDropOffProjectile d) {

@@ -2,6 +2,7 @@ package server.game;
 
 import networking.Connection;
 import objects.*;
+import org.lwjgl.Sys;
 import server.ai.Intel;
 
 import java.io.IOException;
@@ -29,9 +30,13 @@ public class Game implements Runnable {
     private Scoreboard scoreboard;
     private int IDCounter;
 
-    private final boolean DEBUG = true;
+    private final boolean DEBUG = false;
     private final long tick = 60;
     private boolean gameRunning;
+
+    //for debugging
+    private int tickCount = 0;
+    private long lastTime =System.currentTimeMillis();
 
 
     public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
@@ -167,6 +172,7 @@ public class Game implements Runnable {
             public void run() {
                 if (gameRunning) {
                     gameTick();
+                    countTime();
                 }
                 else {
                     cancel();
@@ -418,7 +424,9 @@ public class Game implements Runnable {
         out("Toggling fire");
         FireObject f = (FireObject) s;
         Player p = players.get(f.getPlayerID());
-        p.setFiring(f.isStartFire());
+        if (p.isAlive()) {
+            p.setFiring(f.isStartFire());
+        }
     }
 
     private void switchPhase(Sendable s) {
@@ -450,6 +458,14 @@ public class Game implements Runnable {
                 projectiles.put(p.getID(), p);
                 out("Shot Fired");
             }
+        }
+    }
+
+    private void countTime() {
+        if (tickCount  > 59) {
+            tickCount = 0;
+            System.out.println("Time for 60 ticks: "+(lastTime-System.currentTimeMillis()));
+            lastTime = System.currentTimeMillis();
         }
     }
 

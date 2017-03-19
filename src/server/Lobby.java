@@ -31,7 +31,7 @@ class Lobby {
         Random rand = new Random();
         mapID = rand.nextInt(mapMax);
         //mapID = 2;
-        System.out.println(mapID);
+        System.out.println("Map ID: " +mapID);
         gameRunning = false;
     }
 
