@@ -19,7 +19,7 @@ class MapRenderer {
     private int width;
     private int height;
 
-    private final int EXTENT = 10;
+    private final int EXTENT = 5;
     private float red;
     private float green;
     private float blue;

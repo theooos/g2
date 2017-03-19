@@ -28,7 +28,6 @@ public class Scoreboard implements Sendable {
 
     private void addScore(Player p, int score) {
         playerScore[p.getID()] += score;
-        System.out.println(playerScore[p.getID()]);
         if (p.getTeam() == 0) {
             team0Score += score;
         }
