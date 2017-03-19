@@ -5,7 +5,6 @@ import client.graphics.Sprites.InterfaceTexture;
 import objects.LobbyData;
 import objects.Sendable;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.util.Display;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.function.Consumer;
@@ -19,6 +18,7 @@ public class StartScreenRenderer {
 
     private Screen currentScreen = Screen.MAIN;
 
+    private InterfaceTexture background = new InterfaceTexture(ISprite.BACKGROUND);
     private InterfaceTexture about;
     private InterfaceTexture instructions;
     private InterfaceTexture about_text;
@@ -39,12 +39,13 @@ public class StartScreenRenderer {
 
     public StartScreenRenderer(Consumer<Void> connectFunction) {
         this.connectFunction = connectFunction;
+        background.setRatio(0.5f);
         readyInterfaceLayer();
         readyAboutLayer();
         readyLoadingLayer();
     }
 
-    public void render() {
+    public void run() {
         switch (currentScreen) {
             case MAIN:
                 renderInterface();
@@ -104,13 +105,17 @@ public class StartScreenRenderer {
     // ****** THESE PREPARE EACH LAYER ******
 
     private void readyInterfaceLayer() {
-        about = new InterfaceTexture(ISprite.ABOUT);
-        instructions = new InterfaceTexture(ISprite.HELP);
+        InterfaceTexture title = new InterfaceTexture(ISprite.TITLE);
+        title.setRatio(0.5f);
         join_game = new InterfaceTexture(ISprite.LOBBY);
+        instructions = new InterfaceTexture(ISprite.CONTROLS);
+        about = new InterfaceTexture(ISprite.ABOUT);
 
-        about.spawn(1, new Vector2f((float) 300.0, (float) 100.0), PHASE, interfaceLayer);
-        instructions.spawn(2, new Vector2f((float) 300.0, (float) 250.0), PHASE, interfaceLayer);
-        join_game.spawn(0, new Vector2f((float) 300.0, (float) 400.0), PHASE, interfaceLayer);
+        background.spawn(0,new Vector2f(400f,300f),PHASE,interfaceLayer);
+        title.spawn(1,new Vector2f(400f,435f),PHASE,interfaceLayer);
+        join_game.spawn(2, new Vector2f(400f, 270f), PHASE, interfaceLayer);
+        instructions.spawn(3, new Vector2f(400f, 180f), PHASE, interfaceLayer);
+        about.spawn(4, new Vector2f(400f, 90f), PHASE, interfaceLayer);
     }
 
     private void readyAboutLayer() {
@@ -136,8 +141,6 @@ public class StartScreenRenderer {
 
     private void renderInterface() {
         interfaceLayer.render(PHASE);
-        TextRenderer textRenderer = new TextRenderer();
-        textRenderer.drawText("Test", 0, 0);
     }
 
     private void renderAbout() {

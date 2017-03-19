@@ -1,7 +1,6 @@
 package client.graphics.Sprites;
 
 import client.Client;
-import client.graphics.GameRenderer;
 import client.graphics.Layer;
 import client.graphics.Texture;
 import org.lwjgl.input.Mouse;
@@ -51,7 +50,7 @@ public abstract class Sprite implements ISprite {
     private float textureRight = 1;
 
     protected void initGameSprite() {
-//        this.texture = GameRenderer.textureHandler.getTexture(type);
+//        this.texture = GameManager.textureHandler.getTexture(type);
         this.original_width = this.texture.getTextureWidth();
         this.original_height = this.texture.getTextureHeight();
         this.width = this.original_width * ratio;

@@ -46,12 +46,8 @@ public class ClientReceiver {
         if (DEBUG) System.out.println("[CLIENT] " + o);
     }
 
-    private void setID(int id) {
+    public void setID(int id) {
         this.playerID = id;
-    }
-
-    private int getID() {
-        return playerID;
     }
 
     private void updatedPlayer(Sendable s) {

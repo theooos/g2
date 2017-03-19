@@ -1,6 +1,7 @@
 package client;
 
-import client.graphics.GameRenderer;
+import client.audio.Audio;
+import client.graphics.GameManager;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
@@ -27,7 +28,7 @@ public class Client {
     public static TextureLoader textureLoader;
     private TextRenderer textRenderer;
     private StartScreenRenderer startScreen;
-    private GameRenderer gameRenderer;
+    private GameManager gameRenderer;
 
     private boolean running = true;
 
@@ -46,11 +47,12 @@ public class Client {
             // let subsystem paint
             switch (currentMode) {
                 case SPLASH:
-                    startScreen.render();
+                    startScreen.run();
                     break;
                 case GAME:
+                    // TODO Make sure this doesn't happen every loop.
                     changeDisplaySettings();
-                    gameRenderer.render();
+                    gameRenderer.run();
                     break;
                 default:
                     System.err.println("Not in a mode.");
@@ -100,9 +102,9 @@ public class Client {
 
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
-//            Audio.init();
-//            Audio.volume = Audio.Volume.LOW;
-//            Audio.MUSIC.play();
+            Audio.init();
+            Audio.volume = Audio.Volume.LOW;
+           Audio.INTERFACEBACKGROUND.play();
 
         } catch (LWJGLException le) {
             System.err.println("Game exiting - exception in initialization:");
@@ -112,8 +114,11 @@ public class Client {
     }
 
     private void beginGame(GameData gameData) {
-        gameRenderer = new GameRenderer(gameData, connection, playerID);
+        gameRenderer = new GameManager(gameData, connection, playerID);
         currentMode = Mode.GAME;
+        Audio.INTERFACEBACKGROUND.stopClip();
+        Audio.COUNTDOWN.play();
+        Audio.GAMEMUSIC.pause(4);
     }
 
     private void establishConnection() {
@@ -136,6 +141,7 @@ public class Client {
                 String idS = information.substring(2);
                 int id = Integer.parseInt(idS);
                 playerID = id;
+                clientReceiver.setID(playerID);
                 break;
         }
     }

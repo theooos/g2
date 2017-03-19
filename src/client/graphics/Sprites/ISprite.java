@@ -20,8 +20,8 @@ public interface ISprite {
     int WALL_P1 = 8;
     int WALL_P2 = 9;
 
-    int START = 10;
-    int HELP = 11;
+    int TITLE = 10;
+    int CONTROLS = 11;
     int ABOUT = 12;
 
     int OPTIONS = 13;
@@ -34,4 +34,7 @@ public interface ISprite {
     int LOBBY = 19;
 
     int COLLISION = 20;
+
+    int BACKGROUND = 21;
+    int SCOREBOARD = 22;
 }

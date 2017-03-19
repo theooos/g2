@@ -78,7 +78,15 @@ public class Player extends MovableEntity {
         if (w1Out) return w1;
         else return w2;
     }
-
+    //returns the active weapon ->
+    // 1 for w1 and 2 for w2.
+    public int activeWeapon()
+    {
+        if(getActiveWeapon()==w1)
+            return 1;
+        else
+            return 2;
+    }
     public boolean isWeaponOneOut() {
         return w1Out;
     }
