@@ -24,7 +24,7 @@ public class Client {
     public enum Mode {MAIN_MENU, GAME}
     private Mode currentMode = Mode.MAIN_MENU;
 
-    private Connection connection;
+    private Connection_Client connection;
     private ClientReceiver clientReceiver;
     private int playerID;
 

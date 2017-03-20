@@ -1,6 +1,7 @@
 package server;
 
 import networking.Connection;
+import networking.Connection_Server;
 import objects.String;
 
 import java.util.ArrayList;
@@ -15,10 +16,15 @@ class LobbyManager {
         lobbies.add(createLobby());
     }
 
-    void addConnection(Connection c) {
+    void addConnection(Connection_Server c) {
 
         c.addFunctionEvent("String", Server::out);
-        c.send(new String("You are being cared for by the lobby manager."));
+        try {
+            c.send(new String("You are being cared for by the lobby manager."));
+        } catch (Exception e) {
+            System.out.println("Dude didn't make it into a lobby before dying.");
+            return;
+        }
 
         boolean added = false;
 

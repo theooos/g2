@@ -21,8 +21,6 @@ public abstract class Connection {
     NetworkListener fromConnection;
     NetworkEventHandler handler = new NetworkEventHandler();
 
-
-
     /**
      * Generates the socket.
      */
@@ -43,7 +41,7 @@ public abstract class Connection {
      */
     abstract boolean establishConnection(Client... clients) throws IOException;
 
-    
+
 
     /**
      * Closes all streams.
@@ -70,15 +68,6 @@ public abstract class Connection {
             out("Failed to connect through server socket.");
         }
         return null;
-    }
-
-    /**
-     * Sends a Sendable object the partner.
-     *
-     * @param obj Sendable item.
-     */
-    public void send(Sendable obj) {
-        toConnection.queueForSending(obj);
     }
 
     public void addFunctionEvent(String className, Consumer<Sendable> consumer) {

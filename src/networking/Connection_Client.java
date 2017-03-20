@@ -1,6 +1,7 @@
 package networking;
 
 import client.Client;
+import objects.Sendable;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,10 +21,14 @@ public class Connection_Client extends Connection {
         toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
         fromConnection = new NetworkListener_Client(new ObjectInputStream(socket.getInputStream()), handler, clients[0]);
 
-        out("Connection_Server made to server.");
         new Thread(handler).start();
         new Thread(toConnection).start();
         new Thread(fromConnection).start();
+        out("Connection established with server.");
         return true;
+    }
+
+    public void send(Sendable sendable){
+        toConnection.queueForSending(sendable);
     }
 }
