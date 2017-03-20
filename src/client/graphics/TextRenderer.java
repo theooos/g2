@@ -6,6 +6,8 @@ package client.graphics;
  * Can't believe this is the equivalent of System.out.println();
  */
 
+    import client.ClientSettings;
+
     import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -22,7 +24,7 @@ public class TextRenderer {
     private final Map<Integer,String> CHARS = new HashMap<Integer,String>() {{
         put(0, " ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         put(1, "abcdefghijklmnopqrstuvwxyz");
-        put(2, "0123456789");
+        put(2, "0123456789:,.");
         put(3, "abcdefghijklmnopqrstuvwxyz");
         //put(3, "ÄÖÜäöüß");
         put(4, " ABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -72,6 +74,7 @@ public class TextRenderer {
     void drawText(String text, float x, float y) {
         glBindTexture(GL_TEXTURE_2D, this.fontTextureId);
         glBegin(GL_QUADS);
+        y = ClientSettings.SCREEN_HEIGHT - y;
 
         float xTmp = x;
         for (char c : text.toCharArray()) {

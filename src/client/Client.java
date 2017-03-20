@@ -118,7 +118,7 @@ public class Client {
     private void beginGame(Sendable s) {
         GameData gameData = new GameData((InitGame) s);
         clientReceiver.setGameData(gameData);
-        gameRenderer = new GameManager(gameData, connection, playerID, textRenderer);
+        gameRenderer = new GameManager(gameData, connection, playerID);
         currentMode = Mode.GAME;
         Audio.INTERFACEBACKGROUND.stopClip();
         Audio.COUNTDOWN.play();

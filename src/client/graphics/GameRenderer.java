@@ -21,7 +21,7 @@ class GameRenderer {
 
     float powerUpRotation;
 
-    GameRenderer(GameData gameData, int playerID, CollisionManager collisionManager, TextRenderer textRenderer) {
+    GameRenderer(GameData gameData, int playerID, CollisionManager collisionManager) {
         this.gameData = gameData;
         this.playerID = playerID;
         map = new MapRenderer(gameData.getMapID());
@@ -29,7 +29,7 @@ class GameRenderer {
         Player me = gameData.getPlayer(playerID);
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
         powerUpRotation = 0;
-        draw = new Draw(textRenderer, gameData);
+        draw = new Draw(gameData);
     }
 
     void render() {

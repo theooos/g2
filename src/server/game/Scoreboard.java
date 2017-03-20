@@ -84,4 +84,12 @@ public class Scoreboard implements Sendable {
         sb.playerScores = playerScores.clone();
         return  sb;
     }
+
+    public int getTeam1Score() {
+        return team1Score;
+    }
+
+    public int getTeam0Score() {
+        return team0Score;
+    }
 }

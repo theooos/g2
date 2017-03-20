@@ -35,7 +35,7 @@ public class GameManager {
     private boolean gameMusic;
     private boolean muted;
 
-    public GameManager(GameData gd, Connection conn, int playerID, TextRenderer textRenderer) {
+    public GameManager(GameData gd, Connection conn, int playerID) {
         super();
         this.conn = conn;
         this.gameData = gd;
@@ -46,7 +46,7 @@ public class GameManager {
         muted = false;
 
         collisions = new CollisionManager(gd);
-        gameRenderer = new GameRenderer(gameData, playerID, collisions, textRenderer);
+        gameRenderer = new GameRenderer(gameData, playerID, collisions);
         inGameMenuRenderer = new InGameMenuRenderer(gameData,playerID);
 
         conn.addFunctionEvent("GameOver", this::gameOver);
