@@ -4,7 +4,6 @@ import client.ClientSettings;
 import client.audio.Audio;
 import networking.Connection_Client;
 import objects.*;
-import networking.Connection;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -307,7 +306,7 @@ public class GameManager {
         mode = Mode.GAMEOVER;
     }
 
-    public void setMode(Mode mode){
+    void setMode(Mode mode){
         this.mode = mode;
     }
 }

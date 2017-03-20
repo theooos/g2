@@ -59,16 +59,6 @@ class GameRenderer {
         draw.drawScoreboard(shadeScreen);
     }
 
-    private void positionBullet(Vector2 pos, Vector2 dir, float radius) {
-        Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
-        float lastX = cursor.getX();
-        float lastY = cursor.getY();
-
-        if (lastX > 0 && lastY > 0) {
-            draw.drawCircle(lastX, lastY, radius / 2, 50);
-        }
-    }
-
     private void drawCollisions() {
         Player p = new Player(gameData.getPlayer(playerID));
         GL11.glColor4f(1, 0, 0, 0.5f);
@@ -161,9 +151,36 @@ class GameRenderer {
                 draw.drawAura(p.getPos(), radius + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
             }
 
+
             GL11.glColor3f(red, green, blue);
             draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
-            positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir(), radius);
+            positionBullet(p, radius, red, green, blue);
+        }
+    }
+
+    private void positionBullet(Player p, float radius, float red, float green, float blue) {
+        Vector2 pos = new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY());
+        Vector2 dir = p.getDir();
+        Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
+        float lastX = cursor.getX();
+        float lastY = cursor.getY();
+
+        if (lastX > 0 && lastY > 0) {
+            if (p.getActiveWeapon().toString().equals("SMG")) {
+                draw.drawCircle(lastX, lastY, radius / 2, 50);
+            } else {
+                double ang = Math.atan(p.getDir().getX()/p.getDir().getY());
+                if (Double.isInfinite(ang)) {
+                    ang = 0;
+                } else if (p.getDir().getY() < 0) {
+                    ang += Math.PI;
+                }
+                if (p.getActiveWeapon().toString().equals("Shotgun")) {
+                    draw.drawSpikes(new Vector2(lastX, ClientSettings.SCREEN_HEIGHT - lastY), (float) Math.toDegrees(ang), radius/1.8f, radius/2.6f, red, green, blue);
+                } else {
+                    draw.drawTriangle(new Vector2(lastX, ClientSettings.SCREEN_HEIGHT - lastY), (float) Math.toDegrees(ang), radius/1.2f, radius/1.8f, red, green, blue);
+                }
+            }
         }
     }
 
@@ -253,7 +270,7 @@ class GameRenderer {
                     blue = 0.1f;
                 }
                 float radius = p.getRadius();
-                draw.drawQuad(p.getPos(), powerUpRotation, radius, red, green, blue);
+                draw.drawQuad(p.getPos(), powerUpRotation, radius, red, green, blue, true);
             }
         }
     }
