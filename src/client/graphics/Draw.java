@@ -34,7 +34,47 @@ class Draw {
         gameData = gd;
     }
 
-    void drawQuad(Vector2 centre, float rotation, float radius, float red, float green, float blue) {
+    void drawTriangle(Vector2 centre, float rotation, float drawWidth, float drawHeight, float red, float green, float blue) {
+        glColor4f(red, green, blue, 1);
+        glPushMatrix();
+        float cx = centre.getX();
+        float cy = height-centre.getY();
+        glTranslatef(cx, cy, 0);
+        glRotatef(rotation, 0f, 0f, 1f);
+        glTranslatef(-cx, -cy, 0);
+        glBegin(GL_TRIANGLES);
+        glVertex2f(cx-drawWidth, height-(centre.getY()-drawHeight));
+        glVertex2f(cx, height-(centre.getY()+drawHeight));
+        glVertex2f(cx+drawWidth, height-(centre.getY()-drawHeight));
+        //glVertex2f(cx-drawWidth/2, drawHeight-(centre.getY()+drawHeight/2));
+        glEnd();
+        glPopMatrix();
+    }
+
+    void drawSpikes(Vector2 centre, float rotation, float drawWidth, float drawHeight, float red, float green, float blue) {
+        glColor4f(red, green, blue, 1);
+        glPushMatrix();
+        float cx = centre.getX();
+        float cy = height-centre.getY();
+        glTranslatef(cx, cy, 0);
+        glRotatef(rotation, 0f, 0f, 1f);
+        glTranslatef(-cx, -cy, 0);
+        glBegin(GL_TRIANGLES);
+        glVertex2f(cx-drawWidth, height-(centre.getY()-drawHeight));
+        glVertex2f(cx-drawWidth, height-(centre.getY()+drawHeight));
+        glVertex2f(cx+drawWidth, height-(centre.getY()-drawHeight));
+        glEnd();
+
+        glBegin(GL_TRIANGLES);
+        glVertex2f(cx-drawWidth, height-(centre.getY()-drawHeight));
+        glVertex2f(cx+drawWidth, height-(centre.getY()+drawHeight));
+        glVertex2f(cx+drawWidth, height-(centre.getY()-drawHeight));
+        glEnd();
+
+        glPopMatrix();
+    }
+
+    void drawQuad(Vector2 centre, float rotation, float radius, float red, float green, float blue, boolean glow) {
         glColor4f(red, green, blue, 1);
         glPushMatrix();
         float cx = centre.getX();
@@ -49,31 +89,36 @@ class Draw {
         glVertex2f(cx-radius, height-(centre.getY()+radius));
         glEnd();
 
-        glBegin(GL_QUAD_STRIP);
+        if (glow) {
+            glBegin(GL_QUAD_STRIP);
 
-        float intensity = 0.8f;
-        glColor4f(red, green, blue, 0);
-        glVertex2f(cx-radius*2,cy-radius*2);  //outer bottom left
-        glColor4f(red, green, blue, intensity);
-        glVertex2f(cx-radius, cy-radius); //inner bottom left
-        glColor4f(red, green, blue, 0);
-        glVertex2f(cx+radius*2,cy-radius*2); //outer bottom right
-        glColor4f(red, green, blue, intensity);
-        glVertex2f(cx+radius, cy-radius); //inner bottom right
-        glColor4f(red, green, blue, 0);
-        glVertex2f(cx+radius*2, cy+radius*2); //outer top right
-        glColor4f(red, green, blue, intensity);
-        glVertex2f(cx+radius, cy+radius); //inner top right
-        glColor4f(red, green, blue, 0);
-        glVertex2f(cx-radius*2,cy+radius*2); //outer top left
-        glColor4f(red, green, blue, intensity);
-        glVertex2f(cx-radius, cy+radius); //inner top left
-        glColor4f(red, green, blue, 0);
-        glVertex2f(cx-radius*2,cy-radius*2);  //outer bottom left
-        glColor4f(red, green, blue, intensity);
-        glVertex2f(cx-radius, cy-radius); //inner bottom left
+            float intensity = 0.8f;
+            glColor4f(red, green, blue, 0);
+            glVertex2f(cx - radius * 2, cy - radius * 2);  //outer bottom left
+            glColor4f(red, green, blue, intensity);
+            glVertex2f(cx - radius, cy - radius); //inner bottom left
+            glColor4f(red, green, blue, 0);
+            glVertex2f(cx + radius * 2, cy - radius * 2); //outer bottom right
+            glColor4f(red, green, blue, intensity);
+            glVertex2f(cx + radius, cy - radius); //inner bottom right
+            glColor4f(red, green, blue, 0);
+            glVertex2f(cx + radius * 2, cy + radius * 2); //outer top right
+            glColor4f(red, green, blue, intensity);
+            glVertex2f(cx + radius, cy + radius); //inner top right
+            glColor4f(red, green, blue, 0);
+            glVertex2f(cx - radius * 2, cy + radius * 2); //outer top left
+            glColor4f(red, green, blue, intensity);
+            glVertex2f(cx - radius, cy + radius); //inner top left
+            glColor4f(red, green, blue, 0);
+            glVertex2f(cx - radius * 2, cy - radius * 2);  //outer bottom left
+            glColor4f(red, green, blue, intensity);
+            glVertex2f(cx - radius, cy - radius); //inner bottom left
 
-        glEnd();
+            glEnd();
+        }
+        else {
+            System.out.println("Quad rotate: "+rotation);
+        }
 
         glPopMatrix();
     }
@@ -212,7 +257,7 @@ class Draw {
                 drawText(smallText, name, xStart+10, yStart+3*rectHeight/4+1);
                 drawText(smallText, ((Integer) max).toString(), xStart+rectWidth-((Integer) max).toString().length()*15-10, yStart+3*rectHeight/4+1);
 
-                if (index == playerID) drawText(smallText, " (YOU)", xStart+12+name.length()*12, yStart+3*rectHeight/4);;
+                if (index == playerID) drawText(smallText, " (YOU)", xStart+1+name.length()*12, yStart+3*rectHeight/4);
 
                 yStart+=rectHeight;
 

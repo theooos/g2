@@ -2,7 +2,7 @@ package server.game;
 
 /**
  * Created by peran on 3/20/17.
- * Used to have static variables
+ * Used to hold static variables
  */
 class ServerConfig {
     static final boolean DEBUG = false;
