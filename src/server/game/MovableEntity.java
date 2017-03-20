@@ -40,6 +40,10 @@ public abstract class MovableEntity extends Entity {
         this.dir = dir;
     }
 
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
+
     public int getRadius() {
         return (int) radius;
     }

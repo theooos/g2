@@ -2,13 +2,13 @@ package server.game;
 
 import networking.Connection;
 import objects.*;
-import org.lwjgl.Sys;
 import server.ai.Intel;
 
 import java.io.IOException;
-import java.lang.String;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static server.game.ServerConfig.*;
 
 /**
  * Created by peran on 27/01/17.
@@ -30,8 +30,6 @@ public class Game implements Runnable {
     private Scoreboard scoreboard;
     private int IDCounter;
 
-    private final boolean DEBUG = false;
-    private final long tick = 60;
     private boolean gameRunning;
 
     //for debugging
@@ -49,7 +47,7 @@ public class Game implements Runnable {
             this.map = new Map(mapID);
         }
         catch(IOException e) {
-            msgToAllConnected("Failed to load map");
+            System.err.println("Failed to load map");
         }
 
         out("Total players: "+playerConnections.size());
@@ -155,7 +153,8 @@ public class Game implements Runnable {
             powerUps.put(i, p);
         }
 
-        countdown = 4*60*(int)tick; //four minutes
+        countdown = 4*60*SERVER_TICK; //four minutes
+
         gameRunning = true;
 
         InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps);
@@ -164,7 +163,7 @@ public class Game implements Runnable {
 
 
     public void run() {
-        long timeDelay = 1000/tick;
+        long timeDelay = 1000/(long) SERVER_TICK;
         gameRunning = true;
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -197,7 +196,11 @@ public class Game implements Runnable {
                         playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
                     }
                 }
+                else {
+                    shrinkRadius(p);
+                }
             }
+
             if (p.isFiring()) fire(p);
             p.live();
             PowerUp pu = (collisions.collidesWithPowerUp(p));
@@ -224,7 +227,13 @@ public class Game implements Runnable {
             }
         }
         for (Orb o : orbs.values()) {
-            if (!o.isAlive() && o.canRespawn()) respawn(o);
+            if (!o.isAlive()) {
+                if (o.canRespawn()) {
+                    respawn(o);
+                } else {
+                    shrinkRadius(o);
+                }
+            }
             o.live();
         }
 
@@ -275,6 +284,16 @@ public class Game implements Runnable {
         }
     }
 
+    private void shrinkRadius(MovableEntity e) {
+        float radius = e.getRadius();
+        if (radius > 1) {
+            radius -= radius * 0.005f;
+            e.setRadius(radius);
+        } else if (radius != 0) {
+            e.setRadius(0);
+        }
+    }
+
     /**
      * Ends the game and msgs all clients
      */
@@ -316,9 +335,13 @@ public class Game implements Runnable {
         e.setPhase(rand.nextInt(2));
         if (e instanceof Player) {
             ((Player) e).setFiring(false);
+            e.setRadius(20);
         }
         else if (e instanceof PowerUp) {
             ((PowerUp) e).setChanged(true);
+        }
+        else if (e instanceof Orb) {
+            e.setRadius(10);
         }
     }
 
@@ -352,16 +375,6 @@ public class Game implements Runnable {
     private Vector2 randomDir() {
         int ang = rand.nextInt(359);
         return new Vector2((float)(Math.cos(Math.toRadians(ang))),(float)(Math.sin(Math.toRadians(ang))));
-    }
-
-    /**
-     * sends the string to all players in the lobby
-     * @param s the string to be sent
-     */
-    private void msgToAllConnected(String s) {
-        for (Connection c: playerConnections) {
-            c.send(new objects.String(s));
-        }
     }
 
     /**

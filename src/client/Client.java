@@ -27,7 +27,6 @@ public class Client {
     private ClientReceiver clientReceiver;
     private int playerID;
 
-    public static TextureLoader textureLoader;
     private TextRenderer textRenderer;
     private StartScreenRenderer startScreen;
     private GameManager gameRenderer;
@@ -97,8 +96,7 @@ public class Client {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            textureLoader = new TextureLoader();
-            textureLoader.initialise();
+            TextureLoader.initialise();
 
             textRenderer = new TextRenderer();
 
@@ -106,7 +104,7 @@ public class Client {
 
             Audio.init();
             Audio.volume = Audio.Volume.LOW;
-           Audio.INTERFACEBACKGROUND.play();
+            Audio.INTERFACEBACKGROUND.play();
 
         } catch (LWJGLException le) {
             System.err.println("Game exiting - exception in initialization:");

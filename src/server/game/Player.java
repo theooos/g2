@@ -1,5 +1,7 @@
 package server.game;
 
+import static server.game.ServerConfig.PHASE_FADE_TIME;
+
 /**
  * Created by peran on 01/02/17.
  * The entity which players control.
@@ -13,6 +15,7 @@ public class Player extends MovableEntity {
     private boolean firing;
     private double weaponOutHeat;
     private int moveCounter;
+    private float phasePercentage;
 
     /**
      * The basic player class
@@ -41,6 +44,7 @@ public class Player extends MovableEntity {
         moveCounter = 0;
         respawnTime = 240;
         timeTillRespawn = respawnTime;
+        phasePercentage = phase;
     }
 
     public Player(Player player) {
@@ -63,6 +67,7 @@ public class Player extends MovableEntity {
         this.moveCounter = player.getMoveCount();
         respawnTime = 240;
         timeTillRespawn = respawnTime;
+        phasePercentage = phase;
     }
 
     public void live() {
@@ -70,6 +75,21 @@ public class Player extends MovableEntity {
         //any methods the player may do once a tick
         getActiveWeapon().live();
         weaponOutHeat = getActiveWeapon().getHeat();
+        if (phasePercentage != phase) {
+            if (phasePercentage > phase) {
+                phasePercentage -= 1 / PHASE_FADE_TIME;
+            } else {
+                phasePercentage += 1 / PHASE_FADE_TIME;
+            }
+
+            if (Math.abs(phasePercentage-phase) < 0.05) {
+                phasePercentage = phase;
+            } else if (phasePercentage > 1) {
+                phasePercentage = 1;
+            } else if (phasePercentage < 0) {
+                phasePercentage = 0;
+            }
+        }
     }
 
     public void move() {
@@ -80,15 +100,7 @@ public class Player extends MovableEntity {
         if (w1Out) return w1;
         else return w2;
     }
-    //returns the active weapon ->
-    // 1 for w1 and 2 for w2.
-    public int activeWeapon()
-    {
-        if(getActiveWeapon()==w1)
-            return 1;
-        else
-            return 2;
-    }
+
     public boolean isWeaponOneOut() {
         return w1Out;
     }
@@ -128,6 +140,14 @@ public class Player extends MovableEntity {
 
     public void setMoveCount(int moveCount) {
         this.moveCounter = moveCount;
+    }
+
+    public float getPhasePercentage() {
+        return phasePercentage;
+    }
+
+    public void setPhasePercentage(float phasePercentage) {
+        this.phasePercentage = phasePercentage;
     }
 }
 
