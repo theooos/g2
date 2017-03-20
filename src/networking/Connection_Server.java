@@ -20,8 +20,8 @@ public class Connection_Server extends Connection {
 
     @Override
     boolean establishConnection(Client... clients) throws IOException {
-        toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
-        fromConnection = new NetworkListener_Server(new ObjectInputStream(socket.getInputStream()), handler);
+        toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()), running);
+        fromConnection = new NetworkListener_Server(new ObjectInputStream(socket.getInputStream()), handler, running);
 
         new Thread(handler).start();
         new Thread(toConnection).start();

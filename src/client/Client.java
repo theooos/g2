@@ -152,7 +152,6 @@ public class Client {
 
     public void returnToMainMenu(){
         currentMode = Mode.MAIN_MENU;
-        connection.closeConnection();
         clientReceiver = null;
         connection = null;
         gameManager = null;
