@@ -108,7 +108,8 @@ public class Visualiser {
             double dy = Math.abs(p.getValue().getY2() - p.getValue().getY1());
             if (Math.hypot(dx, dy) > range){
                 interested = false;
-            } else {
+            }
+            else {
                 for (Rectangle2D w : walls) {
                     if (p.getValue().intersects(w)){
                         interested = false;
@@ -151,7 +152,7 @@ public class Visualiser {
     public HashMap<Integer, Line2D> getPlayerTestingLines(Point2D pov, int phase, boolean orbVision){
         HashMap<Integer, Line2D> pLines = new HashMap<>();
         for (java.util.Map.Entry<Integer, Player> e : players.entrySet()) {
-            if (orbVision || e.getValue().getTeam() != players.get(myID).getTeam()){
+            if ((orbVision || e.getValue().getTeam() != players.get(myID).getTeam()) && e.getValue().isAlive()){
                 if (orbVision || e.getValue().getPhase() == phase) {
                     pLines.put(e.getValue().getID(), new Line2D.Double(pov, e.getValue().getPos().toPoint()));
                 }
@@ -170,7 +171,7 @@ public class Visualiser {
     public HashMap<Integer, Line2D> getOrbTestingLines(Point2D pov, int phase){
         HashMap<Integer, Line2D> oLines = new HashMap<>();
         for (java.util.Map.Entry<Integer, Orb> e : orbs.entrySet()) {
-            if (e.getValue().getPhase() == phase) {
+            if (e.getValue().getPhase() == phase && e.getValue().isAlive()) {
                 oLines.put(e.getValue().getID(), new Line2D.Double(pov, e.getValue().getPos().toPoint()));
             }
         }

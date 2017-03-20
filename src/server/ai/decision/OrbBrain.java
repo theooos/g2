@@ -50,6 +50,11 @@ public class OrbBrain extends AIBrain {
 
         check();
 
+        if (!intel.ent().isAlive()){
+            System.out.println("Orb dead.");
+            return;
+        }
+
         // Decide what to do.
         if (!playerNear) {
             drift.doAction();

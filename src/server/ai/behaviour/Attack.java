@@ -41,14 +41,7 @@ public class Attack extends PlayerTask {
         super.start();
 
         this.me = intel.ent();
-        try {
-            this.target = (Player) intel.getRelevantEntity();
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-            System.out.println("\nAssailant: Player #" + me.getID() + ". Target: Orb #" + target.getID());
-            target.setHealth(0);
-            System.exit(1);
-        }
+        this.target = (Player) intel.getRelevantEntity();
 
         track();
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(true);
@@ -60,6 +53,7 @@ public class Attack extends PlayerTask {
     public void doAction(){
 
         if (!target.isAlive()){
+            System.out.println("AI attack success!");
             me.setFiring(false);
             end();
             return;

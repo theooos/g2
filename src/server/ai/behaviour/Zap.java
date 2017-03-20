@@ -46,6 +46,7 @@ public class Zap extends Task {
                 ctr++;
             }
         } else {
+            System.out.println("Orb attack success!");
             end();
         }
 
