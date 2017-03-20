@@ -13,10 +13,11 @@ public final class AIConstants {
     public static final double CHANCE_PHASE_SHIFT = 0.01;
     public static final double CHANCE_STRATEGIC_ERR = 0.4;
     public static final double CHANCE_STRATEGIC_RETHINK = 0.25;
+    public static final double CHANCE_CORRECT_PHASE_SHIFT = 0.6;
 
-    public static final int REACTION_TIME_HIGH = 10;
-    public static final int REACTION_TIME_AVG = 9;
-    public static final int REACTION_TIME_LOW = 8;
+    public static final int REACTION_TIME_HIGH = 15;
+    public static final int REACTION_TIME_AVG = 12;
+    public static final int REACTION_TIME_LOW = 10;
 
     public static final double STRESS_INTIMIDATED = 0.7;
     public static final double STRESS_IRRITATED = 0.8;

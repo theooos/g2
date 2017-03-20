@@ -9,6 +9,8 @@ import server.game.Orb;
 import server.game.Player;
 import server.game.Vector2;
 
+import java.util.Random;
+
 /**
  * Allows the player to attack an opponent player within line of sight, while retreating.
  * Created by Rhys on 3/11/17.
@@ -20,11 +22,13 @@ public class Swat extends PlayerTask {
     private LoadoutHandler loadout;
     private int fireFreq;
     private int fireDelay;
+    private Random gen;
 
     public Swat(PlayerIntel intel, PlayerBrain brain, LoadoutHandler ldh){
         super(intel, brain);
         this.loadout = ldh;
-        fireDelay = 0;
+        this.fireDelay = 0;
+        this.gen = new Random();
     }
 
     public boolean checkConditions(){
@@ -39,8 +43,8 @@ public class Swat extends PlayerTask {
         this.me = intel.ent();
         this.target = (Orb) intel.getRelevantEntity();
 
-        // Is the Orb in this phase? If not, shift phase.
-        if (intel.orbInOtherPhase()){
+        // Is the Orb in this phase? If not, shift phase - if you remember to.
+        if (intel.orbInOtherPhase() && gen.nextDouble() < AIConstants.CHANCE_CORRECT_PHASE_SHIFT){
             brain.getBehaviour("ForceShiftPhase").run();
         }
 

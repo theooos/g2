@@ -46,7 +46,6 @@ public class Check {
             return orbNearbyCheck();
         }
         else if (mode == CheckMode.PROXIMITY) {
-            if (intel instanceof PlayerIntel) return false;
             return proximityCheck();
         }
         else if (mode == CheckMode.RANGE) {

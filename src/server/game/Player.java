@@ -90,6 +90,9 @@ public class Player extends MovableEntity {
                 phasePercentage = 0;
             }
         }
+        if (!isAlive()){
+            setFiring(false);
+        }
     }
 
     public void move() {
