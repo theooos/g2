@@ -20,7 +20,7 @@ public class StartScreenRenderer {
     private InterfaceTexture background = new InterfaceTexture(ISprite.BACKGROUND);
     private InterfaceTexture controls_button = new InterfaceTexture(ISprite.CONTROLS_BUTTON);
     private InterfaceTexture about_button = new InterfaceTexture(ISprite.ABOUT_BUTTON);
-    private InterfaceTexture description = new InterfaceTexture(ISprite.DESCRIPTION);
+    private InterfaceTexture description = new InterfaceTexture(ISprite.ABOUT_SCREEN);
     private InterfaceTexture back_button = new InterfaceTexture(ISprite.BACK_BUTTON);
     private InterfaceTexture join_lobby_button = new InterfaceTexture(ISprite.JOIN_LOBBY_BUTTON);
 
@@ -83,7 +83,7 @@ public class StartScreenRenderer {
     }
 
     private void readyControlsLayer(){
-        InterfaceTexture controls_guide = new InterfaceTexture(ISprite.CONTROLS_GUIDE);
+        InterfaceTexture controls_guide = new InterfaceTexture(ISprite.CONTROLS_SCREEN);
         controls_guide.setRatio(0.5f);
 
         controls_guide.spawn(0, 400f, 300f, controlsLayer);
@@ -96,13 +96,13 @@ public class StartScreenRenderer {
     }
 
     private void readyLoadingLayer() {
-        InterfaceTexture loading = new InterfaceTexture(ISprite.LOADING);
+        InterfaceTexture loading = new InterfaceTexture(ISprite.LOADING_SCREEN);
         loading.setRatio(0.5f);
         loading.spawn(0, 400f, 300f, loadingLayer);
     }
 
     public void setupLobby(Sendable sendable) {
-        InterfaceTexture lobby = new InterfaceTexture(ISprite.LOBBY);
+        InterfaceTexture lobby = new InterfaceTexture(ISprite.LOBBY_SCREEN);
         lobby.setRatio(0.5f);
         lobby.spawn(0,400f, 300f,lobbyLayer);
         back_button.spawn(1,640f,510f,lobbyLayer);

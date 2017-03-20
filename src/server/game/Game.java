@@ -54,7 +54,7 @@ public class Game implements Runnable {
         out("Total players: "+playerConnections.size());
 
         rand = new Random();
-        scoreboard = new Scoreboard(250, maxPlayers);
+        scoreboard = new Scoreboard(ServerConfig.MAX_SCORE, maxPlayers);
 
         players = new ConcurrentHashMap<>();
         orbs = new HashMap<>();
@@ -314,7 +314,7 @@ public class Game implements Runnable {
      */
     private void endGame() {
         gameRunning = false;
-        sendToAllConnected(new GameOver(scoreboard));
+        sendToAllConnected(new GameOver(scoreboard.clone()));
     }
 
     /**

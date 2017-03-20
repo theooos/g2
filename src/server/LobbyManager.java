@@ -1,6 +1,5 @@
 package server;
 
-import networking.Connection;
 import networking.Connection_Server;
 import objects.String;
 
@@ -44,6 +43,6 @@ class LobbyManager {
     }
 
     private Lobby createLobby() {
-        return new Lobby(4);
+        return new Lobby(2);
     }
 }

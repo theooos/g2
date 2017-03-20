@@ -77,10 +77,11 @@ public class GameManager {
                 break;
             case SCOREBOARD:
                 gameRenderer.render();
-                gameRenderer.drawScoreboard();
+                gameRenderer.drawScoreboard(true);
                 break;
             case GAMEOVER:
                 inGameMenuRenderer.renderEndScreen();
+                gameRenderer.drawScoreboard(false);
         }
     }
 
@@ -189,6 +190,7 @@ public class GameManager {
                 break;
 
             case Keyboard.KEY_F:
+            case Keyboard.KEY_SPACE:
                 if(me.isAlive()) {
                     if (muted) Audio.PHASE.play();
                     int newPhase = 0;
@@ -301,6 +303,7 @@ public class GameManager {
 
     private void gameOver(Sendable sendable) {
         gameData.updateScoreboard(((GameOver) sendable).getScoreboard());
+        System.out.println(((GameOver) sendable).getScoreboard());
         mode = Mode.GAMEOVER;
     }
 

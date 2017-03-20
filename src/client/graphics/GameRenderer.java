@@ -55,8 +55,8 @@ class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
-    void drawScoreboard() {
-        draw.drawScoreboard();
+    void drawScoreboard(boolean shadeScreen) {
+        draw.drawScoreboard(shadeScreen);
     }
 
     private void positionBullet(Vector2 pos, Vector2 dir, float radius) {

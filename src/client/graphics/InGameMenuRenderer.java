@@ -36,7 +36,7 @@ class InGameMenuRenderer {
     }
 
     void readyMenuLayer() {
-        InterfaceTexture menu = new InterfaceTexture(ISprite.IN_GAME_MENU);
+        InterfaceTexture menu = new InterfaceTexture(ISprite.IN_GAME_MENU_SCREEN);
         menu.setRatio(0.5f);
 
         menu.spawn(0, 400, 300, menuLayer);
@@ -46,11 +46,17 @@ class InGameMenuRenderer {
     }
 
     void readySettingsLayer(){
-        InterfaceTexture settings = new InterfaceTexture(ISprite.SETTINGS);
+        InterfaceTexture settings = new InterfaceTexture(ISprite.SETTINGS_SCREEN);
         settings.setRatio(0.5f);
 
         settings.spawn(0,400,300,settingsLayer);
         back_button.spawn(1,400,120,settingsLayer);
+    }
+
+    void readyEndLayer(){
+        InterfaceTexture background = new InterfaceTexture(ISprite.BACKGROUND);
+        background.setRatio(0.5f);
+        background.spawn(0,400,300,endLayer);
     }
 
     void handleClickedMenu() {
@@ -94,7 +100,6 @@ class InGameMenuRenderer {
     }
 
     void renderEndScreen() {
-//        TextRenderer textRenderer = new TextRenderer();
-//        textRenderer.drawText("The end game screen will be here.", 0, 50);
+        endLayer.render(0);
     }
 }

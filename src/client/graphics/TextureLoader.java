@@ -22,13 +22,13 @@ public class TextureLoader {
     public static void initialise() {
         textures[ISprite.BACKGROUND] = loadTexture("background.png");
         textures[ISprite.TITLE] = loadTexture("title.png");
-        textures[ISprite.LOADING] = loadTexture("loading.png");
-        textures[ISprite.CONTROLS_GUIDE] = loadTexture("controls_guide.png");
-        textures[ISprite.DESCRIPTION] = loadTexture("description.png");
-        textures[ISprite.LOBBY] = loadTexture("lobby.png");
-
-        textures[ISprite.IN_GAME_MENU] = loadTexture("in_game_menu.png");
-        textures[ISprite.SETTINGS] = loadTexture("settings.png");
+        textures[ISprite.LOADING_SCREEN] = loadTexture("loading_screen.png");
+        textures[ISprite.CONTROLS_SCREEN] = loadTexture("controls_screen.png");
+        textures[ISprite.ABOUT_SCREEN] = loadTexture("about_screen.png");
+        textures[ISprite.LOBBY_SCREEN] = loadTexture("lobby_screen.png");
+        textures[ISprite.IN_GAME_MENU_SCREEN] = loadTexture("in_game_menu_screen.png");
+        textures[ISprite.SETTINGS_SCREEN] = loadTexture("settings_screen.png");
+        textures[ISprite.END_GAME_SCREEN] = loadTexture("end_game_screen.png");
 
         textures[ISprite.CONTROLS_BUTTON] = loadTexture("controls_button.png");
         textures[ISprite.ABOUT_BUTTON] = loadTexture("about_button.png");

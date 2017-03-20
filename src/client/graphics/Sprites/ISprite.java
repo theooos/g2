@@ -7,20 +7,21 @@ public interface ISprite {
 
     int BACKGROUND = 1;
     int TITLE = 2;
-    int LOADING = 3;
-    int CONTROLS_GUIDE = 4;
-    int DESCRIPTION = 5;
-    int LOBBY = 6;
+    int LOADING_SCREEN = 3;
+    int CONTROLS_SCREEN = 4;
+    int ABOUT_SCREEN = 5;
+    int LOBBY_SCREEN = 6;
 
-    int IN_GAME_MENU = 7;
-    int SETTINGS = 8;
+    int IN_GAME_MENU_SCREEN = 7;
+    int SETTINGS_SCREEN = 8;
+    int END_GAME_SCREEN = 9;
 
-    int CONTROLS_BUTTON = 9;
-    int ABOUT_BUTTON = 10;
-    int BACK_BUTTON = 11;
-    int JOIN_LOBBY_BUTTON = 12;
-    int RESUME_GAME_BUTTON = 13;
-    int EXIT_GAME_BUTTON = 14;
+    int CONTROLS_BUTTON = 10;
+    int ABOUT_BUTTON = 11;
+    int BACK_BUTTON = 12;
+    int JOIN_LOBBY_BUTTON = 13;
+    int RESUME_GAME_BUTTON = 14;
+    int EXIT_GAME_BUTTON = 15;
 
-    int SLIDER = 15;
+    int SLIDER = 16;
 }
