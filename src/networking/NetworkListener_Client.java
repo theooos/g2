@@ -9,10 +9,11 @@ import java.io.ObjectInputStream;
  */
 public class NetworkListener_Client extends NetworkListener {
 
-    NetworkListener_Client(ObjectInputStream fromConnection, NetworkEventHandler handler, Client client){
+    NetworkListener_Client(ObjectInputStream fromConnection, NetworkEventHandler handler, Client client, Boolean running){
         this.client = client;
         this.fromConnection = fromConnection;
         this.handler = handler;
+        this.running = running;
     }
 
     @Override

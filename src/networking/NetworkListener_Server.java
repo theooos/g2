@@ -9,13 +9,14 @@ import java.io.ObjectInputStream;
  */
 public class NetworkListener_Server extends NetworkListener {
 
-    NetworkListener_Server(ObjectInputStream fromConnection, NetworkEventHandler handler){
+    NetworkListener_Server(ObjectInputStream fromConnection, NetworkEventHandler handler, Boolean running){
         this.fromConnection = fromConnection;
         this.handler = handler;
+        this.running = running;
     }
 
     @Override
     void performShutdown() {
-        //TODO Strech goal.
+        running = false;
     }
 }

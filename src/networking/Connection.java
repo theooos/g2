@@ -21,6 +21,8 @@ public abstract class Connection {
     NetworkListener fromConnection;
     NetworkEventHandler handler = new NetworkEventHandler();
 
+    Boolean running = true;
+
     /**
      * Generates the socket.
      */
@@ -40,21 +42,6 @@ public abstract class Connection {
      * Creates the input and output streams.
      */
     abstract boolean establishConnection(Client... clients) throws IOException;
-
-
-
-    /**
-     * Closes all streams.
-     */
-    public void closeConnection() {
-        try {
-            toConnection.close();
-            fromConnection.close();
-            socket.close();
-        } catch (IOException e) {
-            out("Could not close connection gracefully.");
-        }
-    }
 
     /**
      * Creates a ServerSocket for use by the server.

@@ -1,7 +1,6 @@
 package networking;
 
 import objects.Sendable;
-import server.game.Player;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -17,21 +16,22 @@ import static networking.Connection.out;
 class NetworkSender implements Runnable {
 
     private ObjectOutputStream toConnection;
-    public boolean isRunning;
+    private Boolean running;
 
     private List<Sendable> toSend = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * Constructor.
      * @param toConnection The output stream that data will be sent to.
+     * @param running
      */
-    NetworkSender(ObjectOutputStream toConnection){
+    NetworkSender(ObjectOutputStream toConnection, Boolean running){
         this.toConnection = toConnection;
+        this.running = running;
     }
 
     public void run(){
-        isRunning = true;
-        while(isRunning){
+        while(running){
             if(!toSend.isEmpty()){
                 send(toSend.get(0));
                 toSend.remove(0);
@@ -47,23 +47,11 @@ class NetworkSender implements Runnable {
         try {
             toConnection.writeUnshared(obj);
             toConnection.flush();
-//            try{
-//                System.out.println("[SENT] "+((Player)obj).getPos());
-//            } catch (Exception e){}
-
         } catch (IOException e) {
-            out("Failed to send "+obj);
+            out("Failed to send "+obj+". Breaking connection.");
+            running = false;
         }
 
-    }
-
-    /**
-     * Closes the output stream.
-     * @throws IOException
-     */
-    void close() throws IOException{
-        isRunning = false;
-        toConnection.close();
     }
 
     public void queueForSending(Sendable obj) {
