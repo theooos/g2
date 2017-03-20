@@ -9,10 +9,22 @@ import java.util.ArrayList;
 class LobbyManager {
 
     private ArrayList<Lobby> lobbies;
+    private int maxSize;
+    private int countDown;
 
-    LobbyManager() {
+    LobbyManager(java.lang.String[] args) {
         lobbies = new ArrayList<>();
         lobbies.add(createLobby());
+        if (args.length == 2) {
+            countDown = Integer.parseInt(args[1]);
+            maxSize = Integer.parseInt(args[0]);
+        } else if (args.length == 1) {
+            maxSize = Integer.parseInt(args[0]);
+            countDown = 5;
+        } else {
+            maxSize = 2;
+            countDown = 0;
+        }
     }
 
     void addConnection(Connection_Server c) {
@@ -43,6 +55,6 @@ class LobbyManager {
     }
 
     private Lobby createLobby() {
-        return new Lobby(4);
+        return new Lobby(maxSize, countDown);
     }
 }

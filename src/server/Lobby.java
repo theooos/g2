@@ -24,6 +24,7 @@ class Lobby {
     private InitPlayer[] players;
     private boolean countdownRunning;
     private int countdown;
+    private int maxCountdown;
     private Timer t;
     private int mapID;
     private boolean gameRunning;
@@ -32,10 +33,11 @@ class Lobby {
      * Creates a new lobby for players to connect too
      * @param maxSize the maximum number of players this lobby can hold
      */
-    Lobby(int maxSize) {
+    Lobby(int maxSize, int countdown) {
         //the max number of maps the server has access to
         int mapMax = 3;
 
+        maxCountdown = countdown;
         countdownRunning = false;
         connections = new HashMap<>();
 
@@ -152,7 +154,7 @@ class Lobby {
      */
     private void startCountdown() {
         if (!countdownRunning) {
-            countdown = 0;
+            countdown = maxCountdown;
             t = new Timer();
             countdownRunning = true;
             msgToAllConnected("Minimum number of players is reached, countdown starting");
