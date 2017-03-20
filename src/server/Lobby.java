@@ -1,16 +1,16 @@
 package server;
 
+import client.ClientSettings;
 import networking.Connection_Server;
 import objects.InitPlayer;
 import objects.LobbyData;
 import objects.Sendable;
 import server.game.Game;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+
+import static server.game.ServerConfig.NAME_LOCAL;
 
 /**
  * Created by peran on 25/01/17.
@@ -50,15 +50,25 @@ class Lobby {
         //Set up the name files for name selection and add names to ArrayLists
         ArrayList<String> enclaveNames = new ArrayList<>();
         ArrayList<String> landscapeNames = new ArrayList<>();
+
         try {
-            BufferedReader eNames = new BufferedReader(new FileReader(Lobby.class.getResource("../EnclaveNames.txt").getFile()));
+            BufferedReader eNames;
+            BufferedReader lNames;
+            if (NAME_LOCAL) {
+                eNames = new BufferedReader(new FileReader(Lobby.class.getResource("../EnclaveNames.txt").getFile()));
+                lNames = new BufferedReader(new FileReader(Lobby.class.getResource("../LandscapersNames.txt").getFile()));
+            }
+            else {
+                String LOCAL_PATH = new File("").getAbsolutePath()+"/maps/";
+                eNames = new BufferedReader(new FileReader(LOCAL_PATH + "EnclaveNames.txt"));
+                lNames = new BufferedReader(new FileReader(LOCAL_PATH + "LandscapersNames.txt"));
+            }
             String line = eNames.readLine();
             while (line != null) {
                 enclaveNames.add(line);
                 line = eNames.readLine();
             }
             eNames.close();
-            BufferedReader lNames = new BufferedReader(new FileReader(Lobby.class.getResource("../LandscapersNames.txt").getFile()));
             line = lNames.readLine();
             while (line != null) {
                 landscapeNames.add(line);
