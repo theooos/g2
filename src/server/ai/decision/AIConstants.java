@@ -34,4 +34,6 @@ public final class AIConstants {
     public static final float SMG_CEIL = 400;
     public static final float SHOTGUN_CEIL = 200;
     public static final float SHOTGUN_OPT = 75;
+
+    public static final float WALL_WIDTH = 6;
 }

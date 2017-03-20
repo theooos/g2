@@ -7,6 +7,7 @@ import server.game.Wall;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,10 +47,10 @@ public class Visualiser {
      * @return true if the destination can be seen from the POV.
      */
     public boolean inSight(Point2D pov, Point2D dest, int phase){
-        ArrayList<Line2D> iLines = getIntersectionLines(phase);
+        ArrayList<Rectangle2D> walls = getWalls(phase);
         Line2D lineOfSight = new Line2D.Double(pov, dest);
         boolean canSee = true;
-        for (Line2D w : iLines){
+        for (Rectangle2D w : walls){
             if (w.intersectsLine(lineOfSight)) {
                 canSee = false;
                 break;
@@ -70,13 +71,13 @@ public class Visualiser {
      */
     public ConcurrentHashMap<Integer, Player> getPlayersInSight(Point2D pov, int phase, boolean orbVision){
         ConcurrentHashMap<Integer, Player> visPlayers = new ConcurrentHashMap<>();
-        ArrayList<Line2D> iLines = getIntersectionLines(phase);
+        ArrayList<Rectangle2D> walls = getWalls(phase);
         HashMap<Integer, Line2D> pLines = getPlayerTestingLines(pov, phase, orbVision);
 
         for (java.util.Map.Entry<Integer, Line2D> p : pLines.entrySet()) {
             boolean intersection = false;
-            for (Line2D w : iLines) {
-                if (p.getValue().intersectsLine(w)){
+            for (Rectangle2D w : walls) {
+                if (p.getValue().intersects(w)){
                     intersection = true;
                     break;
                 }
@@ -98,7 +99,7 @@ public class Visualiser {
      */
     public ConcurrentHashMap<Integer, Orb> getOrbsInSight(Point2D pov, int phase, float range){
         ConcurrentHashMap<Integer, Orb> visOrbs = new ConcurrentHashMap<>();
-        ArrayList<Line2D> iLines = getIntersectionLines(phase);
+        ArrayList<Rectangle2D> walls = getWalls(phase);
         HashMap<Integer, Line2D> oLines = getOrbTestingLines(pov, phase);
 
         for (java.util.Map.Entry<Integer, Line2D> p : oLines.entrySet()) {
@@ -108,8 +109,8 @@ public class Visualiser {
             if (Math.hypot(dx, dy) > range){
                 interested = false;
             } else {
-                for (Line2D w : iLines) {
-                    if (p.getValue().intersectsLine(w)){
+                for (Rectangle2D w : walls) {
+                    if (p.getValue().intersects(w)){
                         interested = false;
                         break;
                     }
@@ -130,12 +131,12 @@ public class Visualiser {
      * @param phase - The phase whose walls the collection will contain.
      * @return a list of lines corresponding to positions of relevant walls.
      */
-    private ArrayList<Line2D> getIntersectionLines(int phase){
-        ArrayList<Line2D> iLines = new ArrayList<>();
+    private ArrayList<Rectangle2D> getWalls(int phase){
+        ArrayList<Rectangle2D> walls = new ArrayList<>();
         for (Wall wall : map.wallsInPhase(phase, true, true)){
-            iLines.add(wall.toLine());
+            walls.add(wall.toRect());
         }
-        return iLines;
+        return walls;
     }
 
     /**
