@@ -18,14 +18,14 @@ abstract class NetworkListener implements Runnable {
     Client client;
     NetworkEventHandler handler;
     ObjectInputStream fromConnection;
-    boolean isRunning;
+
+    Boolean running;
 
     /**
      * Blocks connection when waiting for a new object. Hence this is threaded.
      */
     public void run(){
-        isRunning = true;
-        while(isRunning){
+        while(running){
             try {
                 Sendable received = (Sendable) fromConnection.readObject();
                 handler.queueForExecution(received);
@@ -37,15 +37,6 @@ abstract class NetworkListener implements Runnable {
                 performShutdown();
             }
         }
-    }
-
-    /**
-     * Closes the input stream.
-     * @throws IOException
-     */
-    void close() throws IOException {
-        isRunning = false;
-        fromConnection.close();
     }
 
     abstract void performShutdown();
