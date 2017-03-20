@@ -272,8 +272,8 @@ public class Map {
                         }
 
                         if (items.size() < 5) {
-                            this.walls.add(new Wall(startPos, endPos, 0, false, true));
-                            this.walls.add(new Wall(startPos, endPos, 1, false, true));
+                            this.walls.add(new Wall(startPos, endPos, 0, false, false));
+                            this.walls.add(new Wall(startPos, endPos, 1, false, false));
                         } else {
                             int phase = Integer.parseInt(items.get(4));
                             if (phase > numPhases) {
