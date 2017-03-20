@@ -193,10 +193,24 @@ public class Game implements Runnable {
                     }
                 }
                 else {
+                    shrinkDead(p);
+                }
+            }
+            if(p.getSwitchingPhase()){
+                if(p.switchOver()){
+                    p.setRadius(20);
+                    p.resetPhaseCount();
+                }
+                else if(p.canSwitch()){
+                    p.togglePhase();
+                    expandRadius(p);
+                }
+                else{
                     shrinkRadius(p);
                 }
             }
             if (p.isFiring()) fire(p);
+            p.phaseCount();
             p.live();
             PowerUp pu = (collisions.collidesWithPowerUp(p));
             if (pu != null) {
@@ -226,7 +240,7 @@ public class Game implements Runnable {
                     o.setRadius(10);
                     respawn(o);
                 } else {
-                    shrinkRadius(o);
+                    shrinkDead(o);
                 }
             }
             o.live();
@@ -279,12 +293,32 @@ public class Game implements Runnable {
         }
     }
 
-    private void shrinkRadius(MovableEntity e) {
+    private void shrinkDead(MovableEntity e) {
         float radius = e.getRadius();
         if (radius > 1) {
             radius -= radius * 0.005f;
             e.setRadius(radius);
         } else if (radius != 0) {
+            e.setRadius(0);
+        }
+    }
+
+    private void shrinkRadius(MovableEntity e) {
+        float radius = e.getRadius();
+        if (radius > 1) {
+            radius -= radius * 0.25f;
+            e.setRadius(radius);
+        } else if (radius != 0) {
+            e.setRadius(0);
+        }
+    }
+
+    private void expandRadius(MovableEntity e) {
+        float radius = e.getRadius();
+        if (radius < 20) {
+            radius += radius * 0.25f;
+            e.setRadius(radius);
+        } else if (radius != 20) {
             e.setRadius(0);
         }
     }
@@ -445,7 +479,8 @@ public class Game implements Runnable {
     private void switchPhase(Sendable s) {
         PhaseObject phase = (PhaseObject) s;
         Player p = players.get(phase.getID());
-        p.togglePhase();
+        p.setSwitchingPhases(true);
+        //p.togglePhase();
         out("ID"+p.getID()+": Switching phase");
     }
 

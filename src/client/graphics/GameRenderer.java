@@ -59,13 +59,13 @@ class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
-    private void positionBullet(Vector2 pos, Vector2 dir) {
+    private void positionBullet(Vector2 pos, Vector2 dir, int radius) {
         Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
         float lastX = cursor.getX();
         float lastY = cursor.getY();
 
         if (lastX > 0 && lastY > 0)
-            draw.drawCircle(lastX, lastY, 10, 50);
+            draw.drawCircle(lastX, lastY, radius/2, 50);
     }
 
     private void drawCollisions() {
@@ -152,7 +152,7 @@ class GameRenderer {
                     System.out.println(p.getRadius());
                     GL11.glColor3f(red, green, blue);
                     draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), p.getRadius(), 100);
-                    positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir());
+                    positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir(), p.getRadius());
                 } else {
                     red = 0.6f;
                     green = 0.6f;

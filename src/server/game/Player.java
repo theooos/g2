@@ -14,6 +14,10 @@ public class Player extends MovableEntity {
     private double weaponOutHeat;
     private int moveCounter;
 
+    private boolean switchingPhases;
+    private int timeBeforeSwitch;
+    private int timeAfterSwitch;
+
     /**
      * The basic player class
      * @param pos starting pos
@@ -41,6 +45,10 @@ public class Player extends MovableEntity {
         moveCounter = 0;
         respawnTime = 240;
         timeTillRespawn = respawnTime;
+
+        switchingPhases = false;
+        timeBeforeSwitch = 7;
+        timeAfterSwitch = 7;
     }
 
     public Player(Player player) {
@@ -63,6 +71,10 @@ public class Player extends MovableEntity {
         this.moveCounter = player.getMoveCount();
         respawnTime = 240;
         timeTillRespawn = respawnTime;
+
+        switchingPhases = false;
+        timeBeforeSwitch = 7;
+        timeAfterSwitch = 7;
     }
 
     public void live() {
@@ -128,6 +140,35 @@ public class Player extends MovableEntity {
 
     public void setMoveCount(int moveCount) {
         this.moveCounter = moveCount;
+    }
+
+    public void setSwitchingPhases(boolean switchingPhases){
+        this.switchingPhases = switchingPhases;
+    }
+
+    public boolean getSwitchingPhase(){ return this.switchingPhases;}
+
+    public void phaseCount(){
+        if(switchingPhases){
+            if(timeBeforeSwitch > 0){
+                timeBeforeSwitch--;
+            }
+            else {
+                timeAfterSwitch--;
+            }
+        }
+    }
+
+    public boolean canSwitch(){return (timeBeforeSwitch == 0);}
+
+    public boolean switchOver(){
+        return (timeAfterSwitch == 0);
+    }
+
+    public void resetPhaseCount(){
+        this.switchingPhases = false;
+        this.timeBeforeSwitch = 7;
+        this.timeAfterSwitch = 7;
     }
 }
 
