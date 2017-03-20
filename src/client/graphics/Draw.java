@@ -22,6 +22,8 @@ class Draw {
     private double oldHeat;
     private double displayHeat;
     private GameData gameData;
+    private TextRenderer smallText;
+    private TextRenderer largeText;
 
     Draw(GameData gd) {
         this.width = ClientSettings.SCREEN_WIDTH;
@@ -141,8 +143,13 @@ class Draw {
         shadeScreen();
         Scoreboard sb = gameData.getScoreboard();
 
-        TextRenderer smallText = new TextRenderer(20);
-        TextRenderer largeText = new TextRenderer(25);
+        if (smallText == null) {
+            smallText = new TextRenderer(20);
+        }
+        if (largeText == null) {
+            largeText = new TextRenderer(25);
+        }
+
         float intensity = 0.8f;
         glDisable(GL_TEXTURE_2D);
 
@@ -159,14 +166,14 @@ class Draw {
         glColor4f(red, green, blue, intensity);
         drawRect(xStart, yStart, rectWidth, rectHeight);
 
-        drawText(largeText, "Landscapers", xStart+10, yStart+3*rectHeight/4+4);
-        drawText(largeText, ((Integer) sb.getTeam1Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam1Score()).toString().length()*20-10, yStart+3*rectHeight/4+4);
+        drawText(largeText, "Landscapers", xStart+10, yStart+3*rectHeight/4+7);
+        drawText(largeText, ((Integer) sb.getTeam1Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam1Score()).toString().length()*20-10, yStart+3*rectHeight/4+7);
 
         glColor4f(1, 0, 1, intensity);
         drawRect(xStart+rectWidth, yStart, rectWidth, rectHeight);
-        drawText(largeText, "The Enclave", xStart+rectWidth+10, yStart+3*rectHeight/4+4);
+        drawText(largeText, "The Enclave", xStart+rectWidth+10, yStart+3*rectHeight/4+7);
         rectWidth *= 2;
-        drawText(largeText, ((Integer) sb.getTeam0Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam0Score()).toString().length()*20-10, yStart+3*rectHeight/4+4);
+        drawText(largeText, ((Integer) sb.getTeam0Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam0Score()).toString().length()*20-10, yStart+3*rectHeight/4+7);
 
         yStart += rectHeight+20;
 
@@ -195,8 +202,8 @@ class Draw {
                 glColor4f(red,green,blue, intensity);
                 drawRect(xStart, yStart, rectWidth, rectHeight);
 
-                drawText(smallText, "Player " + index, xStart+10, yStart+3*rectHeight/4+4);
-                drawText(smallText, ((Integer) max).toString(), xStart+rectWidth-((Integer) max).toString().length()*18-10, yStart+3*rectHeight/4+4);
+                drawText(smallText, "Player " + index, xStart+10, yStart+3*rectHeight/4+7);
+                drawText(smallText, ((Integer) max).toString(), xStart+rectWidth-((Integer) max).toString().length()*15-10, yStart+3*rectHeight/4+7);
 
                 yStart+=rectHeight;
 
