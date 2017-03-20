@@ -214,10 +214,14 @@ class GameRenderer {
                     red = 0.6f;
                     green = 0f;
                     blue = 0.6f;
-                } else {
+                } else if (p.getTeam() == 1){
                     red = 0f;
                     green = 0.8f;
                     blue = 0f;
+                } else {
+                    red = 0.2f;
+                    green = 0.2f;
+                    blue = 1f;
                 }
                 GL11.glColor3f(red, green, blue);
                 float radius = p.getRadius();

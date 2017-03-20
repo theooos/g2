@@ -242,6 +242,7 @@ public class Game implements Runnable {
         }
 
         ArrayList<Integer> keys = new ArrayList<>();
+        ArrayList<Projectile> hurtAni = new ArrayList<>();
 
         for (Projectile p : projectiles.values()) {
             MovableEntity e = collisions.collidesWithPlayerOrBot(p);
@@ -249,13 +250,28 @@ public class Game implements Runnable {
                 out(p.getPlayerID()+" just hit "+e.getID());
                 //can't damage your team
                 if (e.getTeam() != p.getTeam() && e.isAlive()) {
+                    Vector2 damageDir = e.getPos().vectorTowards(p.getPos()).normalise();
+                    for (int i = 0; i < p.getDamage()/10; i++) {
+                        double ang = Math.atan(damageDir.getX()/damageDir.getY());
+                        if (Double.isInfinite(ang)) {
+                            ang = 0;
+                        } else if (damageDir.getY() < 0) {
+                            ang += Math.PI;
+                        }
+                        ang += Math.toRadians(rand.nextInt(2*(int)(HURT_SPREAD))-(HURT_SPREAD));
+                        float newX = (float)(Math.sin(ang));
+                        float newY = (float)(Math.cos(ang));
+
+                        hurtAni.add(new DistDropOffProjectile(0, (int) HURT_LIFE, HURT_RADIUS, e.getPos(), new Vector2(newX, newY).normalise(), 6, e.getPhase(), e, IDCounter));
+                        IDCounter++;
+                    }
                     e.damage(p.getDamage());
                     //if the player has been killed
                     if (!e.isAlive()) {
                         if (e instanceof Orb) {
-                            scoreboard.killedOrb(p.getPlayer());
+                            scoreboard.killedOrb((Player) p.getPlayer());
                         } else {
-                            scoreboard.killedPlayer(p.getPlayer());
+                            scoreboard.killedPlayer((Player) p.getPlayer());
                         }
                         scoreboardChanged = true;
                     }
@@ -270,6 +286,11 @@ public class Game implements Runnable {
                 keys.add(p.getID());
             }
         }
+
+        for (Projectile p: hurtAni) {
+            projectiles.put(p.getID(), p);
+        }
+
 
         countdown--;
 
