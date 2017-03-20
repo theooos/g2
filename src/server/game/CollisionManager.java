@@ -89,7 +89,7 @@ public class CollisionManager {
         HashMap<Integer, MovableEntity> entities = new HashMap<>();
 
         for(Player p: players.values()) {
-            if (!(p.equals(e) ||  p.getPhase() != e.getPhase())) {
+            if (!(p.equals(e) ||  p.getPhase() != e.getPhase()) && p.getRadius() > 0) {
                 if (!(e instanceof Projectile)) {
                     entities.put(p.getID(), p);
                 }
@@ -113,7 +113,7 @@ public class CollisionManager {
     private MovableEntity collidesWithBot(MovableEntity e) {
         HashMap<Integer, MovableEntity> entities = new HashMap<>();
         for(Orb o: orbs.values()) {
-            if (!(o.equals(e) ||  o.getPhase() != e.getPhase())) {
+            if (!(o.equals(e) ||  o.getPhase() != e.getPhase()) && o.isAlive()) {
                 entities.put(o.getID(), o);
             }
         }

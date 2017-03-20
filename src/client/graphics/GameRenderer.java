@@ -149,6 +149,7 @@ class GameRenderer {
                         blue = 0.5f;
                     }
                     draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
+                    System.out.println(p.getRadius());
                     GL11.glColor3f(red, green, blue);
                     draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), p.getRadius(), 100);
                     positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir());
@@ -156,7 +157,9 @@ class GameRenderer {
                     red = 0.6f;
                     green = 0.6f;
                     blue = 0.7f;
-                    draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
+                    if (p.getRadius() > 0) {
+                        draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
+                    }
                     GL11.glColor3f(red, green, blue);
                     draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), p.getRadius(), 100);
                 }
@@ -181,14 +184,18 @@ class GameRenderer {
                 blue = 0.7f;
             }
             if (phase == o.getPhase()) {
-                draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f);
+                if (o.getRadius() > 0) {
+                    draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f);
+                }
                 GL11.glColor4f(red, green, blue, 1);
                 draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
             } else {
                 float dist = me.getPos().getDistanceTo(o.getPos());
                 if (dist < 150) {
                     float fade = 0.7f - (dist / 150f);
-                    draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f, fade);
+                    if (o.getRadius() > 0) {
+                        draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f, fade);
+                    }
                     GL11.glColor4f(red, green, blue, fade);
                     draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
                 }

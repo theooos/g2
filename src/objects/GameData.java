@@ -87,6 +87,7 @@ public class GameData {
         me.setHealth(p.getHealth());
         me.setWeaponOut(p.isWeaponOneOut());
         me.setWeaponOutHeat(p.getWeaponOutHeat());
+        me.setRadius(p.getRadius());
         players.put(p.getID(), me);
     }
 

@@ -193,9 +193,7 @@ public class Game implements Runnable {
                     }
                 }
                 else {
-                    float radius = p.getRadius();
-                    radius -= radius * 0.05f;
-                    p.setRadius(radius);
+                    shrinkRadius(p);
                 }
             }
             if (p.isFiring()) fire(p);
@@ -228,9 +226,7 @@ public class Game implements Runnable {
                     o.setRadius(10);
                     respawn(o);
                 } else {
-                    float radius = o.getRadius();
-                    radius -= radius * 0.005f;
-                    o.setRadius(radius);
+                    shrinkRadius(o);
                 }
             }
             o.live();
@@ -280,6 +276,16 @@ public class Game implements Runnable {
             for (Integer i: keys) {
                 projectiles.remove(i);
             }
+        }
+    }
+
+    private void shrinkRadius(MovableEntity e) {
+        float radius = e.getRadius();
+        if (radius > 1) {
+            radius -= radius * 0.005f;
+            e.setRadius(radius);
+        } else if (radius != 0) {
+            e.setRadius(0);
         }
     }
 
