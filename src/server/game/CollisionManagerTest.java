@@ -63,7 +63,7 @@ class CollisionManagerTest {
 
     @Test
     void pointWallCollision() {
-        
+
     }
 
     @Test
