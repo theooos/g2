@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by rhys on 3/11/17.
+ * Extends the Intel object to contain information specifically vital to AI-controlled players.
+ * Created by Rhys on 3/11/17.
  */
 public class PlayerIntel extends Intel {
 

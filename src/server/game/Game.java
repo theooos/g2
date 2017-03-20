@@ -128,7 +128,7 @@ public class Game implements Runnable {
             players.put(IDCounter, p);
             IDCounter++;
         }
-        //create team orbs
+        /*//create team orbs
         for (int i = 0; i < maxPlayers; i++) {
             Orb o = new Orb(respawnCoords(), randomDir(), rand.nextInt(2), IDCounter);
             respawn(o);
@@ -138,7 +138,7 @@ public class Game implements Runnable {
             // Ready Orbs for game.
             OrbIntel intel = new OrbIntel(players, map, powerUps);
             o.prepareOrbForGame(intel, orbs);
-        }
+        }*/
 
         // Ready AI Players for game.
         for (int i = 0; i < players.size(); i++){

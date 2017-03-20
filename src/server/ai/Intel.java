@@ -191,4 +191,8 @@ public abstract class Intel {
         this.relevantEnt = null;
         this.path = null;
     }
+
+    public HashMap<Integer, PowerUp> getPowerUps(){
+        return powerUps;
+    }
 }

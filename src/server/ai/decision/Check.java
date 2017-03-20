@@ -17,7 +17,9 @@ public class Check {
         PROXIMITY,
         RANGE,
         TARGET_MOVED,
-        CLOSEST_ENEMY}
+        CLOSEST_ENEMY,
+        HEALTH_UP_NEAR
+    }
 
     private final int LOW_HEALTH_THRESHOLD = 30;
     private Intel intel;
@@ -39,25 +41,32 @@ public class Check {
      */
     public boolean doCheck(CheckMode mode) {
 
-        if (mode == CheckMode.LOW_HEALTH) {
-            return lowHealthCheck();
+        switch (mode) {
+
+            case LOW_HEALTH:
+                return lowHealthCheck();
+
+            case ORB_NEARBY:
+                return orbNearbyCheck();
+
+            case PROXIMITY:
+                return proximityCheck();
+
+            case RANGE:
+                return rangeCheck();
+
+            case TARGET_MOVED:
+                return targetMovedCheck();
+
+            case CLOSEST_ENEMY:
+                return closestEnemyCheck();
+
+            case HEALTH_UP_NEAR:
+                return healthNearCheck();
+
+            default:
+                return false;
         }
-        else if (mode == CheckMode.ORB_NEARBY) {
-            return orbNearbyCheck();
-        }
-        else if (mode == CheckMode.PROXIMITY) {
-            return proximityCheck();
-        }
-        else if (mode == CheckMode.RANGE) {
-            return rangeCheck();
-        }
-        else if (mode == CheckMode.TARGET_MOVED) {
-            return targetMovedCheck();
-        }
-        else if (mode == CheckMode.CLOSEST_ENEMY) {
-            return closestEnemyCheck();
-        }
-        else return false;
     }
 
     private boolean lowHealthCheck(){
@@ -171,5 +180,17 @@ public class Check {
         }
         intel.setRelevantEntity(closestThreat);
 
+    }
+
+    private boolean healthNearCheck(){
+        boolean found = false;
+        for (java.util.Map.Entry<Integer, PowerUp> e : intel.getPowerUps().entrySet()){
+            boolean inPhase = e.getValue().getPhase() == intel.ent().getPhase();
+            if (e.getValue().getType() == PowerUp.Type.health && inPhase && e.getValue().isAlive()){
+                found = true;
+                break;
+            }
+        }
+        return found;
     }
 }

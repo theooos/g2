@@ -19,8 +19,8 @@ public class PlayerBrain extends AIBrain {
 
     public enum EmotionalState{
         INTIMIDATED,
-        IRRITATED,
         VENGEFUL,
+        IRRITATED,
         AGGRESSIVE,
         DETERMINED,
         BORED,
@@ -207,20 +207,24 @@ public class PlayerBrain extends AIBrain {
         switch (newEmotion) {
 
             case INTIMIDATED:
+                System.out.println("Intimidated.");
                 this.stress = STRESS_INTIMIDATED;
                 flee.start();
                 break;
 
+            case VENGEFUL:
+                System.out.println("Vengeful");
+                this.stress = STRESS_VENGEFUL;
+                break;
+
             case IRRITATED:
+                System.out.println("Irritated");
                 this.stress = STRESS_IRRITATED;
                 behaviours.getBehaviour("Swat").start();
                 break;
 
-            case VENGEFUL:
-                this.stress = STRESS_VENGEFUL;
-                break;
-
             case AGGRESSIVE:
+                System.out.println("Aggressive");
                 if (curEmotion == BORED) {
                     this.stress = STRESS_AGGRESSIVE_FROM_BORED;
                 }
@@ -232,6 +236,7 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             case DETERMINED:
+                System.out.println("Determined");
                 if (curEmotion == BORED) {
                     this.stress = STRESS_DETERMINED_FROM_BORED;
                 } else {
@@ -240,6 +245,7 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             default:
+                System.out.println("Bored");
                 this.stress = STRESS_BORED;
                 ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
                 hunt.start();
