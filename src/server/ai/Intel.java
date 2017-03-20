@@ -185,4 +185,10 @@ public abstract class Intel {
     public CollisionManager getNewCollisionManager(){
         return new CollisionManager(players, allOrbs, map, powerUps);
     }
+
+    public void resetIntel(){
+        this.targetLocation = null;
+        this.relevantEnt = null;
+        this.path = null;
+    }
 }

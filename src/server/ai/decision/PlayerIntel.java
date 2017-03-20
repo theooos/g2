@@ -14,6 +14,7 @@ public class PlayerIntel extends Intel {
     private boolean escaped;
     private boolean phaseShiftFailed;
     private boolean orbInOtherPhase;
+    private MovableEntity entityBuffer;
 
     public PlayerIntel(ConcurrentHashMap<Integer, Player> players, Map map, HashMap<Integer, PowerUp> pUps){
         super(players, map, pUps);
@@ -60,5 +61,20 @@ public class PlayerIntel extends Intel {
 
     public boolean haveEscaped(){
         return escaped;
+    }
+
+    public void resetIntel(){
+        super.resetIntel();
+        this.escaped = false;
+        this.phaseShiftFailed = false;
+        this.orbInOtherPhase = false;
+    }
+
+    public void setRelevantEntity(MovableEntity relEnt){
+        this.entityBuffer = relEnt;
+    }
+
+    public void loadRelevantEntity(){
+        this.relevantEnt = this.entityBuffer;
     }
 }

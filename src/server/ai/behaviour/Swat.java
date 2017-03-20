@@ -33,10 +33,6 @@ public class Swat extends PlayerTask {
                 intel.getRelevantEntity().isAlive();
     }
 
-    public void setParameters(float maxRange, float minRange, int fireFreq){
-        this.fireFreq = fireFreq;
-    }
-
     @Override
     public void start(){
         super.start();
@@ -62,6 +58,7 @@ public class Swat extends PlayerTask {
     public void doAction(){
 
         // Take aim.
+        System.out.println("Target null: " + target==null);
         me.setDir(me.getPos().vectorTowards(target.getPos()).normalise());
         int inaccuracy = (int) Math.ceil(brain.getStressLevel()* AIConstants.MAX_AIM_INACCURACY);
         Vector2.deviate(me.getDir(), inaccuracy);

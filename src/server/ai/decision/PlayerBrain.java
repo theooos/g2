@@ -196,6 +196,8 @@ public class PlayerBrain extends AIBrain {
     protected void respondToEmotion() {
 
         behaviours.resetAll();
+        intel.resetIntel();
+        intel.loadRelevantEntity();
 
         // If the player isn't aggressive, stop firing the SMG!
         if (newEmotion != EmotionalState.AGGRESSIVE){
