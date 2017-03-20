@@ -246,7 +246,7 @@ public class Game implements Runnable {
 
         for (Projectile p : projectiles.values()) {
             MovableEntity e = collisions.collidesWithPlayerOrBot(p);
-            if (e != null) {
+            if (e != null && !e.equals(p.getPlayer())) {
                 out(p.getPlayerID()+" just hit "+e.getID());
                 //can't damage your team
                 if (e.getTeam() != p.getTeam() && e.isAlive()) {
@@ -262,7 +262,7 @@ public class Game implements Runnable {
                         float newX = (float)(Math.sin(ang));
                         float newY = (float)(Math.cos(ang));
 
-                        hurtAni.add(new DistDropOffProjectile(0, (int) HURT_LIFE, HURT_RADIUS, e.getPos(), new Vector2(newX, newY).normalise(), 6, e.getPhase(), e, IDCounter));
+                        hurtAni.add(new DistDropOffProjectile(0, (int) HURT_LIFE, HURT_RADIUS, e.getPos(), new Vector2(newX, newY).normalise(), 5, e.getPhase(), e, IDCounter));
                         IDCounter++;
                     }
                     e.damage(p.getDamage());

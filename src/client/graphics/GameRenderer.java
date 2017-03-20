@@ -223,6 +223,11 @@ class GameRenderer {
                     green = 0.2f;
                     blue = 1f;
                 }
+                if (p.getDamage() == 0) {
+                    red -= 0.34f;
+                    green -= 0.34f;
+                    blue -= 0.34f;
+                }
                 GL11.glColor3f(red, green, blue);
                 float radius = p.getRadius();
                 draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);

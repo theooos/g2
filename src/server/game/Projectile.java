@@ -69,7 +69,7 @@ public class Projectile extends MovableEntity {
         tickLife();
     }
 
-    int getDamage() {
+    public int getDamage() {
         return (int) damage;
     }
 
@@ -107,4 +107,5 @@ public class Projectile extends MovableEntity {
     public Projectile clone() {
         return new Projectile(this);
     }
+
 }
