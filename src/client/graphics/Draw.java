@@ -212,7 +212,7 @@ class Draw {
                 drawText(smallText, name, xStart+10, yStart+3*rectHeight/4+1);
                 drawText(smallText, ((Integer) max).toString(), xStart+rectWidth-((Integer) max).toString().length()*15-10, yStart+3*rectHeight/4+1);
 
-                if (index == playerID) drawText(smallText, " (YOU)", xStart+10+name.length()*12, yStart+3*rectHeight/4);;
+                if (index == playerID) drawText(smallText, " (YOU)", xStart+12+name.length()*12, yStart+3*rectHeight/4);;
 
                 yStart+=rectHeight;
 

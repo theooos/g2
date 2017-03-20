@@ -248,7 +248,7 @@ public class Game implements Runnable {
             if (e != null) {
                 out(p.getPlayerID()+" just hit "+e.getID());
                 //can't damage your team
-                if (e.getTeam() != p.getTeam() && p.isAlive()) {
+                if (e.getTeam() != p.getTeam() && e.isAlive()) {
                     e.damage(p.getDamage());
                     //if the player has been killed
                     if (!e.isAlive()) {
