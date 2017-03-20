@@ -14,7 +14,7 @@ public final class AIConstants {
     public static final double CHANCE_STRATEGIC_ERR = 0.4;
     public static final double CHANCE_STRATEGIC_RETHINK = 0.25;
     public static final double CHANCE_CORRECT_PHASE_SHIFT = 0.6;
-    public static final double CHANCE_PURSUE_HEALTH = 1;
+    public static final double CHANCE_PURSUE_HEALTH = 0.5;
 
     public static final int REACTION_TIME_HIGH = 15;
     public static final int REACTION_TIME_AVG = 12;

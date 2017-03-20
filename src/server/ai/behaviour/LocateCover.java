@@ -31,18 +31,15 @@ public class LocateCover extends Task {
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(false);
         Vector2 newPos = null;
         boolean success = false;
-        int ctr = 0;
 
         while (!success) {
             float ranX = (float) gen.nextInt(intel.getMap().getMapWidth());
             float ranY = (float) gen.nextInt(intel.getMap().getMapLength());
             newPos = new Vector2(ranX, ranY);
 
-            // Check if space is valid.
-            success = intel.isValidSpace(newPos) &&  /*!intel.inSight(newPos)*/true;;
-            ctr++;
+            // Check if space is valid and out of sight of attacker.
+            success = intel.isValidSpace(newPos) && !intel.inSight(newPos);
         }
-        System.out.println("Cover location took " + ctr + " attempts.");
         intel.setTargetLocation(newPos);
         end();
     }

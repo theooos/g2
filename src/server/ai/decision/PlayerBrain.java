@@ -104,15 +104,12 @@ public class PlayerBrain extends AIBrain {
 
             case INTIMIDATED:
                 if (behaviours.getBehaviour("Fetch").isRunning()){
-                    System.out.println("Running fetch.");
                     behaviours.getBehaviour("Fetch").doAction();
                 }
                 else {
-                    System.out.println("Running flee.");
                     flee.doAction();
                 }
                 if (flee.hasFinished() || behaviours.getBehaviour("Fetch").hasFinished()){
-                    System.out.println("Dicking around");
                     curEmotion = AT_REST;   // Force more action if still intimidated next tick.
                 }
                 break;

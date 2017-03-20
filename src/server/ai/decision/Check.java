@@ -158,7 +158,6 @@ public class Check {
         if (closestDist == -1 || closestEnt == null){
             return false;
         }
-        System.out.println("Targeting " + closestEnt);
         intel.setRelevantEntity(closestEnt);
         return true;
     }
