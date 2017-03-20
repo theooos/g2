@@ -13,4 +13,7 @@ class ServerConfig {
     static final int HURT_RADIUS = 4;
 
     static final int MAX_SCORE = 300;
+    static final int PLAYER_KILLED_SCORE = 10;
+    static final int ORB_KILLED_SCORE = 3;
+    static final int KILLED_BY_ORB_SCORE = -3;
 }
