@@ -19,52 +19,35 @@ public class TextureLoader {
 
     private static Texture[] textures = new Texture[32];
 
-    public void initialise() {
-
-        textures[ISprite.PLAYER_P1] = loadTexture("Player1.png");
-        textures[ISprite.PLAYER_P2] = loadTexture("Player2.png");
-
-        textures[ISprite.ORB_P1] = loadTexture("orb_P1.png");
-        textures[ISprite.ORB_P2] = loadTexture("orb_P2.png");
-
-        textures[ISprite.SHOOT_P1] = loadTexture("Bullet2_P1.png");
-        textures[ISprite.SHOOT_P2] = loadTexture("Bullet2_P2.png");
-
-        textures[ISprite.BULLET_P1] = loadTexture("Bullet1_P1.png");
-        textures[ISprite.BULLET_P2] = loadTexture("Bullet1_P2.png");
-
-        textures[ISprite.WALL_P1] = loadTexture("Wall_P1.png");
-        textures[ISprite.WALL_P2] = loadTexture("Wall_P2.png");
-
-        textures[ISprite.TITLE] = loadTexture("title.png");
-        textures[ISprite.CONTROLS] = loadTexture("controls.png");
-        textures[ISprite.ABOUT] = loadTexture("about.png");
-        textures[ISprite.ABOUTTEXT] = loadTexture("testAbout.png");
-        textures[ISprite.GOBACK] = loadTexture("back.png");
-        textures[ISprite.LOBBY] = loadTexture("lobbyfinal.png");
-
-
-        textures[ISprite.OPTIONS] = loadTexture("options.png");
-        textures[ISprite.CONTINUE] = loadTexture("continue.png");
-        textures[ISprite.MUTE] = loadTexture("mute.png");
-        textures[ISprite.ENDGAME] = loadTexture("endgame.png");
-
-        textures[ISprite.COLLISION] = loadTexture("collision.png");
+    public static void initialise() {
         textures[ISprite.BACKGROUND] = loadTexture("background.png");
-        textures[ISprite.SCOREBOARD] = loadTexture("scoreboard.png");
+        textures[ISprite.TITLE] = loadTexture("title.png");
+        textures[ISprite.LOADING_SCREEN] = loadTexture("loading_screen.png");
+        textures[ISprite.CONTROLS_SCREEN] = loadTexture("controls_screen.png");
+        textures[ISprite.ABOUT_SCREEN] = loadTexture("about_screen.png");
+        textures[ISprite.LOBBY_SCREEN] = loadTexture("lobby_screen.png");
+        textures[ISprite.IN_GAME_MENU_SCREEN] = loadTexture("in_game_menu_screen.png");
+        textures[ISprite.SETTINGS_SCREEN] = loadTexture("settings_screen.png");
+        textures[ISprite.END_GAME_SCREEN] = loadTexture("end_game_screen.png");
+
+        textures[ISprite.CONTROLS_BUTTON] = loadTexture("controls_button.png");
+        textures[ISprite.ABOUT_BUTTON] = loadTexture("about_button.png");
+        textures[ISprite.BACK_BUTTON] = loadTexture("back_button.png");
+        textures[ISprite.JOIN_LOBBY_BUTTON] = loadTexture("join_lobby_button.png");
+        textures[ISprite.RESUME_GAME_BUTTON] = loadTexture("resume_game_button.png");
+        textures[ISprite.EXIT_GAME_BUTTON] = loadTexture("exit_game_button.png");
+
+        textures[ISprite.SLIDER] = loadTexture("slider.png");
     }
 
-
-    private Hashtable imageCache = new Hashtable();
-
-    private Texture loadTexture(String path) {
-
+    private static Texture loadTexture(String path) {
+        Hashtable imageCache = new Hashtable();
         BufferedImage buffImage = null;
         try {
             if (imageCache.get(path) != null)
                 buffImage = (BufferedImage) imageCache.get(path);
             else {
-                buffImage = ImageIO.read(this.getClass().getResource("../../" + path));
+                buffImage = ImageIO.read(TextureLoader.class.getResource("../../" + path));
                 byte[] data = ((DataBufferByte) buffImage.getRaster().getDataBuffer()).getData();
 
                 switch (buffImage.getType()) {
@@ -137,7 +120,7 @@ public class TextureLoader {
         }
     }
 
-    public Texture getTexture(int id) {
+    public static Texture getTexture(int id) {
         return textures[id];
     }
 }

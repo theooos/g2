@@ -5,36 +5,23 @@ package client.graphics.Sprites;
  */
 public interface ISprite {
 
-    int PLAYER_P1 = 0;
-    int PLAYER_P2 = 1;
+    int BACKGROUND = 1;
+    int TITLE = 2;
+    int LOADING_SCREEN = 3;
+    int CONTROLS_SCREEN = 4;
+    int ABOUT_SCREEN = 5;
+    int LOBBY_SCREEN = 6;
 
-    int ORB_P1 = 2;
-    int ORB_P2 = 3;
+    int IN_GAME_MENU_SCREEN = 7;
+    int SETTINGS_SCREEN = 8;
+    int END_GAME_SCREEN = 9;
 
-    int SHOOT_P1 = 4;
-    int SHOOT_P2 = 5;
+    int CONTROLS_BUTTON = 10;
+    int ABOUT_BUTTON = 11;
+    int BACK_BUTTON = 12;
+    int JOIN_LOBBY_BUTTON = 13;
+    int RESUME_GAME_BUTTON = 14;
+    int EXIT_GAME_BUTTON = 15;
 
-    int BULLET_P1 = 6;
-    int BULLET_P2 = 7;
-
-    int WALL_P1 = 8;
-    int WALL_P2 = 9;
-
-    int TITLE = 10;
-    int CONTROLS = 11;
-    int ABOUT = 12;
-
-    int OPTIONS = 13;
-    int CONTINUE = 14;
-    int MUTE = 15;
-    int ENDGAME = 16;
-
-    int ABOUTTEXT = 17;
-    int GOBACK = 18;
-    int LOBBY = 19;
-
-    int COLLISION = 20;
-
-    int BACKGROUND = 21;
-    int SCOREBOARD = 22;
+    int SLIDER = 16;
 }

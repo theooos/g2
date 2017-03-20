@@ -3,6 +3,7 @@ package client.graphics.Sprites;
 import client.Client;
 import client.graphics.Layer;
 import client.graphics.Texture;
+import client.graphics.TextureLoader;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -19,10 +20,6 @@ public abstract class Sprite implements ISprite {
     public float height;
 
     private Rectangle clickBox;
-
-    public Sprite(){
-
-    }
 
     public void setRatio(float newRatio) {
         this.ratio = newRatio;
@@ -58,11 +55,15 @@ public abstract class Sprite implements ISprite {
     }
 
     void initInterfaceSprite() {
-        this.texture = Client.textureLoader.getTexture(type);
+        this.texture = TextureLoader.getTexture(type);
         this.original_width = this.texture.getTextureWidth();
         this.original_height = this.texture.getTextureHeight();
         this.width = this.original_width * ratio;
         this.height = this.original_height * ratio;
+    }
+
+    public void spawn(int id, float x, float y , Layer layer){
+        spawn(id,new Vector2f(x,y),0,layer);
     }
 
     public void spawn(int id, Vector2f position, int phase, Layer layer) {

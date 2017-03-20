@@ -141,7 +141,8 @@ public class Weapon implements Sendable{
     public int getRefireTime(){
         return refireTime;
     }
-    public void setCurrentHeat(int heat) {
+
+    void setCurrentHeat(int heat) {
         this.currentHeat = heat;
     }
 

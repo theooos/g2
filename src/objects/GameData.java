@@ -18,6 +18,7 @@ public class GameData {
     private HashMap<Integer, PowerUp> powerUps;
     private Scoreboard scoreboard;
     private int mapID;
+    private LobbyData lobbyData;
 
     public GameData(InitGame initGame) {
         this.players = initGame.getPlayers();
@@ -26,6 +27,7 @@ public class GameData {
         this.mapID = initGame.getMapID();
         this.scoreboard = initGame.getScoreboard();
         this.powerUps = initGame.getPowerUps();
+        this.lobbyData = initGame.getLobbyData();
     }
 
     /**
@@ -87,6 +89,8 @@ public class GameData {
         me.setHealth(p.getHealth());
         me.setWeaponOut(p.isWeaponOneOut());
         me.setWeaponOutHeat(p.getWeaponOutHeat());
+        me.setRadius(p.getRadius());
+        me.setPhasePercentage(p.getPhase());
         players.put(p.getID(), me);
     }
 
@@ -104,6 +108,10 @@ public class GameData {
 
     public void updatePowerUp(PowerUp powerUp) {
         powerUps.put(powerUp.getID(), powerUp);
+    }
+
+    public LobbyData getLobbyData() {
+        return lobbyData;
     }
 
     public java.lang.String toString() {

@@ -16,16 +16,12 @@ import java.util.function.Consumer;
  */
 public class ClientReceiver {
 
-    private Consumer<GameData> beginGame;
     private int playerID;
     private static boolean DEBUG = true;
     private GameData gameData;
 
-    public ClientReceiver(Connection connection, Consumer<GameData> beginGame) {
-        this.beginGame = beginGame;
-
+    ClientReceiver(Connection connection) {
         connection.addFunctionEvent("String", this::out);
-        connection.addFunctionEvent("InitGame", this::setupGame);
         connection.addFunctionEvent("Player", this::updatedPlayer);
         connection.addFunctionEvent("AIPlayer", this::updatedPlayer);
         connection.addFunctionEvent("Orb", this::updatedOrb);
@@ -36,10 +32,8 @@ public class ClientReceiver {
         connection.addFunctionEvent("PowerUp", this::updatedPowerUp);
     }
 
-    private void setupGame(Sendable s) {
-        InitGame initGame = (InitGame) s;
-        gameData = new GameData(initGame);
-        beginGame.accept(gameData);
+    void setGameData(GameData gameData){
+        this.gameData = gameData;
     }
 
     public void out(Object o) {
@@ -78,7 +72,6 @@ public class ClientReceiver {
 
     private void updatedScoreboard(Sendable s) {
         Scoreboard sb = (Scoreboard) s;
-        out(s.toString());
         gameData.updateScoreboard(sb);
     }
 

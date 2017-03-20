@@ -2,6 +2,7 @@ package client.graphics;
 
 import client.ClientSettings;
 import client.audio.Audio;
+import networking.Connection_Client;
 import objects.*;
 import networking.Connection;
 import org.lwjgl.Sys;
@@ -9,6 +10,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import server.game.*;
+
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glEnable;
 
 /**
  * Provides the visuals for the game itself.
@@ -18,7 +23,7 @@ public class GameManager {
     private GameRenderer gameRenderer;
     private InGameMenuRenderer inGameMenuRenderer;
 
-    private enum Mode {GAME, MENU, SCOREBOARD, GAMEOVER}
+    enum Mode {GAME, MENU, SETTINGS, SCOREBOARD, GAMEOVER}
 
     private Mode mode = Mode.GAME;
 
@@ -28,14 +33,14 @@ public class GameManager {
     private int myPlayerID;
 
     private GameData gameData;
-    private Connection conn;
+    private Connection_Client conn;
     private CollisionManager collisions;
 
     private boolean healthbar;
     private boolean gameMusic;
     private boolean muted;
 
-    public GameManager(GameData gd, Connection conn, int playerID) {
+    public GameManager(GameData gd, Connection_Client conn, int playerID) {
         super();
         this.conn = conn;
         this.gameData = gd;
@@ -43,31 +48,40 @@ public class GameManager {
 
         healthbar = true;
         gameMusic = false;
-        muted = true;
+        muted = false;
 
         collisions = new CollisionManager(gd);
         gameRenderer = new GameRenderer(gameData, playerID, collisions);
-        inGameMenuRenderer = new InGameMenuRenderer(gameData,playerID);
+        inGameMenuRenderer = new InGameMenuRenderer(gameData,playerID,this);
 
         conn.addFunctionEvent("GameOver", this::gameOver);
     }
 
     public void run() {
+        update();
         switch (mode) {
             case GAME:
-                update();
                 gameRenderer.render();
                 break;
             case MENU:
-                pollKeyboard();
+                glEnable(GL_TEXTURE_2D);
+                glColor4f(1,1,1,1);
                 inGameMenuRenderer.renderMenu();
+                inGameMenuRenderer.handleClickedMenu();
+                break;
+            case SETTINGS:
+                glEnable(GL_TEXTURE_2D);
+                glColor4f(1,1,1,1);
+                inGameMenuRenderer.renderSettings();
+                inGameMenuRenderer.handleClickedSettings();
                 break;
             case SCOREBOARD:
-                pollKeyboard();
-                inGameMenuRenderer.renderScoreboard();
+                gameRenderer.render();
+                gameRenderer.drawScoreboard(true);
                 break;
             case GAMEOVER:
                 inGameMenuRenderer.renderEndScreen();
+                gameRenderer.drawScoreboard(false);
         }
     }
 
@@ -89,15 +103,17 @@ public class GameManager {
     private void pollMouse() {
         Player me = gameData.getPlayer(myPlayerID);
         if (me.isAlive()) {
-            if (Mouse.isButtonDown(0)) {
-                conn.send(new FireObject(me.getID(), true));
-
-                if (me.activeWeapon() == 1 && muted)
-                    Audio.SHOOT2.play();
-                else if (muted) {
-                    Audio.SHOOT.play();
+            while (Mouse.next()){
+                switch (Mouse.getEventButton()){
+                    case 0:
+                        if(Mouse.getEventButtonState()){
+                            conn.send(new FireObject(me.getID(), true));
+                            Audio.SHOOT.play();
+                        }
+                        else {
+                            conn.send(new FireObject(me.getID(), false));
+                        }
                 }
-                conn.send(new FireObject(me.getID(), false));
             }
         }
     }
@@ -153,7 +169,13 @@ public class GameManager {
                     default:
                         menuKeyboard();
                 }
-
+            } else{
+                switch (mode){
+                    case SCOREBOARD:
+                        if(Keyboard.getEventKey() == Keyboard.KEY_TAB){
+                            mode = Mode.GAME;
+                        }
+                }
             }
         }
     }
@@ -168,6 +190,7 @@ public class GameManager {
                 break;
 
             case Keyboard.KEY_F:
+            case Keyboard.KEY_SPACE:
                 if(me.isAlive()) {
                     if (muted) Audio.PHASE.play();
                     int newPhase = 0;
@@ -280,6 +303,11 @@ public class GameManager {
 
     private void gameOver(Sendable sendable) {
         gameData.updateScoreboard(((GameOver) sendable).getScoreboard());
+        System.out.println(((GameOver) sendable).getScoreboard());
         mode = Mode.GAMEOVER;
+    }
+
+    public void setMode(Mode mode){
+        this.mode = mode;
     }
 }

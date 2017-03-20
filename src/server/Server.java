@@ -1,8 +1,8 @@
 package server;
 
 import networking.Connection;
+import networking.Connection_Server;
 import networking.NewConnectionListener;
-import networking.SendingTester;
 
 import java.net.ServerSocket;
 
@@ -22,7 +22,7 @@ public class Server extends Thread {
     public void run(){
         while(true){
             // Keep checking if listener has any new clients, send them to lobby manager if so.
-            Connection newClient = newConnectionListener.getClient();
+            Connection_Server newClient = newConnectionListener.getClient();
             if(newClient != null){
 //                new Thread(new SendingTester(newClient)).start();
                 lobbyManager.addConnection(newClient);

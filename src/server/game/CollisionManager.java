@@ -61,7 +61,7 @@ public class CollisionManager {
 
     boolean pointWallCollision(int r, Vector2 point, int phase) {
         for (Wall w: map.wallsInPhase(phase, false, false)) {
-            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+10)) {
+            if (linePointDistance(w.getStartPos(), w.getEndPos(), point) < (r+5)) {
                 return true;
             }
         }
@@ -93,7 +93,7 @@ public class CollisionManager {
         HashMap<Integer, MovableEntity> entities = new HashMap<>();
 
         for(Player p: players.values()) {
-            if (!(p.equals(e) ||  p.getPhase() != e.getPhase())) {
+            if (!(p.equals(e) ||  p.getPhase() != e.getPhase()) && p.getRadius() > 0) {
                 if (!(e instanceof Projectile)) {
                     entities.put(p.getID(), p);
                 }
@@ -114,10 +114,10 @@ public class CollisionManager {
         return collidesWithBot(e);
     }
 
-    MovableEntity collidesWithBot(MovableEntity e) {
+    private MovableEntity collidesWithBot(MovableEntity e) {
         HashMap<Integer, MovableEntity> entities = new HashMap<>();
         for(Orb o: orbs.values()) {
-            if (!(o.equals(e) ||  o.getPhase() != e.getPhase())) {
+            if (!(o.equals(e) ||  o.getPhase() != e.getPhase()) && o.isAlive()) {
                 entities.put(o.getID(), o);
             }
         }

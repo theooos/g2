@@ -7,10 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents a game map.
@@ -58,7 +55,8 @@ public class Map {
 
     /**
      * Returns an ArrayList of walls that exist in the given phase.
-     * @param phase - int representing the phase to test each wall against.
+     *
+     * @param phase      - int representing the phase to test each wall against.
      * @param intactOnly - if true, restricts the resulting ArrayList to only walls that are intact.
      * @return an ArrayList of walls that exist in the given phase.
      */
@@ -66,15 +64,9 @@ public class Map {
 
         ArrayList<Wall> relWalls = new ArrayList<>();
 
-
         for (Wall thisWall : walls) {
-            if (thisWall.inPhase(phase)){
-                if (!(intactOnly && !thisWall.intact())) {
-                    if (!(innerOnly && thisWall.isBoundary())){
-                        relWalls.add(thisWall);
-                    }
-
-                }
+            if (thisWall.inPhase(phase) && !(intactOnly && !thisWall.intact()) && !(innerOnly && thisWall.isBoundary())) {
+                relWalls.add(thisWall);
             }
         }
 
@@ -349,8 +341,8 @@ public class Map {
             System.exit(0);
         }
     }
-    public ArrayList<Wall> getWalls()
-    {
+    
+    public ArrayList<Wall> getWalls() {
         return this.walls;
     }
 

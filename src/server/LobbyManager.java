@@ -1,27 +1,29 @@
 package server;
 
-import networking.Connection;
+import networking.Connection_Server;
 import objects.String;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 
 class LobbyManager {
 
     private ArrayList<Lobby> lobbies;
 
-    private boolean gameOn;
-
     LobbyManager() {
         lobbies = new ArrayList<>();
         lobbies.add(createLobby());
     }
 
-    void addConnection(Connection c) {
+    void addConnection(Connection_Server c) {
 
         c.addFunctionEvent("String", Server::out);
-        c.send(new String("You are being cared for by the lobby manager."));
+        try {
+            c.send(new String("You are being cared for by the lobby manager."));
+        } catch (Exception e) {
+            System.out.println("Dude didn't make it into a lobby before dying.");
+            return;
+        }
 
         boolean added = false;
 
@@ -41,9 +43,6 @@ class LobbyManager {
     }
 
     private Lobby createLobby() {
-//        Random r = new Random();
-//        int size = r.nextInt(4)+1;
-
-        return new Lobby(4);
+        return new Lobby(2);
     }
 }

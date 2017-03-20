@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class Layer {
 
-    public HashMap<Integer, Sprite> sprites = new HashMap();
+    public HashMap<Integer, Sprite> sprites = new HashMap<>();
 
     public Layer(){}
 
@@ -22,6 +22,10 @@ public class Layer {
     public void remove(int id)
     {
         sprites.remove(id);
+    }
+
+    public void render(){
+        render(0);
     }
 
     public void render(int phase)

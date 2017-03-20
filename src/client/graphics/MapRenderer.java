@@ -19,7 +19,10 @@ class MapRenderer {
     private int width;
     private int height;
 
-    private final int EXTENT = 10;
+    private final int EXTENT = 5;
+    private float red;
+    private float green;
+    private float blue;
 
     MapRenderer(int mapID) {
         try {
@@ -46,6 +49,17 @@ class MapRenderer {
             float xEnd = w.getEndPos().getX();
             float yEnd = w.getEndPos().getY();
 
+            if (phase == 0) {
+                red = 0.2f;
+                green = 0.2f;
+                blue = 1f;
+            }
+            else {
+                red = 0.8f;
+                green = 0f;
+                blue = 0f;
+            }
+
             if (yStart == yEnd)
                 horizontalDraw(xStart, yStart, xEnd, yEnd);
 
@@ -63,9 +77,6 @@ class MapRenderer {
      * @param yEnd   Y coordinate of the end position
      */
     private void verticalDraw(float xStart, float yStart, float xEnd, float yEnd) {
-        float red = 0.84f;
-        float green = 0.86f;
-        float blue = 0.88f;
         GL11.glColor3f(red, green, blue);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart+EXTENT));
@@ -110,9 +121,6 @@ class MapRenderer {
      * @param yEnd   Y coordinate of the end position
      */
     private void horizontalDraw(float xStart, float yStart, float xEnd, float yEnd) {
-        float red = 0.84f;
-        float green = 0.86f;
-        float blue = 0.88f;
         GL11.glColor3f(red, green, blue);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(checkX(xStart - EXTENT), checkY(height - yStart - EXTENT));

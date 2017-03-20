@@ -6,7 +6,11 @@ import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
 import networking.Connection;
+import networking.Connection_Client;
 import objects.GameData;
+import objects.InitGame;
+import objects.InitPlayer;
+import objects.Sendable;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -18,17 +22,15 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Client {
 
-    public enum Mode {SPLASH, GAME}
-    private Mode currentMode = Mode.SPLASH;
+    public enum Mode {MAIN_MENU, GAME}
+    private Mode currentMode = Mode.MAIN_MENU;
 
-    private Connection connection;
+    private Connection_Client connection;
     private ClientReceiver clientReceiver;
     private int playerID;
 
-    public static TextureLoader textureLoader;
-    private TextRenderer textRenderer;
     private StartScreenRenderer startScreen;
-    private GameManager gameRenderer;
+    private GameManager gameManager;
 
     private boolean running = true;
 
@@ -46,13 +48,15 @@ public class Client {
 
             // let subsystem paint
             switch (currentMode) {
-                case SPLASH:
+                case MAIN_MENU:
+                    glEnable(GL_TEXTURE_2D);
+                    glColor4f(1,1,1,1);
                     startScreen.run();
                     break;
                 case GAME:
                     // TODO Make sure this doesn't happen every loop.
                     changeDisplaySettings();
-                    gameRenderer.run();
+                    gameManager.run();
                     break;
                 default:
                     System.err.println("Not in a mode.");
@@ -95,16 +99,13 @@ public class Client {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            textureLoader = new TextureLoader();
-            textureLoader.initialise();
-
-            textRenderer = new TextRenderer();
+            TextureLoader.initialise();
 
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
             Audio.init();
             Audio.volume = Audio.Volume.LOW;
-           Audio.INTERFACEBACKGROUND.play();
+            Audio.INTERFACEBACKGROUND.play();
 
         } catch (LWJGLException le) {
             System.err.println("Game exiting - exception in initialization:");
@@ -113,9 +114,12 @@ public class Client {
         }
     }
 
-    private void beginGame(GameData gameData) {
-        gameRenderer = new GameManager(gameData, connection, playerID);
+    private void beginGame(Sendable s) {
+        GameData gameData = new GameData((InitGame) s);
+        clientReceiver.setGameData(gameData);
+        gameManager = new GameManager(gameData, connection, playerID);
         currentMode = Mode.GAME;
+        startScreen.setCurrentScreen(StartScreenRenderer.Screen.MAIN);
         Audio.INTERFACEBACKGROUND.stopClip();
         Audio.COUNTDOWN.play();
         Audio.GAMEMUSIC.pause(4);
@@ -123,27 +127,31 @@ public class Client {
 
     private void establishConnection() {
         try {
-            connection = new Connection();
-            clientReceiver = new ClientReceiver(connection, this::beginGame);
-            connection.addFunctionEvent("String",this::getID);
+            connection = new Connection_Client(this);
+            clientReceiver = new ClientReceiver(connection);
+            connection.addFunctionEvent("InitGame", this::beginGame);
+            connection.addFunctionEvent("String",this::out);
             connection.addFunctionEvent("LobbyData",startScreen::setupLobby);
+            connection.addFunctionEvent("InitPlayer", this::setupMe);
+
         } catch (IOException e) {
             System.err.println("Failed to make connection.");
         }
     }
 
-    private void getID(Object o) {
-        String information = o.toString();
-        String t = information.substring(0, 2);
+    private void setupMe(Sendable s) {
+        playerID = ((InitPlayer) s).getID();
+    }
 
-        switch (t) {
-            case "ID":
-                String idS = information.substring(2);
-                int id = Integer.parseInt(idS);
-                playerID = id;
-                clientReceiver.setID(playerID);
-                break;
-        }
+    private void out(Object o) {
+        System.out.println(o);
+    }
+
+    public void returnToMainMenu(){
+        currentMode = Mode.MAIN_MENU;
+        clientReceiver = null;
+        connection = null;
+        gameManager = null;
     }
 
     public static void main(String argv[]) {

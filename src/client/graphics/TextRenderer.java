@@ -6,9 +6,9 @@ package client.graphics;
  * Can't believe this is the equivalent of System.out.println();
  */
 
+    import client.ClientSettings;
     import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class TextRenderer {
     private final Map<Integer,String> CHARS = new HashMap<Integer,String>() {{
         put(0, " ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         put(1, "abcdefghijklmnopqrstuvwxyz");
-        put(2, "0123456789");
+        put(2, "0123456789:,.()");
         put(3, "abcdefghijklmnopqrstuvwxyz");
         //put(3, "ÄÖÜäöüß");
         put(4, " ABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -38,31 +38,12 @@ public class TextRenderer {
 
 
 
-    //Constructors
-    public TextRenderer(String path, float size) throws Exception {
-        this.font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, new File(path)).deriveFont(size);
-
-
-        //Generate buffered image
-        GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        Graphics2D graphics = gc.createCompatibleImage(1, 1, Transparency.TRANSLUCENT).createGraphics();
-        graphics.setFont(font);
-
-        fontMetrics = graphics.getFontMetrics();
-        bufferedImage = graphics.getDeviceConfiguration().createCompatibleImage((int) getFontImageWidth(),(int) getFontImageHeight(),Transparency.TRANSLUCENT);
-
-        //Generate texture
-        fontTextureId = glGenTextures();
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, fontTextureId);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,(int) getFontImageWidth(),(int) getFontImageHeight(),0, GL_RGBA, GL_UNSIGNED_BYTE, asByteBuffer());
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    public TextRenderer() {
+        this(40);
     }
 
-    public TextRenderer()  {
-        this.font = new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 40);
+    public TextRenderer(int size)  {
+        this.font = new java.awt.Font("Agency FB", java.awt.Font.BOLD, size);
         //Font font = new Font("Verdana", Font.BOLD, 32);
         //UnicodeFont f = new UnicodeFont(font);
        // this.font = f;
@@ -84,14 +65,16 @@ public class TextRenderer {
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     //Functions
-    public void drawText(String text, int x, int y) {
+    void drawText(String text, float x, float y) {
         glBindTexture(GL_TEXTURE_2D, this.fontTextureId);
         glBegin(GL_QUADS);
+        y = ClientSettings.SCREEN_HEIGHT - y;
 
-        int xTmp = x;
+        float xTmp = x;
         for (char c : text.toCharArray()) {
             float width = getCharWidth(c);
             float height = getCharHeight();
@@ -116,26 +99,28 @@ public class TextRenderer {
         }
 
         glEnd();
+        glBindTexture(GL_TEXTURE_2D, 0);
+
     }
     //Getters
-    public float getFontImageWidth() {
+    private float getFontImageWidth() {
         return (float) CHARS.values().stream().mapToDouble(e -> fontMetrics.getStringBounds(e, null).getWidth()).max().getAsDouble();
     }
-    public float getFontImageHeight() {
+    private float getFontImageHeight() {
         return (float) CHARS.keySet().size() * (this.getCharHeight());
     }
-    public float getCharX(char c) {
+    private float getCharX(char c) {
         String originStr = CHARS.values().stream().filter(e -> e.contains("" + c)).findFirst().orElse("" + c);
         return (float) fontMetrics.getStringBounds(originStr.substring(0, originStr.indexOf(c)), null).getWidth();
     }
-    public float getCharY(char c) {
+    private float getCharY(char c) {
         float lineId = (float) CHARS.keySet().stream().filter(i -> CHARS.get(i).contains("" + c)).findFirst().orElse(0);
         return this.getCharHeight() * lineId;
     }
-    public float getCharWidth(char c) {
+    private float getCharWidth(char c) {
         return fontMetrics.charWidth(c);
     }
-    public float getCharHeight() {
+    private float getCharHeight() {
         return (float) (fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
     }
     public Color getColour()
@@ -149,7 +134,7 @@ public class TextRenderer {
         this.colour = col;
     }
     //Conversions
-    public ByteBuffer asByteBuffer() {
+    private ByteBuffer asByteBuffer() {
 
         ByteBuffer byteBuffer;
 

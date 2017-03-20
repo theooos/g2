@@ -3,8 +3,9 @@ package client.graphics;
 import static org.lwjgl.opengl.GL11.*;
 
 import client.ClientSettings;
+import objects.GameData;
+import server.game.Scoreboard;
 import server.game.Vector2;
-
 
 /**
  * Created by peran on 3/5/17.
@@ -17,14 +18,20 @@ class Draw {
     private double displayHealth;
     private double oldHeat;
     private double displayHeat;
+    private GameData gameData;
+    private TextRenderer smallText;
+    private TextRenderer largeText;
+    private int playerID;
 
-    Draw() {
+    Draw(GameData gd, int playerID) {
+        this.playerID = playerID;
         this.width = ClientSettings.SCREEN_WIDTH;
         this.height = ClientSettings.SCREEN_HEIGHT;
         oldHealth = 0;
         displayHealth = 100;
         oldHeat = 0;
         displayHeat = 0;
+        gameData = gd;
     }
 
     void drawQuad(Vector2 centre, float rotation, float radius, float red, float green, float blue) {
@@ -73,7 +80,6 @@ class Draw {
 
     private void flashDamage(float intensity, boolean hurt) {
         intensity = Math.min(1, intensity);
-        glBegin(GL_QUAD_STRIP);
         float buffer = 60;
         float red = 0;
         float green = 1;
@@ -82,28 +88,7 @@ class Draw {
             green = 0;
         }
 
-        glColor4f(red, green, 0, intensity/2);
-        glVertex2f(0,0);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(buffer, buffer);
-        glColor4f(red, green, 0, intensity);
-        glVertex2f(width,0);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(width-buffer, buffer);
-        glColor4f(red, green, 0, intensity);
-        glVertex2f(width, height);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(width-buffer, height-buffer);
-        glColor4f(red, green, 0, intensity);
-        glVertex2f(0,height);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(buffer, height-buffer);
-        glColor4f(red, green, 0, intensity/2);
-        glVertex2f(0,0);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(buffer, buffer);
-
-        glEnd();
+        invertedQuadGlow(0, height, width, height, buffer, red, green, 0, intensity);
     }
 
     void drawAura(Vector2 centre, float radius, float strokeWidth, float red, float green, float blue) {
@@ -131,14 +116,134 @@ class Draw {
         glEnd();
     }
 
-    void shadeScreen() {
-        glColor4f(1,1,1,0.6f);
-        verticalDraw(0,0,width,height);
+    private void invertedQuadGlow(float xStart, float yStart, float rectWidth, float rectHeight, float strokeWidth, float red, float green, float blue, float intensity) {
+        yStart = height-yStart;
+
+        glBegin(GL_QUAD_STRIP);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart,yStart);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+strokeWidth, yStart+strokeWidth);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart+rectWidth,yStart);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+rectWidth-strokeWidth, yStart+strokeWidth);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart+rectWidth, yStart+rectHeight);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+rectWidth-strokeWidth, yStart+rectHeight-strokeWidth);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart,yStart+rectHeight);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+strokeWidth, yStart+rectHeight-strokeWidth);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart,yStart);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+strokeWidth, yStart+strokeWidth);
+        glEnd();
+    }
+
+    void drawScoreboard(boolean shadeScreen) {
+        if (shadeScreen) shadeScreen();
+        Scoreboard sb = gameData.getScoreboard();
+
+        if (smallText == null) {
+            smallText = new TextRenderer(20);
+        }
+        if (largeText == null) {
+            largeText = new TextRenderer(25);
+        }
+
+        float intensity = 0.8f;
+        glDisable(GL_TEXTURE_2D);
+
+        int[] scores = sb.getPlayerScores();
+        float xStart = 800/6;
+        float yStart = 150;
+        float rectWidth = xStart*2;
+        float rectHeight = 50;
+
+        float red = 0;
+        float green = 1;
+        float blue = 0;
+
+        glColor4f(red, green, blue, intensity);
+        drawRect(xStart, yStart, rectWidth, rectHeight);
+
+        drawText(largeText, "Landscapers", xStart+10, yStart+3*rectHeight/4+3);
+        drawText(largeText, ((Integer) sb.getTeam1Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam1Score()).toString().length()*18-10, yStart+3*rectHeight/4+3);
+
+        glColor4f(1, 0, 1, intensity);
+        drawRect(xStart+rectWidth, yStart, rectWidth, rectHeight);
+        drawText(largeText, "The Enclave", xStart+rectWidth+10, yStart+3*rectHeight/4+2);
+        rectWidth *= 2;
+        drawText(largeText, ((Integer) sb.getTeam0Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam0Score()).toString().length()*18-10, yStart+3*rectHeight/4+3);
+
+        yStart += rectHeight+20;
+
+        int[] sortedScores = scores.clone();
+        int removed = 0;
+        while (removed < sortedScores.length) {
+            int max = Integer.MIN_VALUE;
+            int index = -1;
+            for (int i = 0; i < sortedScores.length; i++) {
+                if (sortedScores[i] > max) {
+                    index = i;
+                    max = sortedScores[i];
+                }
+            }
+            if (index != -1) {
+                if (gameData.getPlayer(index).getTeam() == 0) {
+                    red = 1;
+                    green = 0;
+                    blue = 1;
+                }
+                else {
+                    red = 0;
+                    green = 1;
+                    blue = 0;
+                }
+                glColor4f(red,green,blue, intensity);
+                drawRect(xStart, yStart, rectWidth, rectHeight);
+
+                String name = gameData.getLobbyData().getPlayers()[index].getName().toString();
+                if (gameData.getLobbyData().getPlayers()[index].isAI()) name += " (AI)";
+
+                drawText(smallText, name, xStart+10, yStart+3*rectHeight/4+1);
+                drawText(smallText, ((Integer) max).toString(), xStart+rectWidth-((Integer) max).toString().length()*15-10, yStart+3*rectHeight/4+1);
+
+                if (index == playerID) drawText(smallText, " (YOU)", xStart+12+name.length()*12, yStart+3*rectHeight/4);;
+
+                yStart+=rectHeight;
+
+                if (index == playerID) {
+                    invertedQuadGlow(xStart,yStart,rectWidth,rectHeight,10,1,1,1,1);
+                }
+
+                sortedScores[index] = Integer.MIN_VALUE;
+            }
+            else {
+                break;
+            }
+            removed++;
+        }
+    }
+
+    private void drawText(TextRenderer tx, String s, float x, float y) {
+        glEnable(GL_TEXTURE_2D);
+        glColor4f(0,0,0,1);
+        tx.drawText(s, x, y);
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    private void shadeScreen() {
+        glColor4f(1,1,1,0.3f);
+        drawRect(0,0,width,height);
     }
 
     void colourBackground(int phase) {
         glColor4f(phase*0.1f,0,(1-phase)*0.1f,1f);
-        verticalDraw(0,0,width,height);
+        drawRect(0,0,width,height);
     }
 
     void drawHeatBar(double heat, double maxHeat) {
@@ -168,7 +273,7 @@ class Draw {
         float green = (204f/255f)*(1-heatRatio);
 
         glColor3f(heatRatio, green, 0f);
-        verticalDraw(width - (buffer+heatWidth), buffer+(1-heatRatio)*maxHeight, heatWidth, maxHeight*heatRatio);
+        drawRect(width - (buffer+heatWidth), buffer+(1-heatRatio)*maxHeight, heatWidth, maxHeight*heatRatio);
     }
 
     void drawHealthBar(double health, double maxHealth) {
@@ -205,7 +310,7 @@ class Draw {
         float healthRatio = (float) (displayHealth/maxHealth);
         float green = (204f/255f)*healthRatio;
         glColor3f(1-healthRatio, green, 0f);
-        verticalDraw(buffer, buffer+(1-healthRatio)*maxHeight, healthWidth, maxHeight*healthRatio);
+        drawRect(buffer, buffer+(1-healthRatio)*maxHeight, healthWidth, maxHeight*healthRatio);
     }
 
     void drawCircle(float cx, float cy, float r, int num_segments) {
@@ -237,7 +342,7 @@ class Draw {
         glEnd();
     }
 
-    private void verticalDraw(float xStart, float yStart, float rectWidth, float rectHeight) {
+    private void drawRect(float xStart, float yStart, float rectWidth, float rectHeight) {
         glBegin(GL_QUADS);
         glVertex2f(checkX(xStart), checkY(height - yStart));
         glVertex2f(checkX(xStart + rectWidth), checkY(height - yStart));
