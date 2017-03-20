@@ -9,7 +9,7 @@ public class WeaponShotgun extends Weapon {
     public WeaponShotgun() {
         super();
         name = "Shotgun";
-        shotType = new DistDropOffProjectile(30,35,15,new Vector2(0,0), new Vector2(0,0), 10, 0, null, 0);
+        shotType = new DistDropOffProjectile(30,30,15,new Vector2(0,0), new Vector2(0,0), 10, 0, null, 0);
         numProjectiles = 7;
         //the max inaccuracy from recoil alone
         maxRecoil = 5;
@@ -25,7 +25,7 @@ public class WeaponShotgun extends Weapon {
         //the amount of heat each firing of the weapon takes up
         heatPerShot = 25;
         //min time after firing a shot till the gun can fire again
-        refireTime = 15;
+        refireTime = 18;
         //whether the player can hold down the trigger
         fullyAuto = false;
     }

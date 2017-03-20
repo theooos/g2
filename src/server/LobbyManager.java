@@ -43,6 +43,6 @@ class LobbyManager {
     }
 
     private Lobby createLobby() {
-        return new Lobby(2);
+        return new Lobby(4);
     }
 }
