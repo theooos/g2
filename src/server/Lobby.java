@@ -192,7 +192,10 @@ class Lobby {
                 break;
             }
         }
-        if(connectionDied) sendAllNewLobbyInfo();
+        if(connectionDied) {
+            sendAllNewLobbyInfo();
+            if (connections.size() < minSize) stopCountdown();
+        }
     }
 
     /**

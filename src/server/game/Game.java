@@ -290,7 +290,7 @@ public class Game implements Runnable {
 
     private void dealWithConnectionLoss(Connection_Server p) {
         out("Connection to "+p+"dropped.");
-        //TODO THIS.
+        playerConnections.remove(p);
     }
 
     private void shrinkRadius(MovableEntity e) {
