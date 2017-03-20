@@ -6,6 +6,10 @@ import objects.LobbyData;
 import objects.Sendable;
 import server.game.Game;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -35,20 +39,56 @@ class Lobby {
         countdownRunning = false;
         connections = new HashMap<>();
 
+        Random rand = new Random();
+
         //used to check if a player has occupied that ID
         used = new boolean[maxSize];
         for (int i = 0; i < used.length; i++) {
             used[i] = false;
         }
+
+        //Set up the name files for name selection and add names to ArrayLists
+        ArrayList<String> enclaveNames = new ArrayList<>();
+        ArrayList<String> landscapeNames = new ArrayList<>();
+        try {
+            BufferedReader eNames = new BufferedReader(new FileReader(Lobby.class.getResource("../EnclaveNames.txt").getFile()));
+            String line = eNames.readLine();
+            while (line != null) {
+                System.out.println(line);
+                enclaveNames.add(line);
+                line = eNames.readLine();
+            }
+            eNames.close();
+            BufferedReader lNames = new BufferedReader(new FileReader(Lobby.class.getResource("../LandscapersNames.txt").getFile()));
+            line = lNames.readLine();
+            while (line != null) {
+                landscapeNames.add(line);
+                line = lNames.readLine();
+            }
+            lNames.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("Failed to find name files\n"+e);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         players = new InitPlayer[maxSize];
         for (int i = 0; i < players.length; i++) {
-            players[i] = new InitPlayer(i, new objects.String("Test"), true, i%2);
+            String name;
+            if (i%2 == 0) {
+                name = enclaveNames.get(rand.nextInt(enclaveNames.size()));
+            }
+            else {
+                name = landscapeNames.get(rand.nextInt(landscapeNames.size()));
+            }
+            players[i] = new InitPlayer(i, new objects.String(name), true, i%2);
         }
+
+        enclaveNames.clear();
+        landscapeNames.clear();
 
         this.maxSize = maxSize;
         minSize = maxSize/2;
         t = new Timer();
-        Random rand = new Random();
         mapID = rand.nextInt(mapMax);
         System.out.println("Map ID: " +mapID);
         gameRunning = false;
@@ -70,7 +110,8 @@ class Lobby {
         for (int i = 0; i < used.length; i++) {
             if (!used[i]) {
                 connections.put(i, c);
-                players[i] = new InitPlayer(i, new objects.String("test"), false, i%2);
+                objects.String name = players[i].getName();
+                players[i] = new InitPlayer(i, name, false, i%2);
                 c.send(players[i]);
                 sendAllNewLobbyInfo();
                 if (connections.size() >= minSize) {

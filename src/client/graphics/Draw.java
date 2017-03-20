@@ -208,6 +208,7 @@ class Draw {
 
                 String name = gameData.getLobbyData().getPlayers()[index].getName().toString();
                 if (gameData.getLobbyData().getPlayers()[index].isAI()) name += " (AI)";
+                else if (index == playerID) name += " (YOU)";
 
                 drawText(smallText, name, xStart+10, yStart+3*rectHeight/4+1);
                 drawText(smallText, ((Integer) max).toString(), xStart+rectWidth-((Integer) max).toString().length()*15-10, yStart+3*rectHeight/4+1);
