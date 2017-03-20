@@ -139,13 +139,20 @@ class Draw {
     void drawScoreboard() {
         shadeScreen();
         Scoreboard sb = gameData.getScoreboard();
-        TextRenderer textRenderer = new TextRenderer(15);
+        //TextRenderer textRenderer = new TextRenderer(15);
 
         int[] scores = sb.getPlayerScores();
         float xStart = width/6;
         float yStart = height/4;
         float rectWidth = xStart*4;
         float rectHeight = 70;
+
+        glColor3f(1,0,1);
+
+        rectDraw(xStart, yStart, rectWidth, rectHeight);
+
+        rectDraw(100, 200, 100, 100);
+
 
         int[] sortedScores = scores.clone();
         int removed = 0;
@@ -165,9 +172,8 @@ class Draw {
                 else {
                     glColor3f(0,1,0);
                 }
-                rectDraw(xStart, yStart, rectWidth, rectHeight);
                 yStart+=rectHeight;
-                textRenderer.drawText("Player " + index + " Score: "+max, xStart+10, yStart-10);
+                //TextTest.drawString("Player " + index + " Score: "+max, xStart+10, yStart-10, 100, 100);
 
                 sortedScores[index] = Integer.MIN_VALUE;
             }
@@ -186,6 +192,7 @@ class Draw {
     void colourBackground(int phase) {
         glColor4f(phase*0.1f,0,(1-phase)*0.1f,1f);
         rectDraw(0,0,width,height);
+
     }
 
     void drawHeatBar(double heat, double maxHeat) {

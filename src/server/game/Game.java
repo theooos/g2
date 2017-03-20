@@ -207,6 +207,7 @@ public class Game implements Runnable {
                 if (pu.getType() == PowerUp.Type.health) {
                     p.setHealth(p.getMaxHealth());
                 }
+
                 else if (pu.getType() == PowerUp.Type.heat) {
                     p.setWeaponOutHeat(0);
                     p.getActiveWeapon().setCurrentHeat(0);
