@@ -14,7 +14,7 @@ public class NewConnectionListener implements Runnable{
 
     boolean alive = true;
     private ServerSocket serverSocket;
-    private ArrayList<Connection> waitingClients = new ArrayList<>();
+    private ArrayList<Connection_Server> waitingClients = new ArrayList<>();
 
     /**
      * Constructor.
@@ -34,7 +34,7 @@ public class NewConnectionListener implements Runnable{
                 // Hangs here until connection appears.
                 out("Waiting for new connection...");
                 Socket s = serverSocket.accept();
-                Connection conn = new Connection(s);
+                Connection_Server conn = new Connection_Server(s);
                 addWaitingClient(conn);
             }
         } catch (IOException e) {
@@ -46,7 +46,7 @@ public class NewConnectionListener implements Runnable{
      * Adds a connection to an ArrayList in a synchronised way, ready for another class to pop.
      * @param conn The connection to add.
      */
-    private synchronized void addWaitingClient(Connection conn) {
+    private synchronized void addWaitingClient(Connection_Server conn) {
         waitingClients.add(conn);
     }
 
@@ -54,9 +54,9 @@ public class NewConnectionListener implements Runnable{
      * This pops the next connection from the ArrayList.
      * @return The new connection.
      */
-    public synchronized Connection getClient(){
+    public synchronized Connection_Server getClient(){
         if(waitingClients.size() != 0){
-            Connection nextClient = waitingClients.get(0);
+            Connection_Server nextClient = waitingClients.get(0);
             waitingClients.remove(0);
             return nextClient;
         }

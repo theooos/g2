@@ -2,6 +2,7 @@ package client.graphics;
 
 import client.ClientSettings;
 import client.audio.Audio;
+import networking.Connection_Client;
 import objects.*;
 import networking.Connection;
 import org.lwjgl.Sys;
@@ -28,14 +29,14 @@ public class GameManager {
     private int myPlayerID;
 
     private GameData gameData;
-    private Connection conn;
+    private Connection_Client conn;
     private CollisionManager collisions;
 
     private boolean healthbar;
     private boolean gameMusic;
     private boolean muted;
 
-    public GameManager(GameData gd, Connection conn, int playerID) {
+    public GameManager(GameData gd, Connection_Client conn, int playerID) {
         super();
         this.conn = conn;
         this.gameData = gd;

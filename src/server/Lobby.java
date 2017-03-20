@@ -1,6 +1,7 @@
 package server;
 
 import networking.Connection;
+import networking.Connection_Server;
 import objects.LobbyData;
 import objects.Sendable;
 import server.game.Game;
@@ -14,7 +15,7 @@ import java.util.*;
 class Lobby {
     private int maxSize;
     private int minSize;
-    private ArrayList<Connection> players;
+    private ArrayList<Connection_Server> players;
     private boolean countdownRunning;
     private int countdown;
     private Timer t;
@@ -47,7 +48,7 @@ class Lobby {
      * Adds a new player to the lobby
      * @param c the connected player
      */
-    void addConnection(Connection c) {
+    void addConnection(Connection_Server c) {
         if(players.add(c)){
             sendAllNewLobbyInfo();
             if (players.size() >= minSize) {
@@ -111,9 +112,17 @@ class Lobby {
     }
 
     private void sendToAll(Sendable sendable){
-        for (Connection c: players) {
-            c.send(sendable);
+        boolean connectionDied = false;
+        for (Connection_Server c: players) {
+            try {
+                c.send(sendable);
+            } catch (Exception e) {
+                players.remove(c);
+                connectionDied = true;
+                break;
+            }
         }
+        if(connectionDied) sendAllNewLobbyInfo();
     }
 
     /**
