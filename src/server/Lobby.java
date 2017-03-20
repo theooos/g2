@@ -88,10 +88,9 @@ class Lobby {
         this.maxSize = maxSize;
         minSize = maxSize/2;
         t = new Timer();
-        mapID = rand.nextInt(mapMax) + 1;
         //mapID = 2;
         System.out.println(mapID);
-        mapID = rand.nextInt(mapMax);
+        mapID = rand.nextInt(mapMax) + 1;
         System.out.println("Map ID: " +mapID);
         gameRunning = false;
     }

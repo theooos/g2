@@ -46,6 +46,7 @@ public class Check {
             return orbNearbyCheck();
         }
         else if (mode == CheckMode.PROXIMITY) {
+            if (intel instanceof PlayerIntel) return false;
             return proximityCheck();
         }
         else if (mode == CheckMode.RANGE) {
@@ -83,8 +84,11 @@ public class Check {
             ((PlayerIntel)intel).setPhaseShiftReq(true);
             return true;
         }
-        ((PlayerIntel)intel).setPhaseShiftReq(false);
-        return false;
+        else {
+            ((PlayerIntel)intel).setPhaseShiftReq(false);
+            return false;
+        }
+
     }
 
     private boolean proximityCheck(){
