@@ -20,7 +20,7 @@ public class StartScreenRenderer {
     private InterfaceTexture background = new InterfaceTexture(ISprite.BACKGROUND);
     private InterfaceTexture controls;
     private InterfaceTexture about;
-    private InterfaceTexture about_text;
+    private InterfaceTexture description;
     private InterfaceTexture go_back;
     private InterfaceTexture join_game;
 
@@ -28,6 +28,7 @@ public class StartScreenRenderer {
     private static Layer controlsLayer = new Layer();
     private static Layer aboutLayer = new Layer();
     private static Layer loadingLayer = new Layer();
+    private static Layer lobbyLayer = new Layer();
 
     private LobbyData lobbyData;
 
@@ -72,9 +73,9 @@ public class StartScreenRenderer {
     private void readyInterfaceLayer() {
         InterfaceTexture title = new InterfaceTexture(ISprite.TITLE);
         title.setRatio(0.5f);
-        join_game = new InterfaceTexture(ISprite.LOBBY);
-        controls = new InterfaceTexture(ISprite.CONTROLS);
-        about = new InterfaceTexture(ISprite.ABOUT);
+        join_game = new InterfaceTexture(ISprite.JOIN_LOBBY_BUTTON);
+        controls = new InterfaceTexture(ISprite.CONTROLS_BUTTON);
+        about = new InterfaceTexture(ISprite.ABOUT_BUTTON);
 
         background.spawn(0, 400f, 300f, interfaceLayer);
         title.spawn(1, 400f, 435f, interfaceLayer);
@@ -86,26 +87,32 @@ public class StartScreenRenderer {
     private void readyControlsLayer(){
         InterfaceTexture controls_guide = new InterfaceTexture(ISprite.CONTROLS_GUIDE);
         controls_guide.setRatio(0.5f);
-        go_back = new InterfaceTexture(ISprite.GOBACK);
+        go_back = new InterfaceTexture(ISprite.BACK_BUTTON);
 
         controls_guide.spawn(0, 400f, 300f, controlsLayer);
         go_back.spawn(1, 180f, 550f, controlsLayer);
     }
 
     private void readyAboutLayer() {
-        about_text = new InterfaceTexture(ISprite.ABOUTTEXT);
-        go_back = new InterfaceTexture(ISprite.GOBACK);
+        description = new InterfaceTexture(ISprite.DESCRIPTION);
+        description.setRatio(0.5f);
+        go_back = new InterfaceTexture(ISprite.BACK_BUTTON);
 
-        about_text.spawn(0, 300f, 100f, aboutLayer);
-        go_back.spawn(1, 300f, 450f, aboutLayer);
+        description.spawn(0, 400f, 300f, aboutLayer);
+        go_back.spawn(1, 640f, 510f, aboutLayer);
     }
 
     private void readyLoadingLayer() {
-        InterfaceTexture temporary_filler = new InterfaceTexture(ISprite.ORB_P1);
-        temporary_filler.spawn(0, 300f, 100f, loadingLayer);
+        InterfaceTexture loading = new InterfaceTexture(ISprite.LOADING);
+        loading.setRatio(0.5f);
+        loading.spawn(0, 400f, 300f, loadingLayer);
     }
 
     public void setupLobby(Sendable sendable) {
+        InterfaceTexture lobby = new InterfaceTexture(ISprite.LOBBY);
+        lobby.setRatio(0.5f);
+        lobby.spawn(0,400f, 300f,lobbyLayer);
+        go_back.spawn(1,640f,510f,lobbyLayer);
         lobbyData = (LobbyData) sendable;
         currentScreen = Screen.LOBBY;
     }
@@ -130,16 +137,7 @@ public class StartScreenRenderer {
     }
 
     private void renderLobby() {
-        int xAlign = 50;
-        TextRenderer textRenderer = new TextRenderer();
-        textRenderer.drawText("Map: " + lobbyData.getMapID(), xAlign, 540);
-
-        int yCoord = 500;
-        textRenderer.drawText("Players: ", xAlign, yCoord);
-        for (Integer player : lobbyData.getPlayers()) {
-            yCoord = yCoord - 30;
-            textRenderer.drawText(player.toString(), xAlign, yCoord);
-        }
+        lobbyLayer.render();
     }
 
 
