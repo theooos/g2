@@ -67,6 +67,7 @@ public class PlayerBrain extends AIBrain {
         behaviours.addBehaviour(new ForceShiftPhase(intel, this), "ForceShiftPhase");
         behaviours.addBehaviour(new Attack(intel, this), "Attack");
         behaviours.addBehaviour(new Swat(intel, this, loadout), "Swat");
+        behaviours.addBehaviour(new Fetch(intel, this), "Fetch");
     }
     @Override
     protected void configureBehaviours() {
@@ -102,8 +103,18 @@ public class PlayerBrain extends AIBrain {
         switch (curEmotion) {
 
             case INTIMIDATED:
-                flee.doAction();
-                if (flee.hasFinished()) intel.setEscaped(true);
+                if (behaviours.getBehaviour("Fetch").isRunning()){
+                    System.out.println("Running fetch.");
+                    behaviours.getBehaviour("Fetch").doAction();
+                }
+                else {
+                    System.out.println("Running flee.");
+                    flee.doAction();
+                }
+                if (flee.hasFinished() || behaviours.getBehaviour("Fetch").hasFinished()){
+                    System.out.println("Dicking around");
+                    curEmotion = AT_REST;   // Force more action if still intimidated next tick.
+                }
                 break;
 
             case IRRITATED:
@@ -209,7 +220,17 @@ public class PlayerBrain extends AIBrain {
             case INTIMIDATED:
                 System.out.println("Intimidated.");
                 this.stress = STRESS_INTIMIDATED;
-                flee.start();
+
+                // If there's a power up available and chance allows:
+                if (check.doCheck(Check.CheckMode.HEALTH_UP_VIABLE) &&
+                        gen.nextDouble() <= AIConstants.CHANCE_PURSUE_HEALTH) {
+                    System.out.println("Pursuing power up.");
+                    behaviours.getBehaviour("Fetch").start();
+                }
+                else {
+                    System.out.println("Fleeing.");
+                    flee.start();
+                }
                 break;
 
             case VENGEFUL:

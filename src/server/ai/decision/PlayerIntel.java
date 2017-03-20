@@ -14,7 +14,7 @@ public class PlayerIntel extends Intel {
 
     private boolean escaped;
     private boolean phaseShiftFailed;
-    private boolean orbInOtherPhase;
+    private boolean phaseShiftReq;
     private MovableEntity entityBuffer;
     private Vector2 lastCursorPos;
 
@@ -50,12 +50,12 @@ public class PlayerIntel extends Intel {
         return sight.getOrbsInSight(ent.getPos().toPoint(), ent.getPhase(), 0);
     }
 
-    public boolean orbInOtherPhase(){
-        return orbInOtherPhase;
+    public boolean isPhaseShiftReq(){
+        return phaseShiftReq;
     }
 
     public void setPhaseShiftReq(boolean req){
-        this.orbInOtherPhase = req;
+        this.phaseShiftReq = req;
     }
 
     public void setEscaped(boolean escaped){
@@ -70,7 +70,7 @@ public class PlayerIntel extends Intel {
         super.resetIntel();
         this.escaped = false;
         this.phaseShiftFailed = false;
-        this.orbInOtherPhase = false;
+        this.phaseShiftReq = false;
     }
 
     public void setRelevantEntity(MovableEntity relEnt){
@@ -87,5 +87,9 @@ public class PlayerIntel extends Intel {
 
     public void setLastCursorPos(Vector2 thisPos){
         this.lastCursorPos = thisPos;
+    }
+
+    public void forceRelevantEntity(MovableEntity relEnt) {
+        this.relevantEnt = relEnt;
     }
 }

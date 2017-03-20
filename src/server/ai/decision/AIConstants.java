@@ -14,6 +14,7 @@ public final class AIConstants {
     public static final double CHANCE_STRATEGIC_ERR = 0.4;
     public static final double CHANCE_STRATEGIC_RETHINK = 0.25;
     public static final double CHANCE_CORRECT_PHASE_SHIFT = 0.6;
+    public static final double CHANCE_PURSUE_HEALTH = 1;
 
     public static final int REACTION_TIME_HIGH = 15;
     public static final int REACTION_TIME_AVG = 12;
@@ -37,4 +38,8 @@ public final class AIConstants {
     public static final float SHOTGUN_OPT = 75;
 
     public static final float WALL_WIDTH = 6;
+
+    public static final double EASY_MULT = 0.7;
+    public static final double MED_MULT = 1.0;
+    public static final double HARD_MULT = 1.4;
 }

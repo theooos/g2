@@ -18,7 +18,7 @@ public class Check {
         RANGE,
         TARGET_MOVED,
         CLOSEST_ENEMY,
-        HEALTH_UP_NEAR
+        HEALTH_UP_VIABLE
     }
 
     private final int LOW_HEALTH_THRESHOLD = 30;
@@ -61,8 +61,8 @@ public class Check {
             case CLOSEST_ENEMY:
                 return closestEnemyCheck();
 
-            case HEALTH_UP_NEAR:
-                return healthNearCheck();
+            case HEALTH_UP_VIABLE:
+                return healthPowerUpViable();
 
             default:
                 return false;
@@ -182,12 +182,19 @@ public class Check {
 
     }
 
-    private boolean healthNearCheck(){
+    private boolean healthPowerUpViable(){
         boolean found = false;
         for (java.util.Map.Entry<Integer, PowerUp> e : intel.getPowerUps().entrySet()){
             boolean inPhase = e.getValue().getPhase() == intel.ent().getPhase();
-            if (e.getValue().getType() == PowerUp.Type.health && inPhase && e.getValue().isAlive()){
+            if (e.getValue().getType() == PowerUp.Type.health && e.getValue().isAlive()){
+                if (inPhase) {
+                    ((PlayerIntel)intel).setPhaseShiftReq(false);
+                }
+                else {
+                    ((PlayerIntel)intel).setPhaseShiftReq(true);
+                }
                 found = true;
+                ((PlayerIntel)intel).forceRelevantEntity(e.getValue());
                 break;
             }
         }

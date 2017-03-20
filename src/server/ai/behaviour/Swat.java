@@ -44,7 +44,7 @@ public class Swat extends PlayerTask {
         this.target = (Orb) intel.getRelevantEntity();
 
         // Is the Orb in this phase? If not, shift phase - if you remember to.
-        if (intel.orbInOtherPhase() && gen.nextDouble() < AIConstants.CHANCE_CORRECT_PHASE_SHIFT){
+        if (intel.isPhaseShiftReq() && gen.nextDouble() < AIConstants.CHANCE_CORRECT_PHASE_SHIFT){
             brain.getBehaviour("ForceShiftPhase").run();
         }
 
@@ -86,7 +86,7 @@ public class Swat extends PlayerTask {
     public void end(){
 
         // Return to original phase if required.
-        if (intel.orbInOtherPhase()){
+        if (intel.isPhaseShiftReq()){
             brain.getBehaviour("ForceShiftPhase").run();
         }
         intel.setPhaseShiftReq(false);
