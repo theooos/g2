@@ -53,7 +53,6 @@ public class Attack extends PlayerTask {
     public void doAction(){
 
         if (!target.isAlive()){
-            System.out.println("AI attack success!");
             me.setFiring(false);
             end();
             return;

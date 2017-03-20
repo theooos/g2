@@ -51,7 +51,6 @@ public class OrbBrain extends AIBrain {
         check();
 
         if (!intel.ent().isAlive()){
-            System.out.println("Orb dead.");
             return;
         }
 

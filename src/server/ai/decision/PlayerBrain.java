@@ -90,7 +90,6 @@ public class PlayerBrain extends AIBrain {
         // Do nothing if dead.
         if (!intel.ent().isAlive()) {
             newEmotion = AT_REST;
-            System.out.println("Playersfsssw dead.");
             return;
         }
 
