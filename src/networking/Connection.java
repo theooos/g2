@@ -1,5 +1,6 @@
 package networking;
 
+import client.Client;
 import client.ClientSettings;
 import objects.Sendable;
 
@@ -23,8 +24,8 @@ public class Connection {
     /**
      * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
      */
-    public Connection() throws IOException {
-        if (establishSocket()) establishConnection();
+    public Connection(Client client) throws IOException {
+        if (establishSocket()) establishConnection(client);
     }
 
     /**
@@ -57,14 +58,23 @@ public class Connection {
      * Creates the input and output streams.
      */
     private boolean establishConnection() throws IOException {
-        int attempts = 3;
+        toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
+        fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler, null);
 
-        retries:
-        for (int i = 1; i <= attempts; i++) {
-            toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
-            fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler);
-            break retries;
-        }
+        out("Connection made to server.");
+        new Thread(handler).start();
+        new Thread(toConnection).start();
+        new Thread(fromConnection).start();
+        return true;
+    }
+
+    /**
+     * Creates the input and output streams.
+     * @param client
+     */
+    private boolean establishConnection(Client client) throws IOException {
+        toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
+        fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler, client);
 
         out("Connection made to server.");
         new Thread(handler).start();
@@ -76,7 +86,7 @@ public class Connection {
     /**
      * Closes all streams.
      */
-    private void closeConnection() {
+    public void closeConnection() {
         try {
             toConnection.close();
             fromConnection.close();
@@ -107,18 +117,6 @@ public class Connection {
      */
     public void send(Sendable obj) {
         toConnection.queueForSending(obj);
-    }
-
-    /**
-     * This re-initialises the connection in case of an error.
-     */
-    public void resetConnection() {
-        closeConnection();
-        try {
-            establishConnection();
-        } catch (Exception e) {
-            System.err.println("Failed to reset connection.");
-        }
     }
 
     public void addFunctionEvent(String className, Consumer<Sendable> consumer) {

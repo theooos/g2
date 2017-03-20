@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  */
 public class StartScreenRenderer {
 
-    private enum Screen {MAIN, ABOUT, CONTROLS, LOADING, LOBBY}
+    public enum Screen {MAIN, ABOUT, CONTROLS, LOADING, LOBBY}
 
     private Screen currentScreen = Screen.MAIN;
 
@@ -187,5 +187,9 @@ public class StartScreenRenderer {
         if (!hasClicked) {
             // do stuff
         }
+    }
+
+    public void setCurrentScreen(Screen screen){
+        currentScreen = screen;
     }
 }

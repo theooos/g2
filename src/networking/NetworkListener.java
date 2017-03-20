@@ -1,5 +1,6 @@
 package networking;
 
+import client.Client;
 import objects.Sendable;
 import server.game.Player;
 
@@ -14,11 +15,13 @@ import static networking.Connection.out;
  */
 class NetworkListener implements Runnable {
 
+    private Client client;
     private NetworkEventHandler handler;
     private ObjectInputStream fromConnection;
     private boolean isRunning;
 
-    NetworkListener(ObjectInputStream fromConnection, NetworkEventHandler handler){
+    NetworkListener(ObjectInputStream fromConnection, NetworkEventHandler handler, Client client){
+        this.client = client;
         this.fromConnection = fromConnection;
         this.handler = handler;
     }
@@ -36,9 +39,8 @@ class NetworkListener implements Runnable {
 //                } catch (Exception e){}
                 handler.queueForExecution(received);
             } catch (IOException e) {
-                out("NetworkListener's connection with the server broke.");
-                out(e.getMessage());
-                isRunning = false;
+                out("Connection broke. Client returning to main menu.");
+                if(client != null) client.returnToMainMenu();
             } catch (ClassNotFoundException e) {
                 out("NetworkListener failed to interpret object type.");
                 out(e.getMessage());

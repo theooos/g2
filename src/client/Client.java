@@ -20,16 +20,15 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Client {
 
-    public enum Mode {SPLASH, GAME}
-    private Mode currentMode = Mode.SPLASH;
+    public enum Mode {MAIN_MENU, GAME}
+    private Mode currentMode = Mode.MAIN_MENU;
 
     private Connection connection;
     private ClientReceiver clientReceiver;
     private int playerID;
 
-    private TextRenderer textRenderer;
     private StartScreenRenderer startScreen;
-    private GameManager gameRenderer;
+    private GameManager gameManager;
 
     private boolean running = true;
 
@@ -47,13 +46,15 @@ public class Client {
 
             // let subsystem paint
             switch (currentMode) {
-                case SPLASH:
+                case MAIN_MENU:
+                    glEnable(GL_TEXTURE_2D);
+                    glColor4f(1,1,1,1);
                     startScreen.run();
                     break;
                 case GAME:
                     // TODO Make sure this doesn't happen every loop.
                     changeDisplaySettings();
-                    gameRenderer.run();
+                    gameManager.run();
                     break;
                 default:
                     System.err.println("Not in a mode.");
@@ -98,8 +99,6 @@ public class Client {
 
             TextureLoader.initialise();
 
-            textRenderer = new TextRenderer();
-
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
             Audio.init();
@@ -116,8 +115,9 @@ public class Client {
     private void beginGame(Sendable s) {
         GameData gameData = new GameData((InitGame) s);
         clientReceiver.setGameData(gameData);
-        gameRenderer = new GameManager(gameData, connection, playerID);
+        gameManager = new GameManager(gameData, connection, playerID);
         currentMode = Mode.GAME;
+        startScreen.setCurrentScreen(StartScreenRenderer.Screen.MAIN);
         Audio.INTERFACEBACKGROUND.stopClip();
         Audio.COUNTDOWN.play();
         Audio.GAMEMUSIC.pause(4);
@@ -125,7 +125,7 @@ public class Client {
 
     private void establishConnection() {
         try {
-            connection = new Connection();
+            connection = new Connection(this);
             clientReceiver = new ClientReceiver(connection);
             connection.addFunctionEvent("InitGame", this::beginGame);
             connection.addFunctionEvent("String",this::getID);
@@ -147,6 +147,14 @@ public class Client {
                 clientReceiver.setID(playerID);
                 break;
         }
+    }
+
+    public void returnToMainMenu(){
+        currentMode = Mode.MAIN_MENU;
+        connection.closeConnection();
+        clientReceiver = null;
+        connection = null;
+        gameManager = null;
     }
 
     public static void main(String argv[]) {
