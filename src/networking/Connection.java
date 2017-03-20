@@ -14,35 +14,19 @@ import java.util.function.Consumer;
 /**
  * This holds the connection between Server and Client, and can be used by either.
  */
-public class Connection {
+public abstract class Connection {
 
-    private Socket socket;
-    private NetworkSender toConnection;
-    private NetworkListener fromConnection;
-    private NetworkEventHandler handler = new NetworkEventHandler();
+    Socket socket;
+    NetworkSender toConnection;
+    NetworkListener fromConnection;
+    NetworkEventHandler handler = new NetworkEventHandler();
 
-    /**
-     * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
-     */
-    public Connection(Client client) throws IOException {
-        if (establishSocket()) establishConnection(client);
-    }
 
-    /**
-     * FOR USE ONLY BY SERVER. Initialises the connection to a client.
-     *
-     * @param socket The server socket.
-     */
-    public Connection(Socket socket) throws IOException {
-        this.socket = socket;
-        out("Connection made to client.");
-        establishConnection();
-    }
 
     /**
      * Generates the socket.
      */
-    private boolean establishSocket() throws IOException {
+    boolean establishSocket() throws IOException {
         int attempts = 3;
 
         String HOSTNAME = ClientSettings.LOCAL ? "localhost" : ClientSettings.SERVER_IP;
@@ -57,31 +41,9 @@ public class Connection {
     /**
      * Creates the input and output streams.
      */
-    private boolean establishConnection() throws IOException {
-        toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
-        fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler, null);
+    abstract boolean establishConnection(Client... clients) throws IOException;
 
-        out("Connection made to server.");
-        new Thread(handler).start();
-        new Thread(toConnection).start();
-        new Thread(fromConnection).start();
-        return true;
-    }
-
-    /**
-     * Creates the input and output streams.
-     * @param client
-     */
-    private boolean establishConnection(Client client) throws IOException {
-        toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
-        fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler, client);
-
-        out("Connection made to server.");
-        new Thread(handler).start();
-        new Thread(toConnection).start();
-        new Thread(fromConnection).start();
-        return true;
-    }
+    
 
     /**
      * Closes all streams.

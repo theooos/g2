@@ -6,6 +6,7 @@ import client.graphics.StartScreenRenderer;
 import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
 import networking.Connection;
+import networking.Connection_Client;
 import objects.GameData;
 import objects.InitGame;
 import objects.Sendable;
@@ -125,7 +126,7 @@ public class Client {
 
     private void establishConnection() {
         try {
-            connection = new Connection(this);
+            connection = new Connection_Client(this);
             clientReceiver = new ClientReceiver(connection);
             connection.addFunctionEvent("InitGame", this::beginGame);
             connection.addFunctionEvent("String",this::getID);

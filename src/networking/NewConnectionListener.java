@@ -34,7 +34,7 @@ public class NewConnectionListener implements Runnable{
                 // Hangs here until connection appears.
                 out("Waiting for new connection...");
                 Socket s = serverSocket.accept();
-                Connection conn = new Connection(s);
+                Connection conn = new Connection_Server(s);
                 addWaitingClient(conn);
             }
         } catch (IOException e) {
