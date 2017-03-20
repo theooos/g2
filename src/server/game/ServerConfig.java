@@ -9,5 +9,5 @@ class ServerConfig {
     static final int SERVER_TICK = 60;
     static final float PHASE_FADE_TIME = 0.25f*SERVER_TICK;
 
-    static final int MAX_SCORE = 50;
+    static final int MAX_SCORE = 300;
 }

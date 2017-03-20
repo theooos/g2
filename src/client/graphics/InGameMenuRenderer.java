@@ -32,7 +32,7 @@ class InGameMenuRenderer {
 
         readyMenuLayer();
         readySettingsLayer();
-        renderEndScreen();
+        readyEndLayer();
     }
 
     void readyMenuLayer() {
