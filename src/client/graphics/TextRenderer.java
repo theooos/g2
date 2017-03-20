@@ -38,29 +38,6 @@ public class TextRenderer {
 
 
 
-    //Constructors
-    public TextRenderer(String path, float size) throws Exception {
-        this.font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, new File(path)).deriveFont(size);
-
-
-        //Generate buffered image
-        GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        Graphics2D graphics = gc.createCompatibleImage(1, 1, Transparency.TRANSLUCENT).createGraphics();
-        graphics.setFont(font);
-
-        fontMetrics = graphics.getFontMetrics();
-        bufferedImage = graphics.getDeviceConfiguration().createCompatibleImage((int) getFontImageWidth(),(int) getFontImageHeight(),Transparency.TRANSLUCENT);
-
-        //Generate texture
-        fontTextureId = glGenTextures();
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, fontTextureId);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,(int) getFontImageWidth(),(int) getFontImageHeight(),0, GL_RGBA, GL_UNSIGNED_BYTE, asByteBuffer());
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
-
     public TextRenderer() {
         this(40);
     }
@@ -88,6 +65,7 @@ public class TextRenderer {
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     //Functions
@@ -120,6 +98,8 @@ public class TextRenderer {
         }
 
         glEnd();
+        glBindTexture(GL_TEXTURE_2D, 0);
+
     }
     //Getters
     private float getFontImageWidth() {

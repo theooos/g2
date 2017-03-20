@@ -13,6 +13,7 @@ import server.game.Vector2;
  *  used for draw methods
  */
 class Draw {
+    private final TextRenderer textRenderer;
     private int width;
     private int height;
     private int oldHealth;
@@ -21,7 +22,8 @@ class Draw {
     private double displayHeat;
     private GameData gameData;
 
-    Draw(GameData gd) {
+    Draw(TextRenderer textRenderer, GameData gd) {
+        this.textRenderer = textRenderer;
         this.width = ClientSettings.SCREEN_WIDTH;
         this.height = ClientSettings.SCREEN_HEIGHT;
         oldHealth = 0;
@@ -29,7 +31,6 @@ class Draw {
         oldHeat = 0;
         displayHeat = 0;
         gameData = gd;
-
     }
 
     void drawQuad(Vector2 centre, float rotation, float radius, float red, float green, float blue) {
@@ -139,7 +140,6 @@ class Draw {
     void drawScoreboard() {
         shadeScreen();
         Scoreboard sb = gameData.getScoreboard();
-        //TextRenderer textRenderer = new TextRenderer(15);
 
         int[] scores = sb.getPlayerScores();
         float xStart = width/6;
@@ -173,7 +173,9 @@ class Draw {
                     glColor3f(0,1,0);
                 }
                 yStart+=rectHeight;
-                //TextTest.drawString("Player " + index + " Score: "+max, xStart+10, yStart-10, 100, 100);
+                glEnable(GL_TEXTURE_2D);
+                textRenderer.drawText("Player " + index + " Score: "+max, xStart+10, yStart-10);
+                glDisable(GL_TEXTURE_2D);
 
                 sortedScores[index] = Integer.MIN_VALUE;
             }
