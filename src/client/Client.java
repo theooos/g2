@@ -9,6 +9,7 @@ import networking.Connection;
 import networking.Connection_Client;
 import objects.GameData;
 import objects.InitGame;
+import objects.InitPlayer;
 import objects.Sendable;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -129,25 +130,21 @@ public class Client {
             connection = new Connection_Client(this);
             clientReceiver = new ClientReceiver(connection);
             connection.addFunctionEvent("InitGame", this::beginGame);
-            connection.addFunctionEvent("String",this::getID);
+            connection.addFunctionEvent("String",this::out);
             connection.addFunctionEvent("LobbyData",startScreen::setupLobby);
+            connection.addFunctionEvent("InitPlayer", this::setupMe);
+
         } catch (IOException e) {
             System.err.println("Failed to make connection.");
         }
     }
 
-    private void getID(Object o) {
-        String information = o.toString();
-        String t = information.substring(0, 2);
+    private void setupMe(Sendable s) {
+        playerID = ((InitPlayer) s).getID();
+    }
 
-        switch (t) {
-            case "ID":
-                String idS = information.substring(2);
-                int id = Integer.parseInt(idS);
-                playerID = id;
-                clientReceiver.setID(playerID);
-                break;
-        }
+    private void out(Object o) {
+        System.out.println(o);
     }
 
     public void returnToMainMenu(){

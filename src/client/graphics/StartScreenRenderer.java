@@ -102,6 +102,7 @@ public class StartScreenRenderer {
     }
 
     public void setupLobby(Sendable sendable) {
+        lobbyData = (LobbyData) sendable;
         InterfaceTexture lobby = new InterfaceTexture(ISprite.LOBBY_SCREEN);
         lobby.setRatio(0.5f);
         lobby.spawn(0,400f, 300f,lobbyLayer);

@@ -1,6 +1,5 @@
 package server.game;
 
-import networking.Connection;
 import networking.Connection_Server;
 import objects.*;
 import server.ai.Intel;
@@ -20,7 +19,7 @@ public class Game implements Runnable {
     private Map map;
     private CollisionManager collisions;
 
-    private ArrayList<Connection_Server> playerConnections;
+    private HashMap<Integer, Connection_Server> playerConnections;
     private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
     private HashMap<Integer, Projectile> projectiles;
@@ -38,7 +37,7 @@ public class Game implements Runnable {
     private long lastTime =System.currentTimeMillis();
 
 
-    public Game(ArrayList<Connection_Server> playerConnections, int maxPlayers, int mapID) {
+    public Game(HashMap<Integer, Connection_Server> playerConnections, int maxPlayers, int mapID, LobbyData ld) {
         IDCounter = 0;
 
         this.playerConnections = playerConnections;
@@ -90,17 +89,12 @@ public class Game implements Runnable {
             }
 
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
-            Connection_Server conn = playerConnections.get(i);
-            try {
-                conn.send(new objects.String("ID"+IDCounter));
-            } catch (Exception e) {
-                dealWithConnectionLoss(conn);
-            }
-            conn.addFunctionEvent("String", this::out);
-            conn.addFunctionEvent("MoveObject", this::receivedMove);
-            conn.addFunctionEvent("FireObject", this::toggleFire);
-            conn.addFunctionEvent("PhaseObject", this::switchPhase);
-            conn.addFunctionEvent("SwitchObject", this::switchWeapon);
+            Connection_Server con = playerConnections.get(i);
+            con.addFunctionEvent("String", this::out);
+            con.addFunctionEvent("MoveObject", this::receivedMove);
+            con.addFunctionEvent("FireObject", this::toggleFire);
+            con.addFunctionEvent("PhaseObject", this::switchPhase);
+            con.addFunctionEvent("SwitchObject", this::switchWeapon);
 
             players.put(IDCounter, p);
             IDCounter++;
@@ -162,7 +156,7 @@ public class Game implements Runnable {
 
         gameRunning = true;
 
-        InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps);
+        InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps, ld);
         sendGameStart(g);
     }
 
@@ -248,20 +242,36 @@ public class Game implements Runnable {
         }
 
         ArrayList<Integer> keys = new ArrayList<>();
+        ArrayList<Projectile> hurtAni = new ArrayList<>();
 
         for (Projectile p : projectiles.values()) {
             MovableEntity e = collisions.collidesWithPlayerOrBot(p);
-            if (e != null) {
+            if (e != null && !e.equals(p.getPlayer())) {
                 out(p.getPlayerID()+" just hit "+e.getID());
                 //can't damage your team
-                if (e.getTeam() != p.getTeam() && p.isAlive()) {
+                if (e.getTeam() != p.getTeam() && e.isAlive()) {
+                    Vector2 damageDir = e.getPos().vectorTowards(p.getPos()).normalise();
+                    for (int i = 0; i < p.getDamage()/10; i++) {
+                        double ang = Math.atan(damageDir.getX()/damageDir.getY());
+                        if (Double.isInfinite(ang)) {
+                            ang = 0;
+                        } else if (damageDir.getY() < 0) {
+                            ang += Math.PI;
+                        }
+                        ang += Math.toRadians(rand.nextInt(2*(int)(HURT_SPREAD))-(HURT_SPREAD));
+                        float newX = (float)(Math.sin(ang));
+                        float newY = (float)(Math.cos(ang));
+
+                        hurtAni.add(new DistDropOffProjectile(0, (int) HURT_LIFE, HURT_RADIUS, e.getPos(), new Vector2(newX, newY).normalise(), 5, e.getPhase(), e, IDCounter));
+                        IDCounter++;
+                    }
                     e.damage(p.getDamage());
                     //if the player has been killed
                     if (!e.isAlive()) {
                         if (e instanceof Orb) {
-                            scoreboard.killedOrb(p.getPlayer());
+                            scoreboard.killedOrb((Player) p.getPlayer());
                         } else {
-                            scoreboard.killedPlayer(p.getPlayer());
+                            scoreboard.killedPlayer((Player) p.getPlayer());
                         }
                         scoreboardChanged = true;
                     }
@@ -276,6 +286,11 @@ public class Game implements Runnable {
                 keys.add(p.getID());
             }
         }
+
+        for (Projectile p: hurtAni) {
+            projectiles.put(p.getID(), p);
+        }
+
 
         countdown--;
 
@@ -296,7 +311,7 @@ public class Game implements Runnable {
 
     private void dealWithConnectionLoss(Connection_Server p) {
         out("Connection to "+p+"dropped.");
-        //TODO THIS.
+        playerConnections.remove(p);
     }
 
     private void shrinkRadius(MovableEntity e) {
@@ -350,6 +365,7 @@ public class Game implements Runnable {
         e.setPhase(rand.nextInt(2));
         if (e instanceof Player) {
             ((Player) e).setFiring(false);
+            ((Player) e).setPhasePercentage(e.getPhase());
             e.setRadius(20);
         }
         else if (e instanceof PowerUp) {
@@ -397,7 +413,7 @@ public class Game implements Runnable {
      * @param s the object to send
      */
     private void sendToAllConnected(Sendable s) {
-        for (Connection_Server c: playerConnections) {
+        for (Connection_Server c: playerConnections.values()) {
             if (s instanceof Scoreboard) {
                 sendScoreboard(c);
             }
@@ -413,7 +429,7 @@ public class Game implements Runnable {
 
     private void sendGameStart(InitGame g) {
         out("Sending init game");
-        for (Connection_Server c: playerConnections) {
+        for (Connection_Server c: playerConnections.values()) {
             try {
                 c.send(g);
             } catch (Exception e) {

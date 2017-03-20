@@ -1,6 +1,7 @@
 package objects;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -8,15 +9,15 @@ import java.util.List;
  */
 public class LobbyData implements Sendable {
 
-    private List<Integer> players;
+    private InitPlayer[] players;
     private int mapID;
 
-    public LobbyData(ArrayList<Integer> players, int mapID) {
+    public LobbyData(InitPlayer[] players, int mapID) {
         this.players = players;
         this.mapID = mapID;
     }
 
-    public List<Integer> getPlayers() {
+    public InitPlayer[] getPlayers() {
         return players;
     }
 

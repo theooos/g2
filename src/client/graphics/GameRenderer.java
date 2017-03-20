@@ -29,7 +29,7 @@ class GameRenderer {
         Player me = gameData.getPlayer(playerID);
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
         powerUpRotation = 0;
-        draw = new Draw(gameData);
+        draw = new Draw(gameData, playerID);
     }
 
     void render() {
@@ -140,7 +140,7 @@ class GameRenderer {
         float blue;
         for (Player p : players.values()) {
             float radius = p.getRadius();
-            radius = (gameData.getPlayer(playerID).getPhase() == 0) ? radius * (1-p.getPhasePercentage()) : radius*p.getPhasePercentage();
+            radius = (phase == 0) ? radius * (1-p.getPhasePercentage()) : radius*p.getPhasePercentage();
 
             if (p.isAlive()) {
                 if (p.getTeam() == 0) {
@@ -214,10 +214,19 @@ class GameRenderer {
                     red = 0.6f;
                     green = 0f;
                     blue = 0.6f;
-                } else {
+                } else if (p.getTeam() == 1){
                     red = 0f;
                     green = 0.8f;
                     blue = 0f;
+                } else {
+                    red = 0.2f;
+                    green = 0.2f;
+                    blue = 1f;
+                }
+                if (p.getDamage() == 0) {
+                    red -= 0.34f;
+                    green -= 0.34f;
+                    blue -= 0.34f;
                 }
                 GL11.glColor3f(red, green, blue);
                 float radius = p.getRadius();

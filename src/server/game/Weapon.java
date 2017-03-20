@@ -138,7 +138,7 @@ public class Weapon implements Sendable{
          return maxHeat;
     }
 
-    public void setCurrentHeat(int heat) {
+    void setCurrentHeat(int heat) {
         this.currentHeat = heat;
     }
 

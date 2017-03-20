@@ -1,11 +1,15 @@
 package server;
 
-import networking.Connection;
 import networking.Connection_Server;
+import objects.InitPlayer;
 import objects.LobbyData;
 import objects.Sendable;
 import server.game.Game;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -15,23 +19,76 @@ import java.util.*;
 class Lobby {
     private int maxSize;
     private int minSize;
-    private ArrayList<Connection_Server> players;
+    private HashMap<Integer, Connection_Server> connections;
+    private boolean[] used;
+    private InitPlayer[] players;
     private boolean countdownRunning;
     private int countdown;
     private Timer t;
     private int mapID;
     private boolean gameRunning;
 
+    /**
+     * Creates a new lobby for players to connect too
+     * @param maxSize the maximum number of players this lobby can hold
+     */
     Lobby(int maxSize) {
+        //the max number of maps the server has access to
         int mapMax = 3;
+
         countdownRunning = false;
-        players = new ArrayList<>();
+        connections = new HashMap<>();
+
+        Random rand = new Random();
+
+        //used to check if a player has occupied that ID
+        used = new boolean[maxSize];
+        for (int i = 0; i < used.length; i++) {
+            used[i] = false;
+        }
+
+        //Set up the name files for name selection and add names to ArrayLists
+        ArrayList<String> enclaveNames = new ArrayList<>();
+        ArrayList<String> landscapeNames = new ArrayList<>();
+        try {
+            BufferedReader eNames = new BufferedReader(new FileReader(Lobby.class.getResource("../EnclaveNames.txt").getFile()));
+            String line = eNames.readLine();
+            while (line != null) {
+                enclaveNames.add(line);
+                line = eNames.readLine();
+            }
+            eNames.close();
+            BufferedReader lNames = new BufferedReader(new FileReader(Lobby.class.getResource("../LandscapersNames.txt").getFile()));
+            line = lNames.readLine();
+            while (line != null) {
+                landscapeNames.add(line);
+                line = lNames.readLine();
+            }
+            lNames.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("Failed to find name files\n"+e);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        players = new InitPlayer[maxSize];
+        for (int i = 0; i < players.length; i++) {
+            String name;
+            if (i%2 == 0) {
+                name = enclaveNames.get(rand.nextInt(enclaveNames.size()));
+            }
+            else {
+                name = landscapeNames.get(rand.nextInt(landscapeNames.size()));
+            }
+            players[i] = new InitPlayer(i, new objects.String(name), true, i%2);
+        }
+
+        enclaveNames.clear();
+        landscapeNames.clear();
+
         this.maxSize = maxSize;
         minSize = maxSize/2;
         t = new Timer();
-        Random rand = new Random();
         mapID = rand.nextInt(mapMax);
-        //mapID = 2;
         System.out.println("Map ID: " +mapID);
         gameRunning = false;
     }
@@ -41,7 +98,7 @@ class Lobby {
      * @return if the lobby is full or not
      */
     boolean isFull() {
-        return players.size() >= maxSize;
+        return connections.size() >= maxSize;
     }
 
     /**
@@ -49,23 +106,33 @@ class Lobby {
      * @param c the connected player
      */
     void addConnection(Connection_Server c) {
-        if(players.add(c)){
-            sendAllNewLobbyInfo();
-            if (players.size() >= minSize) {
-                startCountdown();
+        for (int i = 0; i < used.length; i++) {
+            if (!used[i]) {
+                c.setID(i);
+                connections.put(i, c);
+                objects.String name = players[i].getName();
+                players[i] = new InitPlayer(i, name, false, i%2);
+                try {
+                    c.send(players[i]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                sendAllNewLobbyInfo();
+                if (connections.size() >= minSize) {
+                    startCountdown();
+                }
+                used[i] = true;
+                break;
             }
         }
     }
 
     /**
-     * This sends all connected players all the updated lobby information.
+     * This sends all connected connections all the updated lobby information.
      */
     private void sendAllNewLobbyInfo() {
-        ArrayList<Integer> playerIDs = new ArrayList<>();
-        for(int i = 0; i < players.size(); i++){
-            playerIDs.add(i);
-        }
-        sendToAll(new LobbyData(playerIDs,mapID));
+        InitPlayer[] p = players.clone();
+        sendToAll(new LobbyData(p,mapID));
     }
 
     /**
@@ -113,16 +180,22 @@ class Lobby {
 
     private void sendToAll(Sendable sendable){
         boolean connectionDied = false;
-        for (Connection_Server c: players) {
+        for (Connection_Server c: connections.values()) {
             try {
                 c.send(sendable);
             } catch (Exception e) {
-                players.remove(c);
+                int ID = c.getID();
+                connections.remove(c);
+                used[ID] = false;
+                players[ID] = new InitPlayer(ID, players[ID].getName(), false, players[ID].getTeam());
                 connectionDied = true;
                 break;
             }
         }
-        if(connectionDied) sendAllNewLobbyInfo();
+        if(connectionDied) {
+            sendAllNewLobbyInfo();
+            if (connections.size() < minSize) stopCountdown();
+        }
     }
 
     /**
@@ -131,7 +204,7 @@ class Lobby {
     private void startGame() {
         msgToAllConnected("Game loading....");
         gameRunning = true;
-        Game game = new Game(players, maxSize, mapID);
+        Game game = new Game(connections, maxSize, mapID, new LobbyData(players.clone(),mapID));
         game.run();
     }
 

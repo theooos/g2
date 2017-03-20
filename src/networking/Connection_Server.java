@@ -10,12 +10,15 @@ import java.net.Socket;
 
 /**
  * Created by theo on 20/03/2017.
+ * A connection class used by the server
  */
 public class Connection_Server extends Connection {
+    private int ID;
 
-    public Connection_Server(Socket socket) throws IOException {
+    Connection_Server(Socket socket) throws IOException {
         this.socket = socket;
         establishConnection();
+        this.ID = ID;
     }
 
     @Override
@@ -32,5 +35,13 @@ public class Connection_Server extends Connection {
 
     public void send(Sendable sendable) throws Exception {
         toConnection.queueForSending(sendable);
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public int getID() {
+        return ID;
     }
 }
