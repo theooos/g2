@@ -19,7 +19,7 @@ public class Game implements Runnable {
     private Map map;
     private CollisionManager collisions;
 
-    private ArrayList<Connection> playerConnections;
+    private HashMap<Integer, Connection> playerConnections;
     private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
     private HashMap<Integer, Projectile> projectiles;
@@ -37,7 +37,7 @@ public class Game implements Runnable {
     private long lastTime =System.currentTimeMillis();
 
 
-    public Game(ArrayList<Connection> playerConnections, int maxPlayers, int mapID) {
+    public Game(HashMap<Integer, Connection> playerConnections, int maxPlayers, int mapID, LobbyData ld) {
         IDCounter = 0;
 
         this.playerConnections = playerConnections;
@@ -90,7 +90,6 @@ public class Game implements Runnable {
 
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             Connection con = playerConnections.get(i);
-            con.send(new objects.String("ID"+IDCounter));
             con.addFunctionEvent("String", this::out);
             con.addFunctionEvent("MoveObject", this::receivedMove);
             con.addFunctionEvent("FireObject", this::toggleFire);
@@ -157,7 +156,7 @@ public class Game implements Runnable {
 
         gameRunning = true;
 
-        InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps);
+        InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps, ld);
         sendGameStart(g);
     }
 
@@ -383,7 +382,7 @@ public class Game implements Runnable {
      * @param s the object to send
      */
     private void sendToAllConnected(Sendable s) {
-        for (Connection c: playerConnections) {
+        for (Connection c: playerConnections.values()) {
             if (s instanceof Scoreboard) {
                 sendScoreboard(c);
             }
@@ -395,7 +394,7 @@ public class Game implements Runnable {
 
     private void sendGameStart(InitGame g) {
         out("Sending init game");
-        for (Connection c: playerConnections) {
+        for (Connection c: playerConnections.values()) {
             c.send(g);
         }
     }

@@ -1,6 +1,7 @@
 package server;
 
 import networking.Connection;
+import objects.InitPlayer;
 import objects.LobbyData;
 import objects.Sendable;
 import server.game.Game;
@@ -14,23 +15,41 @@ import java.util.*;
 class Lobby {
     private int maxSize;
     private int minSize;
-    private ArrayList<Connection> players;
+    private HashMap<Integer, Connection> connections;
+    private boolean[] used;
+    private InitPlayer[] players;
     private boolean countdownRunning;
     private int countdown;
     private Timer t;
     private int mapID;
     private boolean gameRunning;
 
+    /**
+     * Creates a new lobby for players to connect too
+     * @param maxSize the maximum number of players this lobby can hold
+     */
     Lobby(int maxSize) {
+        //the max number of maps the server has access to
         int mapMax = 3;
+
         countdownRunning = false;
-        players = new ArrayList<>();
+        connections = new HashMap<>();
+
+        //used to check if a player has occupied that ID
+        used = new boolean[maxSize];
+        for (int i = 0; i < used.length; i++) {
+            used[i] = false;
+        }
+        players = new InitPlayer[maxSize];
+        for (int i = 0; i < players.length; i++) {
+            players[i] = new InitPlayer(i, new objects.String("Test"), true, i%2);
+        }
+
         this.maxSize = maxSize;
         minSize = maxSize/2;
         t = new Timer();
         Random rand = new Random();
         mapID = rand.nextInt(mapMax);
-        //mapID = 2;
         System.out.println("Map ID: " +mapID);
         gameRunning = false;
     }
@@ -40,7 +59,7 @@ class Lobby {
      * @return if the lobby is full or not
      */
     boolean isFull() {
-        return players.size() >= maxSize;
+        return connections.size() >= maxSize;
     }
 
     /**
@@ -48,23 +67,27 @@ class Lobby {
      * @param c the connected player
      */
     void addConnection(Connection c) {
-        if(players.add(c)){
-            sendAllNewLobbyInfo();
-            if (players.size() >= minSize) {
-                startCountdown();
+        for (int i = 0; i < used.length; i++) {
+            if (!used[i]) {
+                connections.put(i, c);
+                players[i] = new InitPlayer(i, new objects.String("test"), false, i%2);
+                c.send(players[i]);
+                sendAllNewLobbyInfo();
+                if (connections.size() >= minSize) {
+                    startCountdown();
+                }
+                used[i] = true;
+                break;
             }
         }
     }
 
     /**
-     * This sends all connected players all the updated lobby information.
+     * This sends all connected connections all the updated lobby information.
      */
     private void sendAllNewLobbyInfo() {
-        ArrayList<Integer> playerIDs = new ArrayList<>();
-        for(int i = 0; i < players.size(); i++){
-            playerIDs.add(i);
-        }
-        sendToAll(new LobbyData(playerIDs,mapID));
+        InitPlayer[] p = players.clone();
+        sendToAll(new LobbyData(p,mapID));
     }
 
     /**
@@ -75,7 +98,7 @@ class Lobby {
             countdown = 0;
             t = new Timer();
             countdownRunning = true;
-            msgToAllConnected("Minimum number of players is reached, countdown starting");
+            msgToAllConnected("Minimum number of connections is reached, countdown starting");
 
             t.scheduleAtFixedRate(new TimerTask() {
                 @Override
@@ -103,7 +126,7 @@ class Lobby {
     }
 
     /**
-     * sends the string to all players in the lobby
+     * sends the string to all connections in the lobby
      * @param s the string to be sent
      */
     private void msgToAllConnected(String s) {
@@ -111,7 +134,7 @@ class Lobby {
     }
 
     private void sendToAll(Sendable sendable){
-        for (Connection c: players) {
+        for (Connection c: connections.values()) {
             c.send(sendable);
         }
     }
@@ -122,7 +145,7 @@ class Lobby {
     private void startGame() {
         msgToAllConnected("Game loading....");
         gameRunning = true;
-        Game game = new Game(players, maxSize, mapID);
+        Game game = new Game(connections, maxSize, mapID, new LobbyData(players.clone(),mapID));
         game.run();
     }
 

@@ -20,7 +20,7 @@ public class ClientReceiver {
     private static boolean DEBUG = true;
     private GameData gameData;
 
-    public ClientReceiver(Connection connection) {
+    ClientReceiver(Connection connection) {
         connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("Player", this::updatedPlayer);
         connection.addFunctionEvent("AIPlayer", this::updatedPlayer);

@@ -18,13 +18,16 @@ public class InitGame implements Sendable{
     private HashMap<Integer, PowerUp> powerUps;
     private int mapID;
     private Scoreboard sb;
+    private LobbyData ld;
 
-    public InitGame(HashMap<Integer,Orb> orbs, ConcurrentHashMap<Integer,Player> players, int mapID, Scoreboard sb, HashMap<Integer, PowerUp> powerUps){
+
+    public InitGame(HashMap<Integer, Orb> orbs, ConcurrentHashMap<Integer, Player> players, int mapID, Scoreboard sb, HashMap<Integer, PowerUp> powerUps, LobbyData ld){
         this.orbs = orbs;
         this.players = players;
         this.mapID = mapID;
         this.sb = sb;
         this.powerUps = powerUps;
+        this.ld = ld;
     }
 
     public ConcurrentHashMap<Integer,Player> getPlayers() {
@@ -45,5 +48,9 @@ public class InitGame implements Sendable{
 
     public HashMap<Integer, PowerUp> getPowerUps() {
         return powerUps;
+    }
+
+    public LobbyData getLobbyData() {
+        return ld;
     }
 }

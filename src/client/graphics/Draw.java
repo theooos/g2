@@ -206,8 +206,10 @@ class Draw {
                 glColor4f(red,green,blue, intensity);
                 drawRect(xStart, yStart, rectWidth, rectHeight);
 
+                String name = gameData.getLobbyData().getPlayers()[index].getName().toString();
+                if (gameData.getLobbyData().getPlayers()[index].isAI()) name += " (AI)";
 
-                drawText(smallText, "Player " + index, xStart+10, yStart+3*rectHeight/4+1);
+                drawText(smallText, name, xStart+10, yStart+3*rectHeight/4+1);
                 drawText(smallText, ((Integer) max).toString(), xStart+rectWidth-((Integer) max).toString().length()*15-10, yStart+3*rectHeight/4+1);
 
                 yStart+=rectHeight;

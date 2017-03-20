@@ -7,10 +7,8 @@ package client.graphics;
  */
 
     import client.ClientSettings;
-
     import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +22,7 @@ public class TextRenderer {
     private final Map<Integer,String> CHARS = new HashMap<Integer,String>() {{
         put(0, " ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         put(1, "abcdefghijklmnopqrstuvwxyz");
-        put(2, "0123456789:,.");
+        put(2, "0123456789:,.()");
         put(3, "abcdefghijklmnopqrstuvwxyz");
         //put(3, "ÄÖÜäöüß");
         put(4, " ABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -45,7 +43,7 @@ public class TextRenderer {
     }
 
     public TextRenderer(int size)  {
-        this.font = new java.awt.Font("Times New Roman", java.awt.Font.BOLD, size);
+        this.font = new java.awt.Font("Agency FB", java.awt.Font.BOLD, size);
         //Font font = new Font("Verdana", Font.BOLD, 32);
         //UnicodeFont f = new UnicodeFont(font);
        // this.font = f;
