@@ -104,15 +104,12 @@ public class PlayerBrain extends AIBrain {
 
             case INTIMIDATED:
                 if (behaviours.getBehaviour("Fetch").isRunning()){
-                    System.out.println("Running fetch.");
                     behaviours.getBehaviour("Fetch").doAction();
                 }
                 else {
-                    System.out.println("Running flee.");
                     flee.doAction();
                 }
                 if (flee.hasFinished() || behaviours.getBehaviour("Fetch").hasFinished()){
-                    System.out.println("Dicking around");
                     curEmotion = AT_REST;   // Force more action if still intimidated next tick.
                 }
                 break;
@@ -218,34 +215,28 @@ public class PlayerBrain extends AIBrain {
         switch (newEmotion) {
 
             case INTIMIDATED:
-                System.out.println("Intimidated.");
                 this.stress = STRESS_INTIMIDATED;
 
                 // If there's a power up available and chance allows:
                 if (check.doCheck(Check.CheckMode.HEALTH_UP_VIABLE) &&
                         gen.nextDouble() <= AIConstants.CHANCE_PURSUE_HEALTH) {
-                    System.out.println("Pursuing power up.");
                     behaviours.getBehaviour("Fetch").start();
                 }
                 else {
-                    System.out.println("Fleeing.");
                     flee.start();
                 }
                 break;
 
             case VENGEFUL:
-                System.out.println("Vengeful");
                 this.stress = STRESS_VENGEFUL;
                 break;
 
             case IRRITATED:
-                System.out.println("Irritated");
                 this.stress = STRESS_IRRITATED;
                 behaviours.getBehaviour("Swat").start();
                 break;
 
             case AGGRESSIVE:
-                System.out.println("Aggressive");
                 if (curEmotion == BORED) {
                     this.stress = STRESS_AGGRESSIVE_FROM_BORED;
                 }
@@ -257,7 +248,6 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             case DETERMINED:
-                System.out.println("Determined");
                 if (curEmotion == BORED) {
                     this.stress = STRESS_DETERMINED_FROM_BORED;
                 } else {
@@ -266,7 +256,6 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             default:
-                System.out.println("Bored");
                 this.stress = STRESS_BORED;
                 ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
                 hunt.start();
