@@ -63,12 +63,27 @@ class CollisionManagerTest {
 
     @Test
     void pointWallCollision() {
-
+        
     }
 
     @Test
     void collidesWithPlayerOrBot() {
         setUpBotsAndPlayer();
+
+        Player p = new Player(new Vector2(100, 100), new Vector2(1, 0), 0, 0, null, null, 2);
+        assertTrue(collisionManager.collidesWithPlayerOrBot(p) == null);
+
+        p = new Player(new Vector2(100, 100), new Vector2(1, 0), 0, 0, null, null, 3);
+        assertTrue(collisionManager.collidesWithPlayerOrBot(p) != null);
+
+        p = new Player(new Vector2(10, 10), new Vector2(1, 0), 0, 1, null, null, 3);
+        assertTrue(collisionManager.collidesWithPlayerOrBot(p) != null);
+
+        p = new Player(new Vector2(10, 10), new Vector2(1, 0), 0, 0, null, null, 3);
+        assertTrue(collisionManager.collidesWithPlayerOrBot(p) == null);
+
+        p = new Player(new Vector2(400, 400), new Vector2(1, 0), 0, 0, null, null, 3);
+        assertTrue(collisionManager.collidesWithPlayerOrBot(p) == null);
 
     }
 

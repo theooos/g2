@@ -9,10 +9,10 @@ public class ClientSettings {
 
     // ***** DISPLAY SETTINGS *****
 
-    public static final String WINDOW_TITLE = "PhaseShift";
+    static final String WINDOW_TITLE = "PhaseShift";
     public static final int SCREEN_WIDTH = 800;
     public static final int SCREEN_HEIGHT = 600;
-    public static final boolean FULLSCREEN = false;
+    static final boolean FULLSCREEN = false;
 
     // ***** NETWORK SETTINGS *****
 
