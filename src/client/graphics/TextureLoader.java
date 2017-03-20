@@ -34,6 +34,8 @@ public class TextureLoader {
         textures[ISprite.ABOUT_BUTTON] = loadTexture("about_button.png");
         textures[ISprite.BACK_BUTTON] = loadTexture("back_button.png");
         textures[ISprite.JOIN_LOBBY_BUTTON] = loadTexture("join_lobby_button.png");
+        textures[ISprite.RESUME_GAME_BUTTON] = loadTexture("resume_game_button.png");
+        textures[ISprite.EXIT_GAME_BUTTON] = loadTexture("exit_game_button.png");
 
         textures[ISprite.SLIDER] = loadTexture("slider.png");
     }

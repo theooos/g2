@@ -11,6 +11,10 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import server.game.*;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glEnable;
+
 /**
  * Provides the visuals for the game itself.
  */
@@ -19,7 +23,7 @@ public class GameManager {
     private GameRenderer gameRenderer;
     private InGameMenuRenderer inGameMenuRenderer;
 
-    private enum Mode {GAME, MENU, SCOREBOARD, GAMEOVER}
+    enum Mode {GAME, MENU, SETTINGS, SCOREBOARD, GAMEOVER}
 
     private Mode mode = Mode.GAME;
 
@@ -48,7 +52,7 @@ public class GameManager {
 
         collisions = new CollisionManager(gd);
         gameRenderer = new GameRenderer(gameData, playerID, collisions);
-        inGameMenuRenderer = new InGameMenuRenderer(gameData,playerID);
+        inGameMenuRenderer = new InGameMenuRenderer(gameData,playerID,this);
 
         conn.addFunctionEvent("GameOver", this::gameOver);
     }
@@ -60,11 +64,19 @@ public class GameManager {
                 gameRenderer.render();
                 break;
             case MENU:
+                glEnable(GL_TEXTURE_2D);
+                glColor4f(1,1,1,1);
                 inGameMenuRenderer.renderMenu();
+                inGameMenuRenderer.handleClickedMenu();
+                break;
+            case SETTINGS:
+                glEnable(GL_TEXTURE_2D);
+                glColor4f(1,1,1,1);
+                inGameMenuRenderer.renderSettings();
+                inGameMenuRenderer.handleClickedSettings();
                 break;
             case SCOREBOARD:
                 gameRenderer.render();
-                inGameMenuRenderer.renderScoreboard();
                 break;
             case GAMEOVER:
                 inGameMenuRenderer.renderEndScreen();
@@ -289,5 +301,9 @@ public class GameManager {
     private void gameOver(Sendable sendable) {
         gameData.updateScoreboard(((GameOver) sendable).getScoreboard());
         mode = Mode.GAMEOVER;
+    }
+
+    public void setMode(Mode mode){
+        this.mode = mode;
     }
 }
