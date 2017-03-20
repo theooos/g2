@@ -22,7 +22,6 @@ public final class AIConstants {
 
     public static final double STRESS_INTIMIDATED = 0.7;
     public static final double STRESS_IRRITATED = 0.8;
-    public static final double STRESS_VENGEFUL = 0.2;
     public static final double STRESS_AGGRESSIVE_FROM_BORED = 0.5;
     public static final double STRESS_AGGRESSIVE = 0.5;
     public static final double STRESS_DETERMINED_FROM_BORED = 0.2;
@@ -42,4 +41,6 @@ public final class AIConstants {
     public static final double EASY_MULT = 0.7;
     public static final double MED_MULT = 1.0;
     public static final double HARD_MULT = 1.4;
+
+    public static final int LOW_HEALTH_THRESHOLD = 30;
 }

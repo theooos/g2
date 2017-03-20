@@ -33,6 +33,9 @@ public class Feel {
         else if (checker.doCheck(Check.CheckMode.PROXIMITY)) {
             brain.setEmotion(AGGRESSIVE);
         }
+        else if (checker.doCheck(Check.CheckMode.ENEMY_IN_PHASE)) {
+            brain.setEmotion(DETERMINED);
+        }
         // Otherwise, just chill.
         else {
             brain.setEmotion(BORED);

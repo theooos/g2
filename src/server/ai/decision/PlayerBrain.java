@@ -30,8 +30,7 @@ public class PlayerBrain extends AIBrain {
     private EmotionalState newEmotion;
 
     private Sequence flee;
-    private Sequence rage;
-    private Sequence chase;
+    private Sequence stalk;
     private Sequence hunt;
     private Task currentStrategy;
 
@@ -81,6 +80,10 @@ public class PlayerBrain extends AIBrain {
         flee.add(behaviours.getBehaviour("LocateCover"));
         flee.add(behaviours.getBehaviour("FindPath"));
         flee.add(behaviours.getBehaviour("Travel"));
+
+        this.stalk = new Sequence(intel, this);
+        stalk.add(behaviours.getBehaviour("FindPath"));
+        stalk.add(behaviours.getBehaviour("Travel"));
     }
 
     @Override
@@ -118,9 +121,6 @@ public class PlayerBrain extends AIBrain {
                 behaviours.getBehaviour("Swat").doAction();
                 break;
 
-            case VENGEFUL:
-                break;
-
             case AGGRESSIVE:
 
                 // Give the AI a 50% chance of rethinking strategy after at least 2 seconds.
@@ -141,7 +141,8 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             case DETERMINED:
-
+                stalk.doAction();
+                if (stalk.hasFinished()) resetBehaviours();     // Repeat if necessary, though highly unlikely.
                 break;
 
             default:
@@ -230,10 +231,6 @@ public class PlayerBrain extends AIBrain {
                 }
                 break;
 
-            case VENGEFUL:
-                System.out.println("Vengeful");
-                this.stress = STRESS_VENGEFUL;
-                break;
 
             case IRRITATED:
                 System.out.println("Irritated");
@@ -257,9 +254,13 @@ public class PlayerBrain extends AIBrain {
                 System.out.println("Determined");
                 if (curEmotion == BORED) {
                     this.stress = STRESS_DETERMINED_FROM_BORED;
-                } else {
+                }
+                else {
                     this.stress = STRESS_DETERMINED;
                 }
+                ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
+                intel.setTargetLocation(intel.getRelevantEntity().getPos());
+                stalk.start();
                 break;
 
             default:

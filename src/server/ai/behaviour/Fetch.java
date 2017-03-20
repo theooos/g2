@@ -31,7 +31,6 @@ public class Fetch extends PlayerTask {
         ((FindPath)brain.getBehaviour("FindPath")).setSimplePath(false);
 
         if (!intel.isPhaseShiftReq()){
-            System.out.println("Ent: " + intel.getRelevantEntity());
             intel.setTargetLocation(intel.getRelevantEntity().getPos());
             brain.getBehaviour("FindPath").run();
             brain.getBehaviour("Travel").start();
@@ -47,7 +46,6 @@ public class Fetch extends PlayerTask {
     public void doAction() {
 
         ForceShiftPhase forceSP = (ForceShiftPhase) brain.getBehaviour("ForceShiftPhase");
-        System.out.println("Ent: " + intel.getRelevantEntity());
 
         // If the power-up has disappeared, give up.
         if (!intel.getRelevantEntity().isAlive()){
