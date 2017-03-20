@@ -24,7 +24,7 @@ import java.util.TimerTask;
 public enum Audio {
 
 
-    GAMEMUSIC(Audio.class.getResource("../../moz.wav")),        // music
+    GAMEMUSIC(Audio.class.getResource("../../game_music.wav")),        // music
     SHOOT(Audio.class.getResource("../../lasershoot.wav")),
     SHOOT2(Audio.class.getResource("../../shoot2.wav")),
     INTERFACEBACKGROUND(Audio.class.getResource("../../backmusic.wav")),
