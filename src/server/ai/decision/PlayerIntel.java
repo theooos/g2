@@ -15,10 +15,12 @@ public class PlayerIntel extends Intel {
     private boolean phaseShiftFailed;
     private boolean orbInOtherPhase;
     private MovableEntity entityBuffer;
+    private Vector2 lastCursorPos;
 
     public PlayerIntel(ConcurrentHashMap<Integer, Player> players, Map map, HashMap<Integer, PowerUp> pUps){
         super(players, map, pUps);
         this.phaseShiftFailed = false;
+        this.lastCursorPos = new Vector2(map.getMapWidth()/2, map.getMapLength()/2);
     }
 
     public AIPlayer ent(){
@@ -76,5 +78,13 @@ public class PlayerIntel extends Intel {
 
     public void loadRelevantEntity(){
         this.relevantEnt = this.entityBuffer;
+    }
+
+    public Vector2 getPointerVector(){
+        return ent.getPos().vectorTowards(lastCursorPos).normalise();
+    }
+
+    public void setLastCursorPos(Vector2 thisPos){
+        this.lastCursorPos = thisPos;
     }
 }

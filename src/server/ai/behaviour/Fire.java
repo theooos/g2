@@ -36,6 +36,7 @@ public class Fire extends PlayerTask {
 
         // Set the player to face the player.
         Vector2 dir = intel.ent().getPos().vectorTowards(intel.getRelevantEntity().getPos());
+        intel.setLastCursorPos(intel.getRelevantEntity().getPos());
 
         //int inaccuracy = (int) Math.ceil(brain.getStressLevel() * AIConstants.MAX_AIM_INACCURACY);
         //dir = Vector2.deviate(dir, inaccuracy);
