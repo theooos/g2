@@ -7,9 +7,6 @@ import objects.GameData;
 import server.game.Scoreboard;
 import server.game.Vector2;
 
-import javax.xml.soap.Text;
-
-
 /**
  * Created by peran on 3/5/17.
  *  used for draw methods
@@ -24,8 +21,10 @@ class Draw {
     private GameData gameData;
     private TextRenderer smallText;
     private TextRenderer largeText;
+    private int playerID;
 
-    Draw(GameData gd) {
+    Draw(GameData gd, int playerID) {
+        this.playerID = playerID;
         this.width = ClientSettings.SCREEN_WIDTH;
         this.height = ClientSettings.SCREEN_HEIGHT;
         oldHealth = 0;
@@ -81,7 +80,6 @@ class Draw {
 
     private void flashDamage(float intensity, boolean hurt) {
         intensity = Math.min(1, intensity);
-        glBegin(GL_QUAD_STRIP);
         float buffer = 60;
         float red = 0;
         float green = 1;
@@ -90,28 +88,7 @@ class Draw {
             green = 0;
         }
 
-        glColor4f(red, green, 0, intensity/2);
-        glVertex2f(0,0);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(buffer, buffer);
-        glColor4f(red, green, 0, intensity);
-        glVertex2f(width,0);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(width-buffer, buffer);
-        glColor4f(red, green, 0, intensity);
-        glVertex2f(width, height);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(width-buffer, height-buffer);
-        glColor4f(red, green, 0, intensity);
-        glVertex2f(0,height);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(buffer, height-buffer);
-        glColor4f(red, green, 0, intensity/2);
-        glVertex2f(0,0);
-        glColor4f(red, green, 0, 0);
-        glVertex2f(buffer, buffer);
-
-        glEnd();
+        invertedQuadGlow(0, height, width, height, buffer, red, green, 0, intensity);
     }
 
     void drawAura(Vector2 centre, float radius, float strokeWidth, float red, float green, float blue) {
@@ -136,6 +113,33 @@ class Draw {
         glVertex2f(cx, cy+(radius-strokeWidth));
         glColor4f(red, green, blue, 0);
         glVertex2f(cx, cy+radius);
+        glEnd();
+    }
+
+    private void invertedQuadGlow(float xStart, float yStart, float rectWidth, float rectHeight, float strokeWidth, float red, float green, float blue, float intensity) {
+        yStart = height-yStart;
+
+        glBegin(GL_QUAD_STRIP);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart,yStart);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+strokeWidth, yStart+strokeWidth);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart+rectWidth,yStart);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+rectWidth-strokeWidth, yStart+strokeWidth);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart+rectWidth, yStart+rectHeight);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+rectWidth-strokeWidth, yStart+rectHeight-strokeWidth);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart,yStart+rectHeight);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+strokeWidth, yStart+rectHeight-strokeWidth);
+        glColor4f(red, green, blue, intensity);
+        glVertex2f(xStart,yStart);
+        glColor4f(red, green, blue, 0);
+        glVertex2f(xStart+strokeWidth, yStart+strokeWidth);
         glEnd();
     }
 
@@ -166,14 +170,14 @@ class Draw {
         glColor4f(red, green, blue, intensity);
         drawRect(xStart, yStart, rectWidth, rectHeight);
 
-        drawText(largeText, "Landscapers", xStart+10, yStart+3*rectHeight/4+7);
-        drawText(largeText, ((Integer) sb.getTeam1Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam1Score()).toString().length()*20-10, yStart+3*rectHeight/4+7);
+        drawText(largeText, "Landscapers", xStart+10, yStart+3*rectHeight/4+3);
+        drawText(largeText, ((Integer) sb.getTeam1Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam1Score()).toString().length()*18-10, yStart+3*rectHeight/4+3);
 
         glColor4f(1, 0, 1, intensity);
         drawRect(xStart+rectWidth, yStart, rectWidth, rectHeight);
-        drawText(largeText, "The Enclave", xStart+rectWidth+10, yStart+3*rectHeight/4+7);
+        drawText(largeText, "The Enclave", xStart+rectWidth+10, yStart+3*rectHeight/4+2);
         rectWidth *= 2;
-        drawText(largeText, ((Integer) sb.getTeam0Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam0Score()).toString().length()*20-10, yStart+3*rectHeight/4+7);
+        drawText(largeText, ((Integer) sb.getTeam0Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam0Score()).toString().length()*18-10, yStart+3*rectHeight/4+3);
 
         yStart += rectHeight+20;
 
@@ -202,10 +206,15 @@ class Draw {
                 glColor4f(red,green,blue, intensity);
                 drawRect(xStart, yStart, rectWidth, rectHeight);
 
-                drawText(smallText, "Player " + index, xStart+10, yStart+3*rectHeight/4+7);
-                drawText(smallText, ((Integer) max).toString(), xStart+rectWidth-((Integer) max).toString().length()*15-10, yStart+3*rectHeight/4+7);
+
+                drawText(smallText, "Player " + index, xStart+10, yStart+3*rectHeight/4+1);
+                drawText(smallText, ((Integer) max).toString(), xStart+rectWidth-((Integer) max).toString().length()*15-10, yStart+3*rectHeight/4+1);
 
                 yStart+=rectHeight;
+
+                if (index == playerID) {
+                    invertedQuadGlow(xStart,yStart,rectWidth,rectHeight,10,1,1,1,1);
+                }
 
                 sortedScores[index] = Integer.MIN_VALUE;
             }
@@ -231,7 +240,6 @@ class Draw {
     void colourBackground(int phase) {
         glColor4f(phase*0.1f,0,(1-phase)*0.1f,1f);
         drawRect(0,0,width,height);
-
     }
 
     void drawHeatBar(double heat, double maxHeat) {

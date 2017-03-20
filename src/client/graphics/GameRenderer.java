@@ -29,7 +29,7 @@ class GameRenderer {
         Player me = gameData.getPlayer(playerID);
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
         powerUpRotation = 0;
-        draw = new Draw(gameData);
+        draw = new Draw(gameData, playerID);
     }
 
     void render() {
@@ -140,7 +140,7 @@ class GameRenderer {
         float blue;
         for (Player p : players.values()) {
             float radius = p.getRadius();
-            radius = (gameData.getPlayer(playerID).getPhase() == 0) ? radius * (1-p.getPhasePercentage()) : radius*p.getPhasePercentage();
+            radius = (phase == 0) ? radius * (1-p.getPhasePercentage()) : radius*p.getPhasePercentage();
 
             if (p.isAlive()) {
                 if (p.getTeam() == 0) {

@@ -335,6 +335,7 @@ public class Game implements Runnable {
         e.setPhase(rand.nextInt(2));
         if (e instanceof Player) {
             ((Player) e).setFiring(false);
+            ((Player) e).setPhasePercentage(e.getPhase());
             e.setRadius(20);
         }
         else if (e instanceof PowerUp) {
