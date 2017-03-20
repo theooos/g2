@@ -5,9 +5,10 @@ import objects.*;
 import server.ai.Intel;
 
 import java.io.IOException;
-import java.lang.String;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static server.game.ServerConfig.*;
 
 /**
  * Created by peran on 27/01/17.
@@ -29,8 +30,6 @@ public class Game implements Runnable {
     private Scoreboard scoreboard;
     private int IDCounter;
 
-    private final boolean DEBUG = true;
-    private final long tick = 60;
     private boolean gameRunning;
 
 
@@ -44,7 +43,7 @@ public class Game implements Runnable {
             this.map = new Map(mapID);
         }
         catch(IOException e) {
-            msgToAllConnected("Failed to load map");
+            System.err.println("Failed to load map");
         }
 
         out("Total players: "+playerConnections.size());
@@ -150,7 +149,8 @@ public class Game implements Runnable {
             powerUps.put(i, p);
         }
 
-        countdown = 4*60*(int)tick; //four minutes
+        countdown = 4*60*SERVER_TICK; //four minutes
+
         gameRunning = true;
 
         InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps);
@@ -159,7 +159,7 @@ public class Game implements Runnable {
 
 
     public void run() {
-        long timeDelay = 1000/tick;
+        long timeDelay = 1000/(long) SERVER_TICK;
         gameRunning = true;
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -185,7 +185,6 @@ public class Game implements Runnable {
         for (Player p : players.values()) {
             if (!p.isAlive()) {
                 if (p.canRespawn()) {
-                    p.setRadius(20);
                     respawn(p);
                     if (!(p instanceof AIPlayer)) {
                         p.incMove();
@@ -193,24 +192,11 @@ public class Game implements Runnable {
                     }
                 }
                 else {
-                    shrinkDead(p);
-                }
-            }
-            if(p.getSwitchingPhase()){
-                if(p.switchOver()){
-                    p.setRadius(20);
-                    p.resetPhaseCount();
-                }
-                else if(p.canSwitch()){
-                    p.togglePhase();
-                    expandRadius(p);
-                }
-                else{
                     shrinkRadius(p);
                 }
             }
+
             if (p.isFiring()) fire(p);
-            p.phaseCount();
             p.live();
             PowerUp pu = (collisions.collidesWithPowerUp(p));
             if (pu != null) {
@@ -237,10 +223,9 @@ public class Game implements Runnable {
         for (Orb o : orbs.values()) {
             if (!o.isAlive()) {
                 if (o.canRespawn()) {
-                    o.setRadius(10);
                     respawn(o);
                 } else {
-                    shrinkDead(o);
+                    shrinkRadius(o);
                 }
             }
             o.live();
@@ -293,32 +278,12 @@ public class Game implements Runnable {
         }
     }
 
-    private void shrinkDead(MovableEntity e) {
+    private void shrinkRadius(MovableEntity e) {
         float radius = e.getRadius();
         if (radius > 1) {
             radius -= radius * 0.005f;
             e.setRadius(radius);
         } else if (radius != 0) {
-            e.setRadius(0);
-        }
-    }
-
-    private void shrinkRadius(MovableEntity e) {
-        float radius = e.getRadius();
-        if (radius > 1) {
-            radius -= radius * 0.25f;
-            e.setRadius(radius);
-        } else if (radius != 0) {
-            e.setRadius(0);
-        }
-    }
-
-    private void expandRadius(MovableEntity e) {
-        float radius = e.getRadius();
-        if (radius < 20) {
-            radius += radius * 0.25f;
-            e.setRadius(radius);
-        } else if (radius != 20) {
             e.setRadius(0);
         }
     }
@@ -364,9 +329,13 @@ public class Game implements Runnable {
         e.setPhase(rand.nextInt(2));
         if (e instanceof Player) {
             ((Player) e).setFiring(false);
+            e.setRadius(20);
         }
         else if (e instanceof PowerUp) {
             ((PowerUp) e).setChanged(true);
+        }
+        else if (e instanceof Orb) {
+            e.setRadius(10);
         }
     }
 
@@ -400,16 +369,6 @@ public class Game implements Runnable {
     private Vector2 randomDir() {
         int ang = rand.nextInt(359);
         return new Vector2((float)(Math.cos(Math.toRadians(ang))),(float)(Math.sin(Math.toRadians(ang))));
-    }
-
-    /**
-     * sends the string to all players in the lobby
-     * @param s the string to be sent
-     */
-    private void msgToAllConnected(String s) {
-        for (Connection c: playerConnections) {
-            c.send(new objects.String(s));
-        }
     }
 
     /**
@@ -479,8 +438,7 @@ public class Game implements Runnable {
     private void switchPhase(Sendable s) {
         PhaseObject phase = (PhaseObject) s;
         Player p = players.get(phase.getID());
-        p.setSwitchingPhases(true);
-        //p.togglePhase();
+        p.togglePhase();
         out("ID"+p.getID()+": Switching phase");
     }
 

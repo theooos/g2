@@ -58,13 +58,14 @@ class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
-    private void positionBullet(Vector2 pos, Vector2 dir, int radius) {
+    private void positionBullet(Vector2 pos, Vector2 dir, float radius) {
         Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
         float lastX = cursor.getX();
         float lastY = cursor.getY();
 
-        if (lastX > 0 && lastY > 0)
-            draw.drawCircle(lastX, lastY, radius/2, 50);
+        if (lastX > 0 && lastY > 0) {
+            draw.drawCircle(lastX, lastY, radius / 2, 50);
+        }
     }
 
     private void drawCollisions() {
@@ -136,32 +137,31 @@ class GameRenderer {
         float green;
         float blue;
         for (Player p : players.values()) {
-            if (p.getPhase() == phase) {
-                if (p.isAlive()) {
-                    if (p.getTeam() == 0) {
-                        red = 1;
-                        green = 0.33f;
-                        blue = 0.26f;
-                    } else {
-                        red = 0.2f;
-                        green = 0.9f;
-                        blue = 0.5f;
-                    }
-                    draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
-                    GL11.glColor3f(red, green, blue);
-                    draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), p.getRadius(), 100);
-                    positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir(), p.getRadius());
+            float radius = p.getRadius();
+            radius = (gameData.getPlayer(playerID).getPhase() == 0) ? radius * (1-p.getPhasePercentage()) : radius*p.getPhasePercentage();
+
+            if (p.isAlive()) {
+                if (p.getTeam() == 0) {
+                    red = 1;
+                    green = 0.33f;
+                    blue = 0.26f;
                 } else {
-                    red = 0.6f;
-                    green = 0.6f;
-                    blue = 0.7f;
-                    if (p.getRadius() > 0) {
-                        draw.drawAura(p.getPos(), p.getRadius() + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
-                    }
-                    GL11.glColor3f(red, green, blue);
-                    draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), p.getRadius(), 100);
+                    red = 0.2f;
+                    green = 0.9f;
+                    blue = 0.5f;
                 }
+            } else {
+                red = 0.6f;
+                green = 0.6f;
+                blue = 0.7f;
             }
+            if (radius > 0) {
+                draw.drawAura(p.getPos(), radius + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
+            }
+
+            GL11.glColor3f(red, green, blue);
+            draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
+            positionBullet(new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY()), p.getDir(), radius);
         }
     }
 
