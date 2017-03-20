@@ -1,6 +1,6 @@
 package server;
 
-import networking.Connection;
+import networking.Connection_Server;
 import objects.InitPlayer;
 import objects.LobbyData;
 import objects.Sendable;
@@ -19,7 +19,7 @@ import java.util.*;
 class Lobby {
     private int maxSize;
     private int minSize;
-    private HashMap<Integer, Connection> connections;
+    private HashMap<Integer, Connection_Server> connections;
     private boolean[] used;
     private InitPlayer[] players;
     private boolean countdownRunning;
@@ -54,7 +54,6 @@ class Lobby {
             BufferedReader eNames = new BufferedReader(new FileReader(Lobby.class.getResource("../EnclaveNames.txt").getFile()));
             String line = eNames.readLine();
             while (line != null) {
-                System.out.println(line);
                 enclaveNames.add(line);
                 line = eNames.readLine();
             }
@@ -106,13 +105,18 @@ class Lobby {
      * Adds a new player to the lobby
      * @param c the connected player
      */
-    void addConnection(Connection c) {
+    void addConnection(Connection_Server c) {
         for (int i = 0; i < used.length; i++) {
             if (!used[i]) {
+                c.setID(i);
                 connections.put(i, c);
                 objects.String name = players[i].getName();
                 players[i] = new InitPlayer(i, name, false, i%2);
-                c.send(players[i]);
+                try {
+                    c.send(players[i]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 sendAllNewLobbyInfo();
                 if (connections.size() >= minSize) {
                     startCountdown();
@@ -139,7 +143,7 @@ class Lobby {
             countdown = 0;
             t = new Timer();
             countdownRunning = true;
-            msgToAllConnected("Minimum number of connections is reached, countdown starting");
+            msgToAllConnected("Minimum number of players is reached, countdown starting");
 
             t.scheduleAtFixedRate(new TimerTask() {
                 @Override
@@ -167,7 +171,7 @@ class Lobby {
     }
 
     /**
-     * sends the string to all connections in the lobby
+     * sends the string to all players in the lobby
      * @param s the string to be sent
      */
     private void msgToAllConnected(String s) {
@@ -175,9 +179,20 @@ class Lobby {
     }
 
     private void sendToAll(Sendable sendable){
-        for (Connection c: connections.values()) {
-            c.send(sendable);
+        boolean connectionDied = false;
+        for (Connection_Server c: connections.values()) {
+            try {
+                c.send(sendable);
+            } catch (Exception e) {
+                int ID = c.getID();
+                connections.remove(c);
+                used[ID] = false;
+                players[ID] = new InitPlayer(ID, players[ID].getName(), false, players[ID].getTeam());
+                connectionDied = true;
+                break;
+            }
         }
+        if(connectionDied) sendAllNewLobbyInfo();
     }
 
     /**

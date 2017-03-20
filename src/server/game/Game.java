@@ -1,6 +1,6 @@
 package server.game;
 
-import networking.Connection;
+import networking.Connection_Server;
 import objects.*;
 import server.ai.Intel;
 
@@ -19,7 +19,7 @@ public class Game implements Runnable {
     private Map map;
     private CollisionManager collisions;
 
-    private HashMap<Integer, Connection> playerConnections;
+    private HashMap<Integer, Connection_Server> playerConnections;
     private ConcurrentHashMap<Integer, Player> players;
     private HashMap<Integer, Orb> orbs;
     private HashMap<Integer, Projectile> projectiles;
@@ -37,7 +37,7 @@ public class Game implements Runnable {
     private long lastTime =System.currentTimeMillis();
 
 
-    public Game(HashMap<Integer, Connection> playerConnections, int maxPlayers, int mapID, LobbyData ld) {
+    public Game(HashMap<Integer, Connection_Server> playerConnections, int maxPlayers, int mapID, LobbyData ld) {
         IDCounter = 0;
 
         this.playerConnections = playerConnections;
@@ -89,7 +89,7 @@ public class Game implements Runnable {
             }
 
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
-            Connection con = playerConnections.get(i);
+            Connection_Server con = playerConnections.get(i);
             con.addFunctionEvent("String", this::out);
             con.addFunctionEvent("MoveObject", this::receivedMove);
             con.addFunctionEvent("FireObject", this::toggleFire);
@@ -192,7 +192,12 @@ public class Game implements Runnable {
                     respawn(p);
                     if (!(p instanceof AIPlayer)) {
                         p.incMove();
-                        playerConnections.get(p.getID()).send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
+                        Connection_Server connection = playerConnections.get(p.getID());
+                        try {
+                            connection.send(new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount()));
+                        } catch (Exception e) {
+                            dealWithConnectionLoss(connection);
+                        }
                     }
                 }
                 else {
@@ -281,6 +286,11 @@ public class Game implements Runnable {
                 projectiles.remove(i);
             }
         }
+    }
+
+    private void dealWithConnectionLoss(Connection_Server p) {
+        out("Connection to "+p+"dropped.");
+        //TODO THIS.
     }
 
     private void shrinkRadius(MovableEntity e) {
@@ -382,20 +392,28 @@ public class Game implements Runnable {
      * @param s the object to send
      */
     private void sendToAllConnected(Sendable s) {
-        for (Connection c: playerConnections.values()) {
+        for (Connection_Server c: playerConnections.values()) {
             if (s instanceof Scoreboard) {
                 sendScoreboard(c);
             }
             else {
-                c.send(s);
+                try {
+                    c.send(s);
+                } catch (Exception e) {
+                    dealWithConnectionLoss(c);
+                }
             }
         }
     }
 
     private void sendGameStart(InitGame g) {
         out("Sending init game");
-        for (Connection c: playerConnections.values()) {
-            c.send(g);
+        for (Connection_Server c: playerConnections.values()) {
+            try {
+                c.send(g);
+            } catch (Exception e) {
+                dealWithConnectionLoss(c);
+            }
         }
     }
 
@@ -403,8 +421,12 @@ public class Game implements Runnable {
      * sends a scoreboard to a player
      * @param c the connected player
      */
-    private void sendScoreboard(Connection c) {
-        c.send(scoreboard.clone());
+    private void sendScoreboard(Connection_Server c) {
+        try {
+            c.send(scoreboard.clone());
+        } catch (Exception e) {
+            dealWithConnectionLoss(c);
+        }
     }
 
     /**
@@ -426,11 +448,21 @@ public class Game implements Runnable {
                 players.put(m.getID(), p);
             }
             else {
-                playerConnections.get(p.getID()).send(old);
+                Connection_Server conn = playerConnections.get(p.getID());
+                try {
+                    conn.send(old);
+                } catch (Exception e) {
+                    dealWithConnectionLoss(conn);
+                }
             }
         }
         else {
-            playerConnections.get(p.getID()).send(old);
+            Connection_Server conn = playerConnections.get(p.getID());
+            try {
+                conn.send(old);
+            } catch (Exception e) {
+                dealWithConnectionLoss(conn);
+            }
         }
     }
 

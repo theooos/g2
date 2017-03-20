@@ -1,5 +1,6 @@
 package networking;
 
+import client.Client;
 import client.ClientSettings;
 import objects.Sendable;
 
@@ -13,35 +14,17 @@ import java.util.function.Consumer;
 /**
  * This holds the connection between Server and Client, and can be used by either.
  */
-public class Connection {
+public abstract class Connection {
 
-    private Socket socket;
-    private NetworkSender toConnection;
-    private NetworkListener fromConnection;
-    private NetworkEventHandler handler = new NetworkEventHandler();
-
-    /**
-     * FOR USE ONLY BY THE CLIENT. Initialises the connection the server.
-     */
-    public Connection() throws IOException {
-        if (establishSocket()) establishConnection();
-    }
-
-    /**
-     * FOR USE ONLY BY SERVER. Initialises the connection to a client.
-     *
-     * @param socket The server socket.
-     */
-    public Connection(Socket socket) throws IOException {
-        this.socket = socket;
-        out("Connection made to client.");
-        establishConnection();
-    }
+    Socket socket;
+    NetworkSender toConnection;
+    NetworkListener fromConnection;
+    NetworkEventHandler handler = new NetworkEventHandler();
 
     /**
      * Generates the socket.
      */
-    private boolean establishSocket() throws IOException {
+    boolean establishSocket() throws IOException {
         int attempts = 3;
 
         String HOSTNAME = ClientSettings.LOCAL ? "localhost" : ClientSettings.SERVER_IP;
@@ -56,27 +39,14 @@ public class Connection {
     /**
      * Creates the input and output streams.
      */
-    private boolean establishConnection() throws IOException {
-        int attempts = 3;
+    abstract boolean establishConnection(Client... clients) throws IOException;
 
-        retries:
-        for (int i = 1; i <= attempts; i++) {
-            toConnection = new NetworkSender(new ObjectOutputStream(socket.getOutputStream()));
-            fromConnection = new NetworkListener(new ObjectInputStream(socket.getInputStream()), handler);
-            break retries;
-        }
 
-        out("Connection made to server.");
-        new Thread(handler).start();
-        new Thread(toConnection).start();
-        new Thread(fromConnection).start();
-        return true;
-    }
 
     /**
      * Closes all streams.
      */
-    private void closeConnection() {
+    public void closeConnection() {
         try {
             toConnection.close();
             fromConnection.close();
@@ -98,27 +68,6 @@ public class Connection {
             out("Failed to connect through server socket.");
         }
         return null;
-    }
-
-    /**
-     * Sends a Sendable object the partner.
-     *
-     * @param obj Sendable item.
-     */
-    public void send(Sendable obj) {
-        toConnection.queueForSending(obj);
-    }
-
-    /**
-     * This re-initialises the connection in case of an error.
-     */
-    public void resetConnection() {
-        closeConnection();
-        try {
-            establishConnection();
-        } catch (Exception e) {
-            System.err.println("Failed to reset connection.");
-        }
     }
 
     public void addFunctionEvent(String className, Consumer<Sendable> consumer) {

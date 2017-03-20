@@ -1,5 +1,6 @@
 package networking;
 
+import client.Client;
 import objects.Sendable;
 import server.game.Player;
 
@@ -12,16 +13,12 @@ import static networking.Connection.out;
 /**
  * Listens for communications on the network. Then deals with them appropriately?
  */
-class NetworkListener implements Runnable {
+abstract class NetworkListener implements Runnable {
 
-    private NetworkEventHandler handler;
-    private ObjectInputStream fromConnection;
-    private boolean isRunning;
-
-    NetworkListener(ObjectInputStream fromConnection, NetworkEventHandler handler){
-        this.fromConnection = fromConnection;
-        this.handler = handler;
-    }
+    Client client;
+    NetworkEventHandler handler;
+    ObjectInputStream fromConnection;
+    boolean isRunning;
 
     /**
      * Blocks connection when waiting for a new object. Hence this is threaded.
@@ -31,17 +28,13 @@ class NetworkListener implements Runnable {
         while(isRunning){
             try {
                 Sendable received = (Sendable) fromConnection.readObject();
-//                try{
-//                    System.err.println("[RECEIVED] "+((Player)received).getPos());
-//                } catch (Exception e){}
                 handler.queueForExecution(received);
             } catch (IOException e) {
-                out("NetworkListener's connection with the server broke.");
-                out(e.getMessage());
-                isRunning = false;
+                out("Connection_Server broke. Performing shutdown.");
+                performShutdown();
             } catch (ClassNotFoundException e) {
                 out("NetworkListener failed to interpret object type.");
-                out(e.getMessage());
+                performShutdown();
             }
         }
     }
@@ -54,4 +47,6 @@ class NetworkListener implements Runnable {
         isRunning = false;
         fromConnection.close();
     }
+
+    abstract void performShutdown();
 }
