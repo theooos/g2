@@ -19,6 +19,8 @@ public interface ISprite {
     int ABOUT_BUTTON = 10;
     int BACK_BUTTON = 11;
     int JOIN_LOBBY_BUTTON = 12;
+    int RESUME_GAME_BUTTON = 13;
+    int EXIT_GAME_BUTTON = 14;
 
-    int SLIDER = 13;
+    int SLIDER = 15;
 }

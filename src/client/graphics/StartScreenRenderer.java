@@ -144,14 +144,12 @@ public class StartScreenRenderer {
             if(controls_button.isClicked()){
                 currentScreen = Screen.CONTROLS;
                 hasClicked = true;
-                return;
             }
-            if (about_button.isClicked()) {
+            else if (about_button.isClicked()) {
                 currentScreen = Screen.ABOUT;
                 hasClicked = true;
-                return;
             }
-            if (join_lobby_button.isClicked()) {
+            else if (join_lobby_button.isClicked()) {
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
                 hasClicked = true;
