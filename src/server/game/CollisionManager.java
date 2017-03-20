@@ -152,7 +152,7 @@ public class CollisionManager {
         return null;
     }
 
-    MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase) {
+    private MovableEntity collidesWithPlayerOrBot(int r, Vector2 pos, int phase) {
         for (Player p : players.values()){
             if (p.getPhase() == phase && p.isAlive() && pointsCollided(r, pos, p.getRadius(), p.getPos())) return p;
         }
