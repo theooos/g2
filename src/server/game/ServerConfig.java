@@ -16,4 +16,6 @@ class ServerConfig {
     static final int PLAYER_KILLED_SCORE = 10;
     static final int ORB_KILLED_SCORE = 3;
     static final int KILLED_BY_ORB_SCORE = -3;
+
+    static final int RESPAWN_DISTANCE = 80;
 }

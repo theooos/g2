@@ -393,7 +393,6 @@ public class Game implements Runnable {
         //get map bounds
         int boundX = map.getMapWidth()-200;
         int boundY = map.getMapLength()-200;
-        int minDist = 60;
 
         boolean valid = false;
         Vector2 v = new Vector2(0,0);
@@ -402,9 +401,9 @@ public class Game implements Runnable {
             valid = true;
             v = new Vector2(rand.nextInt(boundX)+100, rand.nextInt(boundY)+100);
 
-            if (collisions.pointWallCollision(minDist, v, 0)) valid = false;
-            else if (collisions.pointWallCollision(minDist, v, 1)) valid = false;
-            else if (collisions.collidesWithPlayerOrBot(minDist, v) != null) valid = false;
+            if (collisions.pointWallCollision(v, RESPAWN_DISTANCE, 0)) valid = false;
+            else if (collisions.pointWallCollision(v, RESPAWN_DISTANCE, 1)) valid = false;
+            else if (collisions.collidesWithPlayerOrBot(RESPAWN_DISTANCE, v) != null) valid = false;
         }
         return v;
     }

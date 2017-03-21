@@ -1,5 +1,7 @@
 package server.game;
 
+import objects.GameData;
+import objects.InitGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,14 +26,15 @@ class CollisionManagerTest {
     void setUp() {
         try {
             map = new Map(10);
-            players = new ConcurrentHashMap<>();
-            orbs = new HashMap<>();
-            powerUps = new HashMap<>();
-            collisionManager = new CollisionManager(players, orbs, map, powerUps);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+        players = new ConcurrentHashMap<>();
+        orbs = new HashMap<>();
+        powerUps = new HashMap<>();
+        collisionManager = new CollisionManager(players, orbs, map, powerUps);
+        GameData gd = new GameData(new InitGame(orbs, players, 10, null , powerUps, null));
+        collisionManager = new CollisionManager(gd);
     }
 
     @Test
@@ -48,22 +51,48 @@ class CollisionManagerTest {
 
     @Test
     void validPosition() {
-
+        setUpBotsAndPlayer();
+        Orb o = new Orb(new Vector2(20, 20), new Vector2(0, 1), 1, 4);
+        assertFalse(collisionManager.validPosition(o));
+        o = new Orb(new Vector2(120, 120), new Vector2(0, 1), 0, 4);
+        assertFalse(collisionManager.validPosition(o));
+        o = new Orb(new Vector2(101, 300), new Vector2(0, 1), 0, 4);
+        assertFalse(collisionManager.validPosition(o));
+        o = new Orb(new Vector2(101, 200), new Vector2(0, 1), 1, 4);
+        assertTrue(collisionManager.validPosition(o));
     }
 
     @Test
     void validPosition1() {
-
+        setUpBotsAndPlayer();
+        assertTrue(collisionManager.validPosition(new Vector2(20, 20), 14, 0));
+        assertFalse(collisionManager.validPosition(new Vector2(20, 20), 20, 1));
+        assertFalse(collisionManager.validPosition(new Vector2(0, 0), 20, 0));
+        assertFalse(collisionManager.validPosition(new Vector2(0, 200), 20, 1));
+        assertFalse(collisionManager.validPosition(new Vector2(20, 20), 20, 0));
+        assertFalse(collisionManager.validPosition(new Vector2(60, 100), 60, 0));
+        assertTrue(collisionManager.validPosition(new Vector2(400, 400), 80, 0));
     }
 
     @Test
     void orbValidPosition() {
+        setUpBotsAndPlayer();
 
+        Orb o = new Orb(new Vector2(20, 20), new Vector2(0, 1), 1, 4);
+        assertFalse(collisionManager.orbValidPosition(o));
+        o = new Orb(new Vector2(120, 120), new Vector2(0, 1), 0, 4);
+        assertTrue(collisionManager.orbValidPosition(o));
+        o = new Orb(new Vector2(101, 300), new Vector2(0, 1), 0, 4);
+        assertFalse(collisionManager.orbValidPosition(o));
+        o = new Orb(new Vector2(101, 200), new Vector2(0, 1), 1, 4);
+        assertTrue(collisionManager.orbValidPosition(o));
     }
 
     @Test
     void pointWallCollision() {
-
+        assertFalse(collisionManager.pointWallCollision(new Vector2(30, 30), 20, 0));
+        assertFalse(collisionManager.pointWallCollision(new Vector2(100, 300), 20, 1));
+        assertTrue(collisionManager.pointWallCollision(new Vector2(100, 300), 20, 0));
     }
 
     @Test
