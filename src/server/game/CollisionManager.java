@@ -148,7 +148,7 @@ public class CollisionManager {
             if (!(p.equals(e) ||  p.getPhase() != e.getPhase()) && p.getRadius() > 0) {
 
                 //a projectile doesn't want to collide with it's parent
-                if (!((e instanceof Projectile) && !((Projectile) e).getPlayer().equals(p))) {
+                if (!(e instanceof Projectile) || !((Projectile) e).getPlayer().equals(p)) {
                     //checks to see if the next move collides
                     nextPos = e.getPos().add(e.getDir().mult(e.getSpeed()));
                     minDist = linePointDistance(e.getPos(), nextPos, p.getPos());
