@@ -16,7 +16,7 @@ class InGameMenuRenderer {
 
     private InterfaceTexture back_button = new InterfaceTexture(ISprite.BACK_BUTTON);
     private InterfaceTexture resume_game_button = new InterfaceTexture(ISprite.RESUME_GAME_BUTTON);
-    private InterfaceTexture settings_game_button = new InterfaceTexture(ISprite.ABOUT_BUTTON);
+    private InterfaceTexture settings_game_button = new InterfaceTexture(ISprite.SETTINGS_BUTTON);
     private InterfaceTexture exit_game_button = new InterfaceTexture(ISprite.EXIT_GAME_BUTTON);
 
     private static Layer menuLayer = new Layer();

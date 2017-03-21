@@ -192,8 +192,8 @@ class Draw {
         glEnd();
     }
 
-    void drawScoreboard(boolean shadeScreen) {
-        if (shadeScreen) shadeScreen();
+    void drawScoreboard() {
+        shadeScreen();
         Scoreboard sb = gameData.getScoreboard();
 
         if (smallText == null) {

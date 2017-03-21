@@ -55,8 +55,8 @@ class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
-    void drawScoreboard(boolean shadeScreen) {
-        draw.drawScoreboard(shadeScreen);
+    void drawScoreboard() {
+        draw.drawScoreboard();
     }
 
     void drawGameOver() {
