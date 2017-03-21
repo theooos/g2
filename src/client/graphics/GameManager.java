@@ -39,7 +39,7 @@ public class GameManager {
     private boolean gameMusic;
     private boolean muted;
 
-    public GameManager(GameData gd, Connection_Client conn, int playerID) {
+    public GameManager(GameData gd, Connection_Client conn, int playerID, TextRenderer[] textRenderers) {
         super();
         this.conn = conn;
         this.gameData = gd;
@@ -50,7 +50,7 @@ public class GameManager {
         muted = false;
 
         collisions = new CollisionManager(gd);
-        gameRenderer = new GameRenderer(gameData, playerID, collisions);
+        gameRenderer = new GameRenderer(gameData, playerID, collisions, textRenderers);
         inGameMenuRenderer = new InGameMenuRenderer(gameData,playerID,this);
 
         conn.addFunctionEvent("GameOver", this::gameOver);
@@ -77,10 +77,10 @@ public class GameManager {
             case SCOREBOARD:
                 gameRenderer.render();
                 gameRenderer.drawScoreboard(true);
-                break;
             case GAMEOVER:
-                inGameMenuRenderer.renderEndScreen();
-                gameRenderer.drawScoreboard(false);
+                gameRenderer.render();
+                gameRenderer.drawScoreboard(true);
+                gameRenderer.drawGameOver();
         }
     }
 
@@ -236,7 +236,7 @@ public class GameManager {
                 break;
 
             case Keyboard.KEY_TAB:
-                mode = Mode.SCOREBOARD;
+                if(mode != Mode.GAMEOVER) mode = Mode.SCOREBOARD;
                 break;
         }
     }

@@ -14,5 +14,5 @@ public class ServerConfig {
 
     public static final boolean NAME_LOCAL = true;
 
-    static final int MAX_SCORE = 300;
+    static final int MAX_SCORE = 200;
 }

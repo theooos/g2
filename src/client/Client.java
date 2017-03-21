@@ -3,6 +3,7 @@ package client;
 import client.audio.Audio;
 import client.graphics.GameManager;
 import client.graphics.StartScreenRenderer;
+import client.graphics.TextRenderer;
 import client.graphics.TextureLoader;
 import networking.Connection_Client;
 import objects.GameData;
@@ -29,6 +30,8 @@ public class Client {
 
     private StartScreenRenderer startScreen;
     private GameManager gameManager;
+
+    private TextRenderer[] textRenderers = new TextRenderer[3];
 
     private boolean running = true;
 
@@ -98,6 +101,9 @@ public class Client {
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             TextureLoader.initialise();
+            textRenderers[0] = new TextRenderer(20);
+            textRenderers[1] = new TextRenderer(25);
+            textRenderers[2] = new TextRenderer(60);
 
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
@@ -115,7 +121,7 @@ public class Client {
     private void beginGame(Sendable s) {
         GameData gameData = new GameData((InitGame) s);
         clientReceiver.setGameData(gameData);
-        gameManager = new GameManager(gameData, connection, playerID);
+        gameManager = new GameManager(gameData, connection, playerID, textRenderers);
         currentMode = Mode.GAME;
         startScreen.setCurrentScreen(StartScreenRenderer.Screen.MAIN);
         Audio.INTERFACEBACKGROUND.stopClip();
