@@ -24,7 +24,7 @@ public class WeaponSniper extends Weapon {
         //the amount of heat each firing of the weapon takes up
         heatPerShot = 30;
         //min time after firing a shot till the gun can fire again
-        refireTime = 20;
+        refireTime = 25;
         //whether the player can hold down the trigger
         fullyAuto = false;
     }
