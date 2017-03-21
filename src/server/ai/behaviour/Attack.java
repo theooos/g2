@@ -68,9 +68,7 @@ public class Attack extends PlayerTask {
 
         // Move towards optimum distance from target.
         if (distance > (targetRange + 2) || distance < (targetRange - 2)) {
-            Vector2 dir = me.getDir();
             brain.getBehaviour("Travel").doAction();
-            me.setDir(dir);
         }
 
         // Check if the target is in firing range.

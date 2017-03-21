@@ -36,7 +36,7 @@ public class Travel extends PlayerTask {
 
         // Checks for collisions,
         Vector2 oldPos = me.getPos();
-        me.setDir(travelDir);
+        me.setDir(intel.getPointerVector());
         me.setPos(oldPos.add(travelDir.mult(me.getSpeed())));
         if (!intel.validPosition()) {
             me.setPos(oldPos);

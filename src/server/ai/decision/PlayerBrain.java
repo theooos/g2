@@ -19,8 +19,8 @@ public class PlayerBrain extends AIBrain {
 
     public enum EmotionalState{
         INTIMIDATED,
-        IRRITATED,
         VENGEFUL,
+        IRRITATED,
         AGGRESSIVE,
         DETERMINED,
         BORED,
@@ -30,8 +30,7 @@ public class PlayerBrain extends AIBrain {
     private EmotionalState newEmotion;
 
     private Sequence flee;
-    private Sequence rage;
-    private Sequence chase;
+    private Sequence stalk;
     private Sequence hunt;
     private Task currentStrategy;
 
@@ -67,6 +66,7 @@ public class PlayerBrain extends AIBrain {
         behaviours.addBehaviour(new ForceShiftPhase(intel, this), "ForceShiftPhase");
         behaviours.addBehaviour(new Attack(intel, this), "Attack");
         behaviours.addBehaviour(new Swat(intel, this, loadout), "Swat");
+        behaviours.addBehaviour(new Fetch(intel, this), "Fetch");
     }
     @Override
     protected void configureBehaviours() {
@@ -80,6 +80,10 @@ public class PlayerBrain extends AIBrain {
         flee.add(behaviours.getBehaviour("LocateCover"));
         flee.add(behaviours.getBehaviour("FindPath"));
         flee.add(behaviours.getBehaviour("Travel"));
+
+        this.stalk = new Sequence(intel, this);
+        stalk.add(behaviours.getBehaviour("FindPath"));
+        stalk.add(behaviours.getBehaviour("Travel"));
     }
 
     @Override
@@ -102,15 +106,19 @@ public class PlayerBrain extends AIBrain {
         switch (curEmotion) {
 
             case INTIMIDATED:
-                flee.doAction();
-                if (flee.hasFinished()) intel.setEscaped(true);
+                if (behaviours.getBehaviour("Fetch").isRunning()){
+                    behaviours.getBehaviour("Fetch").doAction();
+                }
+                else {
+                    flee.doAction();
+                }
+                if (flee.hasFinished() || behaviours.getBehaviour("Fetch").hasFinished()){
+                    curEmotion = AT_REST;   // Force more action if still intimidated next tick.
+                }
                 break;
 
             case IRRITATED:
                 behaviours.getBehaviour("Swat").doAction();
-                break;
-
-            case VENGEFUL:
                 break;
 
             case AGGRESSIVE:
@@ -133,7 +141,8 @@ public class PlayerBrain extends AIBrain {
                 break;
 
             case DETERMINED:
-
+                stalk.doAction();
+                if (stalk.hasFinished()) resetBehaviours();     // Repeat if necessary, though highly unlikely.
                 break;
 
             default:
@@ -208,16 +217,20 @@ public class PlayerBrain extends AIBrain {
 
             case INTIMIDATED:
                 this.stress = STRESS_INTIMIDATED;
-                flee.start();
+
+                // If there's a power up available and chance allows:
+                if (check.doCheck(Check.CheckMode.HEALTH_UP_VIABLE) &&
+                        gen.nextDouble() <= AIConstants.CHANCE_PURSUE_HEALTH) {
+                    behaviours.getBehaviour("Fetch").start();
+                }
+                else {
+                    flee.start();
+                }
                 break;
 
             case IRRITATED:
                 this.stress = STRESS_IRRITATED;
                 behaviours.getBehaviour("Swat").start();
-                break;
-
-            case VENGEFUL:
-                this.stress = STRESS_VENGEFUL;
                 break;
 
             case AGGRESSIVE:
@@ -234,9 +247,13 @@ public class PlayerBrain extends AIBrain {
             case DETERMINED:
                 if (curEmotion == BORED) {
                     this.stress = STRESS_DETERMINED_FROM_BORED;
-                } else {
+                }
+                else {
                     this.stress = STRESS_DETERMINED;
                 }
+                ((FindPath)behaviours.getBehaviour("FindPath")).setSimplePath(false);
+                intel.setTargetLocation(intel.getRelevantEntity().getPos());
+                stalk.start();
                 break;
 
             default:

@@ -71,6 +71,8 @@ public class QuickMove extends PlayerTask {
     @Override
     public void doAction(){
         if (brain.getBehaviour("Travel").hasFinished()){
+            brain.getBehaviour("Travel").reset();
+            brain.getBehaviour("FindPath").reset();
             end();
         }
         else {

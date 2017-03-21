@@ -40,8 +40,6 @@ public class FindPath extends Task {
     @Override
     public void doAction() {
 
-       // System.out.println("Working out how to get there.");
-
         ArrayList<Vector2> path = new ArrayList<>();
 
         if (lineOfSight) {
@@ -66,9 +64,9 @@ public class FindPath extends Task {
                 path.add(new Vector2(node.getX(), node.getY()));
             }
 
-
             intel.resetPath(path);
         }
+
         end();
     }
 }

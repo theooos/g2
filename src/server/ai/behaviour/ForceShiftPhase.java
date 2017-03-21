@@ -21,11 +21,6 @@ public class ForceShiftPhase extends PlayerTask {
     }
 
     @Override
-    public void start(){
-        intel.setEscaped(false);
-    }
-
-    @Override
     public void doAction() {
 
         // If re-attempt is currently ongoing:

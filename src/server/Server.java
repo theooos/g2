@@ -14,7 +14,8 @@ public class Server extends Thread {
     private ServerSocket serverSocket = Connection.getServerSocket();
     private NewConnectionListener newConnectionListener = new NewConnectionListener(serverSocket);
 
-    private LobbyManager lobbyManager = new LobbyManager();
+    private static LobbyManager lobbyManager;
+    private static String[] arg;
 
     /**
      * Always checking if the listener has any new clients. If so, sends them to the lobby manager.
@@ -31,6 +32,8 @@ public class Server extends Thread {
     }
 
     public static void main(String[] args){
+        arg = args;
+        lobbyManager = new LobbyManager(arg);
         new Server().start();
     }
 

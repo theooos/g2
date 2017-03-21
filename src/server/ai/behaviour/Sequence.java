@@ -92,4 +92,8 @@ public class Sequence extends Task {
         System.err.println("Sequences are not single-tick tasks.");
         System.exit(1);
     }
+
+    public boolean hasFinished(){
+        return (subTasks.get(subTasks.size()-1)).hasFinished();
+    }
 }
