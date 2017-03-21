@@ -5,12 +5,22 @@ import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
 
 /**
- * Forces the AI Player to shift phase by checking for success in the next tick
- * and, upon failure, moving slightly and trying again.
+ * This behaviour allows AI-controlled players to insist upon a phase-shift.
+ * The player will attempt to phase-shift and make use of the {@link QuickMove}
+ * behaviour to facilitate another phase-shift attempt. If the second attempt
+ * fails, the behaviour will give up.
+ *
  * Created by Rhys on 3/11/17.
  */
 public class ForceShiftPhase extends PlayerTask {
 
+    /**
+     * Constructs a ForceShiftPhase behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public ForceShiftPhase(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
     }

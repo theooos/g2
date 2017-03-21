@@ -1,24 +1,26 @@
 package server.ai.behaviour;
 
-import server.ai.AIBrain;
-import server.ai.Intel;
 import server.ai.OrbTask;
-import server.ai.Task;
 import server.ai.decision.OrbBrain;
 import server.ai.decision.OrbIntel;
-import server.ai.decision.PlayerBrain;
 import server.game.MovableEntity;
 import server.game.Vector2;
 
-import java.util.Random;
-
 /**
- * Allows the entity to follow a path.
+ * This behaviour allows an Orb to move towards a pre-determined checkpoint, once per tick.
+ * <p>
  * Created by rhys on 2/16/17.
  */
-public class Float extends OrbTask {
+public class Glide extends OrbTask {
 
-    public Float(OrbIntel intel, OrbBrain brain){
+    /**
+     * Constructs a Glide behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
+    public Glide(OrbIntel intel, OrbBrain brain){
         super(intel, brain);
     }
 
@@ -60,7 +62,7 @@ public class Float extends OrbTask {
 
     @Override
     public void run(){
-        System.err.println("Float is not a single-tick task.");
+        System.err.println("Glide is not a single-tick task.");
         System.exit(1);
     }
 }

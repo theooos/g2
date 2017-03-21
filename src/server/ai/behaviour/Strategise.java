@@ -12,8 +12,14 @@ import java.util.Random;
 import static server.ai.decision.AIConstants.*;
 
 /**
- * Allows the player to decide which attack strategy they will use, based on
- * their load-out, circumstances and some random chance.
+ * This behaviour allows an AI-controlled player to decide which attack strategy they
+ * will use against a pre-targeted player, based on its {@link LoadoutHandler}
+ * and how far away the targeted player is. The correct decision may be discarded
+ * because of random error.
+ * <p>
+ * Use of this behaviour is reserved for circumstances where the targeted player
+ * is in direct line-of-sight of the AI-controlled player.
+ *
  * Created by Rhys on 3/11/17.
  */
 public class Strategise extends PlayerTask {
@@ -29,6 +35,14 @@ public class Strategise extends PlayerTask {
         SPRAY_N_PRAY
     }
 
+    /**
+     * Constructs a Strategise behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param ldh   The AI Player's load-out handler, used for verifying weapon accessibility
+     *              and equipping desired weapons.
+     */
     public Strategise(PlayerIntel intel, PlayerBrain brain, LoadoutHandler ldh){
         super(intel, brain);
         this.loadout = ldh;

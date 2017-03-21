@@ -5,13 +5,27 @@ import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
 
 /**
- * Allows the AI Player to shift phases.
+ * This behaviour allows an AI-controlled player to shift-phase, but will
+ * fail if the players resulting position in the other phase is invalid.
+ * Failure can be detected by calling the {@link PlayerIntel#phaseShiftFailed()}
+ * method.
+ * <p>
+ * If shift-phasing is absolutely required in a particular situation, the
+ * {@link ForceShiftPhase} behaviour should be used instead.
+ * <p>
  * Created by Rhys on 3/11/17.
  */
 public class ShiftPhase extends PlayerTask {
 
     private boolean overrideAuth;
 
+    /**
+     * Constructs a ShiftPhase behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public ShiftPhase(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
         overrideAuth = false;

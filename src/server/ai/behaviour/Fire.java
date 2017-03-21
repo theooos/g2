@@ -7,13 +7,23 @@ import server.ai.decision.PlayerIntel;
 import server.game.Vector2;
 
 /**
- * Created by rhys on 3/11/17.
+ * This behaviour allows an AI-controlled player to fire their weapon at
+ * a suitable frequency.
+ *
+ * Created by Rhys on 3/11/17.
  */
 public class Fire extends PlayerTask {
 
     private int fireFreq;
     private int fireDelay;
 
+    /**
+     * Constructs a Fire behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public Fire(PlayerIntel intel, PlayerBrain brain) {
         super(intel, brain);
     }

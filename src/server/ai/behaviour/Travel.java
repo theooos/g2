@@ -1,18 +1,29 @@
 package server.ai.behaviour;
 
-import server.ai.OrbTask;
 import server.ai.PlayerTask;
 import server.ai.decision.*;
-import server.game.MovableEntity;
 import server.game.Player;
 import server.game.Vector2;
 
 /**
- * Allows the entity to follow a path.
+ * This behaviour allows AI-controlled players to move towards a pre-determined
+ * checkpoint, once per tick.
+ * <p>
+ * Travelling using this behaviour allows the exhibition of random error, which
+ * is calculated by the {@link Vector2#deviate} method, based on
+ * the player's stress level at the time.
+ *
  * Created by Rhys on 2/16/17.
  */
 public class Travel extends PlayerTask {
 
+    /**
+     * Constructs a Travel behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public Travel(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
     }

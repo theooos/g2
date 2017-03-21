@@ -1,23 +1,31 @@
 package server.ai.behaviour;
 
-import server.ai.AIBrain;
-import server.ai.Intel;
 import server.ai.PlayerTask;
-import server.ai.Task;
 import server.ai.decision.Check;
 import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
 import server.game.Vector2;
 
-import java.util.Random;
-
 /**
- * Picks a very close destination for the orb to move towards, in attempt
- * to clear a wall in the other phase, and moves towards it.
- * Created by rhys on 2/16/17.
+ * This behaviour allows an AI-controlled player to move a short-distance
+ * in the opposite direction of a threat, in order to facilitate a reattempt
+ * to shift phase by the {@link ForceShiftPhase} behaviour.
+ * <p>
+ * If the player is unable to move backwards due to an obstruction, this
+ * behaviour will try attempt five times to find an alternative short-distance
+ * destination irrespective of the direction.
+ *
+ * Created by Rhys on 2/16/17.
  */
 public class QuickMove extends PlayerTask {
 
+    /**
+     * Constructs a QuickMove behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public QuickMove(PlayerIntel intel, PlayerBrain brain) {
         super(intel, brain);
     }

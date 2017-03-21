@@ -8,9 +8,10 @@ import server.game.Orb;
 import server.game.Player;
 
 /**
- * Allows the entity to perform a very powerful, touching-range attack.
- * Restricted for use by Orbs only.
- * Created by rhys on 2/16/17.
+ * This behaviour allows an Orb to perform a very powerful attack upon
+ * players in touching range.
+ *
+ * Created by Rhys on 2/16/17.
  */
 public class Zap extends Task {
 
@@ -18,6 +19,13 @@ public class Zap extends Task {
     private double ctr;
     private MovableEntity target;
 
+    /**
+     * Constructs a Zap behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public Zap(Intel intel, AIBrain brain) {
         super(intel, brain);
         this.ctr = 0;

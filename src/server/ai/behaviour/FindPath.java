@@ -10,13 +10,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Defines a behaviour where the entity maps a path to the target.
- * Created by rhys on 2/16/17.
+ * This behaviour allows an AI unit to determine a path towards a pre-determined
+ * target point on the map. The behaviour will use an A* algorithm to find paths
+ * towards points that aren't in direct line-of-sight, but the behaviour must be
+ * prepared using the {@link #setSimplePath(boolean)} method, as it does not check
+ * line of sight itself.
+ *
+ * Created by Rhys on 2/16/17.
  */
 public class FindPath extends Task {
 
     private boolean lineOfSight;
 
+    /**
+     * Constructs a FindPath behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public FindPath(Intel intel, AIBrain brain) {
         super(intel, brain);
     }

@@ -11,7 +11,9 @@ import server.game.Vector2;
 import static sun.audio.AudioPlayer.player;
 
 /**
- * Allows the player to attack an opponent player within line of sight.
+ * Allows AI-controlled players to attack an opponent player within line of sight,
+ * adhering to a pre-determined strategy.
+ * 
  * Created by rhys on 3/11/17.
  */
 public class Attack extends PlayerTask {
@@ -21,6 +23,13 @@ public class Attack extends PlayerTask {
     private float maxRange;
     private float targetRange;
 
+    /**
+     * Constructs an Attack behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public Attack(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
     }

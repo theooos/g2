@@ -2,7 +2,6 @@ package server.ai.decision;
 
 import server.ai.AIBrain;
 import server.ai.behaviour.*;
-import server.ai.behaviour.Float;
 
 /**
  * Represents the brain of an Orb, making decisions on the Orb's behalf while taking
@@ -27,7 +26,7 @@ public class OrbBrain extends AIBrain {
 
     protected void constructBehaviours(){
         super.constructBehaviours();
-        behaviours.addBehaviour(new Float(intel, this), "Float");
+        behaviours.addBehaviour(new Glide(intel, this), "Glide");
     }
 
     /**
@@ -39,7 +38,7 @@ public class OrbBrain extends AIBrain {
         this.drift.add(behaviours.getBehaviour("Dawdle"));
         this.drift.add(behaviours.getBehaviour("Wander"));
         this.drift.add(behaviours.getBehaviour("FindPath"));
-        this.drift.add(behaviours.getBehaviour("Float"));
+        this.drift.add(behaviours.getBehaviour("Glide"));
     }
 
     /**
@@ -64,12 +63,12 @@ public class OrbBrain extends AIBrain {
             if (check.doCheck(Check.CheckMode.TARGET_MOVED)) {
                 intel.setTargetLocation(intel.getRelevantEntity().getPos());
                 behaviours.getBehaviour("FindPath").run();
-                behaviours.getBehaviour("Float").start();
+                behaviours.getBehaviour("Glide").start();
             } // Or if it hasn't...
             else {
                 // Float towards the target player if they'relevantEnt out of attacking range.
                 if (!check.doCheck(Check.CheckMode.RANGE)) {
-                    behaviours.getBehaviour("Float").doAction();
+                    behaviours.getBehaviour("Glide").doAction();
                 }
                 // Or, if the target is in range, zap them.
                 else {

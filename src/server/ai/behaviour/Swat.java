@@ -12,7 +12,12 @@ import server.game.Vector2;
 import java.util.Random;
 
 /**
- * Allows the player to attack an opponent player within line of sight, while retreating.
+ * This behaviour enables an AI-controlled player to attack and kill a nearby
+ * Orb, switching phase if necessary.
+ * <p>
+ * Whether or not a phase-shift is required is pre-determined by the Check class,
+ * but may be ignored due to random error.
+ *
  * Created by Rhys on 3/11/17.
  */
 public class Swat extends PlayerTask {
@@ -24,6 +29,13 @@ public class Swat extends PlayerTask {
     private int fireDelay;
     private Random gen;
 
+    /**
+     * Constructs a Swat behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public Swat(PlayerIntel intel, PlayerBrain brain, LoadoutHandler ldh){
         super(intel, brain);
         this.loadout = ldh;

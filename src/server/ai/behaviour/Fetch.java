@@ -6,13 +6,22 @@ import server.ai.decision.PlayerBrain;
 import server.ai.decision.PlayerIntel;
 
 /**
- * Allows the player to hunt down a power up.
- * Created by rhys on 3/20/17.
+ * This behaviour allows an AI-controlled player to hunt and collect a
+ * pre-targeted power-up, shifting phase if necessary.
+ *
+ * Created by Rhys on 3/20/17.
  */
 public class Fetch extends PlayerTask {
 
-    boolean pathFound;
+    private boolean pathFound;
 
+    /**
+     * Constructs a Fetch behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     *              carry out actions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public Fetch(PlayerIntel intel, PlayerBrain brain) {
         super(intel, brain);
         pathFound = false;

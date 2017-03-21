@@ -8,13 +8,21 @@ import server.game.Vector2;
 import java.util.Random;
 
 /**
- * Chooses a random worthwhile location for the entity to move towards.
+ * This behaviour allows AI-controlled units to choose a random, out-of-sight
+ * location to travel towards.
+ *
  * Created by Rhys on 2/16/17.
  */
 public class Wander extends Task {
 
     private Random gen;
 
+    /**
+     * Constructs a Wander behaviour object that utilises the given Intel and Brain objects.
+     *
+     * @param intel The game-related intelligence the behaviour uses to make decisions.
+     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     */
     public Wander(Intel intel, AIBrain brain) {
         super(intel, brain);
         this.gen = new Random();
