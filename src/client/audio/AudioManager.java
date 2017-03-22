@@ -68,4 +68,18 @@ public class AudioManager {
             Audio.PULSE.stopClip();
         }
     }
+
+    public static void playOrbHum(float closestDist) {
+        if (closestDist < ORB_VIS) {
+            float volume = Math.min(1, Math.max(0, ORB_VOL-closestDist/ORB_VIS));
+            Audio.PULSE.changeVolume(volume);
+            if (!Audio.PULSE.isPlaying()) {
+                Audio.PULSE.loop(volume);
+            }
+        }
+        else if (closestDist >= ORB_VIS && Audio.PULSE.isPlaying()) {
+            Audio.PULSE.stopClip();
+        }
+    }
+
 }

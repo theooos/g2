@@ -29,8 +29,12 @@ public class ClientSettings {
     public static final float PULSE_VOL = 1f;
     public static final float WARNING_VOL = 0.8f;
     public static final float WARNING_THRES = 50;
+    public static final float ORB_VOL = 0.4f;
     //User configurable
     public static float MUSIC_VOL = 1f;
     public static float SOUND_VOL = 1f;
+
+    // ***** GRAPHICS SETTINGS *****
+    public static final float ORB_VIS = 150;
 
 }

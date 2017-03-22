@@ -1,12 +1,15 @@
 package client.graphics;
 
 import client.ClientSettings;
+import client.audio.AudioManager;
 import objects.GameData;
 import org.lwjgl.opengl.GL11;
 import server.game.*;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static client.ClientSettings.ORB_VIS;
 
 class GameRenderer {
     private GameData gameData;
@@ -190,6 +193,7 @@ class GameRenderer {
         float red;
         float green;
         float blue;
+        float closestDist = ORB_VIS+1;
         for (Orb o : orbs.values()) {
             if (o.isAlive()) {
                 red = 0.2f;
@@ -208,8 +212,9 @@ class GameRenderer {
                 draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
             } else {
                 float dist = me.getPos().getDistanceTo(o.getPos());
-                if (dist < 150) {
-                    float fade = 0.7f - (dist / 150f);
+                if (dist < ORB_VIS) {
+                    if (dist > closestDist) closestDist = dist;
+                    float fade = 0.7f - (dist / ORB_VIS);
                     if (o.getRadius() > 0) {
                         draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f, fade);
                     }
@@ -218,6 +223,8 @@ class GameRenderer {
                 }
             }
         }
+
+        AudioManager.playOrbHum(closestDist);
     }
 
     private void drawProjectiles(int phase) {
