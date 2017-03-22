@@ -58,7 +58,7 @@ public class GameManager {
 
         collisions = new CollisionManager(gd);
         gameRenderer = new GameRenderer(gameData, playerID, collisions, textRenderers);
-        inGameMenuRenderer = new InGameMenuRenderer(gameData,playerID,this);
+        inGameMenuRenderer = new InGameMenuRenderer(this);
 
         conn.addFunctionEvent("GameOver", this::gameOver);
     }

@@ -10,8 +10,6 @@ import org.lwjgl.input.Mouse;
  */
 class InGameMenuRenderer {
 
-    private GameData gameData;
-    private int playerID;
     private GameManager gameManager;
 
     private InterfaceTexture back_button = new InterfaceTexture(ISprite.BACK_BUTTON);
@@ -25,9 +23,7 @@ class InGameMenuRenderer {
 
     private boolean hasClicked = false;
 
-    InGameMenuRenderer(GameData gameData, int playerID, GameManager gameManager) {
-        this.gameData = gameData;
-        this.playerID = playerID;
+    InGameMenuRenderer(GameManager gameManager) {
         this.gameManager = gameManager;
 
         readyMenuLayer();
@@ -87,19 +83,11 @@ class InGameMenuRenderer {
         }
     }
 
-    void handleClickedEndScreen() {
-
-    }
-
     void renderMenu() {
         menuLayer.render(0);
     }
 
     public void renderSettings() {
         settingsLayer.render(0);
-    }
-
-    void renderEndScreen() {
-        endLayer.render(0);
     }
 }

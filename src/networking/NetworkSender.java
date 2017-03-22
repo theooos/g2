@@ -16,7 +16,7 @@ import static networking.Connection.out;
 class NetworkSender implements Runnable {
 
     private ObjectOutputStream toConnection;
-    private Boolean running;
+    private ReferenceBool running;
 
     private List<Sendable> toSend = Collections.synchronizedList(new ArrayList<>());
 
@@ -25,13 +25,13 @@ class NetworkSender implements Runnable {
      * @param toConnection The output stream that data will be sent to.
      * @param running
      */
-    NetworkSender(ObjectOutputStream toConnection, Boolean running){
+    NetworkSender(ObjectOutputStream toConnection, ReferenceBool running){
         this.toConnection = toConnection;
         this.running = running;
     }
 
     public void run(){
-        while(running){
+        while(running.value){
             if(!toSend.isEmpty()){
                 send(toSend.get(0));
                 toSend.remove(0);
@@ -49,7 +49,7 @@ class NetworkSender implements Runnable {
             toConnection.flush();
         } catch (IOException e) {
             out("Failed to send "+obj+". Breaking connection.");
-            running = false;
+            running.value = false;
         }
 
     }
