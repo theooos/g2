@@ -281,13 +281,11 @@ public class GameManager {
             float volume = Math.min(1, Math.max(0, WARNING_VOL-health/100f));
             Audio.PULSE.changeVolume(volume);
             if (!Audio.PULSE.isPlaying()) {
-                Audio.PULSE.loop(0.1f);
-                out("Warning sound starts");
+                Audio.PULSE.loop(volume);
             }
         }
         else if (health >= WARNING_THRES && Audio.PULSE.isPlaying()) {
             Audio.PULSE.stopClip();
-            out("Warning sounds stops");
         }
     }
 
