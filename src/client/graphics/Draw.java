@@ -24,9 +24,10 @@ class Draw {
     private GameData gameData;
     private TextRenderer smallText;
     private TextRenderer largeText;
+    private TextRenderer hugeText;
     private int playerID;
 
-    Draw(GameData gd, int playerID) {
+    Draw(GameData gd, int playerID, TextRenderer[] textRenderers) {
         this.playerID = playerID;
         this.width = ClientSettings.SCREEN_WIDTH;
         this.height = ClientSettings.SCREEN_HEIGHT;
@@ -35,6 +36,9 @@ class Draw {
         oldHeat = 0;
         displayHeat = 0;
         gameData = gd;
+        smallText = textRenderers[0];
+        largeText = textRenderers[1];
+        hugeText = textRenderers[2];
     }
 
     void drawTriangle(Vector2 centre, float rotation, float drawWidth, float drawHeight, float red, float green, float blue) {
@@ -191,8 +195,8 @@ class Draw {
         glEnd();
     }
 
-    void drawScoreboard(boolean shadeScreen) {
-        if (shadeScreen) shadeScreen();
+    void drawScoreboard() {
+        shadeScreen();
         Scoreboard sb = gameData.getScoreboard();
 
         if (smallText == null) {
@@ -276,6 +280,10 @@ class Draw {
             }
             removed++;
         }
+    }
+
+    void drawGameOver() {
+        drawText(hugeText,"GAME OVER",210,120);
     }
 
     private void drawText(TextRenderer tx, String s, float x, float y) {
@@ -424,4 +432,5 @@ class Draw {
         if (y > height) y = height;
         return y;
     }
+
 }

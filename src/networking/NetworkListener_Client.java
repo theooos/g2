@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
  */
 public class NetworkListener_Client extends NetworkListener {
 
-    NetworkListener_Client(ObjectInputStream fromConnection, NetworkEventHandler handler, Client client, Boolean running){
+    NetworkListener_Client(ObjectInputStream fromConnection, NetworkEventHandler handler, Client client, ReferenceBool running){
         this.client = client;
         this.fromConnection = fromConnection;
         this.handler = handler;
@@ -18,6 +18,7 @@ public class NetworkListener_Client extends NetworkListener {
 
     @Override
     void performShutdown() {
+        running.value = false;
         client.returnToMainMenu();
     }
 }

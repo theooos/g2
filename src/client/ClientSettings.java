@@ -14,6 +14,8 @@ public class ClientSettings {
     public static final int SCREEN_HEIGHT = 600;
     static final boolean FULLSCREEN = false;
 
+    public static final long ENG_GAME_TIME = 8000;
+
     // ***** NETWORK SETTINGS *****
 
     public static final boolean LOCAL = true;
@@ -23,14 +25,14 @@ public class ClientSettings {
 
     // ***** AUDIO SETTINGS *****
     public static final float MIN_VOLUME = -40f;
-    public static final float AMBIENT_VOL = 0.4f;
+    public static final float AMBIENT_VOL = 0.5f;
     public static final float SHOOTING_VOL = 1f;
     public static final float HEALTH_UP_VOL = 1f;
     public static final float PULSE_VOL = 0.7f;
     public static final float WARNING_VOL = 0.6f;
     public static final float WARNING_THRES = 40;
     public static final float ORB_VOL = 0.4f;
-    public static final float CAUTION_VOL = 0.8f;
+    public static final float CAUTION_VOL = 0.9f;
     public static final float VOICE_VOL = 1f;
     //User configurable
     public static float MUSIC_VOL = 1f;

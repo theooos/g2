@@ -22,7 +22,9 @@ public class StartScreenRenderer {
     private InterfaceTexture about_button = new InterfaceTexture(ISprite.ABOUT_BUTTON);
     private InterfaceTexture description = new InterfaceTexture(ISprite.ABOUT_SCREEN);
     private InterfaceTexture back_button = new InterfaceTexture(ISprite.BACK_BUTTON);
-    private InterfaceTexture join_lobby_button = new InterfaceTexture(ISprite.JOIN_LOBBY_BUTTON);
+    private InterfaceTexture back_button_half = new InterfaceTexture(ISprite.BACK_BUTTON_HALF);
+    private InterfaceTexture solo_game_button = new InterfaceTexture(ISprite.SOLO_GAME_BUTTON);
+    private InterfaceTexture versus_game_button = new InterfaceTexture(ISprite.VERSUS_GAME_BUTTON);
 
     private static Layer interfaceLayer = new Layer();
     private static Layer controlsLayer = new Layer();
@@ -40,6 +42,7 @@ public class StartScreenRenderer {
         this.connectFunction = connectFunction;
         background.setRatio(0.5f);
         description.setRatio(0.5f);
+
         readyInterfaceLayer();
         readyControlsLayer();
         readyAboutLayer();
@@ -49,22 +52,22 @@ public class StartScreenRenderer {
     public void run() {
         switch (currentScreen) {
             case MAIN:
-                renderInterface();
+                interfaceLayer.render();
                 handleClickedMain();
                 break;
             case CONTROLS:
-                renderControls();
+                controlsLayer.render();
                 handleClickedControls();
                 break;
             case ABOUT:
-                renderAbout();
+                aboutLayer.render();
                 handleClickedAbout();
                 break;
             case LOADING:
-                renderLoading();
+                loadingLayer.render();
                 break;
             case LOBBY:
-                renderLobby();
+                lobbyLayer.render();
                 handleClickedLobby();
 
         }
@@ -78,9 +81,10 @@ public class StartScreenRenderer {
 
         background.spawn(0, 400f, 300f, interfaceLayer);
         title.spawn(1, 400f, 435f, interfaceLayer);
-        join_lobby_button.spawn(2, 400f, 270f, interfaceLayer);
-        controls_button.spawn(3, 400f, 180f, interfaceLayer);
-        about_button.spawn(4, 400f, 90f, interfaceLayer);
+        solo_game_button.spawn(2, 220f, 240f, interfaceLayer);
+        versus_game_button.spawn(3, 580f,240f,interfaceLayer);
+        controls_button.spawn(4, 220f, 120f, interfaceLayer);
+        about_button.spawn(5, 580f, 120f, interfaceLayer);
     }
 
     private void readyControlsLayer(){
@@ -88,7 +92,7 @@ public class StartScreenRenderer {
         controls_guide.setRatio(0.5f);
 
         controls_guide.spawn(0, 400f, 300f, controlsLayer);
-        back_button.spawn(1, 180f, 550f, controlsLayer);
+        back_button_half.spawn(1, 160f, 90f, controlsLayer);
     }
 
     private void readyAboutLayer() {
@@ -113,29 +117,6 @@ public class StartScreenRenderer {
     }
 
 
-    // ****** THESE RENDER EACH LAYER ******
-
-    private void renderInterface() {
-        interfaceLayer.render();
-    }
-
-    private void renderControls() {
-        controlsLayer.render();
-    }
-
-    private void renderAbout() {
-        aboutLayer.render();
-    }
-
-    private void renderLoading() {
-        loadingLayer.render();
-    }
-
-    private void renderLobby() {
-        lobbyLayer.render();
-    }
-
-
     // ****** BUTTON HANDLERS ******
 
     private void handleClickedMain() {
@@ -150,7 +131,7 @@ public class StartScreenRenderer {
                 currentScreen = Screen.ABOUT;
                 hasClicked = true;
             }
-            else if (join_lobby_button.isClicked()) {
+            else if (solo_game_button.isClicked() || versus_game_button.isClicked()) {
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
                 hasClicked = true;
@@ -162,7 +143,7 @@ public class StartScreenRenderer {
         if (hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
 
         if (!hasClicked) {
-            if (back_button.isClicked()) {
+            if (back_button_half.isClicked()) {
                 currentScreen = Screen.MAIN;
                 hasClicked = true;
             }

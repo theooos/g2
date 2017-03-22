@@ -19,18 +19,18 @@ abstract class NetworkListener implements Runnable {
     NetworkEventHandler handler;
     ObjectInputStream fromConnection;
 
-    Boolean running;
+    ReferenceBool running;
 
     /**
      * Blocks connection when waiting for a new object. Hence this is threaded.
      */
     public void run(){
-        while(running){
+        while(running.value){
             try {
                 Sendable received = (Sendable) fromConnection.readObject();
                 handler.queueForExecution(received);
             } catch (IOException e) {
-                out("Connection_Server broke. Performing shutdown.");
+                out("Connection broke. Performing shutdown.");
                 performShutdown();
             } catch (ClassNotFoundException e) {
                 out("NetworkListener failed to interpret object type.");

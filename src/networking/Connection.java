@@ -21,7 +21,7 @@ public abstract class Connection {
     NetworkListener fromConnection;
     NetworkEventHandler handler = new NetworkEventHandler();
 
-    Boolean running = true;
+    ReferenceBool running = new ReferenceBool(true);
 
     /**
      * Generates the socket.

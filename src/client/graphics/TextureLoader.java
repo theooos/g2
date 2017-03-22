@@ -12,6 +12,8 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.Hashtable;
 
+import static client.graphics.Sprites.ISprite.*;
+
 /**
  * Created by bianca on 25/02/2017.
  */
@@ -20,24 +22,28 @@ public class TextureLoader {
     private static Texture[] textures = new Texture[32];
 
     public static void initialise() {
-        textures[ISprite.BACKGROUND] = loadTexture("background.png");
-        textures[ISprite.TITLE] = loadTexture("title.png");
-        textures[ISprite.LOADING_SCREEN] = loadTexture("loading_screen.png");
-        textures[ISprite.CONTROLS_SCREEN] = loadTexture("controls_screen.png");
-        textures[ISprite.ABOUT_SCREEN] = loadTexture("about_screen.png");
-        textures[ISprite.LOBBY_SCREEN] = loadTexture("lobby_screen.png");
-        textures[ISprite.IN_GAME_MENU_SCREEN] = loadTexture("in_game_menu_screen.png");
-        textures[ISprite.SETTINGS_SCREEN] = loadTexture("settings_screen.png");
-        textures[ISprite.END_GAME_SCREEN] = loadTexture("end_game_screen.png");
+        textures[BACKGROUND] = loadTexture("background.png");
+        textures[TITLE] = loadTexture("title.png");
+        textures[LOADING_SCREEN] = loadTexture("loading_screen.png");
+        textures[CONTROLS_SCREEN] = loadTexture("controls_screen.png");
+        textures[ABOUT_SCREEN] = loadTexture("about_screen.png");
+        textures[LOBBY_SCREEN] = loadTexture("lobby_screen.png");
 
-        textures[ISprite.CONTROLS_BUTTON] = loadTexture("controls_button.png");
-        textures[ISprite.ABOUT_BUTTON] = loadTexture("about_button.png");
-        textures[ISprite.BACK_BUTTON] = loadTexture("back_button.png");
-        textures[ISprite.JOIN_LOBBY_BUTTON] = loadTexture("join_lobby_button.png");
-        textures[ISprite.RESUME_GAME_BUTTON] = loadTexture("resume_game_button.png");
-        textures[ISprite.EXIT_GAME_BUTTON] = loadTexture("exit_game_button.png");
+        textures[IN_GAME_MENU_SCREEN] = loadTexture("in_game_menu_screen.png");
+        textures[SETTINGS_SCREEN] = loadTexture("settings_screen.png");
+        textures[END_GAME_SCREEN] = loadTexture("end_game_screen.png");
 
-        textures[ISprite.SLIDER] = loadTexture("slider.png");
+        textures[SOLO_GAME_BUTTON] = loadTexture("solo_game_button.png");
+        textures[VERSUS_GAME_BUTTON] = loadTexture("versus_game_button.png");
+        textures[CONTROLS_BUTTON] = loadTexture("controls_button.png");
+        textures[ABOUT_BUTTON] = loadTexture("about_button.png");
+        textures[BACK_BUTTON] = loadTexture("back_button.png");
+        textures[BACK_BUTTON_HALF] = loadTexture("back_button_half.png");
+        textures[RESUME_GAME_BUTTON] = loadTexture("resume_game_button.png");
+        textures[SETTINGS_BUTTON] = loadTexture("settings_button.png");
+        textures[EXIT_GAME_BUTTON] = loadTexture("exit_game_button.png");
+
+        textures[SLIDER] = loadTexture("slider.png");
     }
 
     private static Texture loadTexture(String path) {
