@@ -40,6 +40,7 @@ public class Game implements Runnable {
 
     public Game(HashMap<Integer, Connection_Server> playerConnections, int maxPlayers, int mapID, LobbyData ld) {
         IDCounter = 0;
+        countdown = TIME_LIMIT;
 
         this.playerConnections = playerConnections;
 
@@ -161,8 +162,6 @@ public class Game implements Runnable {
 
             powerUps.put(i, p);
         }
-
-        countdown = 4*60*SERVER_TICK; //four minutes
 
         gameRunning = true;
 

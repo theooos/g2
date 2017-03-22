@@ -79,11 +79,11 @@ public class GameManager {
                 break;
             case SCOREBOARD:
                 gameRenderer.render();
-                gameRenderer.drawScoreboard();
+                gameRenderer.drawScoreboard(false);
+                break;
             case GAMEOVER:
                 gameRenderer.render();
-                gameRenderer.drawScoreboard();
-                gameRenderer.drawGameOver();
+                gameRenderer.drawScoreboard(true);
                 quit();
         }
     }

@@ -58,12 +58,8 @@ class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
-    void drawScoreboard() {
-        draw.drawScoreboard();
-    }
-
-    void drawGameOver() {
-        draw.drawGameOver();
+    void drawScoreboard(boolean gameEnded) {
+        draw.drawScoreboard(gameEnded);
     }
 
     private void drawCollisions() {

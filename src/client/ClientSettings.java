@@ -14,7 +14,7 @@ public class ClientSettings {
     public static final int SCREEN_HEIGHT = 600;
     static final boolean FULLSCREEN = false;
 
-    public static final long ENG_GAME_TIME = 8000;
+    public static final long ENG_GAME_TIME = 20*1000; //20 Seconds
 
     // ***** NETWORK SETTINGS *****
 
@@ -35,8 +35,8 @@ public class ClientSettings {
     public static final float CAUTION_VOL = 0.9f;
     public static final float VOICE_VOL = 1f;
     //User configurable
-    public static float MUSIC_VOL = 1f;
-    public static float SOUND_VOL = 1f;
+    public static float MUSIC_VOL = 0f;
+    public static float SOUND_VOL = 0f;
 
     // ***** GRAPHICS SETTINGS *****
     public static final float ORB_VIS = 150;
