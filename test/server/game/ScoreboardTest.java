@@ -1,5 +1,7 @@
 package server.game;
 
+import org.junit.jupiter.api.BeforeEach;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static server.game.ServerConfig.KILLED_BY_ORB_SCORE;
 import static server.game.ServerConfig.ORB_KILLED_SCORE;
@@ -16,7 +18,7 @@ class ScoreboardTest {
     private Player e0;
     private Player e1;
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() {
         //creates the scoreboard
         scoreboard = new Scoreboard(20, 4);
