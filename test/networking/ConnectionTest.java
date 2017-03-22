@@ -1,5 +1,7 @@
 package networking;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -11,27 +13,27 @@ class ConnectionTest {
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void establishSocket() {
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void establishConnection() {
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getServerSocket() {
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void addFunctionEvent() {
 
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void out() {
 
     }
