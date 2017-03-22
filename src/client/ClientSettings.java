@@ -25,7 +25,7 @@ public class ClientSettings {
     public static final float MIN_VOLUME = -40f;
     public static final float AMBIENT_VOL = 0.2f;
     public static final float SHOOTING_VOL = 0f;
-    public static final float PHASE_VOL = 0f;
+    public static final float PULSE_VOL = 0f;
     //User configurable
     public static float MUSIC_VOL = 1f;
     public static float SOUND_VOL = 1f;

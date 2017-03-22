@@ -10,6 +10,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import server.game.*;
 
+import java.util.Objects;
+
+import static client.ClientSettings.*;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -35,19 +38,11 @@ public class GameManager {
     private Connection_Client conn;
     private CollisionManager collisions;
 
-    private boolean healthbar;
-    private boolean gameMusic;
-    private boolean muted;
-
     public GameManager(GameData gd, Connection_Client conn, int playerID) {
         super();
         this.conn = conn;
         this.gameData = gd;
         this.myPlayerID = playerID;
-
-        healthbar = true;
-        gameMusic = false;
-        muted = false;
 
         collisions = new CollisionManager(gd);
         gameRenderer = new GameRenderer(gameData, playerID, collisions);
@@ -88,7 +83,7 @@ public class GameManager {
         if (gameData.getPlayer(myPlayerID).isAlive()) makeMovement();
         pollKeyboard();
         pollMouse();
-        checkMusic();
+        warningSounds();
 
         rotatePowerUps();
         updateFPS(); // update FPS Counter
@@ -191,7 +186,7 @@ public class GameManager {
             case Keyboard.KEY_F:
             case Keyboard.KEY_SPACE:
                 if(me.isAlive()) {
-                    if (muted) Audio.PHASE.play();
+                    Audio.PULSE.play(PULSE_VOL);
                     int newPhase = 0;
                     if (me.getPhase() == 0) {
                         newPhase = 1;
@@ -219,10 +214,13 @@ public class GameManager {
             // *** Those that don't depend on being alive ***
 
             case Keyboard.KEY_M:
-                if (!muted) {
-                    muted = true;
-                } else {
-                    muted = false;
+                if (SOUND_VOL == 0) {
+                    MUSIC_VOL = 1;
+                    SOUND_VOL = 1;
+                }
+                else {
+                    SOUND_VOL = 0;
+                    MUSIC_VOL = 0;
                     muteEverything();
                 }
                 break;
@@ -276,20 +274,16 @@ public class GameManager {
         fps++;
     }
 
-    private void checkMusic() {
-        Player me = gameData.getPlayer(myPlayerID);
-        if (me.getHealth() < 25 && healthbar && muted) {
-            healthbar = false;
-            gameMusic = true;
-            Audio.MUSIC.stopClip();
-            //Audio.WARNING.loop();
-        } else if (me.getHealth() > 25 && gameMusic && muted) {
-            gameMusic = false;
-            healthbar = true;
-            //Audio.WARNING.stopClip();
-            Audio.MUSIC.loop();
-        } else if (muted) {
-            Audio.MUSIC.loop();
+    private void warningSounds() {
+        int health = gameData.getPlayer(myPlayerID).getHealth();
+
+        if (health < 25 && !Audio.PULSE.isPlaying()) {
+            Audio.PULSE.loop();
+            out("Warning sound starts");
+        }
+        else if (health >= 25 && Audio.PULSE.isPlaying()) {
+            Audio.PULSE.stopClip();
+            out("Warning sounds stops");
         }
     }
 
@@ -297,6 +291,8 @@ public class GameManager {
        // Audio.SNIPER.stopClip();
         //Audio.SMG.stopClip();
         Audio.MUSIC.stopClip();
+        Audio.AMBIANCE.stopClip();
+        Audio.PULSE.stopClip();
         //Audio.WARNING.stopClip();
     }
 
@@ -308,5 +304,9 @@ public class GameManager {
 
     void setMode(Mode mode){
         this.mode = mode;
+    }
+
+    void out(Object o) {
+        if (DEBUG) System.out.println(o);
     }
 }

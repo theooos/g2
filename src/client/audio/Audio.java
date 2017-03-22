@@ -3,7 +3,6 @@ package client.audio;
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,7 +30,7 @@ public enum Audio {
     //SHOTGUN(Audio.class.getResource("../../shoot2.wav")),
     //SMG(Audio.class.getResource("../../shoot2.wav")),
     AMBIANCE(Audio.class.getResource("../../background_sound.wav")),
-    PHASE(Audio.class.getResource("../../phase.wav")),
+    PULSE(Audio.class.getResource("../../phase.wav")),
     //COUNTDOWN(Audio.class.getResource("../../countdown.wav")),
     // WARNING(Audio.class.getResource("../../warning.wav"));
     ;
@@ -60,13 +59,6 @@ public enum Audio {
     }
 
     /**
-     * Plays the sound effect at max volume
-     */
-    public void play() {
-        play(1);
-    }
-
-    /**
      * Player the sound effect.  If it's already running restart it
      * @param volume How loud it is, 0 is min, 1 is max
      */
@@ -81,6 +73,10 @@ public enum Audio {
             // Start playing
             clip.start();
         }
+    }
+
+    public void loop() {
+        loop(1);
     }
 
     //play the music continously

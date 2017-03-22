@@ -118,7 +118,7 @@ public class Client {
         currentMode = Mode.GAME;
         startScreen.setCurrentScreen(StartScreenRenderer.Screen.MAIN);
         Audio.AMBIANCE.stopClip();
-        Audio.MUSIC.delayStart(1);
+        Audio.MUSIC.delayStart(1, 1);
     }
 
     private void establishConnection() {
