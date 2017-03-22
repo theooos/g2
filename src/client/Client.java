@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
+import static client.ClientSettings.AMBIENT_VOL;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Client {
@@ -102,7 +103,7 @@ public class Client {
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
             Audio.init();
-            Audio.AMBIANCE.play(0.15f);
+            Audio.AMBIANCE.loop(AMBIENT_VOL);
 
         } catch (LWJGLException le) {
             System.err.println("Game exiting - exception in initialization:");

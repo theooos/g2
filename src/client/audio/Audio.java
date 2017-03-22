@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import static client.ClientSettings.MIN_VOLUME;
 import static client.ClientSettings.MUSIC_VOL;
 import static client.ClientSettings.SOUND_VOL;
+import static client.graphics.GameManager.out;
 
 /**
  * Created by Patrick on 2/21/2017.
@@ -97,10 +98,6 @@ public enum Audio {
         return clip.isRunning();
     }
 
-    public void setVolume(float volume) {
-        gainControl.setValue(volume);
-    }
-
     public void delayStart(long seconds, float volume) {
         clip.stop();
         timer.schedule(new TimerTask() {
@@ -111,26 +108,26 @@ public enum Audio {
         }, seconds*1000);
     }
 
-    private void changeVolume(float volume) {
+    public void changeVolume(float volume) {
         //makes the sound proportional to min vol
-        volume = (1-volume)*MIN_VOLUME;
-
+        volume = (1f-volume)*MIN_VOLUME;
         if (this == MUSIC) {
-            System.out.println("Playing music");
-            if (MUSIC_VOL == 0) muted = true;
-            else {
-                muted = false;
-                volume = (1-MUSIC_VOL)*volume;
-            }
+            changeGlobalSound(volume, MUSIC_VOL);
         } else {
-            if (SOUND_VOL == 0) muted = true;
-            else {
-                muted = false;
-                volume = (1-SOUND_VOL)*volume;
+            changeGlobalSound(volume, SOUND_VOL);
+        }
+        gainControl.setValue(volume); // changes the volume
+    }
+
+    private float changeGlobalSound(float vol, float globalVol) {
+        if (globalVol == 0) muted = true;
+        else {
+            muted = false;
+            if (globalVol != 1) {
+                vol = (1f - globalVol) * vol;
             }
         }
-
-        gainControl.setValue(volume); // changes the volume
+        return vol;
     }
 
 

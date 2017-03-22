@@ -277,11 +277,15 @@ public class GameManager {
     private void warningSounds() {
         int health = gameData.getPlayer(myPlayerID).getHealth();
 
-        if (health < 25 && !Audio.PULSE.isPlaying()) {
-            Audio.PULSE.loop();
-            out("Warning sound starts");
+        if (health < WARNING_THRES) {
+            float volume = Math.min(1, Math.max(0, WARNING_VOL-health/100f));
+            Audio.PULSE.changeVolume(volume);
+            if (!Audio.PULSE.isPlaying()) {
+                Audio.PULSE.loop(0.1f);
+                out("Warning sound starts");
+            }
         }
-        else if (health >= 25 && Audio.PULSE.isPlaying()) {
+        else if (health >= WARNING_THRES && Audio.PULSE.isPlaying()) {
             Audio.PULSE.stopClip();
             out("Warning sounds stops");
         }
@@ -306,7 +310,7 @@ public class GameManager {
         this.mode = mode;
     }
 
-    void out(Object o) {
+    public static void out(Object o) {
         if (DEBUG) System.out.println(o);
     }
 }
