@@ -14,6 +14,8 @@ public class ClientSettings {
     public static final int SCREEN_HEIGHT = 600;
     static final boolean FULLSCREEN = false;
 
+    public static final long ENG_GAME_TIME = 8000;
+
     // ***** NETWORK SETTINGS *****
 
     public static final boolean LOCAL = true;

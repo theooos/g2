@@ -20,4 +20,5 @@ public class ServerConfig {
     static final int KILLED_BY_ORB_SCORE = -3;
 
     static final int RESPAWN_DISTANCE = 80;
+
 }

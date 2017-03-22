@@ -21,7 +21,7 @@ class GameRenderer {
 
     float powerUpRotation;
 
-    GameRenderer(GameData gameData, int playerID, CollisionManager collisionManager) {
+    GameRenderer(GameData gameData, int playerID, CollisionManager collisionManager, TextRenderer[] textRenderers) {
         this.gameData = gameData;
         this.playerID = playerID;
         map = new MapRenderer(gameData.getMapID());
@@ -29,7 +29,7 @@ class GameRenderer {
         Player me = gameData.getPlayer(playerID);
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
         powerUpRotation = 0;
-        draw = new Draw(gameData, playerID);
+        draw = new Draw(gameData, playerID, textRenderers);
     }
 
     void render() {
@@ -55,8 +55,12 @@ class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
-    void drawScoreboard(boolean shadeScreen) {
-        draw.drawScoreboard(shadeScreen);
+    void drawScoreboard() {
+        draw.drawScoreboard();
+    }
+
+    void drawGameOver() {
+        draw.drawGameOver();
     }
 
     private void drawCollisions() {
@@ -282,4 +286,6 @@ class GameRenderer {
     void flipDisplayCollisions() {
         displayCollisions = !displayCollisions;
     }
+
+
 }

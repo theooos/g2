@@ -10,6 +10,10 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import server.game.*;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.function.Consumer;
+
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -21,6 +25,7 @@ public class GameManager {
 
     private GameRenderer gameRenderer;
     private InGameMenuRenderer inGameMenuRenderer;
+    private boolean quitting = false;
 
     enum Mode {GAME, MENU, SETTINGS, SCOREBOARD, GAMEOVER}
 
@@ -30,6 +35,7 @@ public class GameManager {
     private int fps;
     private long lastFPS;
     private int myPlayerID;
+    private Consumer<Object> endGameFunction;
 
     private GameData gameData;
     private Connection_Client conn;
@@ -39,19 +45,20 @@ public class GameManager {
     private boolean gameMusic;
     private boolean muted;
 
-    public GameManager(GameData gd, Connection_Client conn, int playerID) {
+    public GameManager(GameData gd, Connection_Client conn, int playerID, TextRenderer[] textRenderers, Consumer<Object> endGameFunction) {
         super();
         this.conn = conn;
         this.gameData = gd;
         this.myPlayerID = playerID;
+        this.endGameFunction = endGameFunction;
 
         healthbar = true;
         gameMusic = false;
         muted = false;
 
         collisions = new CollisionManager(gd);
-        gameRenderer = new GameRenderer(gameData, playerID, collisions);
-        inGameMenuRenderer = new InGameMenuRenderer(gameData,playerID,this);
+        gameRenderer = new GameRenderer(gameData, playerID, collisions, textRenderers);
+        inGameMenuRenderer = new InGameMenuRenderer(this);
 
         conn.addFunctionEvent("GameOver", this::gameOver);
     }
@@ -76,11 +83,24 @@ public class GameManager {
                 break;
             case SCOREBOARD:
                 gameRenderer.render();
-                gameRenderer.drawScoreboard(true);
-                break;
+                gameRenderer.drawScoreboard();
             case GAMEOVER:
-                inGameMenuRenderer.renderEndScreen();
-                gameRenderer.drawScoreboard(false);
+                gameRenderer.render();
+                gameRenderer.drawScoreboard();
+                gameRenderer.drawGameOver();
+                quit();
+        }
+    }
+
+    void quit() {
+        if(!quitting){
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    endGameFunction.accept(null);
+                }
+            },ClientSettings.ENG_GAME_TIME);
+            quitting = true;
         }
     }
 
@@ -236,7 +256,7 @@ public class GameManager {
                 break;
 
             case Keyboard.KEY_TAB:
-                mode = Mode.SCOREBOARD;
+                if(mode != Mode.GAMEOVER) mode = Mode.SCOREBOARD;
                 break;
         }
     }
