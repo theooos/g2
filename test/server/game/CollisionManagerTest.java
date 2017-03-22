@@ -134,7 +134,7 @@ class CollisionManagerTest {
         players.put(2, p);
         p = new Player(new Vector2(100, 100), null, 0, 1, null, null, 3);
         players.put(3, p);
-        
+
     }
 
     @Test
