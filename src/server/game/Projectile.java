@@ -92,7 +92,7 @@ public class Projectile extends MovableEntity {
         return p.getID();
     }
 
-    MovableEntity getPlayer() {
+    public MovableEntity getPlayer() {
         return p;
     }
 

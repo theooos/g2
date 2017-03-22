@@ -9,7 +9,6 @@ import java.util.TimerTask;
 import static client.ClientSettings.MIN_VOLUME;
 import static client.ClientSettings.MUSIC_VOL;
 import static client.ClientSettings.SOUND_VOL;
-import static client.graphics.GameManager.out;
 
 /**
  * Created by Patrick on 2/21/2017.
@@ -64,7 +63,7 @@ public enum Audio {
      * Player the sound effect.  If it's already running restart it
      * @param volume How loud it is, 0 is min, 1 is max
      */
-    public void play(float volume) {
+    void play(float volume) {
         changeVolume(volume);
         if (!muted) {
             clip.start();
@@ -77,12 +76,14 @@ public enum Audio {
         }
     }
 
-    public void loop() {
-        loop(1);
+    void replay(float volume) {
+        stopClip();
+        play(volume);
     }
 
+
     //play the music continously
-    public void loop(float volume){
+    void loop(float volume){
         changeVolume(volume);
         if (!muted) {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -90,16 +91,16 @@ public enum Audio {
     }
 
     //stop a certain music
-    public void stopClip() {
+    void stopClip() {
         clip.stop();
     }
 
     //verify if the clip is running or not
-    public boolean isPlaying() {
+    boolean isPlaying() {
         return clip.isActive();
     }
 
-    public void delayStart(long seconds, float volume) {
+    void delayStart(long seconds, float volume) {
         clip.stop();
         timer.schedule(new TimerTask() {
             @Override
@@ -109,7 +110,7 @@ public enum Audio {
         }, seconds*1000);
     }
 
-    public void changeVolume(float volume) {
+    void changeVolume(float volume) {
         //makes the sound proportional to min vol
         volume = (1f-volume)*MIN_VOLUME;
         if (this == MUSIC) {

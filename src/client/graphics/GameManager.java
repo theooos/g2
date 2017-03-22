@@ -2,6 +2,7 @@ package client.graphics;
 
 import client.ClientSettings;
 import client.audio.Audio;
+import client.audio.AudioManager;
 import networking.Connection_Client;
 import objects.*;
 import org.lwjgl.Sys;
@@ -83,7 +84,7 @@ public class GameManager {
         if (gameData.getPlayer(myPlayerID).isAlive()) makeMovement();
         pollKeyboard();
         pollMouse();
-        warningSounds();
+        AudioManager.playWarningSounds(gameData.getPlayer(myPlayerID).getHealth());
 
         rotatePowerUps();
         updateFPS(); // update FPS Counter
@@ -186,7 +187,7 @@ public class GameManager {
             case Keyboard.KEY_F:
             case Keyboard.KEY_SPACE:
                 if(me.isAlive()) {
-                    Audio.PULSE.play(PULSE_VOL);
+                    AudioManager.playPulseSound();
                     int newPhase = 0;
                     if (me.getPhase() == 0) {
                         newPhase = 1;
@@ -221,7 +222,7 @@ public class GameManager {
                 else {
                     SOUND_VOL = 0;
                     MUSIC_VOL = 0;
-                    muteEverything();
+                    AudioManager.muteEverything();
                 }
                 break;
 
@@ -272,30 +273,6 @@ public class GameManager {
             lastFPS += 1000;
         }
         fps++;
-    }
-
-    private void warningSounds() {
-        int health = gameData.getPlayer(myPlayerID).getHealth();
-
-        if (health < WARNING_THRES) {
-            float volume = Math.min(1, Math.max(0, WARNING_VOL-health/100f));
-            Audio.PULSE.changeVolume(volume);
-            if (!Audio.PULSE.isPlaying()) {
-                Audio.PULSE.loop(volume);
-            }
-        }
-        else if (health >= WARNING_THRES && Audio.PULSE.isPlaying()) {
-            Audio.PULSE.stopClip();
-        }
-    }
-
-    private void muteEverything() {
-       // Audio.SNIPER.stopClip();
-        //Audio.SMG.stopClip();
-        Audio.MUSIC.stopClip();
-        Audio.AMBIANCE.stopClip();
-        Audio.PULSE.stopClip();
-        //Audio.WARNING.stopClip();
     }
 
     private void gameOver(Sendable sendable) {

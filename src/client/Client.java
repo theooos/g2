@@ -1,6 +1,7 @@
 package client;
 
 import client.audio.Audio;
+import client.audio.AudioManager;
 import client.graphics.GameManager;
 import client.graphics.StartScreenRenderer;
 import client.graphics.TextureLoader;
@@ -103,8 +104,7 @@ public class Client {
             startScreen = new StartScreenRenderer(e -> establishConnection());
 
             Audio.init();
-            Audio.AMBIANCE.loop(AMBIENT_VOL);
-
+            AudioManager.playAmbiance();
         } catch (LWJGLException le) {
             System.err.println("Game exiting - exception in initialization:");
             le.printStackTrace();
@@ -118,7 +118,7 @@ public class Client {
         gameManager = new GameManager(gameData, connection, playerID);
         currentMode = Mode.GAME;
         startScreen.setCurrentScreen(StartScreenRenderer.Screen.MAIN);
-        Audio.MUSIC.delayStart(1, 1);
+        AudioManager.playMusic();
     }
 
     private void establishConnection() {
