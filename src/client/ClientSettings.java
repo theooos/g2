@@ -26,11 +26,11 @@ public class ClientSettings {
     public static final float AMBIENT_VOL = 0.4f;
     public static final float SHOOTING_VOL = 1f;
     public static final float HEALTH_UP_VOL = 1f;
-    public static final float PULSE_VOL = 1f;
+    public static final float PULSE_VOL = 0.7f;
     public static final float WARNING_VOL = 0.6f;
     public static final float WARNING_THRES = 40;
     public static final float ORB_VOL = 0.4f;
-    public static final float CAUTION_VOL = 0.4f;
+    public static final float CAUTION_VOL = 0.8f;
     public static final float VOICE_VOL = 1f;
     //User configurable
     public static float MUSIC_VOL = 1f;
