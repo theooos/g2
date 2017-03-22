@@ -32,8 +32,10 @@ public enum Audio {
     AMBIANCE(Audio.class.getResource("../../background_sound.wav")),
     PULSE(Audio.class.getResource("../../phase.wav")),
     HEALTH_UP(Audio.class.getResource("../../health_up.wav")),
-    //COUNTDOWN(Audio.class.getResource("../../countdown.wav")),
-    // WARNING(Audio.class.getResource("../../warning.wav"));
+    WARNING(Audio.class.getResource("../../warning.wav")),
+    GAME_START(Audio.class.getResource("../../game_start.wav")),
+    GAME_END(Audio.class.getResource("../../game_over.wav")),
+    CAUTION(Audio.class.getResource("../../caution.wav")),
     ;
     // Each sound effect has its own clip, loaded with its own sound file.
     private  Clip clip;

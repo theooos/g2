@@ -277,8 +277,8 @@ public class GameManager {
 
     private void gameOver(Sendable sendable) {
         gameData.updateScoreboard(((GameOver) sendable).getScoreboard());
-        System.out.println(((GameOver) sendable).getScoreboard());
         mode = Mode.GAMEOVER;
+        AudioManager.playGameOver();
     }
 
     void setMode(Mode mode){

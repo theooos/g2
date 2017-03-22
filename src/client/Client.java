@@ -119,6 +119,7 @@ public class Client {
         currentMode = Mode.GAME;
         startScreen.setCurrentScreen(StartScreenRenderer.Screen.MAIN);
         AudioManager.playMusic();
+        AudioManager.playGameStart();
     }
 
     private void establishConnection() {

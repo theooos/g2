@@ -23,13 +23,15 @@ public class ClientSettings {
 
     // ***** AUDIO SETTINGS *****
     public static final float MIN_VOLUME = -40f;
-    public static final float AMBIENT_VOL = 0.2f;
+    public static final float AMBIENT_VOL = 0.4f;
     public static final float SHOOTING_VOL = 1f;
     public static final float HEALTH_UP_VOL = 1f;
     public static final float PULSE_VOL = 1f;
-    public static final float WARNING_VOL = 0.8f;
-    public static final float WARNING_THRES = 50;
+    public static final float WARNING_VOL = 0.6f;
+    public static final float WARNING_THRES = 40;
     public static final float ORB_VOL = 0.4f;
+    public static final float CAUTION_VOL = 0.4f;
+    public static final float VOICE_VOL = 1f;
     //User configurable
     public static float MUSIC_VOL = 1f;
     public static float SOUND_VOL = 1f;

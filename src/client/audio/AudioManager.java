@@ -33,39 +33,51 @@ public class AudioManager {
         Audio.MUSIC.stopClip();
         Audio.AMBIANCE.stopClip();
         Audio.PULSE.stopClip();
-        //Audio.WARNING.stopClip();
+        Audio.WARNING.stopClip();
+        Audio.CAUTION.stopClip();
+        Audio.GAME_END.stopClip();
+        Audio.GAME_START.stopClip();
     }
 
     public static void playHealthUp() {
         if (!Audio.HEALTH_UP.isPlaying())  Audio.HEALTH_UP.play(HEALTH_UP_VOL);
     }
 
+    public static void playGameStart() {
+        Audio.GAME_START.play(VOICE_VOL);
+    }
+
+    public static void playGameOver() {
+        Audio.GAME_END.play(VOICE_VOL);
+    }
+
     public static void playShooting(Player me) {
         if (me.getActiveWeapon().toString().equals("SMG")) {
-            Audio.SMG.replay(SHOOTING_VOL);
+            Audio.SMG.play(SHOOTING_VOL);
         } else if (me.getActiveWeapon().toString().equals("Shotgun")) {
             if (!Audio.SHOTGUN.isPlaying()) {
                 if (shotgunCount == 0) {
-                    Audio.SHOTGUN.replay(SHOOTING_VOL);
+                    Audio.SHOTGUN.play(SHOOTING_VOL);
                 }
                 shotgunCount++;
                 if (shotgunCount > 4) shotgunCount = 0;
             }
         } else {
-            Audio.SNIPER.replay(SHOOTING_VOL);
+            Audio.SNIPER.play(SHOOTING_VOL);
         }
     }
 
     public static void playWarningSounds(int health) {
         if (health < WARNING_THRES) {
             float volume = Math.min(1, Math.max(0, WARNING_VOL-health/100f));
-            Audio.PULSE.changeVolume(volume);
-            if (!Audio.PULSE.isPlaying()) {
-                Audio.PULSE.loop(volume);
+            Audio.WARNING.changeVolume(volume);
+            if (!Audio.WARNING.isPlaying()) {
+                Audio.WARNING.loop(volume);
+                Audio.CAUTION.play(CAUTION_VOL);
             }
         }
-        else if (health >= WARNING_THRES && Audio.PULSE.isPlaying()) {
-            Audio.PULSE.stopClip();
+        else if (health >= WARNING_THRES && Audio.WARNING.isPlaying()) {
+            Audio.WARNING.stopClip();
         }
     }
 

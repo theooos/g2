@@ -195,6 +195,9 @@ class GameRenderer {
         float blue;
         float closestDist = ORB_VIS+1;
         for (Orb o : orbs.values()) {
+            float dist = me.getPos().getDistanceTo(o.getPos());
+            if (dist > closestDist) closestDist = dist;
+
             if (o.isAlive()) {
                 red = 0.2f;
                 green = 0.2f;
@@ -211,9 +214,7 @@ class GameRenderer {
                 GL11.glColor4f(red, green, blue, 1);
                 draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
             } else {
-                float dist = me.getPos().getDistanceTo(o.getPos());
                 if (dist < ORB_VIS) {
-                    if (dist > closestDist) closestDist = dist;
                     float fade = 0.7f - (dist / ORB_VIS);
                     if (o.getRadius() > 0) {
                         draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f, fade);
@@ -224,7 +225,7 @@ class GameRenderer {
             }
         }
 
-        AudioManager.playOrbHum(closestDist);
+        //AudioManager.playOrbHum(closestDist);
     }
 
     private void drawProjectiles(int phase) {
