@@ -27,11 +27,12 @@ public enum Audio {
 
 
     MUSIC(Audio.class.getResource("../../game_music.wav")),        // music
-    //SNIPER(Audio.class.getResource("../../lasershoot.wav")),
-    //SHOTGUN(Audio.class.getResource("../../shoot2.wav")),
-    //SMG(Audio.class.getResource("../../shoot2.wav")),
+    SNIPER(Audio.class.getResource("../../sniper.wav")),
+    SHOTGUN(Audio.class.getResource("../../shotgun.wav")),
+    SMG(Audio.class.getResource("../../smg.wav")),
     AMBIANCE(Audio.class.getResource("../../background_sound.wav")),
     PULSE(Audio.class.getResource("../../phase.wav")),
+    HEALTH_UP(Audio.class.getResource("../../health_up.wav")),
     //COUNTDOWN(Audio.class.getResource("../../countdown.wav")),
     // WARNING(Audio.class.getResource("../../warning.wav"));
     ;
@@ -95,7 +96,7 @@ public enum Audio {
 
     //verify if the clip is running or not
     public boolean isPlaying() {
-        return clip.isRunning();
+        return clip.isActive();
     }
 
     public void delayStart(long seconds, float volume) {

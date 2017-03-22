@@ -118,7 +118,6 @@ public class Client {
         gameManager = new GameManager(gameData, connection, playerID);
         currentMode = Mode.GAME;
         startScreen.setCurrentScreen(StartScreenRenderer.Screen.MAIN);
-        Audio.AMBIANCE.stopClip();
         Audio.MUSIC.delayStart(1, 1);
     }
 

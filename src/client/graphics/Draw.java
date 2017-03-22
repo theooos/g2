@@ -1,8 +1,10 @@
 package client.graphics;
 
+import static client.ClientSettings.HEALTH_UP_VOL;
 import static org.lwjgl.opengl.GL11.*;
 
 import client.ClientSettings;
+import client.audio.Audio;
 import objects.GameData;
 import server.game.Scoreboard;
 import server.game.Vector2;
@@ -348,6 +350,7 @@ class Draw {
 
         if (displayHealth != oldHealth) {
             flashDamage((float) Math.min(1, Math.abs(healthTick)), (healthTick < 0));
+            if (healthTick > 0 && !Audio.HEALTH_UP.isPlaying())  Audio.HEALTH_UP.play(HEALTH_UP_VOL);
         }
 
         int healthWidth = 10;
