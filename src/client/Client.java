@@ -100,6 +100,8 @@ public class Client {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
+            out("loading images.");
+
             TextureLoader.initialise();
             textRenderers[0] = new TextRenderer(20);
             textRenderers[1] = new TextRenderer(25);
@@ -121,12 +123,19 @@ public class Client {
     private void beginGame(Sendable s) {
         GameData gameData = new GameData((InitGame) s);
         clientReceiver.setGameData(gameData);
-        gameManager = new GameManager(gameData, connection, playerID, textRenderers);
+        gameManager = new GameManager(gameData, connection, playerID, textRenderers,this::endGame);
         currentMode = Mode.GAME;
         startScreen.setCurrentScreen(StartScreenRenderer.Screen.MAIN);
         Audio.INTERFACEBACKGROUND.stopClip();
         Audio.COUNTDOWN.play();
         Audio.GAMEMUSIC.pause(4);
+    }
+
+    private void endGame(Object o) {
+        currentMode = Mode.MAIN_MENU;
+        clientReceiver = null;
+        connection = null;
+        gameManager = null;
     }
 
     private void establishConnection() {

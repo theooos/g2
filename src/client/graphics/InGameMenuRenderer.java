@@ -70,7 +70,7 @@ class InGameMenuRenderer {
                 gameManager.setMode(GameManager.Mode.SETTINGS);
                 hasClicked = true;
             } else if (exit_game_button.isClicked()){
-                gameManager.setMode(GameManager.Mode.SCOREBOARD);
+                gameManager.setMode(GameManager.Mode.GAMEOVER);
                 hasClicked = true;
             }
         }
