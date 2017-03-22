@@ -21,4 +21,13 @@ public class ClientSettings {
     public static final String SERVER_IP = "46.101.84.55";
     public static final int PORT = 3000;
 
+    // ***** AUDIO SETTINGS *****
+    public static final float MIN_VOLUME = -40f;
+    public static final float AMBIENT_VOL = 0.2f;
+    public static final float SHOOTING_VOL = 0f;
+    public static final float PHASE_VOL = 0f;
+    //User configurable
+    public static float MUSIC_VOL = 1f;
+    public static float SOUND_VOL = 1f;
+
 }

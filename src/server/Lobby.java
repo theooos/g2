@@ -1,6 +1,5 @@
 package server;
 
-import client.ClientSettings;
 import networking.Connection_Server;
 import objects.InitPlayer;
 import objects.LobbyData;

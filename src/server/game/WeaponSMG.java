@@ -6,7 +6,7 @@ package server.game;
  */
 public class WeaponSMG extends Weapon {
 
-    public WeaponSMG() {
+    WeaponSMG() {
         super();
         name = "SMG";
         shotType = new Projectile(15,40,6,new Vector2(0,0), new Vector2(0,0), 15, 0, null, 0);

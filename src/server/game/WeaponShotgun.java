@@ -6,7 +6,7 @@ package server.game;
  */
 public class WeaponShotgun extends Weapon {
 
-    public WeaponShotgun() {
+    WeaponShotgun() {
         super();
         name = "Shotgun";
         shotType = new DistDropOffProjectile(27,30,15, new Vector2(0,0), new Vector2(0,0), 10, 0, null, 0);

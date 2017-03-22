@@ -5,7 +5,7 @@ package server.game;
  * A slow firing, high damage weapon type
  */
 public class WeaponSniper extends Weapon {
-    public WeaponSniper() {
+    WeaponSniper() {
         super();
         name = "Sniper";
         shotType = new Projectile(70,300,8,new Vector2(0,0), new Vector2(0,0), 40, 0, null, 0);

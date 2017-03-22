@@ -107,7 +107,7 @@ public class GameManager {
                     case 0:
                         if(Mouse.getEventButtonState()){
                             conn.send(new FireObject(me.getID(), true));
-                            Audio.SHOOT.play();
+                            //Audio.SNIPER.play();
                         }
                         else {
                             conn.send(new FireObject(me.getID(), false));
@@ -281,23 +281,23 @@ public class GameManager {
         if (me.getHealth() < 25 && healthbar && muted) {
             healthbar = false;
             gameMusic = true;
-            Audio.GAMEMUSIC.stopClip();
-            Audio.WARNING.playallTime();
+            Audio.MUSIC.stopClip();
+            //Audio.WARNING.loop();
         } else if (me.getHealth() > 25 && gameMusic && muted) {
             gameMusic = false;
             healthbar = true;
-            Audio.WARNING.stopClip();
-            Audio.GAMEMUSIC.playallTime();
+            //Audio.WARNING.stopClip();
+            Audio.MUSIC.loop();
         } else if (muted) {
-            Audio.GAMEMUSIC.playallTime();
+            Audio.MUSIC.loop();
         }
     }
 
     private void muteEverything() {
-        Audio.SHOOT.stopClip();
-        Audio.SHOOT.stopClip();
-        Audio.GAMEMUSIC.stopClip();
-        Audio.WARNING.stopClip();
+       // Audio.SNIPER.stopClip();
+        //Audio.SMG.stopClip();
+        Audio.MUSIC.stopClip();
+        //Audio.WARNING.stopClip();
     }
 
     private void gameOver(Sendable sendable) {
