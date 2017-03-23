@@ -9,7 +9,7 @@ import java.util.Random;
  * Created by peran on 01/02/17.
  * A default weapon class with example stats
  */
-public class Weapon implements Sendable{
+public abstract class Weapon implements Sendable{
     int accuracy;
     int maxRecoil;
     double recoilRecovery;
@@ -27,6 +27,9 @@ public class Weapon implements Sendable{
     boolean fullyAuto;
     String name;
 
+    /**
+     * An example weapon class
+     */
     Weapon() {
         name = "Default";
         //with a cooldown rate of 1, it'll take 2s for a full reload
@@ -78,6 +81,10 @@ public class Weapon implements Sendable{
         }
     }
 
+    /**
+     * Checks to see whether the max heat and refire delay won't restrict the weapon to fire
+     * @return if the weapon can fire or not
+     */
     boolean canFire() {
         return (maxHeat - currentHeat >= heatPerShot) && refireDelay <= 0;
     }
@@ -106,19 +113,27 @@ public class Weapon implements Sendable{
         return ps;
     }
 
+    /**
+     * Adds inaccuracy to the weapons
+     * @param v
+     * @return
+     */
     private Vector2 getDeviation(Vector2 v) {
         //x' = xcosf - ysinf
         //y' = ycosf - xsinf
+        //get the angle from the vector
         double ang = Math.atan(v.getX()/v.getY());
         if (Double.isInfinite(ang)) {
             ang = 0;
         } else if (v.getY() < 0) {
             ang += Math.PI;
         }
+        //add the inaccuracy
         ang += Math.toRadians(rand.nextInt(2*(int)(accuracy+currentRecoil))-(accuracy+currentRecoil));
         float newX = (float)(Math.sin(ang));
         float newY = (float)(Math.cos(ang));
 
+        //return a new vector
         return (new Vector2(newX, newY)).normalise();
     }
 

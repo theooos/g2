@@ -12,12 +12,11 @@ public abstract class MovableEntity extends Entity {
     int respawnTime;
     int timeTillRespawn;
 
+    /**
+     * moves the player by it's speed
+     */
     protected void move() {
         this.pos = pos.add(dir.mult(speed));
-    }
-
-    public Vector2 hypoMove() {
-        return pos.add(dir.mult(speed));
     }
 
     public float getSpeed() {
@@ -52,6 +51,9 @@ public abstract class MovableEntity extends Entity {
         return team;
     }
 
+    /**
+     * Allows for the entity to respawn
+     */
     void live() {
         if (!isAlive()) timeTillRespawn--;
     }
@@ -60,6 +62,9 @@ public abstract class MovableEntity extends Entity {
         return (timeTillRespawn <= 0);
     }
 
+    /**
+     * sets the timer to max spawn time
+     */
     void resetTimeTillRespawn() {
         timeTillRespawn = respawnTime;
     }
