@@ -101,7 +101,7 @@ public class Swat extends PlayerTask {
 
         // Return to original phase if required.
         if (intel.isPhaseShiftReq()){
-            brain.getBehaviour("ForceShiftPhase").run();
+            brain.getBehaviour("ShiftPhase").run();
         }
         intel.setPhaseShiftReq(false);
     }
