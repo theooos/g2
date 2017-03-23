@@ -64,6 +64,9 @@ public class Projectile extends MovableEntity {
         ID = p.ID;
     }
 
+    /**
+     * Moves the projectile and ticks it life
+     */
     void live() {
         move();
         tickLife();
@@ -92,7 +95,7 @@ public class Projectile extends MovableEntity {
         return p.getID();
     }
 
-    MovableEntity getPlayer() {
+    public MovableEntity getPlayer() {
         return p;
     }
 

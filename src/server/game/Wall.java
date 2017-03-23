@@ -20,9 +20,9 @@ public class Wall extends Entity {
      * @param startPos the vector position of one end of the wall.
      * @param endPos the vector position of the other end of the wall.
      * @param phase the phase the wall belongs to.
-     * @param damageable
+     * @param damageable whether the wall can be damaged
      */
-    public Wall(Vector2 startPos, Vector2 endPos, int phase, boolean damageable, boolean boundary){
+    Wall(Vector2 startPos, Vector2 endPos, int phase, boolean damageable, boolean boundary){
 
         this.pos = startPos;
         this.endPos = endPos;
@@ -77,7 +77,7 @@ public class Wall extends Entity {
      * Returns true if this wall is not broken. More formally, returns true if and only if health > 0.
      * @return true if this wall is not broken.
      */
-    public boolean intact(){
+    boolean intact(){
         return isAlive();
     }
 
@@ -87,11 +87,11 @@ public class Wall extends Entity {
      * @param phase - int representing the phase for which this wall is to be tested.
      * @return true if this wall is in the given phase.
      */
-    public boolean inPhase(int phase){
+    boolean inPhase(int phase){
         return (this.phase == phase);
     }
 
-    public HashSet<Vector2> getWholeWall(){
+    HashSet<Vector2> getWholeWall(){
         return null;
     }
 
@@ -116,7 +116,7 @@ public class Wall extends Entity {
     }
 
 
-    public boolean isBoundary(){
+    boolean isBoundary(){
         return boundary;
     }
 

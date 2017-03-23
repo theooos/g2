@@ -1,19 +1,23 @@
 package client.graphics;
 
+import client.ClientSettings;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
 import objects.LobbyData;
 import objects.Sendable;
 import org.lwjgl.input.Mouse;
+import server.game.Map;
 
 import java.util.function.Consumer;
+
+import static client.graphics.GameManager.out;
 
 /**
  * Holds all the
  */
 public class StartScreenRenderer {
 
-    public enum Screen {MAIN, ABOUT, CONTROLS, LOADING, LOBBY}
+    public enum Screen {MAIN, ABOUT, CONTROLS, SETTINGS, LOADING, LOBBY}
 
     private Screen currentScreen = Screen.MAIN;
 
@@ -22,7 +26,10 @@ public class StartScreenRenderer {
     private InterfaceTexture about_button = new InterfaceTexture(ISprite.ABOUT_BUTTON);
     private InterfaceTexture description = new InterfaceTexture(ISprite.ABOUT_SCREEN);
     private InterfaceTexture back_button = new InterfaceTexture(ISprite.BACK_BUTTON);
-    private InterfaceTexture join_lobby_button = new InterfaceTexture(ISprite.JOIN_LOBBY_BUTTON);
+    private InterfaceTexture back_button_half = new InterfaceTexture(ISprite.BACK_BUTTON_HALF);
+    private InterfaceTexture solo_game_button = new InterfaceTexture(ISprite.SOLO_GAME_BUTTON);
+    private InterfaceTexture versus_game_button = new InterfaceTexture(ISprite.VERSUS_GAME_BUTTON);
+    private InterfaceTexture settings_button = new InterfaceTexture(ISprite.SETTINGS_BUTTON);
 
     private static Layer interfaceLayer = new Layer();
     private static Layer controlsLayer = new Layer();
@@ -35,11 +42,14 @@ public class StartScreenRenderer {
     private boolean hasClicked = false;
 
     private Consumer<Void> connectFunction;
+    private int playerID;
 
-    public StartScreenRenderer(Consumer<Void> connectFunction) {
+    public StartScreenRenderer(Consumer<Void> connectFunction, int playerID) {
         this.connectFunction = connectFunction;
         background.setRatio(0.5f);
         description.setRatio(0.5f);
+        this.playerID = playerID;
+
         readyInterfaceLayer();
         readyControlsLayer();
         readyAboutLayer();
@@ -49,22 +59,33 @@ public class StartScreenRenderer {
     public void run() {
         switch (currentScreen) {
             case MAIN:
-                renderInterface();
+                interfaceLayer.render();
                 handleClickedMain();
                 break;
             case CONTROLS:
-                renderControls();
+                controlsLayer.render();
                 handleClickedControls();
                 break;
             case ABOUT:
-                renderAbout();
+                aboutLayer.render();
                 handleClickedAbout();
                 break;
+            case SETTINGS:
+                SettingsRenderer.run(e -> currentScreen = Screen.MAIN);
+                break;
             case LOADING:
-                renderLoading();
+                loadingLayer.render();
                 break;
             case LOBBY:
-                renderLobby();
+                TextRenderer smallText = new TextRenderer(20);
+                lobbyLayer.render();
+                try {
+                    Draw.drawLobby(lobbyData, new Map(lobbyData.getMapID()), playerID, smallText);
+                    out("Drawing lobby");
+                }
+                catch (Exception e) {
+                    System.err.println("Can't load map from lobby");
+                }
                 handleClickedLobby();
 
         }
@@ -78,9 +99,11 @@ public class StartScreenRenderer {
 
         background.spawn(0, 400f, 300f, interfaceLayer);
         title.spawn(1, 400f, 435f, interfaceLayer);
-        join_lobby_button.spawn(2, 400f, 270f, interfaceLayer);
-        controls_button.spawn(3, 400f, 180f, interfaceLayer);
-        about_button.spawn(4, 400f, 90f, interfaceLayer);
+        solo_game_button.spawn(2, 220f, 270f, interfaceLayer);
+        versus_game_button.spawn(3, 580f,270f,interfaceLayer);
+        controls_button.spawn(4, 220f, 180f, interfaceLayer);
+        about_button.spawn(5, 580f, 180f, interfaceLayer);
+        settings_button.spawn(6,400f,90f,interfaceLayer);
     }
 
     private void readyControlsLayer(){
@@ -88,7 +111,7 @@ public class StartScreenRenderer {
         controls_guide.setRatio(0.5f);
 
         controls_guide.spawn(0, 400f, 300f, controlsLayer);
-        back_button.spawn(1, 180f, 550f, controlsLayer);
+        back_button_half.spawn(1, 160f, 90f, controlsLayer);
     }
 
     private void readyAboutLayer() {
@@ -113,29 +136,6 @@ public class StartScreenRenderer {
     }
 
 
-    // ****** THESE RENDER EACH LAYER ******
-
-    private void renderInterface() {
-        interfaceLayer.render();
-    }
-
-    private void renderControls() {
-        controlsLayer.render();
-    }
-
-    private void renderAbout() {
-        aboutLayer.render();
-    }
-
-    private void renderLoading() {
-        loadingLayer.render();
-    }
-
-    private void renderLobby() {
-        lobbyLayer.render();
-    }
-
-
     // ****** BUTTON HANDLERS ******
 
     private void handleClickedMain() {
@@ -150,9 +150,18 @@ public class StartScreenRenderer {
                 currentScreen = Screen.ABOUT;
                 hasClicked = true;
             }
-            else if (join_lobby_button.isClicked()) {
+            else if (solo_game_button.isClicked()) {
+                ClientSettings.SINGLE_PLAYER = true;
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
+                hasClicked = true;
+            } else if (versus_game_button.isClicked()) {
+                currentScreen = Screen.LOADING;
+                connectFunction.accept(null);
+                hasClicked = true;
+            }
+            else if(settings_button.isClicked()){
+                currentScreen = Screen.SETTINGS;
                 hasClicked = true;
             }
         }
@@ -162,7 +171,7 @@ public class StartScreenRenderer {
         if (hasClicked && !Mouse.isButtonDown(0)) hasClicked = false;
 
         if (!hasClicked) {
-            if (back_button.isClicked()) {
+            if (back_button_half.isClicked()) {
                 currentScreen = Screen.MAIN;
                 hasClicked = true;
             }

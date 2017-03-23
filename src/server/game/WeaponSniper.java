@@ -5,7 +5,10 @@ package server.game;
  * A slow firing, high damage weapon type
  */
 public class WeaponSniper extends Weapon {
-    public WeaponSniper() {
+    /**
+     * Creates a new high damage and low rof weapon
+     */
+    WeaponSniper() {
         super();
         name = "Sniper";
         shotType = new Projectile(70,300,8,new Vector2(0,0), new Vector2(0,0), 40, 0, null, 0);
@@ -24,7 +27,7 @@ public class WeaponSniper extends Weapon {
         //the amount of heat each firing of the weapon takes up
         heatPerShot = 30;
         //min time after firing a shot till the gun can fire again
-        refireTime = 20;
+        refireTime = 25;
         //whether the player can hold down the trigger
         fullyAuto = false;
     }

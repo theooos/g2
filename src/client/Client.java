@@ -1,9 +1,8 @@
 package client;
 
 import client.audio.Audio;
-import client.graphics.GameManager;
-import client.graphics.StartScreenRenderer;
-import client.graphics.TextureLoader;
+import client.audio.AudioManager;
+import client.graphics.*;
 import networking.Connection_Client;
 import objects.GameData;
 import objects.InitGame;
@@ -13,9 +12,14 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import server.Server;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import static client.ClientSettings.LOCAL;
+import static client.ClientSettings.SINGLE_PLAYER;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Client {
@@ -29,6 +33,8 @@ public class Client {
 
     private StartScreenRenderer startScreen;
     private GameManager gameManager;
+
+    private TextRenderer[] textRenderers = new TextRenderer[3];
 
     private boolean running = true;
 
@@ -88,7 +94,7 @@ public class Client {
 
             GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
             GL11.glClearDepth(1.0f); // Depth Buffer Setup
-            GL11.glDisable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
+            GL11.glDisable(GL11.GL_DEPTH_TEST); // Disables Depth Testing
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glDepthMask(false);
             GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -98,13 +104,16 @@ public class Client {
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             TextureLoader.initialise();
+            textRenderers[0] = new TextRenderer(20);
+            textRenderers[1] = new TextRenderer(25);
+            textRenderers[2] = new TextRenderer(60);
 
-            startScreen = new StartScreenRenderer(e -> establishConnection());
+            startScreen = new StartScreenRenderer(e -> establishConnection(), playerID);
+            SettingsRenderer.initialise();
+
 
             Audio.init();
-            Audio.volume = Audio.Volume.LOW;
-            Audio.INTERFACEBACKGROUND.play();
-
+            AudioManager.playAmbiance();
         } catch (LWJGLException le) {
             System.err.println("Game exiting - exception in initialization:");
             le.printStackTrace();
@@ -115,25 +124,36 @@ public class Client {
     private void beginGame(Sendable s) {
         GameData gameData = new GameData((InitGame) s);
         clientReceiver.setGameData(gameData);
-        gameManager = new GameManager(gameData, connection, playerID);
+        gameManager = new GameManager(gameData, connection, playerID, textRenderers,this::endGame);
         currentMode = Mode.GAME;
         startScreen.setCurrentScreen(StartScreenRenderer.Screen.MAIN);
-        Audio.INTERFACEBACKGROUND.stopClip();
-        Audio.COUNTDOWN.play();
-        Audio.GAMEMUSIC.pause(4);
+        AudioManager.playGameStart();
+        AudioManager.playMusic();
     }
 
     private void establishConnection() {
         try {
             connection = new Connection_Client(this);
+            connection.initialise();
             clientReceiver = new ClientReceiver(connection);
             connection.addFunctionEvent("InitGame", this::beginGame);
-            connection.addFunctionEvent("String",this::out);
             connection.addFunctionEvent("LobbyData",startScreen::setupLobby);
             connection.addFunctionEvent("InitPlayer", this::setupMe);
-
         } catch (IOException e) {
-            System.err.println("Failed to make connection.");
+            if (SINGLE_PLAYER) {
+                Server.main(new String[]{"2", "0"});
+                LOCAL = true;
+                Timer t = new Timer();
+                t.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        establishConnection();
+                    }
+                }, 5000);
+            }
+            else {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -141,8 +161,8 @@ public class Client {
         playerID = ((InitPlayer) s).getID();
     }
 
-    private void out(Object o) {
-        System.out.println(o);
+    private void endGame(Object o) {
+        returnToMainMenu();
     }
 
     public void returnToMainMenu(){
@@ -154,6 +174,5 @@ public class Client {
 
     public static void main(String argv[]) {
         new Client();
-        System.exit(0);
     }
 }

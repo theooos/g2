@@ -12,6 +12,13 @@ public class MoveObject implements Sendable {
     private int ID;
     private int moveCounter;
 
+    /**
+     * When sent to the server, updates the player, when sent to client overrides the player
+     * @param pos the new position
+     * @param dir the new direction
+     * @param id the id to change
+     * @param moveCounter the move counter to maintain sync
+     */
     public MoveObject(Vector2 pos, Vector2 dir, int id, int moveCounter) {
         this.dir = dir;
         this.ID = id;

@@ -26,6 +26,10 @@ public class DistDropOffProjectile extends Projectile {
         radiusDec = radius/lifespan;
     }
 
+    /**
+     * Creates a copy of a DistDropOffProjectile
+     * @param d the projectile to copy
+     */
     private DistDropOffProjectile(DistDropOffProjectile d) {
         super(d.getDamage(), d.lifespan, d.getRadius(), d.pos, d.dir, d.speed, d.phase, d.getPlayer(), d.ID);
         damageDec = damage/lifespan;

@@ -8,6 +8,8 @@ import server.game.*;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static client.ClientSettings.ORB_VIS;
+
 class GameRenderer {
     private GameData gameData;
     private int playerID;
@@ -19,19 +21,30 @@ class GameRenderer {
     private Draw draw;
     private Pulse pulse;
 
-    float powerUpRotation;
+    float powerUpRotation = 0;
 
-    GameRenderer(GameData gameData, int playerID, CollisionManager collisionManager) {
+    /**
+     * Sets up a new game renderer to show the game on screen
+     * @param gameData all the game data
+     * @param playerID this clients id
+     * @param collisionManager how to handle collisions
+     * @param textRenderers how to display text
+     */
+    GameRenderer(GameData gameData, int playerID, CollisionManager collisionManager, TextRenderer[] textRenderers) {
         this.gameData = gameData;
         this.playerID = playerID;
-        map = new MapRenderer(gameData.getMapID());
         this.collisionManager = collisionManager;
+
+        map = new MapRenderer(gameData.getMapID());
         Player me = gameData.getPlayer(playerID);
+
         pulse = new Pulse(me.getPos(), me.getRadius(), me.getPhase(), 0, 1 - me.getPhase(), 20, 20, me.getPhase(), true);
-        powerUpRotation = 0;
-        draw = new Draw(gameData, playerID);
+        draw = new Draw(gameData, playerID, textRenderers);
     }
 
+    /**
+     * The main render method
+     */
     void render() {
         Player p = gameData.getPlayer(playerID);
         int phase = p.getPhase();
@@ -55,10 +68,17 @@ class GameRenderer {
         if (displayCollisions) drawCollisions();
     }
 
-    void drawScoreboard(boolean shadeScreen) {
-        draw.drawScoreboard(shadeScreen);
+    /**
+     * Draws the scoreboard
+     * @param gameEnded if the game ended, shows victory or defeat banner
+     */
+    void drawScoreboard(boolean gameEnded) {
+        draw.drawScoreboard(gameEnded);
     }
 
+    /**
+     * Whether to draw the collision mask
+     */
     private void drawCollisions() {
         Player p = new Player(gameData.getPlayer(playerID));
         GL11.glColor4f(1, 0, 0, 0.5f);
@@ -72,11 +92,15 @@ class GameRenderer {
         }
     }
 
+    /**
+     * Draws the the stencil for the pulse, including the layer underneath
+     */
     private void drawStencil() {
         int newPhase = pulse.getNewPhase();
         int oldPhase = 1;
         if (newPhase == 1) oldPhase = 0;
 
+        //draws the old phase
         draw.colourBackground(oldPhase);
         drawProjectiles(oldPhase);
         map.renderMap(oldPhase);
@@ -93,6 +117,7 @@ class GameRenderer {
         GL11.glDepthMask(false); // Don't write to depth buffer
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
 
+        //sets up the layer to be over drawn
         draw.drawCircle(pulse
                 .getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse
                 .getStart().getY(), pulse
@@ -110,6 +135,8 @@ class GameRenderer {
                 .getStart().getX(), ClientSettings.SCREEN_HEIGHT - pulse
                 .getStart().getY(), pulse
                 .getRadius(), 500);
+
+        //draws the new phase in the circle
         draw.colourBackground(newPhase);
         drawProjectiles(newPhase);
         map.renderMap(newPhase);
@@ -123,6 +150,10 @@ class GameRenderer {
 
     }
 
+    /**
+     * Draws the players on the given phase
+     * @param phase which phase to draw players on
+     */
     private void drawPlayers(int phase) {
         ConcurrentHashMap<Integer, Player> players = gameData.getPlayers();
         float red;
@@ -130,6 +161,7 @@ class GameRenderer {
         float blue;
         for (Player p : players.values()) {
             float radius = p.getRadius();
+            //makes the radius a factor of phase percentage for phase animation
             radius = (phase == 0) ? radius * (1-p.getPhasePercentage()) : radius*p.getPhasePercentage();
 
             if (p.isAlive()) {
@@ -151,21 +183,33 @@ class GameRenderer {
                 draw.drawAura(p.getPos(), radius + 10, 10, red - 0.2f, green - 0.2f, blue - 0.2f);
             }
 
-
+            //draws the player
             GL11.glColor3f(red, green, blue);
             draw.drawCircle(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY(), radius, 100);
+            //adds the reticule for the weapon
             positionBullet(p, radius, red, green, blue);
         }
     }
 
+    /**
+     * Draws the reticule for the players
+     * @param p the player to draw
+     * @param radius the size of the reticule
+     * @param red the red component
+     * @param green the green component
+     * @param blue the blue component
+     */
     private void positionBullet(Player p, float radius, float red, float green, float blue) {
+        //gets the current position
         Vector2 pos = new Vector2(p.getPos().getX(), ClientSettings.SCREEN_HEIGHT - p.getPos().getY());
         Vector2 dir = p.getDir();
+        //gets the direction to the cursor
         Vector2 cursor = pos.add((new Vector2(dir.getX(), 0 - dir.getY())).mult(21));
         float lastX = cursor.getX();
         float lastY = cursor.getY();
 
         if (lastX > 0 && lastY > 0) {
+            //draw differently depending on weapon
             if (p.getActiveWeapon().toString().equals("SMG")) {
                 draw.drawCircle(lastX, lastY, radius / 2, 50);
             } else {
@@ -184,13 +228,24 @@ class GameRenderer {
         }
     }
 
+    /**
+     * Draws the orbs
+     * @param phase the phase to draw the orbs on
+     */
     private void drawOrbs(int phase) {
         HashMap<Integer, Orb> orbs = gameData.getOrbs();
         Player me = gameData.getPlayer(playerID);
         float red;
         float green;
         float blue;
+        //sets up the closest distance for the orbs
+        float closestDist = ORB_VIS+1;
+        //lists through all the orbs
         for (Orb o : orbs.values()) {
+            float dist = me.getPos().getDistanceTo(o.getPos());
+            if (dist > closestDist) closestDist = dist;
+
+            //sets orb colours
             if (o.isAlive()) {
                 red = 0.2f;
                 green = 0.2f;
@@ -200,6 +255,7 @@ class GameRenderer {
                 green = 0.5f;
                 blue = 0.7f;
             }
+            //draws the orb if visible
             if (phase == o.getPhase()) {
                 if (o.getRadius() > 0) {
                     draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f);
@@ -207,9 +263,9 @@ class GameRenderer {
                 GL11.glColor4f(red, green, blue, 1);
                 draw.drawCircle(o.getPos().getX(), ClientSettings.SCREEN_HEIGHT - o.getPos().getY(), o.getRadius(), 100);
             } else {
-                float dist = me.getPos().getDistanceTo(o.getPos());
-                if (dist < 150) {
-                    float fade = 0.7f - (dist / 150f);
+                //fade in the orb if on another phase
+                if (dist < ORB_VIS) {
+                    float fade = 0.7f - (dist / ORB_VIS);
                     if (o.getRadius() > 0) {
                         draw.drawAura(o.getPos(), o.getRadius() + 5, 5, red - 0.1f, green - 0.1f, blue - 0.1f, fade);
                     }
@@ -218,15 +274,23 @@ class GameRenderer {
                 }
             }
         }
+
+        //AudioManager.playOrbHum(closestDist);
     }
 
+    /**
+     * Draws all the projectile
+     * @param phase the phase to draw the projectiles on
+     */
     private void drawProjectiles(int phase) {
         ConcurrentHashMap<Integer, Projectile> projectiles = gameData.getProjectiles();
         float red;
         float green;
         float blue;
+        //steps through all the projectiles
         for (Projectile p : projectiles.values()) {
             if (phase == p.getPhase()) {
+                //sets colours
                 if (p.getTeam() == 0) {
                     red = 0.6f;
                     green = 0f;
@@ -236,6 +300,7 @@ class GameRenderer {
                     green = 0.8f;
                     blue = 0f;
                 } else {
+                    //for orb damage
                     red = 0.2f;
                     green = 0.2f;
                     blue = 1f;
@@ -253,11 +318,16 @@ class GameRenderer {
         }
     }
 
+    /**
+     * draws the powerups
+     * @param phase the phase to draw the powerups int
+     */
     private void drawPowerUps(int phase) {
         HashMap<Integer, PowerUp> powerUps = gameData.getPowerUps();
         float red;
         float green;
         float blue;
+        //steps through all powerups
         for (PowerUp p : powerUps.values()) {
             if (phase == p.getPhase() && p.isAlive()) {
                 if (p.getType() == PowerUp.Type.health) {
@@ -282,4 +352,6 @@ class GameRenderer {
     void flipDisplayCollisions() {
         displayCollisions = !displayCollisions;
     }
+
+
 }

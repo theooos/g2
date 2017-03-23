@@ -103,6 +103,10 @@ public abstract class Sprite implements ISprite {
             GL11.glVertex2f(width, height);
         }
         GL11.glEnd();
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        GL11.glTranslatef(0, 0, 0);
+
     }
 
     public boolean isClicked() {

@@ -1,0 +1,21 @@
+// Metadata:
+// Used for testing.  Don't change
+3, Test, 800, 600, 4
+
+// Outer Walls:
+0,   0,   800, 0
+0,   0,   0,   600
+800, 0,   800, 600
+0,   600, 800, 600
+
+// Inner Walls:
+100, 300, 300, 300, 0, false
+500, 300, 700, 300, 0, false
+
+##
+
+// Spawn Locations
+20, 100, 1
+20, 200, 1
+780, 150, 0
+780, 250, 0

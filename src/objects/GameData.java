@@ -1,5 +1,6 @@
 package objects;
 
+import client.audio.AudioManager;
 import server.game.*;
 
 import java.util.HashMap;
@@ -19,7 +20,12 @@ public class GameData {
     private Scoreboard scoreboard;
     private int mapID;
     private LobbyData lobbyData;
+    private Player me;
 
+    /**
+     * Sets up all the data for a game
+     * @param initGame the start of the game
+     */
     public GameData(InitGame initGame) {
         this.players = initGame.getPlayers();
         this.orbs = initGame.getOrbs();
@@ -47,6 +53,9 @@ public class GameData {
 
     public void updateProjectile(Projectile p) {
         if (p.isAlive()) {
+            if (p.getPlayer().equals(me) && projectiles.get(p.getID()) == null && p.getDamage() > 0) {
+                AudioManager.playShooting(me);
+            }
             projectiles.put(p.getID(), p);
         } else {
             projectiles.remove(p.getID());
@@ -83,8 +92,12 @@ public class GameData {
         players.put(p.getID(), p);
     }
 
+    /**
+     * Ignores certain things about the player received
+     * @param p the player to extract data from
+     */
     public void updateMe(Player p) {
-        Player me = players.get(p.getID());
+        me = players.get(p.getID());
         me.setPhase(p.getPhase());
         me.setHealth(p.getHealth());
         me.setWeaponOut(p.isWeaponOneOut());
@@ -114,6 +127,9 @@ public class GameData {
         return lobbyData;
     }
 
+    /**
+     * @return Makes a human readable string
+     */
     public java.lang.String toString() {
         java.lang.String string = "~ PLAYERS ~\n";
         for (Player player : players.values()) {

@@ -60,7 +60,7 @@ public class Orb extends MovableEntity {
      * with an appropriate (new) Intel object.
      * @param intel - the Intel containing details about the next game.
      */
-    public void prepareOrbForGame(OrbIntel intel, HashMap<Integer, Orb> orbs){
+    void prepareOrbForGame(OrbIntel intel, HashMap<Integer, Orb> orbs){
         this.intel = intel;
         this.intel.initForGame(this, orbs);
         this.myBrain = new OrbBrain(intel);

@@ -3,6 +3,7 @@ package networking;
 import client.Client;
 import client.ClientSettings;
 import objects.Sendable;
+import org.lwjgl.Sys;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,7 +22,9 @@ public abstract class Connection {
     NetworkListener fromConnection;
     NetworkEventHandler handler = new NetworkEventHandler();
 
-    Boolean running = true;
+    ReferenceBool running = new ReferenceBool(true);
+
+    public abstract void initialise() throws IOException;
 
     /**
      * Generates the socket.
@@ -52,21 +55,12 @@ public abstract class Connection {
         try {
             return new ServerSocket(ClientSettings.PORT);
         } catch (IOException e) {
-            out("Failed to connect through server socket.");
+            System.out.println("Failed to connect through server socket.");
         }
         return null;
     }
 
     public void addFunctionEvent(String className, Consumer<Sendable> consumer) {
         handler.addFunction(className, consumer);
-    }
-
-    /**
-     * For debugging use only. Remove all references for production.
-     *
-     * @param o Object to print.
-     */
-    static void out(Object o) {
-        if (ClientSettings.DEBUG) System.out.println("[NETWORK] " + o);
     }
 }

@@ -20,8 +20,12 @@ public class ClientReceiver {
     private static boolean DEBUG = true;
     private GameData gameData;
 
+    /**
+     * Sets up a full list of function events
+     * @param connection the connection to the server
+     */
     ClientReceiver(Connection connection) {
-        connection.addFunctionEvent("String", this::out);
+        connection.addFunctionEvent("String", System.out::println);
         connection.addFunctionEvent("Player", this::updatedPlayer);
         connection.addFunctionEvent("AIPlayer", this::updatedPlayer);
         connection.addFunctionEvent("Orb", this::updatedOrb);
@@ -36,15 +40,12 @@ public class ClientReceiver {
         this.gameData = gameData;
     }
 
-    public void out(Object o) {
-        if (DEBUG) System.out.println("[CLIENT] " + o);
-    }
-
     public void setID(int id) {
         this.playerID = id;
     }
 
     private void updatedPlayer(Sendable s) {
+        //handles the player differently if it is ths client
         Player p = (Player) s;
         if (p.getID() != playerID) {
             gameData.updatePlayer(p);

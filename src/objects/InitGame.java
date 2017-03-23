@@ -21,6 +21,15 @@ public class InitGame implements Sendable{
     private LobbyData ld;
 
 
+    /**
+     * Starts a game
+     * @param orbs all the orbs in the game
+     * @param players all the players in the game (inc AI)
+     * @param mapID the map id to be playing on
+     * @param sb the scoreboard
+     * @param powerUps all the power ups in the game
+     * @param ld the lobby data for drawing the scoreboard
+     */
     public InitGame(HashMap<Integer, Orb> orbs, ConcurrentHashMap<Integer, Player> players, int mapID, Scoreboard sb, HashMap<Integer, PowerUp> powerUps, LobbyData ld){
         this.orbs = orbs;
         this.players = players;

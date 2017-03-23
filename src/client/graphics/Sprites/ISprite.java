@@ -16,12 +16,15 @@ public interface ISprite {
     int SETTINGS_SCREEN = 8;
     int END_GAME_SCREEN = 9;
 
-    int CONTROLS_BUTTON = 10;
-    int ABOUT_BUTTON = 11;
-    int BACK_BUTTON = 12;
-    int JOIN_LOBBY_BUTTON = 13;
-    int RESUME_GAME_BUTTON = 14;
-    int EXIT_GAME_BUTTON = 15;
+    int SOLO_GAME_BUTTON = 10;
+    int VERSUS_GAME_BUTTON = 11;
+    int CONTROLS_BUTTON = 12;
+    int ABOUT_BUTTON = 13;
+    int BACK_BUTTON = 14;
+    int BACK_BUTTON_HALF = 15;
+    int RESUME_GAME_BUTTON = 16;
+    int SETTINGS_BUTTON = 17;
+    int EXIT_GAME_BUTTON = 18;
 
-    int SLIDER = 16;
+    int SLIDER = 19;
 }

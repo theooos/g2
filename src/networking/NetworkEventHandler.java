@@ -1,16 +1,12 @@
 package networking;
 
 import objects.Sendable;
-import org.lwjgl.Sys;
-import server.game.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
-
-import static networking.Connection.out;
 
 /**
  * This enables other classes to provide functionality for when a specific command is received.
@@ -36,7 +32,7 @@ public class NetworkEventHandler implements Runnable {
                         consumer.accept(sendable);
                     }
                 } else {
-                    out("Network doesn't know how to handle the class: " + className);
+                    System.out.println("Network doesn't know how to handle the class: " + className);
                 }
             }
         }
@@ -64,7 +60,7 @@ public class NetworkEventHandler implements Runnable {
      * @param objName  Class name.
      * @param consumer Consumer which will exe.
      */
-    public void addFunction(String objName, Consumer<Sendable> consumer) {
+    void addFunction(String objName, Consumer<Sendable> consumer) {
         ArrayList<Consumer<Sendable>> consumerList;
         if (allConsumers.containsKey(objName)) {
             consumerList = this.allConsumers.get(objName);
@@ -75,7 +71,7 @@ public class NetworkEventHandler implements Runnable {
         allConsumers.put(objName, consumerList);
     }
 
-    public void queueForExecution(Sendable received) {
+    void queueForExecution(Sendable received) {
         toExecute.add(received);
         if (!this.isRunning) new Thread(this).start();
     }

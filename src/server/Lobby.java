@@ -1,6 +1,5 @@
 package server;
 
-import client.ClientSettings;
 import networking.Connection_Server;
 import objects.InitPlayer;
 import objects.LobbyData;
@@ -32,6 +31,7 @@ class Lobby {
     /**
      * Creates a new lobby for players to connect too
      * @param maxSize the maximum number of players this lobby can hold
+     * @param countdown the countdown after min players is reached to start the game
      */
     Lobby(int maxSize, int countdown) {
         //the max number of maps the server has access to
@@ -82,6 +82,7 @@ class Lobby {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //give each player a name
         players = new InitPlayer[maxSize];
         for (int i = 0; i < players.length; i++) {
             String name;

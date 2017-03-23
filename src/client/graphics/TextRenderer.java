@@ -37,11 +37,6 @@ public class TextRenderer {
     private java.awt.Color colour ;
 
 
-
-    public TextRenderer() {
-        this(40);
-    }
-
     public TextRenderer(int size)  {
         this.font = new java.awt.Font("Agency FB", java.awt.Font.BOLD, size);
         //Font font = new Font("Verdana", Font.BOLD, 32);

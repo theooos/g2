@@ -2,7 +2,6 @@ package client.graphics;
 
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
-import objects.GameData;
 import org.lwjgl.input.Mouse;
 
 /**
@@ -10,13 +9,11 @@ import org.lwjgl.input.Mouse;
  */
 class InGameMenuRenderer {
 
-    private GameData gameData;
-    private int playerID;
     private GameManager gameManager;
 
     private InterfaceTexture back_button = new InterfaceTexture(ISprite.BACK_BUTTON);
     private InterfaceTexture resume_game_button = new InterfaceTexture(ISprite.RESUME_GAME_BUTTON);
-    private InterfaceTexture settings_game_button = new InterfaceTexture(ISprite.ABOUT_BUTTON);
+    private InterfaceTexture settings_game_button = new InterfaceTexture(ISprite.SETTINGS_BUTTON);
     private InterfaceTexture exit_game_button = new InterfaceTexture(ISprite.EXIT_GAME_BUTTON);
 
     private static Layer menuLayer = new Layer();
@@ -25,9 +22,7 @@ class InGameMenuRenderer {
 
     private boolean hasClicked = false;
 
-    InGameMenuRenderer(GameData gameData, int playerID, GameManager gameManager) {
-        this.gameData = gameData;
-        this.playerID = playerID;
+    InGameMenuRenderer(GameManager gameManager) {
         this.gameManager = gameManager;
 
         readyMenuLayer();
@@ -64,13 +59,13 @@ class InGameMenuRenderer {
 
         if (!hasClicked) {
             if (resume_game_button.isClicked()) {
-                gameManager.setMode(GameManager.Mode.GAME);
+                gameManager.setScreen(GameManager.Screen.GAME);
                 hasClicked = true;
             } else if (settings_game_button.isClicked()) {
-                gameManager.setMode(GameManager.Mode.SETTINGS);
+                gameManager.setScreen(GameManager.Screen.SETTINGS);
                 hasClicked = true;
             } else if (exit_game_button.isClicked()){
-                gameManager.setMode(GameManager.Mode.SCOREBOARD);
+                gameManager.setScreen(GameManager.Screen.GAMEOVER);
                 hasClicked = true;
             }
         }
@@ -81,14 +76,10 @@ class InGameMenuRenderer {
 
         if (!hasClicked) {
             if (back_button.isClicked()) {
-                gameManager.setMode(GameManager.Mode.MENU);
+                gameManager.setScreen(GameManager.Screen.MENU);
                 hasClicked = true;
             }
         }
-    }
-
-    void handleClickedEndScreen() {
-
     }
 
     void renderMenu() {
@@ -97,9 +88,5 @@ class InGameMenuRenderer {
 
     public void renderSettings() {
         settingsLayer.render(0);
-    }
-
-    void renderEndScreen() {
-        endLayer.render(0);
     }
 }

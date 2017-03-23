@@ -8,15 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static networking.Connection.out;
-
 /**
  * Sends objects to the server. Currently no messaging queue, this might be necessary later.
  */
 class NetworkSender implements Runnable {
 
     private ObjectOutputStream toConnection;
-    private Boolean running;
+    private ReferenceBool running;
 
     private List<Sendable> toSend = Collections.synchronizedList(new ArrayList<>());
 
@@ -25,13 +23,13 @@ class NetworkSender implements Runnable {
      * @param toConnection The output stream that data will be sent to.
      * @param running
      */
-    NetworkSender(ObjectOutputStream toConnection, Boolean running){
+    NetworkSender(ObjectOutputStream toConnection, ReferenceBool running){
         this.toConnection = toConnection;
         this.running = running;
     }
 
     public void run(){
-        while(running){
+        while(running.value){
             if(!toSend.isEmpty()){
                 send(toSend.get(0));
                 toSend.remove(0);
@@ -48,8 +46,8 @@ class NetworkSender implements Runnable {
             toConnection.writeUnshared(obj);
             toConnection.flush();
         } catch (IOException e) {
-            out("Failed to send "+obj+". Breaking connection.");
-            running = false;
+            System.out.println("Failed to send "+obj+". Breaking connection.");
+            running.value = false;
         }
 
     }
