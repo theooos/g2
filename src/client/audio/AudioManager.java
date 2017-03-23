@@ -3,7 +3,6 @@ package client.audio;
 import server.game.Player;
 
 import static client.ClientSettings.*;
-import static client.ClientSettings.WARNING_THRES;
 import static client.graphics.GameManager.out;
 
 /**
@@ -41,7 +40,7 @@ public class AudioManager {
     }
 
     public static void playHealthUp() {
-        if (!Audio.HEALTH_UP.isPlaying())  Audio.HEALTH_UP.play(HEALTH_UP_VOL);
+        if (!Audio.HEALTH_UP.isPlaying()) Audio.HEALTH_UP.play(HEALTH_UP_VOL);
     }
 
     public static void playGameStart() {
@@ -72,29 +71,40 @@ public class AudioManager {
 
     public static void playWarningSounds(int health) {
         if (health < WARNING_THRES) {
-            float volume = Math.min(1, Math.max(0, WARNING_VOL-health/100f));
+            float volume = Math.min(1, Math.max(0, WARNING_VOL - health / 100f));
             Audio.WARNING.changeVolume(volume);
             if (!Audio.WARNING.isPlaying()) {
                 Audio.WARNING.loop(volume);
                 Audio.CAUTION.play(CAUTION_VOL);
             }
-        }
-        else if (health >= WARNING_THRES && Audio.WARNING.isPlaying()) {
+        } else if (health >= WARNING_THRES && Audio.WARNING.isPlaying()) {
             Audio.WARNING.stopClip();
         }
     }
 
     public static void playOrbHum(float closestDist) {
         if (closestDist < ORB_VIS) {
-            float volume = Math.min(1, Math.max(0, ORB_VOL-closestDist/ORB_VIS));
+            float volume = Math.min(1, Math.max(0, ORB_VOL - closestDist / ORB_VIS));
             Audio.PULSE.changeVolume(volume);
             if (!Audio.PULSE.isPlaying()) {
                 Audio.PULSE.loop(volume);
             }
-        }
-        else if (closestDist >= ORB_VIS && Audio.PULSE.isPlaying()) {
+        } else if (closestDist >= ORB_VIS && Audio.PULSE.isPlaying()) {
             Audio.PULSE.stopClip();
         }
     }
 
+    public static void applyVolume() {
+        Audio.MUSIC.changeVolume(MUSIC_VOL);
+        Audio.AMBIANCE.changeVolume(AMBIENT_VOL);
+        Audio.SHOTGUN.changeVolume(SHOOTING_VOL);
+        Audio.SMG.changeVolume(SHOOTING_VOL);
+        Audio.SNIPER.changeVolume(SHOOTING_VOL);
+        Audio.HEALTH_UP.changeVolume(HEALTH_UP_VOL);
+        Audio.PULSE.changeVolume(PULSE_VOL);
+        Audio.WARNING.changeVolume(WARNING_VOL);
+        Audio.CAUTION.changeVolume(CAUTION_VOL);
+        Audio.GAME_START.changeVolume(VOICE_VOL);
+        Audio.GAME_END.changeVolume(VOICE_VOL);
+    }
 }

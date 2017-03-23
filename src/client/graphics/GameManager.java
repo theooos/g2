@@ -1,7 +1,6 @@
 package client.graphics;
 
 import client.ClientSettings;
-import client.audio.Audio;
 import client.audio.AudioManager;
 import networking.Connection_Client;
 import objects.*;
@@ -9,18 +8,16 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import server.game.*;
+import server.game.CollisionManager;
+import server.game.Player;
+import server.game.Vector2;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 
-import java.util.Objects;
-
 import static client.ClientSettings.*;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Provides the visuals for the game itself.
@@ -28,6 +25,7 @@ import static org.lwjgl.opengl.GL11.glEnable;
 public class GameManager {
 
     enum Mode {GAME, MENU, SETTINGS, SCOREBOARD, GAMEOVER}
+
     private Mode mode = Mode.GAME;
 
     private GameRenderer gameRenderer;
@@ -60,29 +58,32 @@ public class GameManager {
     }
 
     public void run() {
-        update();
         switch (mode) {
             case GAME:
+                update();
                 gameRenderer.render();
                 break;
             case MENU:
+                update();
                 glEnable(GL_TEXTURE_2D);
-                glColor4f(1,1,1,1);
+                glColor4f(1, 1, 1, 1);
                 inGameMenuRenderer.renderMenu();
                 inGameMenuRenderer.handleClickedMenu();
                 break;
             case SETTINGS:
                 glEnable(GL_TEXTURE_2D);
-                glColor4f(1,1,1,1);
+                glColor4f(1, 1, 1, 1);
                 inGameMenuRenderer.renderSettings();
                 inGameMenuRenderer.handleClickedSettings();
                 SettingsRenderer.run(e -> mode = Mode.MENU);
                 break;
             case SCOREBOARD:
+                update();
                 gameRenderer.render();
                 gameRenderer.drawScoreboard(false);
                 break;
             case GAMEOVER:
+                update();
                 gameRenderer.render();
                 gameRenderer.drawScoreboard(true);
                 quit();
@@ -90,13 +91,13 @@ public class GameManager {
     }
 
     void quit() {
-        if(!quitting){
+        if (!quitting) {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
                     endGameFunction.accept(null);
                 }
-            },ClientSettings.ENG_GAME_TIME);
+            }, ClientSettings.ENG_GAME_TIME);
             quitting = true;
         }
     }
@@ -118,13 +119,12 @@ public class GameManager {
     private void pollMouse() {
         Player me = gameData.getPlayer(myPlayerID);
         if (me.isAlive()) {
-            while (Mouse.next()){
-                switch (Mouse.getEventButton()){
+            while (Mouse.next()) {
+                switch (Mouse.getEventButton()) {
                     case 0:
-                        if(Mouse.getEventButtonState()){
+                        if (Mouse.getEventButtonState()) {
                             conn.send(new FireObject(me.getID(), true));
-                        }
-                        else {
+                        } else {
                             conn.send(new FireObject(me.getID(), false));
                         }
                 }
@@ -176,17 +176,17 @@ public class GameManager {
         while (Keyboard.next()) {
             // Runs if next key has been PRESSED.
             if (Keyboard.getEventKeyState()) {
-                switch (mode){
+                switch (mode) {
                     case GAME:
                         gameKeyboard();
                         break;
                     default:
                         menuKeyboard();
                 }
-            } else{
-                switch (mode){
+            } else {
+                switch (mode) {
                     case SCOREBOARD:
-                        if(Keyboard.getEventKey() == Keyboard.KEY_TAB){
+                        if (Keyboard.getEventKey() == Keyboard.KEY_TAB) {
                             mode = Mode.GAME;
                         }
                 }
@@ -200,12 +200,12 @@ public class GameManager {
 
             // *** Those that depend on being alive ***
             case Keyboard.KEY_E:
-                if(me.isAlive()) conn.send(new SwitchObject(me.getID(),!me.isWeaponOneOut()));
+                if (me.isAlive()) conn.send(new SwitchObject(me.getID(), !me.isWeaponOneOut()));
                 break;
 
             case Keyboard.KEY_F:
             case Keyboard.KEY_SPACE:
-                if(me.isAlive()) {
+                if (me.isAlive()) {
                     AudioManager.playPulseSound();
                     int newPhase = 0;
                     if (me.getPhase() == 0) {
@@ -237,8 +237,7 @@ public class GameManager {
                 if (SOUND_VOL == 0) {
                     MUSIC_VOL = 1;
                     SOUND_VOL = 1;
-                }
-                else {
+                } else {
                     SOUND_VOL = 0;
                     MUSIC_VOL = 0;
                     AudioManager.muteEverything();
@@ -254,13 +253,13 @@ public class GameManager {
                 break;
 
             case Keyboard.KEY_TAB:
-                if(mode != Mode.GAMEOVER) mode = Mode.SCOREBOARD;
+                if (mode != Mode.GAMEOVER) mode = Mode.SCOREBOARD;
                 break;
         }
     }
 
-    private void menuKeyboard(){
-        switch (Keyboard.getEventKey()){
+    private void menuKeyboard() {
+        switch (Keyboard.getEventKey()) {
             case Keyboard.KEY_ESCAPE:
                 mode = Mode.GAME;
                 break;
@@ -300,7 +299,7 @@ public class GameManager {
         AudioManager.playGameOver();
     }
 
-    void setMode(Mode mode){
+    void setMode(Mode mode) {
         this.mode = mode;
     }
 

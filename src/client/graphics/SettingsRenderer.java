@@ -1,6 +1,7 @@
 package client.graphics;
 
 import client.ClientSettings;
+import client.audio.AudioManager;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
 import org.lwjgl.input.Mouse;
@@ -22,7 +23,7 @@ public class SettingsRenderer {
     private static Layer settingsLayer = new Layer();
 
     private static float sliderLength = 360f;
-    private static float leftSliderLimit = 370;
+    private static float leftSliderLimit = 370f;
     private static boolean hasClicked;
 
     public static void initialise() {
@@ -53,8 +54,7 @@ public class SettingsRenderer {
                 if (Mouse.getEventButtonState()) {
                     if (music_slider.isClicked()) draggingMusicSlider = true;
                     if (sound_slider.isClicked()) draggingSoundSlider = true;
-                }
-                else {
+                } else {
                     draggingMusicSlider = false;
                     draggingSoundSlider = false;
                 }
@@ -65,12 +65,14 @@ public class SettingsRenderer {
             if (vol < 0) vol = 0;
             if (vol > 1) vol = 1;
             ClientSettings.MUSIC_VOL = vol;
+            AudioManager.applyVolume();
         }
         if (draggingSoundSlider) {
             float vol = ((float) Mouse.getX() - leftSliderLimit) / sliderLength;
             if (vol < 0) vol = 0;
             if (vol > 1) vol = 1;
             ClientSettings.SOUND_VOL = vol;
+            AudioManager.applyVolume();
         }
     }
 
