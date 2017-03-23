@@ -60,7 +60,7 @@ public class NetworkEventHandler implements Runnable {
      * @param objName  Class name.
      * @param consumer Consumer which will exe.
      */
-    public void addFunction(String objName, Consumer<Sendable> consumer) {
+    void addFunction(String objName, Consumer<Sendable> consumer) {
         ArrayList<Consumer<Sendable>> consumerList;
         if (allConsumers.containsKey(objName)) {
             consumerList = this.allConsumers.get(objName);
@@ -71,7 +71,7 @@ public class NetworkEventHandler implements Runnable {
         allConsumers.put(objName, consumerList);
     }
 
-    public void queueForExecution(Sendable received) {
+    void queueForExecution(Sendable received) {
         toExecute.add(received);
         if (!this.isRunning) new Thread(this).start();
     }

@@ -157,6 +157,5 @@ public class Client {
 
     public static void main(String argv[]) {
         new Client();
-        System.exit(0);
     }
 }
