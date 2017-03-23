@@ -2,7 +2,6 @@ package client.graphics;
 
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
-import objects.GameData;
 import org.lwjgl.input.Mouse;
 
 /**
@@ -60,13 +59,13 @@ class InGameMenuRenderer {
 
         if (!hasClicked) {
             if (resume_game_button.isClicked()) {
-                gameManager.setMode(GameManager.Mode.GAME);
+                gameManager.setScreen(GameManager.Screen.GAME);
                 hasClicked = true;
             } else if (settings_game_button.isClicked()) {
-                gameManager.setMode(GameManager.Mode.SETTINGS);
+                gameManager.setScreen(GameManager.Screen.SETTINGS);
                 hasClicked = true;
             } else if (exit_game_button.isClicked()){
-                gameManager.setMode(GameManager.Mode.GAMEOVER);
+                gameManager.setScreen(GameManager.Screen.GAMEOVER);
                 hasClicked = true;
             }
         }
@@ -77,7 +76,7 @@ class InGameMenuRenderer {
 
         if (!hasClicked) {
             if (back_button.isClicked()) {
-                gameManager.setMode(GameManager.Mode.MENU);
+                gameManager.setScreen(GameManager.Screen.MENU);
                 hasClicked = true;
             }
         }
