@@ -1,12 +1,13 @@
 package server.ai.decision;
 
-import server.ai.AIBrain;
-
 import static server.ai.decision.PlayerBrain.EmotionalState.*;
 
 /**
- * Sets the emotional state of the player, depending on some external factors.
- * Created by rhys on 2/16/17.
+ * This object is used by its parent entity to analyse the results of several {@link Check}
+ * object checks and thus determine the appropriate emotion for the entity's current
+ * situation.
+ *
+ * Created by Rhys on 2/16/17.
  */
 public class Feel {
 
@@ -14,15 +15,28 @@ public class Feel {
     private PlayerIntel intel;
     private Check checker;
 
+    /**
+     * Constructs a Feel object as a child of the given brain, that utilises the
+     * given Intel and Check objects for deciding how the entity should react to it's
+     * current situation.
+     *
+     * @param brain   the brain of the parent entity.
+     * @param checker the object used for performing several complex checks.
+     * @param intel   grants access to information about the world and the parent entity.
+     */
     public Feel(PlayerBrain brain, Check checker, PlayerIntel intel){
         this.brain = brain;
         this.intel = intel;
         this.checker = checker;
     }
 
+    /**
+     * Determines the appropriate emotion for the parent entity under the current
+     * circumstances and reports back to the brain.
+     */
     public void doFinal() {
         // If the entity has very low health, be scared.
-        if (checker.doCheck(Check.CheckMode.LOW_HEALTH) && !intel.haveEscaped()) {
+        if (checker.doCheck(Check.CheckMode.LOW_HEALTH)) {
             brain.setEmotion(INTIMIDATED);
         }
         // If there is an Orb nearby (in either phase).
@@ -41,6 +55,4 @@ public class Feel {
             brain.setEmotion(BORED);
         }
     }
-
-
 }

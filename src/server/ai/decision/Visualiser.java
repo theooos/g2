@@ -26,10 +26,11 @@ public class Visualiser {
 
     /**
      * Creates a Visualiser object for use by a Player or Orb.
-     * @param map - The map the current game is being played on.
-     * @param players - The players involved in the current game.
-     * @param orbs - The orbs involved in the current game.
-     * @param id - The ID of the Orb this Visualisation object will belong to.
+     *
+     * @param map       the map the current game is being played on.
+     * @param players   the players involved in the current game.
+     * @param orbs      the orbs involved in the current game.
+     * @param id        the ID of the Orb this Visualisation object will belong to.
      */
     public Visualiser(Map map, ConcurrentHashMap<Integer, Player> players, HashMap<Integer, Orb> orbs, int id) {
         this.map = map;
@@ -41,10 +42,11 @@ public class Visualiser {
     /**
      * Determines whether a point 'dest' can be seen from another point 'pov' within
      * the given phase.
-     * @param pov - The point of view.
-     * @param dest - The destination towards which line of sight will be verified.
-     * @param phase - The phase within which line of sight will be verified.
-     * @return true if the destination can be seen from the POV.
+     *
+     * @param pov   the point of view.
+     * @param dest  the destination towards which line of sight will be verified.
+     * @param phase the phase within which line of sight will be verified.
+     * @return      true if the destination can be seen from the POV.
      */
     public boolean inSight(Point2D pov, Point2D dest, int phase){
         ArrayList<Rectangle2D> walls = getWalls(phase);
@@ -63,11 +65,12 @@ public class Visualiser {
     /**
      * Returns the collection of opponent players where the line between the player's position
      * and the POV is not intersected by any walls within the game map.
-     * @param pov - The position from which vision is being checked.
-     * @param phase - The phase within which vision is being checked.
-     * @param orbVision - Whether or not visibility is being tested from the
+     *
+     * @param pov       the position from which vision is being checked.
+     * @param phase     the phase within which vision is being checked.
+     * @param orbVision whether or not visibility is being tested from the
      *                  perspective of an Orb.
-     * @return the collection of opponent players in sight.
+     * @return          the collection of opponent players in sight.
      */
     public ConcurrentHashMap<Integer, Player> getPlayersInSight(Point2D pov, int phase, boolean orbVision){
         ConcurrentHashMap<Integer, Player> visPlayers = new ConcurrentHashMap<>();
@@ -93,9 +96,10 @@ public class Visualiser {
     /**
      * Returns the collection of orbs where the line between the orb's position
      * and the POV is not intersected by any walls within the game map.
-     * @param pov - The position from which vision is being checked.
-     * @param phase - The phase within which vision is being checked.
-     * @return the collection of orbs in sight.
+     *
+     * @param pov   the position from which vision is being checked.
+     * @param phase the phase within which vision is being checked.
+     * @return      the collection of orbs in sight.
      */
     public ConcurrentHashMap<Integer, Orb> getOrbsInSight(Point2D pov, int phase, float range){
         ConcurrentHashMap<Integer, Orb> visOrbs = new ConcurrentHashMap<>();
@@ -129,8 +133,9 @@ public class Visualiser {
     /**
      * Returns a collection of lines representing all intact walls of the current
      * map, within the given phase.
-     * @param phase - The phase whose walls the collection will contain.
-     * @return a list of lines corresponding to positions of relevant walls.
+     *
+     * @param phase  the phase whose walls the collection will contain.
+     * @return       a list of lines corresponding to positions of relevant walls.
      */
     private ArrayList<Rectangle2D> getWalls(int phase){
         ArrayList<Rectangle2D> walls = new ArrayList<>();
@@ -143,11 +148,12 @@ public class Visualiser {
     /**
      * Returns a collection of lines where each line represents a ray cast from
      * the POV towards an opponent player within the given phase.
-     * @param pov - The position from which the rays are being cast.
-     * @param phase - The phase within which the rays are being cast.
-     * @param orbVision - Whether or not visibility is being tested from the
+     *
+     * @param pov       the position from which the rays are being cast.
+     * @param phase     the phase within which the rays are being cast.
+     * @param orbVision whether or not visibility is being tested from the
      *                  perspective of an Orb.
-     * @return a list of rays between the pov and relevant players.
+     * @return          a list of rays between the pov and relevant players.
      */
     public HashMap<Integer, Line2D> getPlayerTestingLines(Point2D pov, int phase, boolean orbVision){
         HashMap<Integer, Line2D> pLines = new HashMap<>();
@@ -164,9 +170,10 @@ public class Visualiser {
     /**
      * Returns a collection of lines where each line represents a ray cast from
      * the POV towards an Orb within the given phase.
-     * @param pov - The position from which the rays are being cast.
-     * @param phase - The phase within which the rays are being cast.
-     * @return a list of rays between the pov and relevant orbs.
+     *
+     * @param pov   the position from which the rays are being cast.
+     * @param phase the phase within which the rays are being cast.
+     * @return      a list of rays between the pov and relevant orbs.
      */
     public HashMap<Integer, Line2D> getOrbTestingLines(Point2D pov, int phase){
         HashMap<Integer, Line2D> oLines = new HashMap<>();

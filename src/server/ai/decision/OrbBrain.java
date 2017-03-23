@@ -16,7 +16,7 @@ public class OrbBrain extends AIBrain {
 
     /**
      * Constructs an Orb's Brain - the decision maker of an Orb.
-     * @param intel - The Intel object the brain utilises to make decisions.
+     * @param intel the Intel object the brain utilises to make decisions.
      */
     public OrbBrain(OrbIntel intel) {
         super(intel);
@@ -24,6 +24,10 @@ public class OrbBrain extends AIBrain {
         this.playerNear = false;
     }
 
+    /**
+     * Constructs generic and Orb-only behaviours and adds them to the
+     * behaviour set.
+     */
     protected void constructBehaviours(){
         super.constructBehaviours();
         behaviours.addBehaviour(new Glide(intel, this), "Glide");
@@ -100,5 +104,4 @@ public class OrbBrain extends AIBrain {
             }
         }
     }
-
 }

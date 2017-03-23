@@ -45,7 +45,7 @@ public class Travel extends PlayerTask {
         int inaccuracy = (int) Math.ceil(brain.getStressLevel()* AIConstants.MAX_TRAVEL_INACCURACY);
         Vector2 travelDir = Vector2.deviate(target, inaccuracy);
 
-        // Checks for collisions,
+        // Checks for collisions.
         Vector2 oldPos = me.getPos();
         me.setDir(intel.getPointerVector());
         me.setPos(oldPos.add(travelDir.mult(me.getSpeed())));

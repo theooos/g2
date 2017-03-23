@@ -28,7 +28,7 @@ public abstract class Intel {
     public AStar pathfinder;
 
     /**
-     * Constructs an intel object based on the given Players and Map.
+     * Constructs an intelligence object based on the given Players and Map.
      * @param players - The list of players.
      * @param map - The map currently in play.
      */

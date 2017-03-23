@@ -3,6 +3,7 @@ package server.ai.decision;
 /**
  * This class contains figures that allow AI-controlled players to make pseudo-random
  * binary decisions and simulate human error.
+ *
  * Created by Rhys on 3/17/17.
  */
 public final class AIConstants {

@@ -12,7 +12,6 @@ public abstract class AIBrain {
 
     protected Intel intel;
     protected Check check;
-    protected Feel feel;
     protected BehaviourSet behaviours;
 
     public AIBrain(Intel intel) {

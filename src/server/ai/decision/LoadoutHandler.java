@@ -3,7 +3,8 @@ package server.ai.decision;
 import server.game.*;
 
 /**
- * Contains useful methods for checking and equiping available weapons.
+ * Contains useful methods for checking and equipping available weapons.
+ *
  * Created by Rhys on 3/17/17.
  */
 public class LoadoutHandler {
@@ -12,6 +13,11 @@ public class LoadoutHandler {
     private Weapon weapon2;
     private AIPlayer player;
 
+    /**
+     * Creates a LoadoutHandler object for the given AI player.
+     *
+     * @param player the player whose weapons this object will handle.
+     */
     public LoadoutHandler(AIPlayer player) {
         this.player = player;
         this.weapon1 = player.getWeapon1();
@@ -20,6 +26,7 @@ public class LoadoutHandler {
 
     /**
      * Checks whether or not the player possesses a sniper.
+     *
      * @return true if the player has a sniper.
      */
     public boolean haveSniper(){
@@ -28,6 +35,7 @@ public class LoadoutHandler {
 
     /**
      * Sets the player's current weapon to the sniper.
+     *
      * Assumes prior confirmation that the player does indeed possess a sniper.
      */
     public void equipSniper(){
@@ -36,6 +44,7 @@ public class LoadoutHandler {
 
     /**
      * Checks whether or not the player possesses an SMG.
+     *
      * @return true if the player has a SMG.
      */
     public boolean haveSMG(){
@@ -44,6 +53,7 @@ public class LoadoutHandler {
 
     /**
      * Sets the player's current weapon to the SMG.
+     *
      * Assumes prior confirmation that the player does indeed possess an SMP.
      */
     public void equipSMG(){
@@ -52,6 +62,7 @@ public class LoadoutHandler {
 
     /**
      * Checks whether or not the player possesses a shotgun.
+     *
      * @return true if the player has a shotgun.
      */
     public boolean haveShotgun(){
@@ -59,6 +70,7 @@ public class LoadoutHandler {
     }
 
     /**
+     *
      * Sets the player's current weapon to the shotgun.
      * Assumes prior confirmation that the player does indeed possess a shotgun.
      */

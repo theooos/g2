@@ -8,8 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import static server.ai.decision.AIConstants.LOW_HEALTH_THRESHOLD;
 
 /**
- * Can perform a variety of checks on the entity or its environment.
- * Created by rhys on 2/16/17.
+ * Can perform a variety of checks on an AI-controlled entity or its environment.
+ *
+ * Created by Rhys on 2/16/17.
  */
 public class Check {
 
@@ -29,7 +30,8 @@ public class Check {
 
     /**
      * Constructs a check object that utilises a given Intel object.
-     * @param intel - The Intel object this checker will utilise.
+     *
+     * @param intel the Intel object this checker will utilise.
      */
     public Check(Intel intel){
         this.intel = intel;
@@ -38,8 +40,9 @@ public class Check {
 
     /**
      * Performs the requested check.
-     * @param mode - The check to be carried out.
-     * @return true if the check passes.
+     *
+     * @param mode the check to be carried out.
+     * @return     true if the check passes.
      */
     public boolean doCheck(CheckMode mode) {
 
@@ -74,17 +77,33 @@ public class Check {
         }
     }
 
+    /**
+     * Checks the entity's current health-level against the defined threshold.
+     *
+     * @return true if health is below threshold.
+     */
     private boolean lowHealthCheck(){
         return intel.ent().getHealth() <= LOW_HEALTH_THRESHOLD;
     }
 
+    /**
+     * Checks in both phases for nearby orbs, and sets the nearest one as the target if
+     * one is near - prioritising orbs in the entity's current phase. Check radius is greater in
+     * the current phase to simulate how a human would play.
+     * <p>
+     * If an orb is found, this method will set a boolean flag in the player's intel object
+     * for later methods to know which phase to look in.
+     *
+     * @return true if an orb is in sight and within range, in either phase.
+     */
     private boolean orbNearbyCheck(){
 
         Player me = (Player) intel.ent();
 
         // Check for orbs in the current phase first.
         ConcurrentHashMap<Integer, Orb> threats =
-                ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(), me.getPhase(), 150);
+                ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(),
+                        me.getPhase(), 150);
         if (threats.size() > 0){
             targetNearestThreat(threats);
             ((PlayerIntel)intel).setPhaseShiftReq(false);
@@ -92,7 +111,8 @@ public class Check {
         }
 
         // Then check for orbs in the other phase.
-        threats = ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(), 1 - me.getPhase(), 50);
+        threats = ((PlayerIntel)(intel)).getVisualiser().getOrbsInSight(me.getPos().toPoint(),
+                1 - me.getPhase(), 50);
         if (threats.size() > 0){
             targetNearestThreat(threats);
             ((PlayerIntel)intel).setPhaseShiftReq(true);
@@ -105,6 +125,12 @@ public class Check {
 
     }
 
+    /**
+     * Checks if there is a player in sight in either phase, and sets the closest detected player
+     * as the target upon detection.
+     *
+     * @return true if there is a player in line-of-sight, in either phase.
+     */
     private boolean proximityCheck(){
         ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight(orbCheck);
         if (playersInSight.size() > 0){
@@ -116,6 +142,12 @@ public class Check {
         }
     }
 
+    /**
+     * Checks whether a targeted player is within range of an Orb's zap-attack.
+     *
+     * @return true if the orb is able to zap the target player from their current
+     * position.
+     */
     private boolean rangeCheck(){
         Vector2 targetPos = intel.getRelevantEntity().getPos();
         Vector2 currentPos = intel.ent().getPos();
@@ -124,6 +156,12 @@ public class Check {
         return (distance <= range);
     }
 
+    /**
+     * Checks whether or not a target has moved a greater distance than their radius
+     * since the last time their position was updated.
+     *
+     * @return true if the target has moved.
+     */
     private boolean targetMovedCheck(){
         if (intel.getTargetLocation() == null) {
             return true;
@@ -139,6 +177,13 @@ public class Check {
         return false;
     }
 
+    /**
+     * Sets the closest threat as the relevant entity, under the assumption that
+     * the fact that it's the closest means it's the greatest threat to the player
+     * at times of low health.
+     *
+     * @return true if a threat is found anywhere within line of sight.
+     */
     private boolean closestEnemyCheck(){
         MovableEntity closestEnt = null;
         float closestDist = -1;
@@ -169,9 +214,10 @@ public class Check {
     }
 
     /**
-     * For efficiency purposes, targets the nearest threat from a given collection
-     * and stores the entity in the intel object.
-     * @param threats - the collection of threats to be range-checked.
+     * Finds the nearest threat from a given collection and stores it as the target
+     * in the intel object.
+     *
+     * @param threats the collection of threats to be range-checked.
      */
     private <E extends MovableEntity> void targetNearestThreat(ConcurrentHashMap<Integer, E> threats){
         float closestDistance = -1;
@@ -187,6 +233,13 @@ public class Check {
 
     }
 
+    /**
+     * Checks if there is health power-up currently active in the game and sets
+     * it as the target if found. Also sets a boolean flag in the player's intel object
+     * so that future methods know which phase to find the power-up in.
+     *
+     * @return true if there is an active health power-up in either phase.
+     */
     private boolean healthcareAvailableCheck(){
         boolean found = false;
         for (java.util.Map.Entry<Integer, PowerUp> e : intel.getPowerUps().entrySet()){
@@ -206,6 +259,13 @@ public class Check {
         return found;
     }
 
+    /**
+     * Checks if there are any enemy players within the entity's current phase -
+     * regardless of whether a direct line-of-sight can be established - and sets
+     * the closest as the target.
+     *
+     * @return true if there is an enemy player in this phase.
+     */
     private boolean enemyInPhaseCheck(){
         ConcurrentHashMap<Integer, Player> relPlayers = new ConcurrentHashMap<>();
         for (java.util.Map.Entry<Integer, Player> e : intel.getPlayers().entrySet()){

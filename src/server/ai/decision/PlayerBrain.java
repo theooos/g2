@@ -13,7 +13,8 @@ import static server.ai.decision.PlayerBrain.EmotionalState.*;
  * Represents the brain of an AI-controlled player, making decisions on the
  * player's behalf while taking the player's situation and surroundings into
  * account.
- * Created by rhys on 3/8/17.
+ *
+ * Created by Rhys on 3/8/17.
  */
 public class PlayerBrain extends AIBrain {
 
@@ -26,8 +27,8 @@ public class PlayerBrain extends AIBrain {
         BORED,
         AT_REST}
 
-    private EmotionalState curEmotion;
-    private EmotionalState newEmotion;
+    private EmotionalState curEmotion;      // Holds the player's current emotional state.
+    private EmotionalState newEmotion;      // Holds the player's upcoming emotional state, pending reaction times.
 
     private Sequence flee;
     private Sequence stalk;
@@ -36,13 +37,21 @@ public class PlayerBrain extends AIBrain {
 
     private PlayerIntel intel;
     private Random gen;
+    private Feel feel;
     private LoadoutHandler loadout;
 
-    private int strategiseDelay;
-    private int phaseShiftDelay;
-    private int reactionDelay;
-    private double stress;
+    private int strategiseDelay;    // How long the player must wait before being allowed to re-strategise.
+    private int phaseShiftDelay;    // How long the player must wait before being allowed to phase-shift.
+    private int reactionDelay;      // How long the player must wait before reacting to a change in emotion.
+    private double stress;          // Multiplies random error in several behaviours to allow variation between emotions.
 
+    /**
+     * Constructs a player's brain - the core decision-maker behind all
+     * of an AI-controlled player's actions.
+     *
+     * @param intel the object the brain will use for making decisions based
+     *              on the game-world.
+     */
     public PlayerBrain(PlayerIntel intel) {
         super(intel);
         this.intel = intel;
@@ -56,6 +65,11 @@ public class PlayerBrain extends AIBrain {
         this.curEmotion = AT_REST;
     }
 
+    /**
+     * Constructs all generic and player-only behaviours, and adds them to
+     * the behaviour set.
+     */
+    @Override
     protected void constructBehaviours(){
         super.constructBehaviours();
         behaviours.addBehaviour(new Travel(intel, this), "Travel");
@@ -68,6 +82,10 @@ public class PlayerBrain extends AIBrain {
         behaviours.addBehaviour(new Swat(intel, this, loadout), "Swat");
         behaviours.addBehaviour(new Fetch(intel, this), "Fetch");
     }
+
+    /**
+     * Arranges behaviours into sequences for simpler use.
+     */
     @Override
     protected void configureBehaviours() {
         this.hunt = new Sequence(intel, this);
@@ -86,6 +104,10 @@ public class PlayerBrain extends AIBrain {
         stalk.add(behaviours.getBehaviour("Travel"));
     }
 
+    /**
+     * Calls upon the brain to analyse the situation and make the parent player
+     * perform an appropriate action.
+     */
     @Override
     public void doSomething() {
 
@@ -170,7 +192,8 @@ public class PlayerBrain extends AIBrain {
     /**
      * Checks for a change in emotional state, starting the response process in the
      * case that there has been a change.
-     * @param newEmotion - The upcoming emotional state.
+     *
+     * @param newEmotion the upcoming emotional state.
      */
     public void setEmotion(EmotionalState newEmotion) {
         if (newEmotion != this.newEmotion) {
@@ -202,7 +225,7 @@ public class PlayerBrain extends AIBrain {
     /**
      * Determines how the AI Player behaves when it experiences a change in emotion.
      */
-    protected void respondToEmotion() {
+    private void respondToEmotion() {
 
         behaviours.resetAll();
         intel.resetIntel();
@@ -267,30 +290,59 @@ public class PlayerBrain extends AIBrain {
 
     }
 
+    /**
+     * @return the player's current stress level.
+     */
     public double getStressLevel(){
         return stress;
     }
 
+    /**
+     * Sets the attacking strategy to be followed.
+     *
+     * @param strategy the chosen attack strategy.
+     */
     public void setStrategy(String strategy) {
         this.currentStrategy = behaviours.getBehaviour(strategy);
     }
 
+    /**
+     * Wraps the Check object to allow objects without access to make complex checks.
+     *
+     * @param mode the desired check-mode.
+     * @return     the result of the check.
+     */
     public boolean performCheck(Check.CheckMode mode){
         return check.doCheck(mode);
     }
 
+    /**
+     * Makes the chosen strategy perform its starting logic.
+     */
     public void executeStrategy(){
         currentStrategy.start();
     }
 
+    /**
+     * To be called by any method that makes the player phase-shift, in
+     * order to reset the phase-shift delay timer.
+     */
     public void shiftedPhase(){
         this.phaseShiftDelay = -(AIConstants.PHASE_SHIFT_DELAY);
     }
 
+    /**
+     * Checks whether or not the phase-shift delay timer has reached zero,
+     * indicating that phase-shift is permitted.
+     * @return true if phase-shift is permitted.
+     */
     public boolean phaseShiftAuth(){
         return phaseShiftDelay == 0;
     }
 
+    /**
+     * Advances all timers, if they haven't already stopped.
+     */
     private void tick(){
         if (phaseShiftDelay != 0) phaseShiftDelay++;
         if (reactionDelay != 0) reactionDelay++;
