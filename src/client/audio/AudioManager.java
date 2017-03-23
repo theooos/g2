@@ -44,12 +44,10 @@ public class AudioManager {
     }
 
     public static void playGameStart() {
-        out("Playing game start");
         Audio.GAME_START.play(VOICE_VOL);
     }
 
     public static void playGameOver() {
-        out("Playing game over");
         Audio.GAME_END.play(VOICE_VOL);
     }
 

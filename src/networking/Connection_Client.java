@@ -12,7 +12,14 @@ import java.io.ObjectOutputStream;
  */
 public class Connection_Client extends Connection {
 
-    public Connection_Client(Client client) throws IOException {
+    private Client client;
+
+    public Connection_Client(Client client) {
+        this.client = client;
+    }
+
+    @Override
+    public void initialise() throws IOException {
         if (establishSocket()) establishConnection(client);
     }
 
@@ -24,11 +31,11 @@ public class Connection_Client extends Connection {
         new Thread(handler).start();
         new Thread(toConnection).start();
         new Thread(fromConnection).start();
-        out("Connection established with server.");
+        System.out.println("Connection established with server.");
         return true;
     }
 
-    public void send(Sendable sendable){
+    public void send(Sendable sendable) {
         toConnection.queueForSending(sendable);
     }
 }

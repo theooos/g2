@@ -29,7 +29,7 @@ class LobbyManager {
 
     void addConnection(Connection_Server c) {
 
-        c.addFunctionEvent("String", Server::out);
+        c.addFunctionEvent("String", System.out::println);
         try {
             c.send(new String("You are being cared for by the lobby manager."));
         } catch (Exception e) {
@@ -39,11 +39,11 @@ class LobbyManager {
 
         boolean added = false;
 
-        for (Lobby l: lobbies) {
+        for (Lobby l : lobbies) {
             if (!l.isFull() && !l.isGameRunning()) {
-               l.addConnection(c);
-               added = true;
-               break;
+                l.addConnection(c);
+                added = true;
+                break;
             }
         }
 

@@ -5,14 +5,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import static networking.Connection.out;
-
 /**
  * Creates the listening thread for the Server which accepts new clients.
  */
 public class NewConnectionListener implements Runnable{
 
-    boolean alive = true;
+    private boolean alive = true;
     private ServerSocket serverSocket;
     private ArrayList<Connection_Server> waitingClients = new ArrayList<>();
 
@@ -32,9 +30,10 @@ public class NewConnectionListener implements Runnable{
         try {
             while(alive) {
                 // Hangs here until connection appears.
-                out("Waiting for new connection...");
+                System.out.println("Waiting for new connection...");
                 Socket s = serverSocket.accept();
                 Connection_Server conn = new Connection_Server(s);
+                conn.initialise();
                 addWaitingClient(conn);
             }
         } catch (IOException e) {
@@ -61,12 +60,5 @@ public class NewConnectionListener implements Runnable{
             return nextClient;
         }
         else return null;
-    }
-
-    /**
-     * Kills the thread.
-     */
-    public void kill(){
-        alive = false;
     }
 }
