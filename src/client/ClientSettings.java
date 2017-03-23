@@ -35,8 +35,8 @@ public class ClientSettings {
     public static final float CAUTION_VOL = 0.9f;
     public static final float VOICE_VOL = 1f;
     //User configurable
-    public static float MUSIC_VOL = 0f;
-    public static float SOUND_VOL = 0f;
+    public static float MUSIC_VOL = 1f;
+    public static float SOUND_VOL = 1f;
 
     // ***** GRAPHICS SETTINGS *****
     public static final float ORB_VIS = 150;

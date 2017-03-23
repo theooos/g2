@@ -1,12 +1,18 @@
 package client.graphics;
 
 import static client.ClientSettings.HEALTH_UP_VOL;
+import static client.ClientSettings.SCREEN_HEIGHT;
+import static client.ClientSettings.SCREEN_WIDTH;
+import static client.graphics.GameManager.out;
 import static org.lwjgl.opengl.GL11.*;
 
 import client.ClientSettings;
 import client.audio.Audio;
 import client.audio.AudioManager;
 import objects.GameData;
+import objects.InitPlayer;
+import objects.LobbyData;
+import server.game.Map;
 import server.game.Scoreboard;
 import server.game.Vector2;
 
@@ -168,8 +174,8 @@ class Draw {
         glEnd();
     }
 
-    private void invertedQuadGlow(float xStart, float yStart, float rectWidth, float rectHeight, float strokeWidth, float red, float green, float blue, float intensity) {
-        yStart = height-yStart;
+    private static void invertedQuadGlow(float xStart, float yStart, float rectWidth, float rectHeight, float strokeWidth, float red, float green, float blue, float intensity) {
+        yStart = SCREEN_HEIGHT-yStart;
 
         glBegin(GL_QUAD_STRIP);
         glColor4f(red, green, blue, intensity);
@@ -312,11 +318,74 @@ class Draw {
         }
     }
 
-    private void drawText(TextRenderer tx, String s, float x, float y) {
+    static void drawLobby(LobbyData ld, Map map, int playerID, TextRenderer smallText) {
+
+        //TextRenderer largeText = new TextRenderer(25);
+
+        float intensity = 1f;
+        glDisable(GL_TEXTURE_2D);
+
+        float xStart = 800/6;
+        float yStart = 150;
+        float rectWidth = xStart*4;
+        float rectHeight = 50;
+
+        float red = 0;
+        float green = 1;
+        float blue = 0;
+        float buffer = 20;
+
+
+        glColor4f(red, green, blue, intensity);
+        drawRect(xStart, yStart, rectWidth, rectHeight);
+
+        InitPlayer[] players = ld.getPlayers();
+
+        for (int i = 0; i < players.length; i++) {
+
+            if (players[i].getTeam() == 0) {
+                red = 1;
+                green = 0;
+                blue = 1;
+            } else {
+                red = 0;
+                green = 1;
+                blue = 0;
+            }
+
+            String name = players[i].getName().toString();
+            if (players[i].isAI()) {
+                name += " (Not connected: AI)";
+                red *= 0.5f;
+                green *= 0.5f;
+                blue *= 0.5f;
+            }
+            if (i == playerID) name += " (You)";
+
+            glColor4f(red,green,blue, intensity);
+            drawRect(xStart, yStart, rectWidth, rectHeight);
+
+            drawText(smallText, name, xStart+10, yStart+3*rectHeight/4+1);
+
+            yStart+=rectHeight;
+
+            if (i == playerID) {
+                out("Drawing me");
+                invertedQuadGlow(xStart,yStart,rectWidth,rectHeight,10,1,1,1,1);
+            }
+
+        }
+
+        glEnable(GL_TEXTURE_2D);
+    }
+
+
+
+    private static void drawText(TextRenderer tx, String s, float x, float y) {
         drawText(tx, s, x, y, 0, 0, 0);
     }
 
-    private void drawText(TextRenderer tx, String s, float x, float y, float red, float green, float blue) {
+    private static void drawText(TextRenderer tx, String s, float x, float y, float red, float green, float blue) {
         glEnable(GL_TEXTURE_2D);
         glColor4f(red,green,blue,1);
         tx.drawText(s, x, y);
@@ -430,12 +499,12 @@ class Draw {
         glEnd();
     }
 
-    private void drawRect(float xStart, float yStart, float rectWidth, float rectHeight) {
+    private static void drawRect(float xStart, float yStart, float rectWidth, float rectHeight) {
         glBegin(GL_QUADS);
-        glVertex2f(checkX(xStart), checkY(height - yStart));
-        glVertex2f(checkX(xStart + rectWidth), checkY(height - yStart));
-        glVertex2f(checkX(xStart + rectWidth), checkY(height - (yStart+rectHeight)));
-        glVertex2f(checkX(xStart), checkY(height - (yStart+rectHeight)));
+        glVertex2f(checkX(xStart), checkY(ClientSettings.SCREEN_HEIGHT - yStart));
+        glVertex2f(checkX(xStart + rectWidth), checkY(SCREEN_HEIGHT - yStart));
+        glVertex2f(checkX(xStart + rectWidth), checkY(SCREEN_HEIGHT - (yStart+rectHeight)));
+        glVertex2f(checkX(xStart), checkY(SCREEN_HEIGHT - (yStart+rectHeight)));
         glEnd();
     }
 
@@ -445,9 +514,9 @@ class Draw {
      * @param x Initial x coordinate
      * @return Checked x coordinate
      */
-    private float checkX(float x) {
+    private static float checkX(float x) {
         if (x < 0) x = 0;
-        if (x > width) x = width;
+        if (x > SCREEN_WIDTH) x = SCREEN_WIDTH;
         return x;
     }
 
@@ -457,9 +526,9 @@ class Draw {
      * @param y Initial y coordinate
      * @return Checked y coordinate
      */
-    private float checkY(float y) {
+    private static float checkY(float y) {
         if (y < 0) y = 0;
-        if (y > height) y = height;
+        if (y > SCREEN_HEIGHT) y = SCREEN_HEIGHT;
         return y;
     }
 

@@ -18,7 +18,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
-import static client.ClientSettings.AMBIENT_VOL;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Client {
@@ -93,7 +92,7 @@ public class Client {
 
             GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
             GL11.glClearDepth(1.0f); // Depth Buffer Setup
-            GL11.glDisable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
+            GL11.glDisable(GL11.GL_DEPTH_TEST); // Disables Depth Testing
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glDepthMask(false);
             GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -107,7 +106,7 @@ public class Client {
             textRenderers[1] = new TextRenderer(25);
             textRenderers[2] = new TextRenderer(60);
 
-            startScreen = new StartScreenRenderer(e -> establishConnection());
+            startScreen = new StartScreenRenderer(e -> establishConnection(), playerID);
 
             Audio.init();
             AudioManager.playAmbiance();
