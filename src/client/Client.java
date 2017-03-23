@@ -12,9 +12,14 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import server.Server;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import static client.ClientSettings.LOCAL;
+import static client.ClientSettings.SINGLE_PLAYER;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Client {
@@ -135,7 +140,20 @@ public class Client {
             connection.addFunctionEvent("LobbyData",startScreen::setupLobby);
             connection.addFunctionEvent("InitPlayer", this::setupMe);
         } catch (IOException e) {
-            e.printStackTrace();
+            if (SINGLE_PLAYER) {
+                Server.main(new String[]{"2", "0"});
+                LOCAL = true;
+                Timer t = new Timer();
+                t.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        establishConnection();
+                    }
+                }, 5000);
+            }
+            else {
+                e.printStackTrace();
+            }
         }
     }
 

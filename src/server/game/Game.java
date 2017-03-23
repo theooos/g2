@@ -91,7 +91,6 @@ public class Game implements Runnable {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-                    out("Error selecting weapon");
                     break;
             }
 

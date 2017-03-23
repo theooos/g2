@@ -1,5 +1,6 @@
 package client.graphics;
 
+import client.ClientSettings;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
 import objects.LobbyData;
@@ -150,6 +151,7 @@ public class StartScreenRenderer {
                 hasClicked = true;
             }
             else if (solo_game_button.isClicked()) {
+                ClientSettings.SINGLE_PLAYER = true;
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
                 hasClicked = true;

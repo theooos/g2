@@ -18,7 +18,7 @@ public class ClientSettings {
 
     // ***** NETWORK SETTINGS *****
 
-    public static final boolean LOCAL = true;
+    public static boolean LOCAL = true;
     public static final boolean MAP_LOCAL = true;
     public static final String SERVER_IP = "46.101.84.55";
     public static final int PORT = 3000;
@@ -40,5 +40,7 @@ public class ClientSettings {
 
     // ***** GRAPHICS SETTINGS *****
     public static final float ORB_VIS = 150;
+
+    public static boolean SINGLE_PLAYER = false;
 
 }
