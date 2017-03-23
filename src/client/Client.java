@@ -2,10 +2,7 @@ package client;
 
 import client.audio.Audio;
 import client.audio.AudioManager;
-import client.graphics.GameManager;
-import client.graphics.StartScreenRenderer;
-import client.graphics.TextRenderer;
-import client.graphics.TextureLoader;
+import client.graphics.*;
 import networking.Connection_Client;
 import objects.GameData;
 import objects.InitGame;
@@ -107,6 +104,8 @@ public class Client {
             textRenderers[2] = new TextRenderer(60);
 
             startScreen = new StartScreenRenderer(e -> establishConnection(), playerID);
+            SettingsRenderer.initialise();
+
 
             Audio.init();
             AudioManager.playAmbiance();
