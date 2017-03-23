@@ -109,7 +109,7 @@ public class GameManager {
         pollMouse();
         AudioManager.playWarningSounds(gameData.getPlayer(myPlayerID).getHealth());
         rotatePowerUps();
-        updateFPS(); // update FPS Counter
+        //updateFPS(); // update FPS Counter
     }
 
     private void rotatePowerUps() {
