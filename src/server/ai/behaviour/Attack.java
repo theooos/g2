@@ -104,6 +104,7 @@ public class Attack extends PlayerTask {
     /**
      * Calculates the location the AI should be travel towards in order to be in
      * optimum attacking range of the target.
+     *
      */
     private void track(){
         Vector2 fullVector = me.getPos().vectorTowards(target.getPos());

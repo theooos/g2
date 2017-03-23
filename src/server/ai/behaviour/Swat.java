@@ -58,7 +58,7 @@ public class Swat extends PlayerTask {
 
         // Is the Orb in this phase? If not, shift phase - if you remember to.
         if (intel.isPhaseShiftReq() && gen.nextDouble() < AIConstants.CHANCE_CORRECT_PHASE_SHIFT){
-            brain.getBehaviour("ForceShiftPhase").run();
+            brain.getBehaviour("ShiftPhase").run();
         }
 
         // Does the player have a shotgun?
