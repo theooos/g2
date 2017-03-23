@@ -1,4 +1,4 @@
-import static org.junit.jupiter.api.Assertions.*;
+package client;
 
 /**
  * Created by theo on 23/03/2017.
