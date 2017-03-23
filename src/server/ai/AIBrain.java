@@ -17,6 +17,7 @@ public abstract class AIBrain {
 
     /**
      * Initialises generic members.
+     *
      * @param intel the intelligence object the brain will use to make decisions.
      */
     public AIBrain(Intel intel) {
@@ -37,20 +38,38 @@ public abstract class AIBrain {
     }
 
     /**
-     * Arranges behaviours into
+     * Arranges behaviours into sequences and performs any other bespoke behaviour
+     * configuration.
      */
     protected abstract void configureBehaviours();
 
+    /**
+     * Calls upon the brain to evaluate the current situation and make the parent entity
+     * carry out an appropriate action.
+     */
     public abstract void doSomething();
 
+    /**
+     * Returns the requested behaviour from the brain's behaviour set.
+     *
+     * @param behaviour the name of the desired behaviour.
+     * @return          the requested behaviour instance.
+     */
     public Task getBehaviour(String behaviour){
         return behaviours.getBehaviour(behaviour);
     }
 
+    /**
+     * Calls upon the behaviour set to reset all progress and logic of all behaviours.
+     */
     public void resetBehaviours(){
         behaviours.resetAll();
     }
 
+    /**
+     * Calls upon the brain to construct and configure its behaviours when all necessary
+     * intelligence has been established.
+     */
     public void equip(){
         constructBehaviours();
         configureBehaviours();

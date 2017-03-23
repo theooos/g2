@@ -10,27 +10,30 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A packet of the necessary data that AI units need to make decisions.
+ *
  * Created by Rhys on 2/15/17.
  */
 public abstract class Intel {
 
     protected MovableEntity ent;
     protected ConcurrentHashMap<Integer, Player> players;  // A list of all the players in the game.
-    protected HashMap<Integer, Orb> allOrbs;
-    protected HashMap<Integer, PowerUp> powerUps;
+    private HashMap<Integer, Orb> allOrbs;
+    private HashMap<Integer, PowerUp> powerUps;
     protected Map map;                    // The map the current game is being played on.
-    protected Vector2 targetLocation;     // Where the entity is currently aiming to reach.
+    private Vector2 targetLocation;     // Where the entity is currently aiming to reach.
     protected MovableEntity relevantEnt;  // The entity this entity is currently interested in.
-    protected ArrayList<Vector2> path;    // A sequence of points through which the entity
+    private ArrayList<Vector2> path;    // A sequence of points through which the entity
                                         // will travel to reach its target location.
     protected Visualiser sight;
     protected CollisionManager collisionManager;
     public AStar pathfinder;
 
     /**
-     * Constructs an intelligence object based on the given Players and Map.
-     * @param players - The list of players.
-     * @param map - The map currently in play.
+     * Constructs an intelligence object that tracks the given players within
+     * the given game map.
+     *
+     * @param players the list of players.
+     * @param map     the map currently in play.
      */
     public Intel(ConcurrentHashMap<Integer, Player> players, Map map, HashMap<Integer, PowerUp> pUps) {
         this.players = players;
@@ -42,6 +45,9 @@ public abstract class Intel {
         this.pathfinder = new AStar(this);
     }
 
+    /**
+     * @return the owning entity of this intelligence object.
+     */
     public MovableEntity ent() {
         return ent;
     }
@@ -55,8 +61,9 @@ public abstract class Intel {
 
     /**
      * Returns the Player at the specified position in the player list.
-     * @param pid - The ID of the desired player.
-     * @return the requested Player.
+     *
+     * @param pid the ID of the desired player.
+     * @return    the requested Player.
      */
     public Player getPlayer(int pid){
         return players.get(pid);
@@ -64,13 +71,16 @@ public abstract class Intel {
 
     /**
      * Refreshes this Intel with a given list of Players.
-     * @param players - The list of players to be used to refresh the Intel object.
+     *
+     * @param players the list of players to be used to refresh the Intel object.
      */
     public void resetPlayers(ConcurrentHashMap<Integer, Player> players) {
         this.players = players;
     }
 
-
+    /**
+     * @return a collection of the orbs that this intelligence object is tracking.
+     */
     public HashMap<Integer, Orb> getOrbs(){
         return allOrbs;
     }
@@ -84,7 +94,8 @@ public abstract class Intel {
 
     /**
      * Re-sets the map that this Intel is to use for the next game.
-     * @param map - The desired map for refresh.
+     *
+     * @param map the desired map for refresh.
      */
     public void setMap(Map map) {
         this.map = map;
@@ -99,7 +110,8 @@ public abstract class Intel {
 
     /**
      * Stores the location the entity is currently aiming to reach.
-     * @param targetLocation - The new target location.
+     *
+     * @param targetLocation the new target location.
      */
     public void setTargetLocation(Vector2 targetLocation) {
         this.targetLocation = targetLocation;
@@ -118,6 +130,7 @@ public abstract class Intel {
 
     /**
      * Updates the path to acknowledge a checkpoint being reached.
+     *
      * @return the next checkpoint to move towards.
      */
     public Vector2 nextCheckpoint(){
@@ -126,7 +139,7 @@ public abstract class Intel {
     }
 
     /**
-     * @return true if the current checkpoint is the destination.
+     * @return <CODE>true</CODE> if the current checkpoint is the destination.
      */
     public boolean isFinalDestination(){
         return path.size() == 1;
@@ -134,7 +147,8 @@ public abstract class Intel {
 
     /**
      * Clears the path and puts a new one in place.
-     * @param newPath - The new list of points for the new path.
+     *
+     * @param newPath the new list of points for the new path.
      */
     public void resetPath(ArrayList<Vector2> newPath){
         if (this.path != null){
@@ -152,13 +166,20 @@ public abstract class Intel {
 
     /**
      * Stores the player the entity is intending to hunt next.
-     * @param relEnt - the next target player.
+     *
+     * @param relEnt the next target player.
      */
     public void setRelevantEntity(MovableEntity relEnt) {
         this.relevantEnt = relEnt;
     }
 
-
+    /**
+     * Prepare this intelligence object for the game by assigning its owner and
+     * the other orbs involved in the game.
+     *
+     * @param ent  the parent entity of this intel object.
+     * @param orbs collection of all orbs involved in the upcoming game.
+     */
     public void initForGame(MovableEntity ent, HashMap<Integer, Orb> orbs) {
         this.ent = ent;
         this.allOrbs = orbs;
@@ -166,32 +187,66 @@ public abstract class Intel {
         this.sight = new Visualiser(map, players, allOrbs, ent.getID());
     }
 
+    /**
+     * Checks with the {@link CollisionManager} object whether or not the
+     * given position is valid within the current state of the game environment.
+     *
+     * @param pos the position to be validity-checked.
+     * @return    <CODE>true</CODE> if the position is valid.
+     */
     public boolean isValidSpace(Vector2 pos){
         return collisionManager.validPosition(pos, ent.getRadius(), ent.getPhase());
     }
 
+    /**
+     * Checks with the {@link Visualiser} object which enemy players are in sight.
+     *
+     * @param orbVision whether or not both phases should be checked, such as for
+     *                  use by Orbs.
+     * @return          a collection of visible enemy players.
+     */
     public ConcurrentHashMap<Integer, Player> getEnemyPlayersInSight(boolean orbVision){
         return sight.getPlayersInSight(ent.getPos().toPoint(), ent.getPhase(), orbVision);
     }
 
+    /**
+     * Checks with the {@link Visualiser} object whether or not the given position
+     * can be seen from the entity's current position.
+     *
+     * @param pos the position to be line-of-sight checked.
+     * @return    <CODE>true</CODE> if the position is within line-of-sight.
+     */
     public boolean inSight(Vector2 pos){
         return sight.inSight(ent.getPos().toPoint(), pos.toPoint(), ent.getPhase());
     }
 
+    /**
+     * @return the {@link AStar} object for the entity to use for complex path-finding.
+     */
     public AStar pathfinder(){
         return pathfinder;
     }
 
+    /**
+     * @return a new {@link CollisionManager} instance.
+     */
     public CollisionManager getNewCollisionManager(){
         return new CollisionManager(players, allOrbs, map, powerUps);
     }
 
+    /**
+     * Nullifies a few overloaded members so that data doesn't bleed between emotional
+     * processes.
+     */
     public void resetIntel(){
         this.targetLocation = null;
         this.relevantEnt = null;
         this.path = null;
     }
 
+    /**
+     * @return a collection of the power-ups in use in the current game.
+     */
     public HashMap<Integer, PowerUp> getPowerUps(){
         return powerUps;
     }

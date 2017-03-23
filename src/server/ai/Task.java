@@ -1,11 +1,9 @@
 package server.ai;
 
-import server.ai.AIBrain;
-import server.ai.Intel;
-
 /**
  * Represents a leaf task of the Behaviour Tree.
- * Created by rhys on 2/16/17.
+ *
+ * Created by Rhys on 2/16/17.
  */
 public abstract class Task {
 
@@ -14,6 +12,13 @@ public abstract class Task {
     protected Intel intel;
     protected AIBrain brain;
 
+    /**
+     * Constructs an generic behaviour that will use the given intelligence object.
+     *
+     * @param intel the intel object that will be used for making decisions and
+     *              causing actions.
+     * @param brain the brain of the owning entity of this behaviour.
+     */
     public Task(Intel intel, AIBrain brain) {
         this.intel = intel;
         this.brain = brain;
@@ -22,7 +27,7 @@ public abstract class Task {
 
     /**
      * Check whether or not the behaviour's initial conditions are met.
-     * @return true if the behaviour is permissible.
+     * @return <CODE>true</CODE> if the behaviour is permissible.
      */
     public abstract boolean checkConditions();
 
@@ -53,21 +58,21 @@ public abstract class Task {
     }
 
     /**
-     * @return true if this task has not yet started.
+     * @return <CODE>true</CODE> if this task has not yet started.
      */
     public boolean isDormant(){
         return (curRunState == runState.DORMANT);
     }
 
     /**
-     * @return true if this task is currently running.
+     * @return <CODE>true</CODE> if this task is currently running.
      */
     public boolean isRunning(){
         return (curRunState == runState.RUNNING);
     }
 
     /**
-     * @return true if this task has finished.
+     * @return <CODE>true</CODE> if this task has finished.
      */
     public boolean hasFinished(){
         return (curRunState == runState.FINISHED);
@@ -75,6 +80,9 @@ public abstract class Task {
 
     /**
      * Allows the task to be run from start to finish in a single tick.
+     * <p>
+     * May be overridden by super-classes that do not support single-tick
+     * completion.
      */
     public void run() {
         start();
