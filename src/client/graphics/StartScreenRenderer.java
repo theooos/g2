@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  */
 public class StartScreenRenderer {
 
-    public enum Screen {MAIN, ABOUT, CONTROLS, LOADING, LOBBY}
+    public enum Screen {MAIN, ABOUT, CONTROLS, SETTINGS, LOADING, LOBBY}
 
     private Screen currentScreen = Screen.MAIN;
 
@@ -25,6 +25,7 @@ public class StartScreenRenderer {
     private InterfaceTexture back_button_half = new InterfaceTexture(ISprite.BACK_BUTTON_HALF);
     private InterfaceTexture solo_game_button = new InterfaceTexture(ISprite.SOLO_GAME_BUTTON);
     private InterfaceTexture versus_game_button = new InterfaceTexture(ISprite.VERSUS_GAME_BUTTON);
+    private InterfaceTexture settings_button = new InterfaceTexture(ISprite.SETTINGS_BUTTON);
 
     private static Layer interfaceLayer = new Layer();
     private static Layer controlsLayer = new Layer();
@@ -63,6 +64,9 @@ public class StartScreenRenderer {
                 aboutLayer.render();
                 handleClickedAbout();
                 break;
+            case SETTINGS:
+                SettingsRenderer.run(e -> currentScreen = Screen.MAIN);
+                break;
             case LOADING:
                 loadingLayer.render();
                 break;
@@ -81,10 +85,11 @@ public class StartScreenRenderer {
 
         background.spawn(0, 400f, 300f, interfaceLayer);
         title.spawn(1, 400f, 435f, interfaceLayer);
-        solo_game_button.spawn(2, 220f, 240f, interfaceLayer);
-        versus_game_button.spawn(3, 580f,240f,interfaceLayer);
-        controls_button.spawn(4, 220f, 120f, interfaceLayer);
-        about_button.spawn(5, 580f, 120f, interfaceLayer);
+        solo_game_button.spawn(2, 220f, 270f, interfaceLayer);
+        versus_game_button.spawn(3, 580f,270f,interfaceLayer);
+        controls_button.spawn(4, 220f, 180f, interfaceLayer);
+        about_button.spawn(5, 580f, 180f, interfaceLayer);
+        settings_button.spawn(6,400f,90f,interfaceLayer);
     }
 
     private void readyControlsLayer(){
@@ -134,6 +139,10 @@ public class StartScreenRenderer {
             else if (solo_game_button.isClicked() || versus_game_button.isClicked()) {
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
+                hasClicked = true;
+            }
+            else if(settings_button.isClicked()){
+                currentScreen = Screen.SETTINGS;
                 hasClicked = true;
             }
         }

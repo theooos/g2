@@ -27,13 +27,13 @@ import static org.lwjgl.opengl.GL11.glEnable;
  */
 public class GameManager {
 
+    enum Mode {GAME, MENU, SETTINGS, SCOREBOARD, GAMEOVER}
+    private Mode mode = Mode.GAME;
+
     private GameRenderer gameRenderer;
     private InGameMenuRenderer inGameMenuRenderer;
+
     private boolean quitting = false;
-
-    enum Mode {GAME, MENU, SETTINGS, SCOREBOARD, GAMEOVER}
-
-    private Mode mode = Mode.GAME;
 
     private long lastFrame;
     private int fps;
@@ -76,6 +76,7 @@ public class GameManager {
                 glColor4f(1,1,1,1);
                 inGameMenuRenderer.renderSettings();
                 inGameMenuRenderer.handleClickedSettings();
+                SettingsRenderer.run(e -> mode = Mode.MENU);
                 break;
             case SCOREBOARD:
                 gameRenderer.render();
