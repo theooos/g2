@@ -15,7 +15,7 @@ public class ServerConfig {
     public static final boolean NAME_LOCAL = true;
 
     static final int TIME_LIMIT = 4*60*SERVER_TICK; //4 minutes
-    static final int MAX_SCORE = 200;
+    static final int MAX_SCORE = 300;
     static final int PLAYER_KILLED_SCORE = 10;
     static final int ORB_KILLED_SCORE = 3;
     static final int KILLED_BY_ORB_SCORE = -3;

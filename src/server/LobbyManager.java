@@ -12,6 +12,10 @@ class LobbyManager {
     private int maxSize;
     private int countDown;
 
+    /**
+     * Sets up a new lobby manager
+     * @param args the arguments inc. lobby size and countdown
+     */
     LobbyManager(java.lang.String[] args) {
         lobbies = new ArrayList<>();
         lobbies.add(createLobby());
@@ -27,6 +31,10 @@ class LobbyManager {
         }
     }
 
+    /**
+     * Adds a new connection to the lobby manager and allocates them a lobby
+     * @param c the connection to send to a lobby
+     */
     void addConnection(Connection_Server c) {
 
         c.addFunctionEvent("String", System.out::println);
@@ -54,6 +62,10 @@ class LobbyManager {
         }
     }
 
+    /**
+     * Creates a new lobby
+     * @return a lobby with correct maxSize and countDown
+     */
     private Lobby createLobby() {
         return new Lobby(maxSize, countDown);
     }

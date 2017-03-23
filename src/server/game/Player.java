@@ -9,9 +9,9 @@ import static server.game.ServerConfig.PHASE_FADE_TIME;
  */
 public class Player extends MovableEntity {
 
-    protected Weapon w1;
+    Weapon w1;
     protected Weapon w2;
-    protected boolean w1Out;
+    boolean w1Out;
     private boolean firing;
     private double weaponOutHeat;
     private int moveCounter;
@@ -47,6 +47,10 @@ public class Player extends MovableEntity {
         phasePercentage = phase;
     }
 
+    /**
+     * Creates a new player based off of another
+     * @param player the player to clone
+     */
     public Player(Player player) {
         this.pos = player.getPos();
         this.dir = player.getDir();
@@ -70,6 +74,9 @@ public class Player extends MovableEntity {
         phasePercentage = phase;
     }
 
+    /**
+     * The tick for the player, most notably reducing the heat and used for phase animation
+     */
     public void live() {
         super.live();
         //any methods the player may do once a tick
@@ -95,10 +102,17 @@ public class Player extends MovableEntity {
         }
     }
 
+    /**
+     * Moves the player in it's direction
+     */
     public void move() {
         super.move();
     }
 
+    /**
+     * gets which weapon is out
+     * @return the weapon teh player is using
+     */
     public Weapon getActiveWeapon() {
         if (w1Out) return w1;
         else return w2;
@@ -112,11 +126,18 @@ public class Player extends MovableEntity {
         this.w1Out = w1out;
     }
 
+    /**
+     * switches the player's phase
+     */
     void togglePhase() {
         if (phase == 1) phase = 0;
         else phase = 1;
     }
 
+    /**
+     * checks to see if the player is firing
+     * @return if the player is firing
+     */
     boolean isFiring() {
         return firing;
     }
@@ -133,6 +154,10 @@ public class Player extends MovableEntity {
         this.weaponOutHeat = weaponOutHeat;
     }
 
+    /**
+     * Makes sure the client is synced to server
+     * @return
+     */
     public int getMoveCount() {
         return moveCounter;
     }
@@ -145,6 +170,10 @@ public class Player extends MovableEntity {
         this.moveCounter = moveCount;
     }
 
+    /**
+     * used for phase shift animation
+     * @return how close it is to the desired phase
+     */
     public float getPhasePercentage() {
         return phasePercentage;
     }

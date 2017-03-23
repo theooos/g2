@@ -24,7 +24,12 @@ class MapRenderer {
     private float green;
     private float blue;
 
+    /**
+     * Creates a new renderer to display the walls on the map
+     * @param mapID the id of the map to load
+     */
     MapRenderer(int mapID) {
+        //try to load the map
         try {
             map = new Map(mapID);
             this.height = map.getMapLength();
@@ -37,10 +42,11 @@ class MapRenderer {
     }
 
     /**
-     * Create all components of the map
+     * Display all components of the map
+     * @param phase the phase to show the map on
      */
     void renderMap(int phase) {
-
+        //gets the phase
         ArrayList<Wall> walls = map.wallsInPhase(phase, true, false);
 
         for (Wall w : walls) {
@@ -85,6 +91,7 @@ class MapRenderer {
         GL11.glVertex2f(checkX(xEnd - EXTENT), checkY(height - yEnd - EXTENT));
         GL11.glEnd();
 
+        //glow effect (sorry)
         glBegin(GL_QUAD_STRIP);
 
         float intensity = 0.6f;
@@ -131,6 +138,7 @@ class MapRenderer {
 
         glBegin(GL_QUAD_STRIP);
 
+        //glow effect (sorry)
         float intensity = 0.6f;
         glColor4f(red, green, blue, 0);
         glVertex2f(xStart-EXTENT*2,height-(yEnd-EXTENT*2));  //outer bottom left

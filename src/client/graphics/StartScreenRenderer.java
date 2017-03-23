@@ -1,12 +1,16 @@
 package client.graphics;
 
+import client.ClientSettings;
 import client.graphics.Sprites.ISprite;
 import client.graphics.Sprites.InterfaceTexture;
 import objects.LobbyData;
 import objects.Sendable;
 import org.lwjgl.input.Mouse;
+import server.game.Map;
 
 import java.util.function.Consumer;
+
+import static client.graphics.GameManager.out;
 
 /**
  * Holds all the
@@ -38,11 +42,13 @@ public class StartScreenRenderer {
     private boolean hasClicked = false;
 
     private Consumer<Void> connectFunction;
+    private int playerID;
 
-    public StartScreenRenderer(Consumer<Void> connectFunction) {
+    public StartScreenRenderer(Consumer<Void> connectFunction, int playerID) {
         this.connectFunction = connectFunction;
         background.setRatio(0.5f);
         description.setRatio(0.5f);
+        this.playerID = playerID;
 
         readyInterfaceLayer();
         readyControlsLayer();
@@ -71,7 +77,15 @@ public class StartScreenRenderer {
                 loadingLayer.render();
                 break;
             case LOBBY:
+                TextRenderer smallText = new TextRenderer(20);
                 lobbyLayer.render();
+                try {
+                    Draw.drawLobby(lobbyData, new Map(lobbyData.getMapID()), playerID, smallText);
+                    out("Drawing lobby");
+                }
+                catch (Exception e) {
+                    System.err.println("Can't load map from lobby");
+                }
                 handleClickedLobby();
 
         }
@@ -136,7 +150,12 @@ public class StartScreenRenderer {
                 currentScreen = Screen.ABOUT;
                 hasClicked = true;
             }
-            else if (solo_game_button.isClicked() || versus_game_button.isClicked()) {
+            else if (solo_game_button.isClicked()) {
+                ClientSettings.SINGLE_PLAYER = true;
+                currentScreen = Screen.LOADING;
+                connectFunction.accept(null);
+                hasClicked = true;
+            } else if (versus_game_button.isClicked()) {
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
                 hasClicked = true;

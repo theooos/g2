@@ -67,34 +67,74 @@ public class Vector2 implements Sendable{
         return this;
     }
 
+    /**
+     * Gets the vector towards another vector
+     * @param target the vector to get towards
+     * @return the vector of the difference between the two vectors
+     */
     public Vector2 vectorTowards(Vector2 target){
         return new Vector2(target.getX() - this.x, target.getY() - this.y);
     }
 
+    /**
+     * Gets the vector towards two floats
+     * @param x the xcoord
+     * @param y the ycoord
+     * @return the vector of the difference between the vector and the point
+     */
     public Vector2 vectorTowards(float x, float y) {
         return this.vectorTowards(new Vector2(x, y));
     }
 
+    /**
+     * gets the absolute value of the vector
+     * @return the absolute value
+     */
     public float abs(){
         return (float)Math.sqrt(x*x + y*y);
     }
 
+    /**
+     * Multiplies two vectors together
+     * @param multVector the vector to multiply with
+     * @return the mulitplied vector
+     */
     public Vector2 mult(Vector2 multVector){
         return new Vector2(this.x * multVector.getX(), this.y * multVector.getY());
     }
 
+    /**
+     * multiply a vector by a float
+     * @param val the val to multiply the vector
+     * @return the amount each vector is multiplied with
+     */
     public Vector2 mult(float val){
         return new Vector2(this.x * val, this.y * val);
     }
 
+    /**
+     * divides a vector by another
+     * @param divVector the vector to div the current vector by
+     * @return the divided vector
+     */
     public Vector2 div(Vector2 divVector){
         return new Vector2(this.x/divVector.getX(), this.y/divVector.getY());
     }
 
+    /**
+     * Adds two vectors together
+     * @param addVector the vector to add
+     * @return the sum of the vectors
+     */
     public Vector2 add(Vector2 addVector){
         return new Vector2(this.x + addVector.getX(), this.y + addVector.getY());
     }
 
+    /**
+     * Subtracts the given vector from this one
+     * @param subVector the vector to subtract
+     * @return the subtracted vector
+     */
     public Vector2 sub(Vector2 subVector){
         return new Vector2(this.x - subVector.getX(), this.y - subVector.getY());
     }
@@ -108,19 +148,33 @@ public class Vector2 implements Sendable{
         return (x*v.y)+(y*v.y);
     }
 
+    /**
+     * Sets up a new vector
+     * @param x the x coord
+     * @param y the y coord
+     */
     public Vector2(float x, float y){
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * Sets up a new vector
+     * @param x the x coord
+     * @param y the y coord
+     */
     public Vector2(int x, int y) {
         this.x = (float) x;
         this.y = (float) y;
     }
 
+    /**
+     * @return Gets a string in a human readable format
+     */
     public String toString() {
         return "("+x+", "+y+")";
     }
+
 
     public boolean equals(Vector2 other) {
         return (this.x == other.getX() && this.y == other.getY());
@@ -140,12 +194,22 @@ public class Vector2 implements Sendable{
         return new Vector2((float)line.getX1(), (float)line.getY1());
     }
 
+    /**
+     * Sets a vector to a set given size
+     * @param size the size of the vector required
+     * @return the clamped vector
+     */
     public Vector2 clampedTo(float size) {
         return (normalise()).mult(size);
     }
 
+    /**
+     * Deviates a vector by a set amount
+     * @param targetDirection the starting vector
+     * @param inaccuracy the inaccuracy to add to the vector
+     * @return the vector with added inaccuracy
+     */
     public static Vector2 deviate(Vector2 targetDirection, int inaccuracy){
-
         Random gen = new Random();
         double ang = Math.atan(targetDirection.getX()/targetDirection.getY());
         if (Double.isInfinite(ang)) {
@@ -160,6 +224,11 @@ public class Vector2 implements Sendable{
         return (new Vector2(newX, newY)).normalise();
     }
 
+    /**
+     * returns a random vector
+     * @param size the magnitude of the vector
+     * @return a random vector
+     */
     public static Vector2 randomVector(int size){
         Random gen = new Random();
         return new Vector2(gen.nextFloat()*size, gen.nextFloat()*size);

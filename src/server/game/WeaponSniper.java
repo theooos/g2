@@ -5,6 +5,9 @@ package server.game;
  * A slow firing, high damage weapon type
  */
 public class WeaponSniper extends Weapon {
+    /**
+     * Creates a new high damage and low rof weapon
+     */
     WeaponSniper() {
         super();
         name = "Sniper";

@@ -26,6 +26,18 @@ class Pulse {
     private boolean showOtherPhase;
 
 
+    /**
+     * Creates a new pulse effect to change phase
+     * @param start the start pos
+     * @param radius the start radius
+     * @param red the red percentage
+     * @param green the green percentage
+     * @param blue the blue percentage
+     * @param speed the speed of the pulse
+     * @param strokeWidth the stroke width of the pulse
+     * @param newPhase which is the new phase
+     * @param showOtherPhase whether to show the layer underneath
+     */
     Pulse(Vector2 start, float radius, float red, float green, float blue, float speed, float strokeWidth, int newPhase, boolean showOtherPhase) {
         this.start = start;
         this.radius = radius;
@@ -42,7 +54,19 @@ class Pulse {
         max = 1;
 
     }
-
+    /**
+     * Creates a new pulse effect to change phase
+     * @param start the start pos
+     * @param radius the start radius
+     * @param red the red percentage
+     * @param green the green percentage
+     * @param blue the blue percentage
+     * @param speed the speed of the pulse
+     * @param strokeWidth the stroke width of the pulse
+     * @param newPhase which is the new phase
+     * @param max the max radius the pulse can reach
+     * @param showOtherPhase whether to show the layer underneath
+     */
     Pulse(Vector2 start, float radius, float red, float green, float blue, float speed, float strokeWidth, int newPhase, int max, boolean showOtherPhase) {
         this.start = start;
         this.radius = radius;
@@ -59,14 +83,21 @@ class Pulse {
         maxRadius = true;
     }
 
+    /**
+     * Draws the pulse
+     */
     void draw() {
+        //sets up the shape
         GL11.glColor4f(red, green, blue, 0);
         GL11.glBegin(GL_QUAD_STRIP);
+
         float cx = start.getX();
         float cy = ClientSettings.SCREEN_HEIGHT - start.getY();
+
         GL11.glVertex2f(cx, cy + (radius - strokeWidth));
         GL11.glColor4f(red, green, blue, 1);
         GL11.glVertex2f(cx, cy + radius);
+        //sets the fade out
         for (int i = 1; i < 360; i += 3) {
             //y = hcosTheta
             //x = hsinTheta
@@ -80,7 +111,9 @@ class Pulse {
         GL11.glColor4f(red, green, blue, 1);
         GL11.glVertex2f(cx, cy + radius);
         GL11.glEnd();
+        //increase the radius of the pulse
         radius += speed;
+        //checks to see if the pulse should end
         if (maxRadius && max < radius) {
             alive = false;
         }

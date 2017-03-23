@@ -38,6 +38,13 @@ public class Game implements Runnable {
     private long lastTime =System.currentTimeMillis();
 
 
+    /**
+     * Creates a new game object.  This runs the entire game logic
+     * @param playerConnections the list of the player connections
+     * @param maxPlayers the maximum number of players in a game
+     * @param mapID the map ID to set up the map
+     * @param ld the lobby data of the game
+     */
     public Game(HashMap<Integer, Connection_Server> playerConnections, int maxPlayers, int mapID, LobbyData ld) {
         IDCounter = 0;
         countdown = TIME_LIMIT;
@@ -145,6 +152,7 @@ public class Game implements Runnable {
             }
         }
 
+        //Sets up the new powerups
         for (int i = 0; i < maxPlayers/2; i++) {
             PowerUp p;
             int phase = rand.nextInt(2);
@@ -161,10 +169,14 @@ public class Game implements Runnable {
         gameRunning = true;
 
         InitGame g = new InitGame(orbs, players, mapID, scoreboard, powerUps, ld);
+        //notifies clients
         sendGameStart(g);
     }
 
 
+    /**
+     * Starts running the game loop
+     */
     public void run() {
         long timeDelay = 1000/(long) SERVER_TICK;
         gameRunning = true;
@@ -180,20 +192,22 @@ public class Game implements Runnable {
                     cancel();
                 }
             }
-        }, timeDelay, timeDelay);
+        }, 1000, timeDelay);
     }
 
     /**
      * The game tick runs.  This is the master function for a running game
      */
     private void gameTick() {
-
         boolean scoreboardChanged = false;
 
+        //checks every payer
         for (Player p : players.values()) {
+            //if dead start respawning
             if (!p.isAlive()) {
                 if (p.canRespawn()) {
                     respawn(p);
+                    //tell the player
                     if (!(p instanceof AIPlayer)) {
                         p.incMove();
                         Connection_Server connection = playerConnections.get(p.getID());
@@ -205,13 +219,17 @@ public class Game implements Runnable {
                     }
                 }
                 else {
+                    //death animation
                     shrinkRadius(p);
                 }
             }
 
+            //checks firing
             if (p.isFiring()) fire(p);
+
             p.live();
             PowerUp pu = (collisions.collidesWithPowerUp(p));
+            //if found a powerup
             if (pu != null) {
                 pu.setChanged(true);
                 pu.setHealth(0);
@@ -226,6 +244,7 @@ public class Game implements Runnable {
             }
         }
 
+        //checks every powerup
         for (PowerUp p: powerUps.values()) {
             if (!p.isAlive()) {
                 p.live();
@@ -234,6 +253,7 @@ public class Game implements Runnable {
                 }
             }
         }
+        //checks every orb
         for (Orb o : orbs.values()) {
             if (!o.isAlive()) {
                 if (o.canRespawn()) {
@@ -245,16 +265,22 @@ public class Game implements Runnable {
             o.live();
         }
 
+        //projectiles to remove
         ArrayList<Integer> keys = new ArrayList<>();
+        //particles for an array list
         ArrayList<Projectile> hurtAni = new ArrayList<>();
 
+        //checks every projectile
         for (Projectile p : projectiles.values()) {
+            //if it hits something
             MovableEntity e = collisions.collidesWithPlayerOrBot(p);
             if (e != null && !e.equals(p.getPlayer())) {
 //                System.out.println(p.getPlayerID()+" just hit "+e.getID());
                 //can't damage your team
                 if (e.getTeam() != p.getTeam() && e.isAlive()) {
+                    //gets the direction the damage is taking from for animation
                     Vector2 damageDir = e.getPos().vectorTowards(p.getPos()).normalise();
+                    //creates the damage projectiles
                     for (int i = 0; i < p.getDamage()/10; i++) {
                         double ang = Math.atan(damageDir.getX()/damageDir.getY());
                         if (Double.isInfinite(ang)) {
@@ -269,6 +295,7 @@ public class Game implements Runnable {
                         hurtAni.add(new DistDropOffProjectile(0, (int) HURT_LIFE, HURT_RADIUS, e.getPos(), new Vector2(newX, newY).normalise(), 5, e.getPhase(), e, IDCounter));
                         IDCounter++;
                     }
+                    //damage the entity
                     e.damage(p.getDamage());
                     //if the player has been killed
                     if (!e.isAlive()) {
@@ -283,14 +310,17 @@ public class Game implements Runnable {
                 p.kill();
             }
 
+            //checks to see if collided with wall
             if (collisions.projectileWallCollision(p.getPos(), p.getDir(), p.getSpeed(), p.getPhase())) p.kill();
 
             p.live();
+            //if dead list for removal
             if (!p.isAlive()) {
                 keys.add(p.getID());
             }
         }
 
+        //add hurt projectiles
         for (Projectile p: hurtAni) {
             projectiles.put(p.getID(), p);
         }
@@ -307,17 +337,26 @@ public class Game implements Runnable {
             endGame();
         } else {
             sendAllObjects();
+            //remove all dead projectiles
             for (Integer i: keys) {
                 projectiles.remove(i);
             }
         }
     }
 
+    /**
+     * if a player drops out
+     */
     private void dealWithConnectionLoss(Connection_Server p) {
-        System.out.println("Connection to "+p+"dropped.");
-        playerConnections.remove(p);
+        if (!playerConnections.isEmpty()) {
+            playerConnections.remove(p);
+        }
     }
 
+    /**
+     * shrinks the radius based for death animation
+     * @param e the entity who's radius to shrink
+     */
     private void shrinkRadius(MovableEntity e) {
         float radius = e.getRadius();
         if (radius > 1) {
@@ -430,6 +469,10 @@ public class Game implements Runnable {
         }
     }
 
+    /**
+     * Sends the game start to all players
+     * @param g the init game object
+     */
     private void sendGameStart(InitGame g) {
         for (Connection_Server c: playerConnections.values()) {
             try {
@@ -461,9 +504,14 @@ public class Game implements Runnable {
         updatePlayerMove(m);
     }
 
+    /**
+     * When recieved a move object, update the player in the hasmap
+     * @param m the recieved move
+     */
     private synchronized void updatePlayerMove(MoveObject m) {
         Player p = players.get(m.getID());
         MoveObject old = new MoveObject(p.getPos(), p.getDir(), p.getID(), p.getMoveCount());
+        //checks to see if it's not an old move
         if (m.getMoveCounter() == p.getMoveCount()) {
             p.setDir(m.getDir());
             p.setPos(m.getPos());
@@ -482,7 +530,7 @@ public class Game implements Runnable {
         else {
             Connection_Server conn = playerConnections.get(p.getID());
             try {
-                conn.send(old);
+                //conn.send(old);
             } catch (Exception e) {
                 dealWithConnectionLoss(conn);
             }

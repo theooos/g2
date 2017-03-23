@@ -12,10 +12,14 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import server.Server;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import static client.ClientSettings.AMBIENT_VOL;
+import static client.ClientSettings.LOCAL;
+import static client.ClientSettings.SINGLE_PLAYER;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Client {
@@ -90,7 +94,7 @@ public class Client {
 
             GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
             GL11.glClearDepth(1.0f); // Depth Buffer Setup
-            GL11.glDisable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
+            GL11.glDisable(GL11.GL_DEPTH_TEST); // Disables Depth Testing
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glDepthMask(false);
             GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -104,9 +108,9 @@ public class Client {
             textRenderers[1] = new TextRenderer(25);
             textRenderers[2] = new TextRenderer(60);
 
+            startScreen = new StartScreenRenderer(e -> establishConnection(), playerID);
             SettingsRenderer.initialise();
 
-            startScreen = new StartScreenRenderer(e -> establishConnection());
 
             Audio.init();
             AudioManager.playAmbiance();
@@ -136,7 +140,20 @@ public class Client {
             connection.addFunctionEvent("LobbyData",startScreen::setupLobby);
             connection.addFunctionEvent("InitPlayer", this::setupMe);
         } catch (IOException e) {
-            e.printStackTrace();
+            if (SINGLE_PLAYER) {
+                Server.main(new String[]{"2", "0"});
+                LOCAL = true;
+                Timer t = new Timer();
+                t.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        establishConnection();
+                    }
+                }, 5000);
+            }
+            else {
+                e.printStackTrace();
+            }
         }
     }
 

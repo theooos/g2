@@ -12,6 +12,7 @@ import server.game.CollisionManager;
 import server.game.Player;
 import server.game.Vector2;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
@@ -108,7 +109,7 @@ public class GameManager {
         pollMouse();
         AudioManager.playWarningSounds(gameData.getPlayer(myPlayerID).getHealth());
         rotatePowerUps();
-        updateFPS(); // update FPS Counter
+        //updateFPS(); // update FPS Counter
     }
 
     private void rotatePowerUps() {

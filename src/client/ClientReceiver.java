@@ -20,6 +20,10 @@ public class ClientReceiver {
     private static boolean DEBUG = true;
     private GameData gameData;
 
+    /**
+     * Sets up a full list of function events
+     * @param connection the connection to the server
+     */
     ClientReceiver(Connection connection) {
         connection.addFunctionEvent("String", System.out::println);
         connection.addFunctionEvent("Player", this::updatedPlayer);
@@ -41,6 +45,7 @@ public class ClientReceiver {
     }
 
     private void updatedPlayer(Sendable s) {
+        //handles the player differently if it is ths client
         Player p = (Player) s;
         if (p.getID() != playerID) {
             gameData.updatePlayer(p);

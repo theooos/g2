@@ -64,6 +64,9 @@ public class Projectile extends MovableEntity {
         ID = p.ID;
     }
 
+    /**
+     * Moves the projectile and ticks it life
+     */
     void live() {
         move();
         tickLife();

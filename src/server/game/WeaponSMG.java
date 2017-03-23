@@ -6,6 +6,9 @@ package server.game;
  */
 public class WeaponSMG extends Weapon {
 
+    /**
+     * Creates a new fast firing low damage weapon
+     */
     WeaponSMG() {
         super();
         name = "SMG";

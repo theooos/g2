@@ -2,7 +2,6 @@ package server.game;
 
 import client.ClientSettings;
 
-import java.awt.geom.Line2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -136,7 +135,7 @@ public class Map {
      *
      * @return an ArrayList of strings representing the source file.
      */
-    public ArrayList<String> readMapFromSource() {
+    private ArrayList<String> readMapFromSource() {
 
         ArrayList<String> mapStrings = new ArrayList<>();
 
@@ -352,7 +351,7 @@ public class Map {
      * @param pos - The position to be tested.
      * @return true if the position is within the bounds of this map.
      */
-    public boolean inMap(Vector2 pos) {
+    private boolean inMap(Vector2 pos) {
 
         return (pos.getX() >= 0 && pos.getX() <= width && pos.getY() >= 0 && pos.getY() <= length);
     }

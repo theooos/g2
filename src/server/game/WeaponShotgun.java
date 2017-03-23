@@ -6,6 +6,9 @@ package server.game;
  */
 public class WeaponShotgun extends Weapon {
 
+    /**
+     * creates a new slow firing close range weapon
+     */
     WeaponShotgun() {
         super();
         name = "Shotgun";

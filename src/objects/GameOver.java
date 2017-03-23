@@ -10,6 +10,10 @@ public class GameOver implements Sendable {
 
     private Scoreboard scoreboard;
 
+    /**
+     * Ends the game
+     * @param scoreboard the final score
+     */
     public GameOver(Scoreboard scoreboard) {
         this.scoreboard = scoreboard;
     }
