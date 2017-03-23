@@ -195,7 +195,7 @@ class Draw {
         glEnd();
     }
 
-    void drawScoreboard() {
+    void drawScoreboard(boolean gameEnded) {
         shadeScreen();
         Scoreboard sb = gameData.getScoreboard();
 
@@ -218,6 +218,36 @@ class Draw {
         float red = 0;
         float green = 1;
         float blue = 0;
+        float buffer = 20;
+
+        if (gameEnded) {
+            float endY = yStart-buffer-rectHeight;
+            float team = gameData.getPlayer(playerID).getTeam();
+            glColor4f(1-team, team, 1-team, intensity);
+            drawRect(xStart, endY, rectWidth*2, rectHeight);
+            invertedQuadGlow(xStart,endY+rectHeight, rectWidth*2, rectHeight,10,1,1,1,1);
+
+            if (sb.getTeam0Score() > sb.getTeam1Score()) {
+                if (team == 0) {
+                    //enclave won (you)
+                    drawText(largeText, "VICTORY", ClientSettings.SCREEN_WIDTH/2-50, endY+3*rectHeight/4+3);
+                }
+                else {
+                    //enclave won (not you)
+                    drawText(largeText,"DEFEAT",ClientSettings.SCREEN_WIDTH/2-40,endY+3*rectHeight/4+3);
+                }
+            }
+            else {
+                if (team == 0) {
+                    //landscapers won (not you)
+                    drawText(largeText, "DEFEAT", ClientSettings.SCREEN_WIDTH/2-40, endY+3*rectHeight/4+3);
+                }
+                else {
+                    //landscapers won (you)
+                    drawText(largeText,"VICTORY",ClientSettings.SCREEN_WIDTH/2-50,endY+3*rectHeight/4+3);
+                }
+            }
+        }
 
         glColor4f(red, green, blue, intensity);
         drawRect(xStart, yStart, rectWidth, rectHeight);
@@ -231,7 +261,7 @@ class Draw {
         rectWidth *= 2;
         drawText(largeText, ((Integer) sb.getTeam0Score()).toString(), xStart+rectWidth-((Integer) sb.getTeam0Score()).toString().length()*18-10, yStart+3*rectHeight/4+3);
 
-        yStart += rectHeight+20;
+        yStart += rectHeight+buffer;
 
         int[] sortedScores = scores.clone();
         int removed = 0;
@@ -282,13 +312,13 @@ class Draw {
         }
     }
 
-    void drawGameOver() {
-        drawText(hugeText,"GAME OVER",210,120);
+    private void drawText(TextRenderer tx, String s, float x, float y) {
+        drawText(tx, s, x, y, 0, 0, 0);
     }
 
-    private void drawText(TextRenderer tx, String s, float x, float y) {
+    private void drawText(TextRenderer tx, String s, float x, float y, float red, float green, float blue) {
         glEnable(GL_TEXTURE_2D);
-        glColor4f(0,0,0,1);
+        glColor4f(red,green,blue,1);
         tx.drawText(s, x, y);
         glDisable(GL_TEXTURE_2D);
     }
