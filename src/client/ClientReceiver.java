@@ -49,6 +49,7 @@ public class ClientReceiver {
     }
 
     private void updatedPlayer(Sendable s) {
+        //handles the player differently if it is ths client
         Player p = (Player) s;
         if (p.getID() != playerID) {
             gameData.updatePlayer(p);
