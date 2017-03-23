@@ -129,23 +129,18 @@ public class Client {
     private void establishConnection() {
         try {
             connection = new Connection_Client(this);
+            connection.initialise();
             clientReceiver = new ClientReceiver(connection);
             connection.addFunctionEvent("InitGame", this::beginGame);
-            connection.addFunctionEvent("String",this::out);
             connection.addFunctionEvent("LobbyData",startScreen::setupLobby);
             connection.addFunctionEvent("InitPlayer", this::setupMe);
-
         } catch (IOException e) {
-            System.err.println("Failed to make connection.");
+            e.printStackTrace();
         }
     }
 
     private void setupMe(Sendable s) {
         playerID = ((InitPlayer) s).getID();
-    }
-
-    private void out(Object o) {
-        System.out.println(o);
     }
 
     private void endGame(Object o) {

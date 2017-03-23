@@ -25,9 +25,9 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class GameManager {
 
-    enum Mode {GAME, MENU, SETTINGS, SCOREBOARD, GAMEOVER}
+    enum Screen {GAME, MENU, SETTINGS, SCOREBOARD, GAMEOVER}
 
-    private Mode mode = Mode.GAME;
+    private Screen screen = Screen.GAME;
 
     private GameRenderer gameRenderer;
     private InGameMenuRenderer inGameMenuRenderer;
@@ -59,7 +59,7 @@ public class GameManager {
     }
 
     public void run() {
-        switch (mode) {
+        switch (screen) {
             case GAME:
                 update();
                 gameRenderer.render();
@@ -76,7 +76,7 @@ public class GameManager {
                 glColor4f(1, 1, 1, 1);
                 inGameMenuRenderer.renderSettings();
                 inGameMenuRenderer.handleClickedSettings();
-                SettingsRenderer.run(e -> mode = Mode.MENU);
+                SettingsRenderer.run(e -> screen = Screen.MENU);
                 break;
             case SCOREBOARD:
                 update();
@@ -177,7 +177,7 @@ public class GameManager {
         while (Keyboard.next()) {
             // Runs if next key has been PRESSED.
             if (Keyboard.getEventKeyState()) {
-                switch (mode) {
+                switch (screen) {
                     case GAME:
                         gameKeyboard();
                         break;
@@ -185,10 +185,10 @@ public class GameManager {
                         menuKeyboard();
                 }
             } else {
-                switch (mode) {
+                switch (screen) {
                     case SCOREBOARD:
                         if (Keyboard.getEventKey() == Keyboard.KEY_TAB) {
-                            mode = Mode.GAME;
+                            screen = Screen.GAME;
                         }
                 }
             }
@@ -250,11 +250,11 @@ public class GameManager {
                 break;
 
             case Keyboard.KEY_ESCAPE:
-                mode = Mode.MENU;
+                screen = Screen.MENU;
                 break;
 
             case Keyboard.KEY_TAB:
-                if (mode != Mode.GAMEOVER) mode = Mode.SCOREBOARD;
+                if (screen != Screen.GAMEOVER) screen = Screen.SCOREBOARD;
                 break;
         }
     }
@@ -262,7 +262,7 @@ public class GameManager {
     private void menuKeyboard() {
         switch (Keyboard.getEventKey()) {
             case Keyboard.KEY_ESCAPE:
-                mode = Mode.GAME;
+                screen = Screen.GAME;
                 break;
         }
     }
@@ -296,12 +296,12 @@ public class GameManager {
 
     private void gameOver(Sendable sendable) {
         gameData.updateScoreboard(((GameOver) sendable).getScoreboard());
-        mode = Mode.GAMEOVER;
+        screen = Screen.GAMEOVER;
         AudioManager.playGameOver();
     }
 
-    void setMode(Mode mode) {
-        this.mode = mode;
+    void setScreen(Screen screen) {
+        this.screen = screen;
     }
 
     public static void out(Object o) {

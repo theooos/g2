@@ -15,10 +15,13 @@ import java.net.Socket;
 public class Connection_Server extends Connection {
     private int ID;
 
-    Connection_Server(Socket socket) throws IOException {
+    Connection_Server(Socket socket) {
         this.socket = socket;
+    }
+
+    @Override
+    public void initialise() throws IOException {
         establishConnection();
-        this.ID = ID;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class Connection_Server extends Connection {
         new Thread(handler).start();
         new Thread(toConnection).start();
         new Thread(fromConnection).start();
-        out("Connection established with client.");
+        System.out.println("Connection established with client.");
         return true;
     }
 

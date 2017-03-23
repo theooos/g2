@@ -59,8 +59,6 @@ public class Game implements Runnable {
             System.err.println("Failed to load map");
         }
 
-        out("Total players: "+playerConnections.size());
-
         rand = new Random();
         scoreboard = new Scoreboard(ServerConfig.MAX_SCORE, maxPlayers);
 
@@ -99,7 +97,6 @@ public class Game implements Runnable {
 
             Player p = new Player(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
             Connection_Server con = playerConnections.get(i);
-            con.addFunctionEvent("String", this::out);
             con.addFunctionEvent("MoveObject", this::receivedMove);
             con.addFunctionEvent("FireObject", this::toggleFire);
             con.addFunctionEvent("PhaseObject", this::switchPhase);
@@ -129,7 +126,6 @@ public class Game implements Runnable {
                 default:
                     w1 = new WeaponSniper();
                     w2 = new WeaponShotgun();
-                    out("Error selecting weapon");
                     break;
             }
             Player p = new AIPlayer(respawnCoords(), randomDir(), i % 2, rand.nextInt(2), w1, w2, IDCounter);
@@ -280,7 +276,7 @@ public class Game implements Runnable {
             //if it hits something
             MovableEntity e = collisions.collidesWithPlayerOrBot(p);
             if (e != null && !e.equals(p.getPlayer())) {
-                out(p.getPlayerID()+" just hit "+e.getID());
+//                System.out.println(p.getPlayerID()+" just hit "+e.getID());
                 //can't damage your team
                 if (e.getTeam() != p.getTeam() && e.isAlive()) {
                     //gets the direction the damage is taking from for animation
@@ -353,7 +349,6 @@ public class Game implements Runnable {
      * if a player drops out
      */
     private void dealWithConnectionLoss(Connection_Server p) {
-        out("Connection to "+p+"dropped.");
         if (!playerConnections.isEmpty()) {
             playerConnections.remove(p);
         }
@@ -480,7 +475,6 @@ public class Game implements Runnable {
      * @param g the init game object
      */
     private void sendGameStart(InitGame g) {
-        out("Sending init game");
         for (Connection_Server c: playerConnections.values()) {
             try {
                 c.send(g);
@@ -545,7 +539,6 @@ public class Game implements Runnable {
     }
 
     private void toggleFire(Sendable s) {
-        out("Toggling fire");
         FireObject f = (FireObject) s;
         Player p = players.get(f.getPlayerID());
         if (p.isAlive()) {
@@ -557,14 +550,12 @@ public class Game implements Runnable {
         PhaseObject phase = (PhaseObject) s;
         Player p = players.get(phase.getID());
         p.togglePhase();
-        out("ID"+p.getID()+": Switching phase");
     }
 
     private void switchWeapon(Sendable s) {
         SwitchObject sw = (SwitchObject) s;
         Player p = players.get(sw.getID());
         p.setWeaponOut(sw.takeWeaponOneOut());
-        out("ID"+p.getID()+": Switching weapon");
     }
 
     /**
@@ -574,13 +565,11 @@ public class Game implements Runnable {
     private void fire(Player player) {
         Weapon w = player.getActiveWeapon();
         if (w.canFire()) {
-            out("ID"+player.getID()+": Just Fired");
             ArrayList<Projectile> ps = w.getShots(player);
             for (Projectile p: ps) {
                 p.setID(IDCounter);
                 IDCounter++;
                 projectiles.put(p.getID(), p);
-                out("Shot Fired");
             }
         }
     }
@@ -588,15 +577,9 @@ public class Game implements Runnable {
     private void countTime() {
         if (tickCount  > 240) {
             tickCount = 0;
-            out("Time for 240 ticks: "+(System.currentTimeMillis()-lastTime));
             lastTime = System.currentTimeMillis();
         }
         tickCount++;
     }
 
-    private void out(Object o) {
-        if (DEBUG) {
-            System.out.println(o);
-        }
-    }
 }

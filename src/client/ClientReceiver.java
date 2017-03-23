@@ -25,7 +25,7 @@ public class ClientReceiver {
      * @param connection the connection to the server
      */
     ClientReceiver(Connection connection) {
-        connection.addFunctionEvent("String", this::out);
+        connection.addFunctionEvent("String", System.out::println);
         connection.addFunctionEvent("Player", this::updatedPlayer);
         connection.addFunctionEvent("AIPlayer", this::updatedPlayer);
         connection.addFunctionEvent("Orb", this::updatedOrb);
@@ -38,10 +38,6 @@ public class ClientReceiver {
 
     void setGameData(GameData gameData){
         this.gameData = gameData;
-    }
-
-    public void out(Object o) {
-        if (DEBUG) System.out.println("[CLIENT] " + o);
     }
 
     public void setID(int id) {

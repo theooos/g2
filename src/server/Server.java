@@ -34,8 +34,4 @@ public class Server extends Thread {
         lobbyManager = new LobbyManager(args);
         new Server().start();
     }
-
-    public static void out(Object o){
-        System.out.println("[SERVER] "+o);
-    }
 }

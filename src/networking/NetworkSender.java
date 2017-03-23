@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static networking.Connection.out;
-
 /**
  * Sends objects to the server. Currently no messaging queue, this might be necessary later.
  */
@@ -48,7 +46,7 @@ class NetworkSender implements Runnable {
             toConnection.writeUnshared(obj);
             toConnection.flush();
         } catch (IOException e) {
-            out("Failed to send "+obj+". Breaking connection.");
+            System.out.println("Failed to send "+obj+". Breaking connection.");
             running.value = false;
         }
 

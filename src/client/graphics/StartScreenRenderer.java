@@ -149,7 +149,11 @@ public class StartScreenRenderer {
                 currentScreen = Screen.ABOUT;
                 hasClicked = true;
             }
-            else if (solo_game_button.isClicked() || versus_game_button.isClicked()) {
+            else if (solo_game_button.isClicked()) {
+                currentScreen = Screen.LOADING;
+                connectFunction.accept(null);
+                hasClicked = true;
+            } else if (versus_game_button.isClicked()) {
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
                 hasClicked = true;
