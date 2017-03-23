@@ -6,6 +6,7 @@ import server.ai.behaviour.*;
 /**
  * Represents the brain of an Orb, making decisions on the Orb's behalf while taking
  * the Orb's situation and surroundings into account.
+ *
  * Created by Rhys on 2/20/17.
  */
 public class OrbBrain extends AIBrain {
@@ -16,6 +17,7 @@ public class OrbBrain extends AIBrain {
 
     /**
      * Constructs an Orb's Brain - the decision maker of an Orb.
+     *
      * @param intel the Intel object the brain utilises to make decisions.
      */
     public OrbBrain(OrbIntel intel) {

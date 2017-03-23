@@ -27,7 +27,7 @@ public class LoadoutHandler {
     /**
      * Checks whether or not the player possesses a sniper.
      *
-     * @return true if the player has a sniper.
+     * @return <CODE>true</CODE> if the player has a sniper.
      */
     public boolean haveSniper(){
         return (weapon1 instanceof WeaponSniper) || (weapon2 instanceof WeaponSniper);
@@ -63,7 +63,7 @@ public class LoadoutHandler {
     /**
      * Checks whether or not the player possesses a shotgun.
      *
-     * @return true if the player has a shotgun.
+     * @return <CODE>true</CODE> if the player has a shotgun.
      */
     public boolean haveShotgun(){
         return (weapon1 instanceof WeaponShotgun) || (weapon2 instanceof WeaponShotgun);

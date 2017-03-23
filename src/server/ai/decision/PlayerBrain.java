@@ -334,7 +334,8 @@ public class PlayerBrain extends AIBrain {
     /**
      * Checks whether or not the phase-shift delay timer has reached zero,
      * indicating that phase-shift is permitted.
-     * @return true if phase-shift is permitted.
+     *
+     * @return <CODE>true</CODE> if phase-shift is permitted.
      */
     public boolean phaseShiftAuth(){
         return phaseShiftDelay == 0;

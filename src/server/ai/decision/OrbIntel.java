@@ -35,7 +35,7 @@ public class OrbIntel extends Intel {
      * a variation on the game's collision code that allows Orbs to be in the same space
      * as a player (because their attack requires touching range).
      *
-     * @return true if the Orb's current position is valid.
+     * @return <CODE>true</CODE> if the Orb's current position is valid.
      */
     public boolean validPosition(){
         return collisionManager.orbValidPosition((Orb)ent);

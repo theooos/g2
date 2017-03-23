@@ -43,7 +43,7 @@ public class PlayerIntel extends Intel {
      * Checks the player's current position against the game's collision
      * manager for position validity.
      *
-     * @return true if the player's position within the game is valid.
+     * @return <CODE>true</CODE> if the player's position within the game is valid.
      */
     public boolean validPosition(){
         return collisionManager.validPosition(ent);
@@ -66,7 +66,7 @@ public class PlayerIntel extends Intel {
     /**
      * Checks whether or not a phase-shift has failed recently and resets the flag.
      *
-     * @return true if a recent phase-shift attempt failed.
+     * @return <CODE>true</CODE> if a recent phase-shift attempt failed.
      */
     public boolean phaseShiftFailed(){
         boolean r = phaseShiftFailed;
@@ -88,7 +88,7 @@ public class PlayerIntel extends Intel {
      * Returns the result of a flag that tells whether or not a phase-shift is (or was)
      * required in order to carry out a scheduled behaviour.
      *
-     * @return true if a phase-shift is/was required for the current behaviour.
+     * @return <CODE>true</CODE> if a phase-shift is/was required for the current behaviour.
      */
     public boolean isPhaseShiftReq(){
         return phaseShiftReq;

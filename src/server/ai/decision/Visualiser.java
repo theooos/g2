@@ -46,7 +46,7 @@ public class Visualiser {
      * @param pov   the point of view.
      * @param dest  the destination towards which line of sight will be verified.
      * @param phase the phase within which line of sight will be verified.
-     * @return      true if the destination can be seen from the POV.
+     * @return      <CODE>true</CODE> if the destination can be seen from the POV.
      */
     public boolean inSight(Point2D pov, Point2D dest, int phase){
         ArrayList<Rectangle2D> walls = getWalls(phase);

@@ -42,7 +42,7 @@ public class Check {
      * Performs the requested check.
      *
      * @param mode the check to be carried out.
-     * @return     true if the check passes.
+     * @return     <CODE>true</CODE> if the check passes.
      */
     public boolean doCheck(CheckMode mode) {
 
@@ -80,7 +80,7 @@ public class Check {
     /**
      * Checks the entity's current health-level against the defined threshold.
      *
-     * @return true if health is below threshold.
+     * @return <CODE>true</CODE> if health is below threshold.
      */
     private boolean lowHealthCheck(){
         return intel.ent().getHealth() <= LOW_HEALTH_THRESHOLD;
@@ -94,7 +94,7 @@ public class Check {
      * If an orb is found, this method will set a boolean flag in the player's intel object
      * for later methods to know which phase to look in.
      *
-     * @return true if an orb is in sight and within range, in either phase.
+     * @return <CODE>true</CODE> if an orb is in sight and within range, in either phase.
      */
     private boolean orbNearbyCheck(){
 
@@ -129,7 +129,7 @@ public class Check {
      * Checks if there is a player in sight in either phase, and sets the closest detected player
      * as the target upon detection.
      *
-     * @return true if there is a player in line-of-sight, in either phase.
+     * @return <CODE>true</CODE> if there is a player in line-of-sight, in either phase.
      */
     private boolean proximityCheck(){
         ConcurrentHashMap<Integer, Player> playersInSight = intel.getEnemyPlayersInSight(orbCheck);
@@ -145,7 +145,7 @@ public class Check {
     /**
      * Checks whether a targeted player is within range of an Orb's zap-attack.
      *
-     * @return true if the orb is able to zap the target player from their current
+     * @return <CODE>true</CODE> if the orb is able to zap the target player from their current
      * position.
      */
     private boolean rangeCheck(){
@@ -160,7 +160,7 @@ public class Check {
      * Checks whether or not a target has moved a greater distance than their radius
      * since the last time their position was updated.
      *
-     * @return true if the target has moved.
+     * @return <CODE>true</CODE> if the target has moved.
      */
     private boolean targetMovedCheck(){
         if (intel.getTargetLocation() == null) {
@@ -182,7 +182,7 @@ public class Check {
      * the fact that it's the closest means it's the greatest threat to the player
      * at times of low health.
      *
-     * @return true if a threat is found anywhere within line of sight.
+     * @return <CODE>true</CODE> if a threat is found anywhere within line of sight.
      */
     private boolean closestEnemyCheck(){
         MovableEntity closestEnt = null;
@@ -238,7 +238,7 @@ public class Check {
      * it as the target if found. Also sets a boolean flag in the player's intel object
      * so that future methods know which phase to find the power-up in.
      *
-     * @return true if there is an active health power-up in either phase.
+     * @return <CODE>true</CODE> if there is an active health power-up in either phase.
      */
     private boolean healthcareAvailableCheck(){
         boolean found = false;
@@ -264,7 +264,7 @@ public class Check {
      * regardless of whether a direct line-of-sight can be established - and sets
      * the closest as the target.
      *
-     * @return true if there is an enemy player in this phase.
+     * @return <CODE>true</CODE> if there is an enemy player in this phase.
      */
     private boolean enemyInPhaseCheck(){
         ConcurrentHashMap<Integer, Player> relPlayers = new ConcurrentHashMap<>();
