@@ -20,6 +20,10 @@ public class ClientReceiver {
     private static boolean DEBUG = true;
     private GameData gameData;
 
+    /**
+     * Sets up a full list of function events
+     * @param connection the connection to the server
+     */
     ClientReceiver(Connection connection) {
         connection.addFunctionEvent("String", this::out);
         connection.addFunctionEvent("Player", this::updatedPlayer);

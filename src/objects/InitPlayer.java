@@ -10,6 +10,13 @@ public class InitPlayer implements Sendable {
     private boolean isAI;
     private int team;
 
+    /**
+     * Initialises a player
+     * @param i the ID of the player
+     * @param name the name of the player
+     * @param isAI whether the player is linked to a connection
+     * @param team which team the player is on
+     */
     public InitPlayer(int i, String name, boolean isAI, int team) {
         ID = i;
         this.name = name;

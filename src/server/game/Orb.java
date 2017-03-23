@@ -15,6 +15,7 @@ import java.util.HashMap;
  */
 public class Orb extends MovableEntity {
 
+    transient private OrbIntel intel;
     transient private OrbBrain myBrain;
 
 
@@ -60,7 +61,8 @@ public class Orb extends MovableEntity {
      * @param intel - the Intel containing details about the next game.
      */
     void prepareOrbForGame(OrbIntel intel, HashMap<Integer, Orb> orbs){
-        intel.initForGame(this, orbs);
+        this.intel = intel;
+        this.intel.initForGame(this, orbs);
         this.myBrain = new OrbBrain(intel);
         this.myBrain.equip();
     }

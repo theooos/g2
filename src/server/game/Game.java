@@ -537,7 +537,7 @@ public class Game implements Runnable {
         else {
             Connection_Server conn = playerConnections.get(p.getID());
             try {
-                conn.send(old);
+                //conn.send(old);
             } catch (Exception e) {
                 dealWithConnectionLoss(conn);
             }
