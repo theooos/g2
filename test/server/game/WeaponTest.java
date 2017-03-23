@@ -3,6 +3,8 @@ package server.game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -10,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * Testing weapons
  */
 class WeaponTest {
-    Weapon shotgun;
-    Weapon sniper;
-    Weapon smg;
+    private Weapon shotgun;
+    private Weapon sniper;
+    private Weapon smg;
 
     @BeforeEach
     void setUp() {
@@ -23,17 +25,28 @@ class WeaponTest {
 
     @Test
     void live() {
-
+        assertTrue(shotgun.getHeat() == 0);
+        shotgun.setCurrentHeat(50);
+        shotgun.live();
+        assertTrue(shotgun.getHeat() < 50);
     }
 
     @Test
     void canFire() {
-
+        assertTrue(shotgun.canFire());
+        shotgun.setCurrentHeat(99);
+        assertFalse(shotgun.canFire());
+        shotgun.setCurrentHeat(40);
+        shotgun.getShots(new Player(new Vector2(0, 0), new Vector2(1, 0), 0, 0, null, null, 0));
+        assertFalse(shotgun.canFire());
     }
 
     @Test
     void getShots() {
-
+        ArrayList x = shotgun.getShots(new Player(new Vector2(0, 0), new Vector2(1, 0), 0, 0, null, null, 0));
+        assertTrue(x.size() == 7);
+        x = sniper.getShots(new Player(new Vector2(0, 0), new Vector2(1, 0), 0, 0, null, null, 0));
+        assertTrue(x.size() == 1);
     }
 
     @Test
@@ -44,7 +57,7 @@ class WeaponTest {
 
     @Test
     void toStringTest() {
-        assertTrue(shotgun.toString().equals("shotgun"));
+        assertTrue(shotgun.toString().equals("Shotgun"));
     }
 
     @Test

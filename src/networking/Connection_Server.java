@@ -15,7 +15,7 @@ import java.net.Socket;
 public class Connection_Server extends Connection {
     private int ID;
 
-    Connection_Server(Socket socket) {
+    public Connection_Server(Socket socket) {
         this.socket = socket;
     }
 

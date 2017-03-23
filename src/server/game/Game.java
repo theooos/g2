@@ -30,6 +30,7 @@ public class Game implements Runnable {
 
     private Scoreboard scoreboard;
     private int IDCounter;
+    Timer timer;
 
     private boolean gameRunning;
 
@@ -180,7 +181,7 @@ public class Game implements Runnable {
     public void run() {
         long timeDelay = 1000/(long) SERVER_TICK;
         gameRunning = true;
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -193,6 +194,14 @@ public class Game implements Runnable {
                 }
             }
         }, 1000, timeDelay);
+    }
+
+    /**
+     * Stops the game
+     */
+    public void stop() {
+        timer.cancel();
+        timer.purge();
     }
 
     /**
