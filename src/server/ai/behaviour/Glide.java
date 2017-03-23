@@ -8,7 +8,7 @@ import server.game.Vector2;
 
 /**
  * This behaviour allows an Orb to move towards a pre-determined checkpoint, once per tick.
- * <p>
+ *
  * Created by rhys on 2/16/17.
  */
 public class Glide extends OrbTask {
@@ -16,9 +16,9 @@ public class Glide extends OrbTask {
     /**
      * Constructs a Glide behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public Glide(OrbIntel intel, OrbBrain brain){
         super(intel, brain);

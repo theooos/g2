@@ -25,9 +25,9 @@ public class FindPath extends Task {
     /**
      * Constructs a FindPath behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public FindPath(Intel intel, AIBrain brain) {
         super(intel, brain);
@@ -36,7 +36,8 @@ public class FindPath extends Task {
     /**
      * Determines whether this path-finding object needs to
      * use A* search to find a path or not.
-     * @param lineOfSight - set to true if the target is within line of sight
+     *
+     * @param lineOfSight set to true if the target is within line of sight
      *                    of the entity.
      */
     public void setSimplePath(boolean lineOfSight){

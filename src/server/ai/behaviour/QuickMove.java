@@ -22,9 +22,9 @@ public class QuickMove extends PlayerTask {
     /**
      * Constructs a QuickMove behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public QuickMove(PlayerIntel intel, PlayerBrain brain) {
         super(intel, brain);
@@ -88,5 +88,12 @@ public class QuickMove extends PlayerTask {
         }
     }
 
-
+    /**
+     * Prevents this behaviour from being run as a single-tick-task.
+     */
+    @Override
+    public void run(){
+        System.err.println("QuickMove is not a single-tick task.");
+        System.exit(1);
+    }
 }

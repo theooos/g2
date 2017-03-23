@@ -8,19 +8,33 @@ import java.util.ArrayList;
 
 /**
  * Allows control of a sequence of behaviours.
- * Created by rhys on 2/16/17.
+ *
+ * Created by Rhys on 2/16/17.
  */
 public class Sequence extends Task {
 
-    protected ArrayList<Task> subTasks;
-    protected Task curTask;
+    private ArrayList<Task> subTasks;
+    private Task curTask;
 
+    /**
+     * Constructs an empty behaviour sequence.
+     *
+     * @param intel the intelligence object the behaviours will use to carry
+     *              out their decisions and actions.
+     * @param brain the brain that will exhibit the behaviours stored within
+     *              this sequence.
+     */
     public Sequence(Intel intel, AIBrain brain) {
         super(intel, brain);
         this.subTasks = new ArrayList<>();
         this.curTask = null;
     }
 
+    /**
+     * Appends a behaviour to this sequence.
+     *
+     * @param newTask the behaviour to be added.
+     */
     public void add(Task newTask){
         subTasks.add(newTask);
     }
@@ -39,6 +53,7 @@ public class Sequence extends Task {
 
     }
 
+    @Override
     public void doAction() {
         // If the super-task has finished or we have a null sub-task:
         if (hasFinished() || curTask == null) {
@@ -60,7 +75,7 @@ public class Sequence extends Task {
     }
 
     /**
-     * Moves onto the next sub-task in the sequence when a sub-task succeeds.
+     * Moves onto the next sub-task in this sequence when a sub-task succeeds.
      */
     private void advanceSequence() {
         int curPos = subTasks.indexOf(curTask);
@@ -79,6 +94,10 @@ public class Sequence extends Task {
         }
     }
 
+    /**
+     * Resets progress of all behaviours within this sequence, as well as the overall
+     * progress of this sequence itself.
+     */
     public void reset() {
         super.reset();
         this.curTask = subTasks.get(0);
@@ -93,6 +112,13 @@ public class Sequence extends Task {
         System.exit(1);
     }
 
+    /**
+     * Checks to see if the final sub-task in this sequence has finished, which
+     * determines whether or not this sequence as a whole has finished.
+     *
+     * @return <CODE>true</CODE> if the sequence has finished.
+     */
+    @Override
     public boolean hasFinished(){
         return (subTasks.get(subTasks.size()-1)).hasFinished();
     }

@@ -20,8 +20,8 @@ public class Wander extends Task {
     /**
      * Constructs a Wander behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param intel the game-related intelligence the behaviour uses to make decisions.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public Wander(Intel intel, AIBrain brain) {
         super(intel, brain);

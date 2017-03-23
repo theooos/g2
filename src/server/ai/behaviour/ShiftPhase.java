@@ -22,15 +22,19 @@ public class ShiftPhase extends PlayerTask {
     /**
      * Constructs a ShiftPhase behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public ShiftPhase(PlayerIntel intel, PlayerBrain brain){
         super(intel, brain);
         overrideAuth = false;
     }
 
+    /**
+     * Allows another behaviour to override the brain's phase-shift delay timer
+     * when called.
+     */
     public void forceAction(){
         overrideAuth = true;
     }

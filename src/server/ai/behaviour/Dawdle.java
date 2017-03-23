@@ -24,9 +24,9 @@ public class Dawdle extends Task {
     /**
      * Constructs a Dawdle behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public Dawdle(Intel intel, AIBrain brain) {
         super(intel, brain);
@@ -62,6 +62,10 @@ public class Dawdle extends Task {
         }
     }
 
+    /**
+     * Prevents this behaviour from being run as a single-tick-task.
+     */
+    @Override
     public void run(){
         System.err.println("Dawdle is not a single-tick task.");
         System.exit(1);

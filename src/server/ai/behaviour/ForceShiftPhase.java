@@ -53,4 +53,13 @@ public class ForceShiftPhase extends PlayerTask {
             }
         }
     }
+
+    /**
+     * Prevents this behaviour from being run as a single-tick-task.
+     */
+    @Override
+    public void run(){
+        System.err.println("ForceShiftPhase is not a single-tick task.");
+        System.exit(1);
+    }
 }

@@ -32,9 +32,9 @@ public class Swat extends PlayerTask {
     /**
      * Constructs a Swat behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public Swat(PlayerIntel intel, PlayerBrain brain, LoadoutHandler ldh){
         super(intel, brain);
@@ -43,6 +43,7 @@ public class Swat extends PlayerTask {
         this.gen = new Random();
     }
 
+    @Override
     public boolean checkConditions(){
         return intel.getRelevantEntity() != null &&
                 intel.getRelevantEntity() instanceof Orb &&
@@ -71,6 +72,7 @@ public class Swat extends PlayerTask {
         fireDelay = 0;
     }
 
+    @Override
     public void doAction(){
 
         // Take aim.

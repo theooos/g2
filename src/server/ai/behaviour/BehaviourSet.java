@@ -9,7 +9,7 @@ import java.util.HashMap;
  * that single instances can be shared by multiple emotional processes and reset
  * en-masse.
  *
- * Created by rhys on 3/8/17.
+ * Created by Rhys on 3/8/17.
  */
 public class BehaviourSet {
 

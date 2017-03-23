@@ -22,9 +22,9 @@ public class Zap extends Task {
     /**
      * Constructs a Zap behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public Zap(Intel intel, AIBrain brain) {
         super(intel, brain);
@@ -39,6 +39,7 @@ public class Zap extends Task {
         return (absDistBetween <= 40);
     }
 
+    @Override
     public void start(){
         super.start();
         this.target = intel.getRelevantEntity();
@@ -56,6 +57,5 @@ public class Zap extends Task {
         } else {
             end();
         }
-
     }
 }

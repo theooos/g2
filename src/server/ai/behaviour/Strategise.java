@@ -38,16 +38,16 @@ public class Strategise extends PlayerTask {
     /**
      * Constructs a Strategise behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
-     * @param ldh   The AI Player's load-out handler, used for verifying weapon accessibility
+     * @param intel the game-related intelligence the behaviour uses to make decisions.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
+     * @param ldh   the AI Player's load-out handler, used for verifying weapon accessibility
      *              and equipping desired weapons.
      */
     public Strategise(PlayerIntel intel, PlayerBrain brain, LoadoutHandler ldh){
         super(intel, brain);
         this.loadout = ldh;
         this.gen = new Random();
-        strategyList = new ArrayList<>();
+        this.strategyList = new ArrayList<>();
         for (Strategy s : Strategy.values()){
             strategyList.add(s);
         }

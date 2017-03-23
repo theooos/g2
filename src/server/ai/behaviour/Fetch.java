@@ -18,9 +18,9 @@ public class Fetch extends PlayerTask {
     /**
      * Constructs a Fetch behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public Fetch(PlayerIntel intel, PlayerBrain brain) {
         super(intel, brain);
@@ -77,5 +77,14 @@ public class Fetch extends PlayerTask {
         else {
             brain.getBehaviour("Travel").doAction();
         }
+    }
+
+    /**
+     * Prevents this behaviour from being run as a single-tick-task.
+     */
+    @Override
+    public void run(){
+        System.err.println("Fetch is not a single-tick task.");
+        System.exit(1);
     }
 }

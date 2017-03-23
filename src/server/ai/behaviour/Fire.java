@@ -20,18 +20,24 @@ public class Fire extends PlayerTask {
     /**
      * Constructs a Fire behaviour object that utilises the given Intel and Brain objects.
      *
-     * @param intel The game-related intelligence the behaviour uses to make decisions and
+     * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
-     * @param brain The brain of the AI player that will be exhibiting this behaviour.
+     * @param brain the brain of the AI player that will be exhibiting this behaviour.
      */
     public Fire(PlayerIntel intel, PlayerBrain brain) {
         super(intel, brain);
     }
 
+    @Override
     public boolean checkConditions(){
         return (intel.getRelevantEntity()!= null);
     }
 
+    /**
+     * Sets the appropriate firing frequency for the currently equipped weapon.
+     *
+     * @param fireFreq delay between shots (in number of ticks).
+     */
     public void setParameters(int fireFreq){
         this.fireFreq = fireFreq;
     }
@@ -42,6 +48,7 @@ public class Fire extends PlayerTask {
         fireDelay = 0;
     }
 
+    @Override
     public void doAction(){
 
         // Set the player to face the player.

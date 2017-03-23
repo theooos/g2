@@ -34,18 +34,29 @@ public class Attack extends PlayerTask {
         super(intel, brain);
     }
 
+    @Override
     public boolean checkConditions(){
         return intel.getRelevantEntity() != null &&
                 intel.getRelevantEntity() instanceof Player &&
                 intel.getRelevantEntity().isAlive();
     }
 
-    public void setParameters(float maxRange, float minRange, int fireFreq){
+    /**
+     * Sets the parameters that this attack object needs to be able to function.
+     *
+     * @param maxRange    the maximum range from which the weapon can be fired and
+     *                    still do damage to the target.
+     * @param targetRange the distance from the target that the current strategy
+     *                    calls for as the optimum attacking range.
+     * @param fireFreq    an appropriate firing frequency for the weapon.
+     */
+    public void setParameters(float maxRange, float targetRange, int fireFreq){
         this.maxRange = maxRange;
-        this.targetRange = minRange;
+        this.targetRange = targetRange;
         ((Fire)brain.getBehaviour("Fire")).setParameters(fireFreq);
     }
 
+    @Override
     public void start(){
         super.start();
 
@@ -59,6 +70,7 @@ public class Attack extends PlayerTask {
         brain.getBehaviour("Fire").start();
     }
 
+    @Override
     public void doAction(){
 
         if (!target.isAlive()){
@@ -89,6 +101,10 @@ public class Attack extends PlayerTask {
         }
     }
 
+    /**
+     * Calculates the location the AI should be travel towards in order to be in
+     * optimum attacking range of the target.
+     */
     private void track(){
         Vector2 fullVector = me.getPos().vectorTowards(target.getPos());
         float distanceToTravel = me.getPos().getDistanceTo(target.getPos()) - targetRange;
