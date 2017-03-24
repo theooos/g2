@@ -151,11 +151,13 @@ public class StartScreenRenderer {
                 hasClicked = true;
             }
             else if (solo_game_button.isClicked()) {
+                ClientSettings.LOCAL = true;
                 ClientSettings.SINGLE_PLAYER = true;
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
                 hasClicked = true;
             } else if (versus_game_button.isClicked()) {
+                ClientSettings.LOCAL = false;
                 currentScreen = Screen.LOADING;
                 connectFunction.accept(null);
                 hasClicked = true;
