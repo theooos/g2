@@ -57,6 +57,7 @@ class Lobby {
             BufferedReader eNames;
             BufferedReader lNames;
             if (NAME_LOCAL) {
+                System.out.println(Lobby.class.getResource("../EnclaveNames.txt"));
                 eNames = new BufferedReader(new FileReader(Lobby.class.getResource("../EnclaveNames.txt").getFile()));
                 lNames = new BufferedReader(new FileReader(Lobby.class.getResource("../LandscapersNames.txt").getFile()));
             }

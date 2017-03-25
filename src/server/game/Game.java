@@ -30,7 +30,7 @@ public class Game implements Runnable {
 
     private Scoreboard scoreboard;
     private int IDCounter;
-    Timer timer;
+    private Timer timer;
 
     private boolean gameRunning;
 
@@ -199,7 +199,7 @@ public class Game implements Runnable {
     /**
      * Stops the game
      */
-    public void stop() {
+    void stop() {
         timer.cancel();
         timer.purge();
     }
@@ -207,7 +207,7 @@ public class Game implements Runnable {
     /**
      * The game tick runs.  This is the master function for a running game
      */
-    private void gameTick() {
+     void gameTick() {
         boolean scoreboardChanged = false;
 
         //checks every payer

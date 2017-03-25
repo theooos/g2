@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.TimerTask;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,16 +18,29 @@ class GameTest {
     private Game game;
     @BeforeEach
     void setUp() {
+        System.out.println("Test started");
         HashMap<Integer, Connection_Server> connections = new HashMap<>();
-        connections.put(0, new Connection_Server(null));
-        game = new Game(connections, 4, 4, new LobbyData(null, 5));
+        //connections.put(0, new Connection_Server(null));
+        game = new Game(connections, 1, 1, new LobbyData(null, 5));
+        System.out.println("Finished setup");
+
     }
 
+
     @Test
-    void run() {
+    void runTest() {
         //checks to see if the game runs
         game.run();
         game.stop();
+        assertFalse(false);
     }
+
+    @Test
+    void gameTick() {
+        //used to check the game can run without crashing
+        game.gameTick();
+        assertFalse(false);
+    }
+
 
 }

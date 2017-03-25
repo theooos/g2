@@ -8,6 +8,7 @@ import java.util.Random;
 
 /**
  * Created by peran on 27/01/17.
+ * A class to handle vector2fs
  */
 
 public class Vector2 implements Sendable{
