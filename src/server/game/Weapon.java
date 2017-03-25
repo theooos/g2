@@ -166,4 +166,8 @@ public abstract class Weapon implements Sendable{
         this.currentHeat = heat;
     }
 
+    boolean equals(Weapon w) {
+        return name.equals(w.toString());
+    }
+
 }

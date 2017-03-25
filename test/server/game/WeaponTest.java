@@ -83,4 +83,9 @@ class WeaponTest {
         assertTrue(shotgun.getHeat() == 30);
     }
 
+    @Test
+    void equals() {
+        assertTrue(shotgun.equals(new WeaponShotgun()));
+    }
+
 }
