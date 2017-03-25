@@ -30,6 +30,7 @@ public class Game implements Runnable {
 
     private Scoreboard scoreboard;
     private int IDCounter;
+    private Timer timer;
 
     private boolean gameRunning;
 
@@ -180,7 +181,7 @@ public class Game implements Runnable {
     public void run() {
         long timeDelay = 1000/(long) SERVER_TICK;
         gameRunning = true;
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -196,9 +197,17 @@ public class Game implements Runnable {
     }
 
     /**
+     * Stops the game
+     */
+    void stop() {
+        timer.cancel();
+        timer.purge();
+    }
+
+    /**
      * The game tick runs.  This is the master function for a running game
      */
-    private void gameTick() {
+     void gameTick() {
         boolean scoreboardChanged = false;
 
         //checks every payer
