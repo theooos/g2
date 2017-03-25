@@ -18,12 +18,9 @@ class GameTest {
     private Game game;
     @BeforeEach
     void setUp() {
-        System.out.println("Test started");
         HashMap<Integer, Connection_Server> connections = new HashMap<>();
         //connections.put(0, new Connection_Server(null));
         game = new Game(connections, 1, 1, new LobbyData(null, 5));
-        System.out.println("Finished setup");
-
     }
 
 
