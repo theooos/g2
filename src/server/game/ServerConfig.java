@@ -12,7 +12,7 @@ public class ServerConfig {
     static final float HURT_LIFE = 0.15f*SERVER_TICK;
     static final int HURT_RADIUS = 4;
 
-    public static final boolean NAME_LOCAL = false;
+    public static final boolean NAME_LOCAL = true;
 
     static final int TIME_LIMIT = 4*60*SERVER_TICK; //4 minutes
     static final int MAX_SCORE = 300;

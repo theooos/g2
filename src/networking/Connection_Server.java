@@ -37,7 +37,12 @@ public class Connection_Server extends Connection {
     }
 
     public void send(Sendable sendable) throws Exception {
-        toConnection.queueForSending(sendable);
+        try {
+            toConnection.queueForSending(sendable);
+        }
+        catch(NullPointerException e) {
+            System.out.println("Uh oh, no socket.  Testing?");
+        }
     }
 
     public void setID(int ID) {
