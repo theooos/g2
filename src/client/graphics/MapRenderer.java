@@ -30,15 +30,10 @@ class MapRenderer {
      */
     MapRenderer(int mapID) {
         //try to load the map
-        try {
-            map = new Map(mapID);
-            this.height = map.getMapLength();
-            this.width = map.getMapWidth();
+        map = new Map(mapID);
+        this.height = map.getMapLength();
+        this.width = map.getMapWidth();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
     }
 
     /**

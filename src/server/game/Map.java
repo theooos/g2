@@ -34,7 +34,7 @@ public class Map {
      *
      * @param mapID
      */
-    public Map(int mapID) throws IOException {
+    public Map(int mapID) {
 
         String LOCAL_PATH = new File("").getAbsolutePath();
         String PROJ_PATH = ClientSettings.MAP_LOCAL ? "/src/server/game/maps/" : "/maps/";

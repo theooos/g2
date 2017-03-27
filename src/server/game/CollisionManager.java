@@ -29,11 +29,7 @@ public class CollisionManager {
         orbs = gd.getOrbs();
         powerUps = gd.getPowerUps();
 
-        try {
-            map = new Map(gd.getMapID());
-        } catch (IOException e) {
-            System.err.println("IOException: Failed to load map in collisions class");
-        }
+        map = new Map(gd.getMapID());
     }
 
     /**
