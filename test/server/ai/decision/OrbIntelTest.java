@@ -47,5 +47,19 @@ class OrbIntelTest {
     @Test
     void validPosition() {
 
+        Orb orb = new Orb(null, null, 0, 0);
+        HashMap<Integer, Orb> orbs = new HashMap<>();
+        orbs.put(1, orb);
+
+        this.intel.initForGame(orb, orbs);
+
+        // Test valid position.
+
+        // Test invalid position (wall).
+
+        // Test player overlap.
+
+        // Test invalid position (outside map).
+
     }
 }
