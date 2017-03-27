@@ -89,6 +89,11 @@ public abstract class Weapon implements Sendable{
         return (maxHeat - currentHeat >= heatPerShot) && refireDelay <= 0;
     }
 
+    /**
+     * Fires the weapon
+     * @param player the player which fired the weapon
+     * @return An ArrayList of the fired shots
+     */
     ArrayList<Projectile> getShots(Player player) {
         ArrayList<Projectile> ps = new ArrayList<>();
         for (int i = 0; i < numProjectiles; i++) {
@@ -115,8 +120,8 @@ public abstract class Weapon implements Sendable{
 
     /**
      * Adds inaccuracy to the weapons
-     * @param v
-     * @return
+     * @param v the vector to deviate
+     * @return the new vector
      */
     private Vector2 getDeviation(Vector2 v) {
         //x' = xcosf - ysinf
@@ -159,6 +164,10 @@ public abstract class Weapon implements Sendable{
 
     void setCurrentHeat(int heat) {
         this.currentHeat = heat;
+    }
+
+    boolean equals(Weapon w) {
+        return name.equals(w.toString());
     }
 
 }

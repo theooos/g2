@@ -61,6 +61,11 @@ public abstract class Entity implements objects.Sendable {
         return ID;
     }
 
+    /**
+     * Compares the ID on two Entities
+     * @param o the object to compare
+     * @return whether the ID matche
+     */
     public boolean equals(Object o) {
         try {
             return ((Entity) o).getID() == ID;
