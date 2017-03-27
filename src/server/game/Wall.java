@@ -28,7 +28,8 @@ public class Wall extends Entity {
         this.endPos = endPos;
         this.phase = phase;
         this.damageable = damageable;
-        this.health = 100;
+        this.maxHealth = 100;
+        this.health = maxHealth;
         this.visible = true;
         this.boundary = boundary;
     }

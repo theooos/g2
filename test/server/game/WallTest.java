@@ -26,7 +26,7 @@ class WallTest {
 
     @Test
     void getEndPos() {
-        assertFalse(w.getEndPos().equals(new Vector2(10, 100)));
+        assertTrue(w.getEndPos().equals(new Vector2(10, 100)));
     }
 
     @Test
@@ -56,13 +56,8 @@ class WallTest {
     }
 
     @Test
-    void toRect() {
-
-    }
-
-    @Test
     void isBoundary() {
-
+        assertFalse(w.isBoundary());
     }
 
 }
