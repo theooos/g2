@@ -18,7 +18,7 @@ public class Scoreboard implements Sendable {
      * @param maxScore the game's score limit
      * @param playerNum the number of players in the game
      */
-    Scoreboard(int maxScore, int playerNum) {
+    public Scoreboard(int maxScore, int playerNum) {
         this.maxScore = maxScore;
         team0Score = 0;
         team1Score = 0;
@@ -129,7 +129,7 @@ public class Scoreboard implements Sendable {
      * @param sb the scoreboard to compare
      * @return whether equal or not
      */
-    boolean equals(Scoreboard sb) {
+    public boolean equals(Scoreboard sb) {
         if (sb.getPlayerScores().length != playerScores.length) return false;
         if (sb.maxScore != maxScore) return false;
         for (int i = 0; i < playerScores.length; i++) {

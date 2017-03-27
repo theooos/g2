@@ -24,11 +24,8 @@ class CollisionManagerTest {
 
     @BeforeEach
     void setUp() {
-        try {
-            map = new Map(10);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        map = new Map(10);
+
         players = new ConcurrentHashMap<>();
         orbs = new HashMap<>();
         powerUps = new HashMap<>();

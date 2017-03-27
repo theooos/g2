@@ -29,11 +29,7 @@ public class CollisionManager {
         orbs = gd.getOrbs();
         powerUps = gd.getPowerUps();
 
-        try {
-            map = new Map(gd.getMapID());
-        } catch (IOException e) {
-            System.err.println("IOException: Failed to load map in collisions class");
-        }
+        map = new Map(gd.getMapID());
     }
 
     /**
@@ -225,7 +221,7 @@ public class CollisionManager {
         Line2D l1 = new Line2D.Float(p1.getX(), p1.getY(), p2.getX(), p2.getY());
         //checks if lines intersect
         for (Wall w: map.wallsInPhase(phase, true, false)) {
-            Line2D l2 = new Line2D.Float(w.getStartPos().getX(), w.getStartPos().getY(), w.getEndPos().getX(), w.getEndPos().getY());
+            Line2D l2 = w.toLine();
             if (l2.intersectsLine(l1)) return true;
         }
 

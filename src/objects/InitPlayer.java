@@ -1,5 +1,7 @@
 package objects;
 
+import java.util.Objects;
+
 /**
  * Created by peran on 3/20/17.
  * Used to initialise players in the lobby
@@ -38,5 +40,9 @@ public class InitPlayer implements Sendable {
 
     public int getTeam() {
         return team;
+    }
+
+    public boolean equals(InitPlayer p) {
+        return p.getID() == ID && p.getName().toString().equals(name.toString()) && p.isAI() == isAI() && p.getTeam() == team;
     }
 }

@@ -53,12 +53,8 @@ public class Game implements Runnable {
         this.playerConnections = playerConnections;
 
         //try to load the map
-        try {
-            this.map = new Map(mapID);
-        }
-        catch(IOException e) {
-            System.err.println("Failed to load map");
-        }
+        this.map = new Map(mapID);
+
 
         rand = new Random();
         scoreboard = new Scoreboard(ServerConfig.MAX_SCORE, maxPlayers);
