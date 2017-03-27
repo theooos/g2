@@ -94,41 +94,6 @@ public class Map {
         return length;
     }
 
-    /**
-     * Calculates and returns an ArrayList of spaces that movable entities can move and exist within.
-     * Assumes boundary walls are included in the map specification file.
-     *
-     * @return an ArrayList of valid spaces within the map.
-     */
-    private ArrayList<Vector2> allValidSpace() {
-
-        HashSet<Vector2> validSpaceSet = new HashSet<>();
-
-        // Add all possible map positions.
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < length; y++) {
-                validSpaceSet.add(new Vector2(x, y));
-            }
-        }
-
-        // Check all (intact) walls and remove each position obstructed by a wall.
-        for (Wall w : walls) {
-            if (w.isAlive()) {
-                HashSet<Vector2> wallSpace = w.getWholeWall();
-                for (Vector2 space : wallSpace) {
-                    validSpaceSet.remove(space);
-                }
-            }
-        }
-
-        // Convert the set into an ArrayList and return it.
-        ArrayList<Vector2> validSpace = new ArrayList<>();
-        for (Vector2 space : validSpaceSet) {
-            validSpace.add(space);
-        }
-        return validSpace;
-    }
-
 
     /**
      * Reads this map's specified source file and returns it as an ArrayList of strings.

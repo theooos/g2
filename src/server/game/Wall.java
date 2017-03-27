@@ -91,12 +91,9 @@ public class Wall extends Entity {
         return (this.phase == phase);
     }
 
-    HashSet<Vector2> getWholeWall(){
-        return null;
-    }
 
-    public Line2D.Double toLine(){
-        return new Line2D.Double(pos.toPoint(), endPos.toPoint());
+    public Line2D.Float toLine(){
+        return new Line2D.Float(pos.getX(), pos.getY(), endPos.getX(), endPos.getY());
     }
 
     public Rectangle2D.Float toRect(){
