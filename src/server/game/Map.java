@@ -51,6 +51,9 @@ public class Map {
         constructMapFromSource(mapStrings);
     }
 
+    public int getID(){
+        return mapID;
+    }
 
     /**
      * Returns an ArrayList of walls that exist in the given phase.

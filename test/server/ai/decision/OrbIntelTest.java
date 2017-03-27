@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by Rhys on 3/27/17.
- * Used to test orb's intel
+ * Used to test Orb's intel
  */
 
 class OrbIntelTest {
@@ -21,13 +21,12 @@ class OrbIntelTest {
 
     @BeforeEach
     void setUp() {
-
         ConcurrentHashMap<Integer, Player> players = new ConcurrentHashMap<>();
-        players.put(0, new Player(new Vector2(1, 0), null, 1, 1, null, null, 0));
+        players.put(0, new Player(new Vector2(50, 50), null, 1, 1, null, null, 0));
 
         Map map = null;
         try {
-            map = new Map(10);
+            map = new Map(1);
         } catch (IOException e) {
             System.err.println("More map errors");
         }
@@ -36,8 +35,6 @@ class OrbIntelTest {
         pUps.put(0, new PowerUp(new Vector2(0, 1), PowerUp.Type.health, 0, 1));
 
         this.intel = new OrbIntel(players, map, pUps);
-
-
     }
 
     @Test
@@ -45,14 +42,14 @@ class OrbIntelTest {
 
         Orb orb = new Orb(null, null, 0, 0);
         HashMap<Integer, Orb> orbs = new HashMap<>();
-        orbs.put(1, orb);
+        orbs.put(0, orb);
 
         this.intel.initForGame(orb, orbs);
 
         Orb testOrb = intel.ent();
 
-        assertTrue(testOrb.equals(orb));
-        assertTrue(testOrb.getID() == orb.getID());
+        assertSame(orb, testOrb);
+        assertEquals(orb.getID(), testOrb.getID());
     }
 
     @Test
@@ -65,12 +62,15 @@ class OrbIntelTest {
         this.intel.initForGame(orb, orbs);
 
         // Test valid position.
+        intel.ent().setPos(new Vector2(20, 20));
+        assertTrue(intel.validPosition());
 
         // Test invalid position (wall).
+        intel.ent().setPos(new Vector2(0, 0));
+        assertFalse(intel.validPosition());
 
         // Test player overlap.
-
-        // Test invalid position (outside map).
-
+        intel.ent().setPos(new Vector2(50, 50));
+        assertTrue(intel.validPosition());
     }
 }

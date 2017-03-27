@@ -70,15 +70,6 @@ public abstract class Intel {
     }
 
     /**
-     * Refreshes this Intel with a given list of Players.
-     *
-     * @param players the list of players to be used to refresh the Intel object.
-     */
-    public void resetPlayers(ConcurrentHashMap<Integer, Player> players) {
-        this.players = players;
-    }
-
-    /**
      * @return a collection of the orbs that this intelligence object is tracking.
      */
     public HashMap<Integer, Orb> getOrbs(){
