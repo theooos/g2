@@ -28,7 +28,8 @@ public class Wall extends Entity {
         this.endPos = endPos;
         this.phase = phase;
         this.damageable = damageable;
-        this.health = 100;
+        this.maxHealth = 100;
+        this.health = maxHealth;
         this.visible = true;
         this.boundary = boundary;
     }
@@ -91,12 +92,9 @@ public class Wall extends Entity {
         return (this.phase == phase);
     }
 
-    HashSet<Vector2> getWholeWall(){
-        return null;
-    }
 
-    public Line2D.Double toLine(){
-        return new Line2D.Double(pos.toPoint(), endPos.toPoint());
+    public Line2D.Float toLine(){
+        return new Line2D.Float(pos.getX(), pos.getY(), endPos.getX(), endPos.getY());
     }
 
     public Rectangle2D.Float toRect(){
