@@ -17,7 +17,7 @@ public class PowerUp extends MovableEntity implements Sendable {
      * @param id it's unique ID
      * @param phase the phase the power up occupies
      */
-    PowerUp(Vector2 pos, Type t, int id, int phase) {
+    public PowerUp(Vector2 pos, Type t, int id, int phase) {
         this.pos = pos;
         this.type = t;
         this.radius = 10;
