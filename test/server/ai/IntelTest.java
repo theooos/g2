@@ -24,12 +24,7 @@ class IntelTest {
         ConcurrentHashMap<Integer, Player> players = new ConcurrentHashMap<>();
         players.put(0, new Player(new Vector2(50, 50), null, 1, 1, null, null, 0));
 
-        Map map = null;
-        try {
-            map = new Map(1);
-        } catch (IOException e) {
-            System.err.println("More map errors");
-        }
+        Map map = new Map(1);
 
         HashMap<Integer, PowerUp> pUps = new HashMap<>();
         pUps.put(0, new PowerUp(new Vector2(0, 1), PowerUp.Type.health, 0, 1));
@@ -94,12 +89,7 @@ class IntelTest {
 
     @Test
     void setMap() {
-        Map map = null;
-        try {
-            map = new Map(2);
-        } catch (IOException e) {
-            System.err.println("More map errors");
-        }
+        Map map = new Map(2);
         assertNotNull(map);
 
         intel.setMap(map);

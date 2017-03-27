@@ -99,6 +99,7 @@ public class Visualiser {
      *
      * @param pov   the position from which vision is being checked.
      * @param phase the phase within which vision is being checked.
+     * @param range the maximum visual range of this check.
      * @return      the collection of orbs in sight.
      */
     public ConcurrentHashMap<Integer, Orb> getOrbsInSight(Point2D pov, int phase, float range){

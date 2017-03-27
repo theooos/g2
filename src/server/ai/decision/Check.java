@@ -218,6 +218,7 @@ public class Check {
      * in the intel object.
      *
      * @param threats the collection of threats to be range-checked.
+     * @param <E>     class-type of threats.
      */
     private <E extends MovableEntity> void targetNearestThreat(ConcurrentHashMap<Integer, E> threats){
         float closestDistance = -1;

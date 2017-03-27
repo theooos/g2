@@ -18,6 +18,7 @@ public class OrbIntel extends Intel {
      *
      * @param players the list of players.
      * @param map     the map currently in play.
+     * @param pUps    the list of power-ups in this game.
      */
     public OrbIntel(ConcurrentHashMap<Integer, Player> players, Map map, HashMap<Integer, PowerUp> pUps) {
         super(players, map, pUps);

@@ -35,6 +35,7 @@ public class Swat extends PlayerTask {
      * @param intel the game-related intelligence the behaviour uses to make decisions and
      *              carry out actions.
      * @param brain the brain of the AI player that will be exhibiting this behaviour.
+     * @param ldh   the loadout handler of the player.
      */
     public Swat(PlayerIntel intel, PlayerBrain brain, LoadoutHandler ldh){
         super(intel, brain);
