@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Used for testing switch objects
  */
 class SwitchObjectTest {
-    SwitchObject s;
+    private SwitchObject s;
 
     @BeforeEach
     void setUp() {
