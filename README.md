@@ -22,6 +22,8 @@ In this game, there exist two dimensions. Though you my be battling for your lif
 
 But you're not alone. This war that has raged for eons stirred an ancient power, one which until now has lain dormant and undiscovered. Many call them Orbs. Beings of pure energy. And they intend to stop this war, before the war destroys the universe.
 
+![screenshot](http://i.imgur.com/4IIM85R.gif "Gameplay")
+
 ## Dev Team
 Peran Truscott - @ptruscott  
 Rhys Barrett - @rhysb27  
